@@ -1,0 +1,2 @@
+ALTER TABLE "food_orders" ADD COLUMN IF NOT EXISTS "delivered" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "food_orders" ADD COLUMN IF NOT EXISTS "delivered_at" TIMESTAMPTZ;

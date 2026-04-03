@@ -1,0 +1,18 @@
+{
+  "threshold": 5,
+  "reporters": ["console"],
+  "ignore": [
+    "node_modules",
+    "dist",
+    "prisma",
+    "tests",
+    "assets",
+    "import",
+    "src/server/generated/sqlite-client/**",
+    "**/src/server/generated/sqlite-client/**",
+    "server/generated/sqlite-client/**"
+  ],
+  "minTokens": 50,
+  "minLines": 5,
+  "absolute": false
+}

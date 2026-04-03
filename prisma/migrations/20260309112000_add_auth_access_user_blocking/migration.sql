@@ -1,0 +1,3 @@
+ALTER TABLE "auth_access_users"
+ADD COLUMN "blocked" BOOLEAN NOT NULL DEFAULT FALSE,
+ADD COLUMN "blocked_at" TIMESTAMPTZ NULL;

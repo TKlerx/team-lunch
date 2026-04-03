@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["menu"],
+  "properties": {
+    "menu": {
+      "type": "array",
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "date-created"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "location": {
+              "type": "string",
+              "maxLength": 160
+            },
+            "phone": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "url": {
+              "type": "string",
+              "maxLength": 255,
+              "format": "uri"
+            },
+            "date-created": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["items"],
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "ingredients", "price"],
+              "properties": {
+                "item-number": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "ingredients": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 9999.99
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

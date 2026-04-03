@@ -1,0 +1,35 @@
+{
+  "cSpell.words": [
+    "backpressure",
+    "collab",
+    "elif",
+    "envsubst",
+    "farr",
+    "geoff",
+    "geoff's",
+    "ghuntley",
+    "grayscale",
+    "inspectable",
+    "mattpocockuk",
+    "monolithically",
+    "multimodal",
+    "opencode",
+    "operationalizing",
+    "pipefail",
+    "ryancarson",
+    "stdlib",
+    "thariq's",
+    "typechecks",
+    "ultrathink",
+    "undeterministic",
+    "worktrees"
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "git add": true,
+    "git commit": true,
+    "npx vitest": true,
+    "docker compose": true,
+    "npx jscpd": true,
+    "npx tsc": true
+  }
+}

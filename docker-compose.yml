@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: teamlunch
+      POSTGRES_PASSWORD: teamlunch
+      POSTGRES_DB: teamlunch
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./prisma/init-citext.sql:/docker-entrypoint-initdb.d/01-citext.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teamlunch"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  migrate:
+    image: team-lunch:latest
+    restart: "no"
+    environment:
+      DATABASE_URL: "postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public"
+      NODE_ENV: production
+    command: ["npx", "prisma", "migrate", "deploy"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    image: team-lunch:latest
+    build:
+      context: .
+      args:
+        VITE_BASE_PATH: "${VITE_BASE_PATH:-/}"
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    environment:
+      DATABASE_URL: "postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public"
+      NODE_ENV: production
+      PORT: "${PORT:-3000}"
+      BASE_PATH: "${BASE_PATH:-}"
+      VITE_BASE_PATH: "${VITE_BASE_PATH:-}"
+      APP_PUBLIC_URL: "${APP_PUBLIC_URL:-}"
+      AUTH_SESSION_SECRET: "${AUTH_SESSION_SECRET:-}"
+      ENTRA_CLIENT_ID: "${ENTRA_CLIENT_ID:-}"
+      ENTRA_CLIENT_SECRET: "${ENTRA_CLIENT_SECRET:-}"
+      ENTRA_TENANT_ID: "${ENTRA_TENANT_ID:-}"
+      ENTRA_REDIRECT_URI: "${ENTRA_REDIRECT_URI:-}"
+      AUTH_ADMIN_EMAIL: "${AUTH_ADMIN_EMAIL:-}"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

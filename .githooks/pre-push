@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+set -eu
+
+powershell -NoProfile -File ./validate.ps1 full

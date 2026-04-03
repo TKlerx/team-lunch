@@ -1,0 +1,322 @@
+{
+  "menu": [
+    {
+      "name": "Pizza Pronto",
+      "location": "Frankfurter Weg 11, 33106 Paderborn",
+      "phone": "+49 5251 6862323",
+      "url": "http://www.pronto-paderborn.de",
+      "date-created": "2026-02-06T12:00:00Z"
+    },
+    {
+      "category": "Vorspeisen",
+      "items": [
+        {
+          "name": "Bruschetta",
+          "ingredients": "geröstetes Brot mit gewürfelten Tomaten, Zwiebeln, Olivenöl und Parmesan",
+          "price": 6.00,
+          "diet": "vegetarian"
+        }
+      ]
+    },
+    {
+      "category": "Salate",
+      "items": [
+        {
+          "name": "Salat Rucola",
+          "ingredients": "Rucola, Mozzarella, Schinken, Parmesankäse",
+          "price": 11.00
+        },
+        {
+          "name": "Salat Formaggi",
+          "ingredients": "Mozzarella-Sticks, Würfel aus Schafskäse und Gouda",
+          "price": 11.00,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Salat Mare",
+          "ingredients": "Meeresfrüchte",
+          "price": 12.50
+        },
+        {
+          "name": "Salat Laura",
+          "ingredients": "Thunfisch, Ei, Käse, Schinken, Tomaten, Artischocken, Schafskäse, Gurken, Oliven",
+          "price": 11.50
+        },
+        {
+          "name": "Salat Lombardi",
+          "ingredients": "milde Peperoni, Schafskäse, Oliven, Artischocken, Zwiebeln, Sardellen",
+          "price": 11.00
+        },
+        {
+          "name": "Salat Capricciosa",
+          "ingredients": "milde Peperoni, Mais, Thunfisch, Artischocken, Zwiebeln, Ei",
+          "price": 11.00
+        },
+        {
+          "name": "Salat San Marco",
+          "ingredients": "Tomaten, Gurken, Schafskäse, Oliven, Paprika, Zwiebeln, Mais, Ei",
+          "price": 11.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Salat Pronto",
+          "ingredients": "Hähnchenbrustfilet, Champignons, Mais, Schafskäse",
+          "price": 11.50
+        },
+        {
+          "name": "Salat Mista",
+          "ingredients": "Gurken, Tomaten, Zwiebeln",
+          "price": 8.00,
+          "diet": "vegan"
+        },
+        {
+          "name": "Salat Primavera",
+          "ingredients": "Tomaten, Gurken, Thunfisch, Mais",
+          "price": 9.00
+        },
+        {
+          "name": "Salat Caprese",
+          "ingredients": "Mozzarella, Käse, Tomaten, Basilikum",
+          "price": 9.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Salat Tonno",
+          "ingredients": "Thunfisch, Mais, Zwiebeln, Ei",
+          "price": 10.00
+        },
+        {
+          "name": "Salat Verde",
+          "ingredients": "grüner Salat, Zwiebeln",
+          "price": 5.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Salat Cetrioli",
+          "ingredients": "Gurkensalat, Zwiebeln",
+          "price": 6.00,
+          "diet": "vegan"
+        },
+        {
+          "name": "Salat Pomodoro",
+          "ingredients": "Tomatensalat, Zwiebeln",
+          "price": 6.00,
+          "diet": "vegan"
+        }
+      ]
+    },
+    {
+      "category": "Pizza",
+      "items": [
+        {
+          "name": "Pizza Frutti di Mare",
+          "ingredients": "Meeresfrüchte, Knoblauch",
+          "price": 8.00
+        },
+        {
+          "name": "Calzone",
+          "ingredients": "Schinken, frische Champignons, Artischocken",
+          "price": 11.50
+        },
+        {
+          "name": "Pizza Parma",
+          "ingredients": "Mozzarella, Parmaschinken, Rucola, Olivenöl",
+          "price": 8.00
+        },
+        {
+          "name": "Pizza Quattro Formaggi",
+          "ingredients": "vier Käsesorten",
+          "price": 7.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Pollo",
+          "ingredients": "Hähnchenbrust, frische Champignons, Schafskäse",
+          "price": 7.50
+        },
+        {
+          "name": "Pizza Quattro Stagioni",
+          "ingredients": "Schinken, Paprika, frische Champignons, Thunfisch",
+          "price": 7.00
+        },
+        {
+          "name": "Pizza Gyros",
+          "ingredients": "Schweinegyros, Schafskäse, Zwiebeln",
+          "price": 7.50
+        },
+        {
+          "name": "Pizza Caprese",
+          "ingredients": "Mozzarella, frische Tomaten, Basilikum",
+          "price": 7.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Gamberetti",
+          "ingredients": "Krabben, Knoblauch",
+          "price": 7.50
+        },
+        {
+          "name": "Pizza Salmone",
+          "ingredients": "Lachs, Zwiebeln",
+          "price": 8.00
+        },
+        {
+          "name": "Pizza alla Norma",
+          "ingredients": "Auberginen, Parmesan",
+          "price": 7.00,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Speziale",
+          "ingredients": "Mozzarella, Hähnchenbruststreifen, frische Champignons, Rucola, Parmesan, Olivenöl, Balsamicocreme",
+          "price": 8.50
+        },
+        {
+          "name": "Pizza Ortolana",
+          "ingredients": "frisches Gemüse",
+          "price": 8.00,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Salame Piccante",
+          "ingredients": "scharfe Salami, Mozzarella, Olivenöl, Parmesan, Rucola",
+          "price": 7.50
+        },
+        {
+          "name": "Pizza Carbonara",
+          "ingredients": "Pecorinocreme, Mozzarella, Guanciale, Pfeffer, Carbonaracreme",
+          "price": 15.50
+        },
+        {
+          "name": "Pizza Chef",
+          "ingredients": "Thunfisch, Zwiebeln, Oliven, scharfe Peperoni",
+          "price": 8.00
+        },
+        {
+          "name": "Pizza Mediterranea",
+          "ingredients": "Lachs, Krabben, Knoblauch",
+          "price": 8.50
+        },
+        {
+          "name": "Pizza Don Matteo",
+          "ingredients": "Mozzarella, Thunfisch, Lachs",
+          "price": 8.50
+        },
+        {
+          "name": "Pizza Pronto",
+          "ingredients": "Hackfleisch, Pfefferlinge",
+          "price": 8.00
+        },
+        {
+          "name": "Pizza Bruschetta",
+          "ingredients": "gewürfelte Tomaten, Mozzarella, Oliven, Olivenöl",
+          "price": 7.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Romana",
+          "ingredients": "Schinken, frische Champignons",
+          "price": 6.00
+        },
+        {
+          "name": "Pizza Hawaii",
+          "ingredients": "Schinken, Ananas",
+          "price": 6.00
+        },
+        {
+          "name": "Pizza O Sole Mio",
+          "ingredients": "Schinken, Salami, Champignons",
+          "price": 6.50
+        },
+        {
+          "name": "Pizza Diavola",
+          "ingredients": "Paprika, scharfe Peperoni, Oliven",
+          "price": 6.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Tonno",
+          "ingredients": "Thunfisch",
+          "price": 6.50
+        },
+        {
+          "name": "Pizza Tonno-Cipolla",
+          "ingredients": "Thunfisch, Zwiebeln",
+          "price": 7.00
+        },
+        {
+          "name": "Pizza San Marco",
+          "ingredients": "Salami, Schafskäse, Bolognese, Zwiebeln",
+          "price": 7.00
+        },
+        {
+          "name": "Pizza Vegetaria",
+          "ingredients": "frische Champignons, Eisbergsalat, Paprika, frische Tomaten, Zwiebeln",
+          "price": 7.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Spaghetti Bolognese",
+          "ingredients": "Spaghetti, Bolognese",
+          "price": 7.00
+        },
+        {
+          "name": "Pizza Spinaci",
+          "ingredients": "Spinat, Ei",
+          "price": 7.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Margherita",
+          "ingredients": "Tomatensauce, Käse, Oregano",
+          "price": 4.50,
+          "diet": "vegetarian"
+        },
+        {
+          "name": "Pizza Paprika",
+          "ingredients": "Paprika",
+          "price": 5.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Napoli",
+          "ingredients": "Sardinen, Kapern",
+          "price": 5.50
+        },
+        {
+          "name": "Pizza Cipolle",
+          "ingredients": "Zwiebeln",
+          "price": 5.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Carciofi",
+          "ingredients": "Artischocken",
+          "price": 5.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Prosciutto",
+          "ingredients": "Schinken",
+          "price": 5.50
+        },
+        {
+          "name": "Pizza Salami",
+          "ingredients": "Salami",
+          "price": 5.50
+        },
+        {
+          "name": "Pizza Funghi",
+          "ingredients": "frische Champignons",
+          "price": 5.50,
+          "diet": "vegan"
+        },
+        {
+          "name": "Pizza Primavera",
+          "ingredients": "Salami, frische Champignons",
+          "price": 6.00
+        }
+      ]
+    }
+  ]
+}

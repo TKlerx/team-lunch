@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+*.tsbuildinfo
+.DS_Store
+coverage/
+.prisma/
+src/server/generated/
+src/server/generated/sqlite-client/
+playwright-report/
+test-results/

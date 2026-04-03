@@ -1,0 +1,2 @@
+ALTER TABLE "auth_access_users"
+ADD COLUMN "is_admin" BOOLEAN NOT NULL DEFAULT FALSE;

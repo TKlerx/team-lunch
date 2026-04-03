@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/server/generated/sqlite-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model OfficeLocation {
+  id                                 String           @id @default(uuid())
+  key                                String           @unique
+  name                               String           @unique
+  isActive                           Boolean          @default(true) @map("is_active")
+  autoStartPollEnabled               Boolean          @default(false) @map("auto_start_poll_enabled")
+  autoStartPollWeekdays              Json             @default("[]") @map("auto_start_poll_weekdays")
+  autoStartPollFinishTime            String?          @map("auto_start_poll_finish_time")
+  defaultFoodSelectionDurationMinutes Int             @default(30) @map("default_food_selection_duration_minutes")
+  createdAt                          DateTime         @default(now()) @map("created_at")
+  updatedAt                          DateTime         @updatedAt @map("updated_at")
+  authAccessUsers   AuthAccessUser[]
+  authAccessUserOffices AuthAccessUserOffice[]
+  menus             Menu[]
+  polls             Poll[]
+  foodSelections    FoodSelection[]
+  shoppingListItems ShoppingListItem[]
+
+  @@map("office_locations")
+}
+
+model Menu {
+  id                String          @id @default(uuid())
+  officeLocationId  String          @map("office_location_id")
+  name              String
+  location          String?
+  phone             String?
+  url               String?
+  sourceDateCreated DateTime?       @map("source_date_created")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  items             MenuItem[]
+  pollVotes         PollVote[]
+  pollExclusions    PollExcludedMenu[]
+  wonPolls          Poll[]          @relation("WinnerMenu")
+  foodSelections    FoodSelection[]
+  userMealDefaults  UserMenuDefaultPreference[]
+  officeLocation    OfficeLocation  @relation(fields: [officeLocationId], references: [id], onDelete: Restrict)
+
+  @@unique([officeLocationId, name])
+  @@map("menus")
+}
+
+model MenuItem {
+  id          String      @id @default(uuid())
+  menuId      String      @map("menu_id")
+  itemNumber  String?     @map("item_number")
+  name        String
+  description String?
+  price       Decimal?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  menu        Menu        @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  foodOrders  FoodOrder[]
+  userMealDefaults UserMenuDefaultPreference[]
+
+  @@unique([menuId, name])
+  @@map("menu_items")
+}
+
+model Poll {
+  id                     String          @id @default(uuid())
+  officeLocationId       String          @map("office_location_id")
+  createdBy              String?         @map("created_by")
+  description            String
+  status                 String
+  startedAt              DateTime        @map("started_at")
+  endsAt                 DateTime        @map("ends_at")
+  endedPrematurely       Boolean         @default(false) @map("ended_prematurely")
+  winnerMenuId           String?         @map("winner_menu_id")
+  winnerMenuName         String?         @map("winner_menu_name")
+  winnerSelectedRandomly Boolean         @default(false) @map("winner_selected_randomly")
+  createdAt              DateTime        @default(now()) @map("created_at")
+  officeLocation         OfficeLocation  @relation(fields: [officeLocationId], references: [id], onDelete: Restrict)
+  winnerMenu             Menu?           @relation("WinnerMenu", fields: [winnerMenuId], references: [id], onDelete: SetNull)
+  votes                  PollVote[]
+  excludedMenus          PollExcludedMenu[]
+  foodSelections         FoodSelection[]
+
+  @@index([officeLocationId, status])
+  @@map("polls")
+}
+
+model PollExcludedMenu {
+  id        String   @id @default(uuid())
+  pollId    String   @map("poll_id")
+  menuId    String   @map("menu_id")
+  menuName  String   @map("menu_name")
+  reason    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  menu Menu @relation(fields: [menuId], references: [id], onDelete: Restrict)
+
+  @@unique([pollId, menuId])
+  @@map("poll_excluded_menus")
+}
+
+model PollVote {
+  id       String   @id @default(uuid())
+  pollId   String   @map("poll_id")
+  menuId   String   @map("menu_id")
+  menuName String   @map("menu_name")
+  nickname String
+  castAt   DateTime @default(now()) @map("cast_at")
+  poll     Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  menu     Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, menuId, nickname])
+  @@map("poll_votes")
+}
+
+model FoodSelection {
+  id               String         @id @default(uuid())
+  officeLocationId String         @map("office_location_id")
+  createdBy        String?        @map("created_by")
+  pollId           String         @map("poll_id")
+  menuId           String?        @map("menu_id")
+  menuName         String         @map("menu_name")
+  status           String
+  startedAt        DateTime       @map("started_at")
+  endsAt           DateTime       @map("ends_at")
+  orderPlacedAt    DateTime?      @map("order_placed_at")
+  orderPlacedBy    String?        @map("order_placed_by")
+  completedAt      DateTime?      @map("completed_at")
+  etaMinutes       Int?           @map("eta_minutes")
+  etaSetAt         DateTime?      @map("eta_set_at")
+  deliveryDueAt    DateTime?      @map("delivery_due_at")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  officeLocation   OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Restrict)
+  poll             Poll           @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  menu             Menu?          @relation(fields: [menuId], references: [id], onDelete: SetNull)
+  orders           FoodOrder[]
+
+  @@index([officeLocationId, status, createdAt])
+  @@map("food_selections")
+}
+
+model FoodOrder {
+  id              String        @id @default(uuid())
+  selectionId     String        @map("selection_id")
+  nickname        String
+  itemId          String?       @map("item_id")
+  itemName        String        @map("item_name")
+  notes           String?
+  feedbackComment String?       @map("feedback_comment")
+  processed       Boolean       @default(false)
+  processedAt     DateTime?     @map("processed_at")
+  delivered       Boolean       @default(false)
+  deliveredAt     DateTime?     @map("delivered_at")
+  rating          Int?
+  ratedAt         DateTime?     @map("rated_at")
+  orderedAt       DateTime      @default(now()) @map("ordered_at")
+  selection       FoodSelection @relation(fields: [selectionId], references: [id], onDelete: Cascade)
+  item            MenuItem?     @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@map("food_orders")
+}
+
+model LocalAuthUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("local_auth_users")
+}
+
+model AuthAccessUser {
+  id               String          @id @default(uuid())
+  email            String          @unique
+  approved         Boolean         @default(false)
+  isAdmin          Boolean         @default(false) @map("is_admin")
+  blocked          Boolean         @default(false)
+  officeLocationId String?         @map("office_location_id")
+  requestedAt      DateTime        @default(now()) @map("requested_at")
+  approvedAt       DateTime?       @map("approved_at")
+  blockedAt        DateTime?       @map("blocked_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  officeLocation OfficeLocation? @relation(fields: [officeLocationId], references: [id], onDelete: SetNull)
+  officeMemberships AuthAccessUserOffice[]
+
+  @@map("auth_access_users")
+}
+
+model AuthAccessUserOffice {
+  id               String          @id @default(uuid())
+  authAccessUserId String          @map("auth_access_user_id")
+  officeLocationId String          @map("office_location_id")
+  createdAt        DateTime        @default(now()) @map("created_at")
+
+  authAccessUser AuthAccessUser @relation(fields: [authAccessUserId], references: [id], onDelete: Cascade)
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([authAccessUserId, officeLocationId])
+  @@index([officeLocationId])
+  @@map("auth_access_user_offices")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  event      String
+  actorEmail String?  @map("actor_email")
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([targetType, targetId], map: "audit_logs_target_idx")
+  @@map("audit_logs")
+}
+
+model UserPreference {
+  id            String   @id @default(uuid())
+  userKey       String   @unique @map("user_key")
+  allergiesJson Json     @default("[]") @map("allergies_json")
+  dislikesJson  Json     @default("[]") @map("dislikes_json")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+model UserMenuDefaultPreference {
+  id                     String   @id @default(uuid())
+  userKey                String   @map("user_key")
+  menuId                 String   @map("menu_id")
+  itemId                 String   @map("item_id")
+  defaultComment         String?  @map("default_comment")
+  allowOrganizerFallback Boolean  @default(false) @map("allow_organizer_fallback")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  item MenuItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userKey, menuId])
+  @@map("user_menu_default_preferences")
+}
+
+model ShoppingListItem {
+  id          String   @id @default(uuid())
+  officeLocationId String @map("office_location_id")
+  name        String
+  requestedBy String   @map("requested_by")
+  bought      Boolean  @default(false)
+  boughtBy    String?  @map("bought_by")
+  boughtAt    DateTime? @map("bought_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Restrict)
+
+  @@index([officeLocationId, bought, createdAt])
+  @@map("shopping_list_items")
+}
