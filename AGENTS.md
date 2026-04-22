@@ -83,6 +83,7 @@ npm run ports:check:ci      # non-interactive port blocker report (no terminatio
 - Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit runs `./validate.ps1 all` and pre-push runs `./validate.ps1 full`.
 - Semgrep uses the locally installed `semgrep` CLI (`npm run semgrep`); install it on dev machines before relying on `./validate.ps1 quality`, `all`, or `full`.
 - `validate.ps1` now runs `npm audit --omit=dev`, so the dependency gate tracks production/runtime vulnerabilities without failing on dev-only tooling advisories such as `sharp-cli`.
+- Running `npm audit fix --omit=dev` can prune dev dependencies from local `node_modules`; run `npm install` afterward before `npm run lint`/`npm test` to restore full tooling.
 - Server test setup must load `.env` before rewriting `DATABASE_URL` to the test schema; otherwise runtime env loading in app code can make tests hit the wrong schema.
 - If host port `5433` is already occupied, set `DB_PORT` and update `DATABASE_URL` to match (for example `55433`); Docker Compose now maps Postgres via `${DB_PORT}:5432`.
 - Docker Compose now pins `postgres:18-alpine`; because the official PostgreSQL 18 image uses the newer `/var/lib/postgresql` volume layout, keep the named volume mounted at `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to preserve durable data initialization.
