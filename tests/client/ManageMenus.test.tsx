@@ -453,6 +453,7 @@ describe('ManageMenus', () => {
       location: 'Street 7',
       phone: '+49 999',
       url: 'https://menu.example',
+      orderUrl: null,
     });
   });
 

@@ -31,6 +31,11 @@
               "maxLength": 255,
               "format": "uri"
             },
+            "order-url": {
+              "type": "string",
+              "maxLength": 255,
+              "format": "uri"
+            },
             "date-created": {
               "type": "string",
               "format": "date-time"

@@ -182,12 +182,14 @@ function MenuEditDialog({
   location,
   phone,
   url,
+  orderUrl,
   error,
   submitting,
   onNameChange,
   onLocationChange,
   onPhoneChange,
   onUrlChange,
+  onOrderUrlChange,
   onSave,
   onCancel,
 }: {
@@ -196,12 +198,14 @@ function MenuEditDialog({
   location: string;
   phone: string;
   url: string;
+  orderUrl: string;
   error: string;
   submitting: boolean;
   onNameChange: (value: string) => void;
   onLocationChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onUrlChange: (value: string) => void;
+  onOrderUrlChange: (value: string) => void;
   onSave: () => void;
   onCancel: () => void;
 }) {
@@ -265,6 +269,20 @@ function MenuEditDialog({
               maxLength={255}
               className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               placeholder="https://example.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="menu-contact-order-url" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+              Order URL
+            </label>
+            <input
+              id="menu-contact-order-url"
+              type="url"
+              value={orderUrl}
+              onChange={(event) => onOrderUrlChange(event.target.value)}
+              maxLength={255}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              placeholder="https://delivery-service.com/order"
             />
           </div>
         </div>
@@ -988,6 +1006,7 @@ function MenuCard({
   const [locationInput, setLocationInput] = useState(menu.location ?? '');
   const [phoneInput, setPhoneInput] = useState(menu.phone ?? '');
   const [urlInput, setUrlInput] = useState(menu.url ?? '');
+  const [orderUrlInput, setOrderUrlInput] = useState(menu.orderUrl ?? '');
   const [contactError, setContactError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -1018,6 +1037,11 @@ function MenuCard({
       setContactError(parsedUrl.error);
       return;
     }
+    const parsedOrderUrl = parseMenuUrlInput(orderUrlInput);
+    if (parsedOrderUrl.error) {
+      setContactError(`Order URL: ${parsedOrderUrl.error}`);
+      return;
+    }
 
     setSubmitting(true);
     setContactError('');
@@ -1027,6 +1051,7 @@ function MenuCard({
         location: parsedLocation.value,
         phone: parsedPhone.value,
         url: parsedUrl.value,
+        orderUrl: parsedOrderUrl.value,
       });
       setEditingMenu(false);
       setError('');
@@ -1054,6 +1079,7 @@ function MenuCard({
     setLocationInput(menu.location ?? '');
     setPhoneInput(menu.phone ?? '');
     setUrlInput(menu.url ?? '');
+    setOrderUrlInput(menu.orderUrl ?? '');
     setContactError('');
     setEditingMenu(true);
   };
@@ -1102,6 +1128,30 @@ function MenuCard({
                         <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
                       </svg>
                       {menu.url}
+                    </a>
+                  ) : null}
+                  {menu.orderUrl ? (
+                    <a
+                      href={menu.orderUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-emerald-600 hover:text-emerald-800 hover:underline"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        className="mr-1 h-4 w-4 shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                      </svg>
+                      Order
                     </a>
                   ) : null}
                   {menu.phone ? (
@@ -1239,6 +1289,7 @@ function MenuCard({
           location={locationInput}
           phone={phoneInput}
           url={urlInput}
+          orderUrl={orderUrlInput}
           error={contactError}
           submitting={submitting}
           onNameChange={(value) => {
@@ -1255,6 +1306,10 @@ function MenuCard({
           }}
           onUrlChange={(value) => {
             setUrlInput(value);
+            setContactError('');
+          }}
+          onOrderUrlChange={(value) => {
+            setOrderUrlInput(value);
             setContactError('');
           }}
           onSave={() => void handleMenuSave()}

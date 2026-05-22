@@ -22,6 +22,7 @@ type ParsedMenuImport = {
   location: string | null;
   phone: string | null;
   url: string | null;
+  orderUrl: string | null;
   sourceDateCreated: Date;
   items: ImportItem[];
 };
@@ -158,6 +159,7 @@ function formatMenu(m: {
   location: string | null;
   phone: string | null;
   url: string | null;
+  orderUrl: string | null;
   sourceDateCreated: Date | null;
   createdAt: Date;
   items: Array<{
@@ -176,6 +178,7 @@ function formatMenu(m: {
     location: m.location,
     phone: m.phone,
     url: m.url,
+    orderUrl: m.orderUrl,
     sourceDateCreated: m.sourceDateCreated?.toISOString() ?? null,
     createdAt: m.createdAt.toISOString(),
     items: m.items.map(formatMenuItem),
@@ -242,6 +245,7 @@ function parseMenuImportPayload(payload: unknown): {
   const rawLocation = metadata.location;
   const rawPhone = metadata.phone;
   const rawUrl = metadata.url;
+  const rawOrderUrl = metadata['order-url'];
   const rawDateCreated = metadata['date-created'];
 
   const name = typeof rawName === 'string' ? rawName.trim() : '';
@@ -285,6 +289,23 @@ function parseMenuImportPayload(payload: unknown): {
           url = trimmedUrl;
         } catch {
           violations.push({ path: 'menu[0].url', message: 'url must be a valid absolute URL' });
+        }
+      }
+    }
+  }
+
+  let orderUrl: string | null = null;
+  if (typeof rawOrderUrl === 'string') {
+    const trimmedOrderUrl = rawOrderUrl.trim();
+    if (trimmedOrderUrl) {
+      if (trimmedOrderUrl.length > 255) {
+        violations.push({ path: 'menu[0].order-url', message: 'order-url must be at most 255 characters' });
+      } else {
+        try {
+          new URL(trimmedOrderUrl);
+          orderUrl = trimmedOrderUrl;
+        } catch {
+          violations.push({ path: 'menu[0].order-url', message: 'order-url must be a valid absolute URL' });
         }
       }
     }
@@ -407,6 +428,7 @@ function parseMenuImportPayload(payload: unknown): {
       location,
       phone,
       url,
+      orderUrl,
       sourceDateCreated,
       items,
     },
@@ -551,6 +573,7 @@ type UpdateMenuPayload = {
   location?: string | null;
   phone?: string | null;
   url?: string | null;
+  orderUrl?: string | null;
 };
 
 export async function updateMenu(
@@ -585,6 +608,7 @@ export async function updateMenu(
     location?: string | null;
     phone?: string | null;
     url?: string | null;
+    orderUrl?: string | null;
   } = { name: trimmed };
 
   if ('location' in updatePayload) {
@@ -595,6 +619,9 @@ export async function updateMenu(
   }
   if ('url' in updatePayload) {
     updates.url = validateMenuUrl(updatePayload.url);
+  }
+  if ('orderUrl' in updatePayload) {
+    updates.orderUrl = validateMenuUrl(updatePayload.orderUrl);
   }
 
   const menu = await prisma.menu.update({
@@ -770,6 +797,7 @@ export async function importMenuFromJson(
           location: parsed.location,
           phone: parsed.phone,
           url: parsed.url,
+          orderUrl: parsed.orderUrl,
           sourceDateCreated: parsed.sourceDateCreated,
         },
       });
@@ -801,6 +829,7 @@ export async function importMenuFromJson(
         location: parsed.location,
         phone: parsed.phone,
         url: parsed.url,
+        orderUrl: parsed.orderUrl,
         sourceDateCreated: parsed.sourceDateCreated,
       },
     });

@@ -36,6 +36,7 @@ model Menu {
   location          String?
   phone             String?
   url               String?
+  orderUrl          String?         @map("order_url")
   sourceDateCreated DateTime?       @map("source_date_created")
   createdAt         DateTime        @default(now()) @map("created_at")
   items             MenuItem[]

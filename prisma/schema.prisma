@@ -36,6 +36,7 @@ model Menu {
   location  String?  @db.VarChar(160)
   phone     String?  @db.VarChar(40)
   url       String?  @db.VarChar(255)
+  orderUrl  String?  @map("order_url") @db.VarChar(255)
   sourceDateCreated DateTime? @map("source_date_created") @db.Timestamptz()
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 

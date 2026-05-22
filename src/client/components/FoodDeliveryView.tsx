@@ -300,34 +300,91 @@ export default function FoodDeliveryView() {
           {selection.deliveryDueAt && <p>Announced arrival: {formatDateTime(selection.deliveryDueAt)}</p>}
         </div>
 
-        {(selectionMenu?.location || selectionMenu?.phone || selectionMenu?.url) && (
+        {(selectionMenu?.location || selectionMenu?.phone || selectionMenu?.url || selectionMenu?.orderUrl) && (
           <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-3">
             <h3 className="mb-2 text-sm font-semibold text-gray-700">Restaurant contact</h3>
-            <div className="space-y-1 text-sm text-gray-700">
+            <table className="text-sm text-gray-700">
+              <tbody>
               {selectionMenu?.location && (
-                <p>
-                  <span className="font-medium">Location:</span> {selectionMenu.location}
-                </p>
+                <tr>
+                  <td className="pr-2 align-top">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </td>
+                  <td className="py-0.5">
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectionMenu.location)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-700 underline hover:text-blue-800"
+                    >
+                      {selectionMenu.location}
+                    </a>
+                  </td>
+                </tr>
               )}
               {selectionMenu?.phone && (
-                <p>
-                  <span className="font-medium">Phone:</span> {selectionMenu.phone}
-                </p>
+                <tr>
+                  <td className="pr-2 align-top">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </td>
+                  <td className="py-0.5">
+                    <a href={`tel:${selectionMenu.phone}`} className="text-blue-700 underline hover:text-blue-800">
+                      {selectionMenu.phone}
+                    </a>
+                  </td>
+                </tr>
               )}
               {selectionMenu?.url && (
-                <p>
-                  <span className="font-medium">URL:</span>{' '}
-                  <a
-                    href={selectionMenu.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-700 underline hover:text-blue-800"
-                  >
-                    {selectionMenu.url}
-                  </a>
-                </p>
+                <tr>
+                  <td className="pr-2 align-top">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 3h7v7" />
+                      <path d="M10 14L21 3" />
+                      <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
+                    </svg>
+                  </td>
+                  <td className="py-0.5">
+                    <a
+                      href={selectionMenu.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={selectionMenu.url}
+                      className="text-blue-700 underline hover:text-blue-800"
+                    >
+                      {(() => { try { const u = new URL(selectionMenu.url); return `${u.origin}/\u2026`; } catch { return selectionMenu.url; } })()}
+                    </a>
+                  </td>
+                </tr>
               )}
-            </div>
+              {selectionMenu?.orderUrl && (
+                <tr>
+                  <td className="pr-2 align-top">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="21" r="1" />
+                      <circle cx="20" cy="21" r="1" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                  </td>
+                  <td className="py-0.5">
+                    <a
+                      href={selectionMenu.orderUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={selectionMenu.orderUrl}
+                      className="text-blue-700 underline hover:text-blue-800"
+                    >
+                      {(() => { try { const u = new URL(selectionMenu.orderUrl); return `${u.origin}/\u2026`; } catch { return selectionMenu.orderUrl; } })()}
+                    </a>
+                  </td>
+                </tr>
+              )}
+              </tbody>
+            </table>
           </div>
         )}
 
