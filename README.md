@@ -32,17 +32,27 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 - SQLite option for lightweight local server/testing flows
 - Vitest, Testing Library, Supertest, Playwright
 
+## Prerequisites
+
+- **Node.js** (v18+)
+- **Python** (v3.10+) — used only for the semgrep security scanner
+- **Docker** — for PostgreSQL (unless using SQLite)
+
+Run `./setup.ps1` to install all project dependencies automatically (npm packages, Prisma client, Python venv with semgrep).
+
 ## Quick Start
 
 ### Option A: Fastest Local Start with Docker
 
-1. Clone the repo and install dependencies:
+1. Clone the repo and run the setup script:
 
 ```bash
 git clone https://github.com/TKlerx/team-lunch.git
 cd team-lunch
-npm install
+./setup.ps1
 ```
+
+This installs npm packages, generates the Prisma client, and creates a Python venv with semgrep.
 
 2. Create your local env file:
 
@@ -56,11 +66,10 @@ cp .env.example .env
 docker compose up db -d
 ```
 
-4. Generate Prisma client and apply migrations:
+4. Apply migrations:
 
 ```bash
-npx prisma generate
-npm run prisma:migrate:dev
+npx prisma migrate dev
 ```
 
 5. Start the app:
@@ -81,7 +90,7 @@ This is useful if you want to explore the backend quickly without running Postgr
 ```bash
 git clone https://github.com/TKlerx/team-lunch.git
 cd team-lunch
-npm install
+./setup.ps1
 cp .env.example .env
 npm run dev:server:sqlite
 ```
