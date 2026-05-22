@@ -2,7 +2,7 @@
 
 This project uses an interactive Ralph-style workflow via **GitHub Copilot in VS Code** (not Claude Code CLI).
 
-### Task Loop (replaces `loop.sh`)
+### Task Loop
 
 Each task follows this cycle — Copilot executes steps 1–7, user observes and steers:
 
@@ -145,7 +145,7 @@ npm run test:client    # vitest run --project client (component + hook tests)
 
 Full one-liner (same as CI):
 ```bash
-npm run validate       # typecheck && lint && npm test
+npm run validate       # runs ./validate.ps1 all (typecheck + lint + duplication + semgrep + test + audit + continuity)
 ```
 
 ## Test Coverage Requirements
