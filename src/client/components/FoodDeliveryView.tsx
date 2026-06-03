@@ -317,7 +317,7 @@ export default function FoodDeliveryView() {
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectionMenu.location)}`}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="text-blue-700 underline hover:text-blue-800"
                     >
                       {selectionMenu.location}
@@ -352,7 +352,7 @@ export default function FoodDeliveryView() {
                     <a
                       href={selectionMenu.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       title={selectionMenu.url}
                       className="text-blue-700 underline hover:text-blue-800"
                     >
@@ -374,7 +374,7 @@ export default function FoodDeliveryView() {
                     <a
                       href={selectionMenu.orderUrl}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       title={selectionMenu.orderUrl}
                       className="text-blue-700 underline hover:text-blue-800"
                     >

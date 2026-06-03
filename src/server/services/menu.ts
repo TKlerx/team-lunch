@@ -130,7 +130,7 @@ function validateMenuPhone(phone?: string | null): string | null {
   return trimmedPhone;
 }
 
-function validateMenuUrl(url?: string | null): string | null {
+function validateMenuUrl(url?: string | null, fieldLabel = 'URL'): string | null {
   if (url === undefined || url === null) {
     return null;
   }
@@ -140,12 +140,12 @@ function validateMenuUrl(url?: string | null): string | null {
     return null;
   }
   if (trimmedUrl.length > 255) {
-    throw Object.assign(new Error('URL must be at most 255 characters'), { statusCode: 400 });
+    throw Object.assign(new Error(`${fieldLabel} must be at most 255 characters`), { statusCode: 400 });
   }
   try {
     new URL(trimmedUrl);
   } catch {
-    throw Object.assign(new Error('URL must be a valid absolute URL'), { statusCode: 400 });
+    throw Object.assign(new Error(`${fieldLabel} must be a valid absolute URL`), { statusCode: 400 });
   }
 
   return trimmedUrl;
@@ -621,7 +621,7 @@ export async function updateMenu(
     updates.url = validateMenuUrl(updatePayload.url);
   }
   if ('orderUrl' in updatePayload) {
-    updates.orderUrl = validateMenuUrl(updatePayload.orderUrl);
+    updates.orderUrl = validateMenuUrl(updatePayload.orderUrl, 'Order URL');
   }
 
   const menu = await prisma.menu.update({

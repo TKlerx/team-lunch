@@ -36,9 +36,10 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 
 - **Node.js** (v18+)
 - **Python** (v3.10+) — used only for the semgrep security scanner
+- **PowerShell** (v7+) — `pwsh` is used for setup and validation scripts ([install guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
 - **Docker** — for PostgreSQL (unless using SQLite)
 
-Run `./setup.ps1` to install all project dependencies automatically (npm packages, Prisma client, Python venv with semgrep).
+Run `pwsh -File ./setup.ps1` to install all project dependencies automatically (npm packages, Prisma client, Python venv with semgrep).
 
 ## Quick Start
 
@@ -49,7 +50,7 @@ Run `./setup.ps1` to install all project dependencies automatically (npm package
 ```bash
 git clone https://github.com/TKlerx/team-lunch.git
 cd team-lunch
-./setup.ps1
+pwsh -File ./setup.ps1
 ```
 
 This installs npm packages, generates the Prisma client, and creates a Python venv with semgrep.
@@ -90,7 +91,7 @@ This is useful if you want to explore the backend quickly without running Postgr
 ```bash
 git clone https://github.com/TKlerx/team-lunch.git
 cd team-lunch
-./setup.ps1
+pwsh -File ./setup.ps1
 cp .env.example .env
 npm run dev:server:sqlite
 ```

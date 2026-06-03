@@ -35,7 +35,8 @@ if (-not (Test-Path $venvDir)) {
     if ($LASTEXITCODE -ne 0) { Write-Error "python -m venv failed"; exit 1 }
 }
 
-$pipExe = Join-Path $venvDir 'Scripts' 'pip'
+$binDir = if ($IsWindows -or $env:OS -eq 'Windows_NT') { 'Scripts' } else { 'bin' }
+$pipExe = Join-Path $venvDir $binDir 'pip'
 Write-Step "Installing semgrep into .venv"
 & $pipExe install semgrep
 if ($LASTEXITCODE -ne 0) { Write-Error "pip install semgrep failed"; exit 1 }
