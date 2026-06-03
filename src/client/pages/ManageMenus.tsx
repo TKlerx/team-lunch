@@ -73,10 +73,14 @@ function parseMenuUrlInput(value: string): { value: string | null; error: string
     return normalized;
   }
 
+  let parsed: URL;
   try {
-    new URL(normalized.value);
+    parsed = new URL(normalized.value);
   } catch {
     return { value: null, error: 'URL must be a valid absolute URL' };
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    return { value: null, error: 'URL must use http or https' };
   }
   return normalized;
 }

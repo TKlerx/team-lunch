@@ -29,12 +29,14 @@
             "url": {
               "type": "string",
               "maxLength": 255,
-              "format": "uri"
+              "format": "uri",
+              "pattern": "^https?://"
             },
             "order-url": {
               "type": "string",
               "maxLength": 255,
-              "format": "uri"
+              "format": "uri",
+              "pattern": "^https?://"
             },
             "date-created": {
               "type": "string",
