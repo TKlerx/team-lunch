@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAppState } from '../context/AppContext.js';
 import { useNickname } from '../hooks/useNickname.js';
 import * as api from '../api.js';
@@ -83,65 +83,6 @@ function parseMenuUrlInput(value: string): { value: string | null; error: string
     return { value: null, error: 'URL must use http or https' };
   }
   return normalized;
-}
-
-// ─── Import Helper ──────────────────────────────────────────────────────────────
-
-function ImportMenuHelper() {
-  const [copyStatus, setCopyStatus] = useState('');
-
-  const copyText = async (text: string, successLabel: string) => {
-    if (!navigator.clipboard?.writeText) {
-      setCopyStatus('Clipboard is unavailable in this browser context. Copy manually from the text blocks.');
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyStatus(successLabel);
-    } catch {
-      setCopyStatus('Could not copy to clipboard. Copy manually from the text blocks.');
-    }
-  };
-
-  return (
-    <details className="rounded border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
-      <summary className="cursor-pointer text-sm font-semibold text-slate-900">
-        Import helper (schema + LLM prompt)
-      </summary>
-      <p className="mt-2 text-slate-700">
-        Use this when an admin wants to convert copied menu text into the required JSON import format.
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => { void copyText(MENU_IMPORT_SCHEMA_TEXT, 'JSON schema copied.'); }}
-          className="rounded border border-slate-300 bg-white px-3 py-1 font-medium text-slate-800 hover:bg-slate-100"
-        >
-          Copy JSON schema
-        </button>
-        <button
-          type="button"
-          onClick={() => { void copyText(MENU_IMPORT_LLM_PROMPT, 'LLM prompt copied.'); }}
-          className="rounded border border-slate-300 bg-white px-3 py-1 font-medium text-slate-800 hover:bg-slate-100"
-        >
-          Copy LLM prompt
-        </button>
-      </div>
-      {copyStatus && (
-        <p className="mt-2 text-slate-700">{copyStatus}</p>
-      )}
-      <div className="mt-3 grid gap-3">
-        <div>
-          <p className="mb-1 font-semibold text-slate-900">JSON schema</p>
-          <pre className="max-h-56 overflow-auto rounded border border-slate-200 bg-white p-2 text-[11px] leading-relaxed">{MENU_IMPORT_SCHEMA_TEXT}</pre>
-        </div>
-        <div>
-          <p className="mb-1 font-semibold text-slate-900">LLM prompt template</p>
-          <pre className="max-h-56 overflow-auto rounded border border-slate-200 bg-white p-2 text-[11px] leading-relaxed">{MENU_IMPORT_LLM_PROMPT}</pre>
-        </div>
-      </div>
-    </details>
-  );
 }
 
 // ─── Confirmation dialog ────────────────────────────────────
@@ -501,7 +442,7 @@ function MenuItemRow({
 
 // ─── Import Menu Form ──────────────────────────────────────
 
-function ImportMenuForm() {
+function ImportMenuPanel({ onClose }: { onClose: () => void }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -510,6 +451,7 @@ function ImportMenuForm() {
   const [pendingPayload, setPendingPayload] = useState<unknown | null>(null);
   const [preview, setPreview] = useState<ImportMenuPreviewResponse | null>(null);
   const [jsonTextInput, setJsonTextInput] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
 
   const readFileText = async (file: File): Promise<string> => {
     if (typeof file.text === 'function') {
@@ -548,6 +490,7 @@ function ImportMenuForm() {
 
     try {
       const text = await readFileText(file);
+      setJsonTextInput(text);
       const payload = JSON.parse(text) as unknown;
       await previewImportPayload(payload);
     } catch (err) {
@@ -565,12 +508,14 @@ function ImportMenuForm() {
     }
   };
 
-  const handleJsonTextPreview = async () => {
-    const trimmed = jsonTextInput.trim();
+  const triggerJsonTextPreview = useCallback(async (text: string) => {
+    const trimmed = text.trim();
     if (!trimmed) {
-      setError('Paste JSON content first');
+      setError('');
       setSuccess('');
       setViolations([]);
+      setPreview(null);
+      setPendingPayload(null);
       return;
     }
 
@@ -588,53 +533,91 @@ function ImportMenuForm() {
         setViolations(importError.violations ?? []);
       }
     }
+  }, []);
+
+  // Auto-preview pasted JSON after 1 s debounce
+  useEffect(() => {
+    if (!jsonTextInput.trim()) {
+      setError('');
+      setViolations([]);
+      setPreview(null);
+      setPendingPayload(null);
+      return;
+    }
+    const timer = setTimeout(() => {
+      void triggerJsonTextPreview(jsonTextInput);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [jsonTextInput, triggerJsonTextPreview]);
+
+  const copyPromptTemplate = async () => {
+    if (!navigator.clipboard?.writeText) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(MENU_IMPORT_LLM_PROMPT);
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus(''), 2000);
+    } catch {
+      // silently ignore
+    }
   };
 
   return (
-    <div className="flex w-full max-w-lg flex-col items-end gap-2">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="application/json,.json"
-        onChange={(e) => { void handleFileChange(e); }}
-        className="hidden"
-      />
-      <button
-        type="button"
-        disabled={submitting}
-        onClick={() => fileInputRef.current?.click()}
-        className="rounded border border-blue-600 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
-      >
-        Import JSON
-      </button>
-      <div className="w-full rounded border border-gray-200 bg-white p-3">
-        <label htmlFor="menu-import-json-text" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
-          Paste JSON
-        </label>
+    <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 shadow-sm">
+      {/* Row 1: AI help text with "Copy AI prompt" button */}
+      <div className="rounded border border-gray-200 bg-white p-3">
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-xs text-gray-600">
+            You can use AI to generate the menu JSON from a PDF or website. Copy the prompt, paste it into your AI assistant, and provide the menu text.
+          </p>
+          <button
+            type="button"
+            onClick={() => { void copyPromptTemplate(); }}
+            className="shrink-0 rounded border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50"
+          >
+            {copyStatus === 'copied' ? 'Copied' : 'Copy AI prompt'}
+          </button>
+        </div>
+      </div>
+
+      {/* Row 2: JSON textarea with "Import from JSON file" button */}
+      <div className="mt-3 rounded border border-gray-200 bg-white p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <label htmlFor="menu-import-json-text" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+            Paste menu JSON
+          </label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={(e) => { void handleFileChange(e); }}
+            className="hidden"
+          />
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+          >
+            Import from JSON file
+          </button>
+        </div>
         <textarea
           id="menu-import-json-text"
           value={jsonTextInput}
           onChange={(event) => setJsonTextInput(event.target.value)}
           rows={7}
           className="w-full rounded border border-gray-300 px-3 py-2 font-mono text-xs focus:border-blue-500 focus:outline-none"
-          placeholder="Paste menu import JSON here"
+          placeholder="Menu JSON..."
         />
-        <div className="mt-2 flex justify-end">
-          <button
-            type="button"
-            disabled={submitting}
-            onClick={() => { void handleJsonTextPreview(); }}
-            className="rounded border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
-          >
-            Preview pasted JSON
-          </button>
-        </div>
       </div>
 
-      {success && <p className="text-xs text-emerald-700">{success}</p>}
-      {error && <p className="text-xs text-red-700">{error}</p>}
+      {/* Feedback area */}
+      {success && <p className="mt-3 text-xs text-emerald-700">{success}</p>}
+      {error && <p className="mt-3 text-xs text-red-700">{error}</p>}
       {violations.length > 0 && (
-        <ul className="max-h-40 w-full max-w-lg list-disc overflow-y-auto rounded border border-red-200 bg-red-50 p-3 pl-6 text-xs text-red-800">
+        <ul className="mt-3 max-h-40 list-disc overflow-y-auto rounded border border-red-200 bg-red-50 p-3 pl-6 text-xs text-red-800">
           {violations.map((violation) => (
             <li key={`${violation.path}:${violation.message}`}>
               <span className="font-semibold">{String(violation.path)}</span>: {String(violation.message)}
@@ -643,64 +626,68 @@ function ImportMenuForm() {
         </ul>
       )}
 
-      {preview && pendingPayload !== null && (
-        <div className="w-full max-w-lg rounded border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
-          <p className="mb-1 font-semibold">Confirm import for "{String(preview.menuName)}"?</p>
-          <p className="mb-2">
-            {preview.menuExists ? 'Existing menu will be updated.' : 'New menu will be created.'}
-          </p>
-          <ul className="mb-3 list-disc pl-5">
-            <li>Created items: {Number(preview.itemSummary.created)}</li>
-            <li>Updated items: {Number(preview.itemSummary.updated)}</li>
-            <li>Deleted items: {Number(preview.itemSummary.deleted)}</li>
-          </ul>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              disabled={submitting}
-              onClick={() => {
-                void (async () => {
-                  if (!pendingPayload) return;
-                  setSubmitting(true);
-                  setError('');
-                  try {
-                    const result = await api.importMenuJson(pendingPayload);
-                    setSuccess(
-                      result.created
-                        ? `Imported menu "${result.menu.name}"`
-                        : `Updated menu "${result.menu.name}" from import`,
-                    );
-                    setJsonTextInput('');
-                    setPreview(null);
-                    setPendingPayload(null);
-                  } catch (err) {
-                    const importError = err as api.ImportMenuError;
-                    setError(importError.message || 'Import failed');
-                    setViolations(importError.violations ?? []);
-                  } finally {
-                    setSubmitting(false);
-                  }
-                })();
-              }}
-              className="rounded bg-emerald-600 px-3 py-1 font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              Confirm Import
-            </button>
-            <button
-              type="button"
-              disabled={submitting}
-              onClick={() => {
-                setPreview(null);
-                setPendingPayload(null);
-                setSuccess('Import cancelled');
-              }}
-              className="rounded border border-gray-300 bg-white px-3 py-1 font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-            >
-              Cancel
-            </button>
+      {/* Preview panel — always visible */}
+      <div className="mt-3 rounded border border-gray-200 bg-white p-3 text-xs">
+        {preview && pendingPayload !== null ? (
+          <div className="text-amber-900">
+            <p className="mb-1 font-semibold">Confirm import for &quot;{String(preview.menuName)}&quot;?</p>
+            <p className="mb-2">
+              {preview.menuExists ? 'Existing menu will be updated.' : 'New menu will be created.'}
+            </p>
+            <ul className="mb-3 list-disc pl-5">
+              <li>Created items: {Number(preview.itemSummary.created)}</li>
+              <li>Updated items: {Number(preview.itemSummary.updated)}</li>
+              <li>Deleted items: {Number(preview.itemSummary.deleted)}</li>
+            </ul>
           </div>
+        ) : (
+          <p className="text-gray-400">
+            {error ? 'Fix the errors above to preview the import.' : 'Import or enter menu JSON to see a preview.'}
+          </p>
+        )}
+        <div className="mt-2 flex gap-2">
+          <button
+            type="button"
+            disabled={submitting || !preview || pendingPayload === null}
+            onClick={() => {
+              void (async () => {
+                if (!pendingPayload) return;
+                setSubmitting(true);
+                setError('');
+                try {
+                  const result = await api.importMenuJson(pendingPayload);
+                  setSuccess(
+                    result.created
+                      ? `Imported menu "${result.menu.name}"`
+                      : `Updated menu "${result.menu.name}" from import`,
+                  );
+                  setJsonTextInput('');
+                  setPreview(null);
+                  setPendingPayload(null);
+                  onClose();
+                } catch (err) {
+                  const importError = err as api.ImportMenuError;
+                  setError(importError.message || 'Import failed');
+                  setViolations(importError.violations ?? []);
+                } finally {
+                  setSubmitting(false);
+                }
+              })();
+            }}
+            className="rounded bg-emerald-600 px-3 py-1 font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          >
+            Confirm Import
+          </button>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={onClose}
+            className="rounded border border-gray-300 bg-white px-3 py-1 font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+          >
+            Cancel
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -1141,7 +1128,7 @@ function MenuCard({
                       rel="noopener noreferrer"
                       aria-label={`Order from ${menu.name}`}
                       title={menu.orderUrl}
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-emerald-600 hover:text-emerald-800 hover:underline"
+                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-gray-500 hover:text-gray-900 hover:underline"
                     >
                       <svg
                         aria-hidden="true"
@@ -1329,83 +1316,89 @@ function MenuCard({
   );
 }
 
-// ─── Create Menu Form ───────────────────────────────────────
+// ─── Create Menu Button + Form ──────────────────────────────
 
-function CreateMenuForm() {
+function NewMenuDropdown({
+  menus,
+  onToggleImport,
+}: {
+  menus: Menu[];
+  onToggleImport: () => void;
+}) {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState('');
   const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed) {
-      setError('Menu name cannot be empty');
-      return;
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const generateMenuName = (): string => {
+    const existingNames = new Set(menus.map((m) => m.name.toLowerCase()));
+    let counter = 1;
+    while (existingNames.has(`new menu ${counter}`)) {
+      counter++;
     }
-    if (trimmed.length > 60) {
-      setError('Menu name must be 60 characters or fewer');
-      return;
-    }
-    setSubmitting(true);
+    return `New Menu ${counter}`;
+  };
+
+  const handleCreateManually = async () => {
+    setOpen(false);
+    setError('');
+    const name = generateMenuName();
     try {
-      await api.createMenu(trimmed);
-      setName('');
-      setError('');
-      setOpen(false);
+      await api.createMenu(name);
     } catch (err) {
       setError((err as Error).message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
-  if (!open) {
-    return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          + New Menu
-        </button>
-      </div>
-    );
-  }
+  const handleImportFromJson = () => {
+    setOpen(false);
+    onToggleImport();
+  };
 
   return (
-    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 shadow-sm">
-      <form onSubmit={(e) => void handleSubmit(e)}>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Menu name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setError(''); }}
-          maxLength={60}
-          className="mb-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-          placeholder="e.g. Italian"
-          autoFocus
-        />
-        {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-        <div className="flex gap-2">
+    <div ref={dropdownRef} className="relative inline-block">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="inline-flex items-center gap-1.5 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        + New Menu
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}>
+          <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute left-0 z-20 mt-1 w-48 rounded border border-gray-200 bg-white py-1 shadow-lg">
           <button
-            type="submit"
-            disabled={submitting}
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            type="button"
+            onClick={handleImportFromJson}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
           >
-            Create
+            Import from JSON
           </button>
           <button
             type="button"
-            onClick={() => { setOpen(false); setName(''); setError(''); }}
-            className="rounded px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
+            onClick={() => void handleCreateManually()}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
           >
-            Cancel
+            Manually
           </button>
         </div>
-      </form>
+      )}
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
 }
@@ -1415,6 +1408,7 @@ function CreateMenuForm() {
 export default function ManageMenus() {
   const { menus } = useAppState();
   const { nickname } = useNickname();
+  const [importOpen, setImportOpen] = useState(false);
   const [menuDefaultsByMenuId, setMenuDefaultsByMenuId] = useState<
     Record<string, UserMenuDefaultPreference>
   >({});
@@ -1465,12 +1459,8 @@ export default function ManageMenus() {
 
   return (
     <div className="w-full p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Menus</h1>
-        <ImportMenuForm />
-      </div>
       <div className="mb-6">
-        <ImportMenuHelper />
+        <h1 className="text-2xl font-bold text-gray-900">Manage Menus</h1>
       </div>
       {defaultsLoading ? (
         <p className="mb-4 text-sm text-gray-500">Loading your default meals...</p>
@@ -1480,7 +1470,13 @@ export default function ManageMenus() {
       ) : null}
 
       <div className="space-y-4">
-        <CreateMenuForm />
+        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex flex-wrap gap-2">
+            <NewMenuDropdown menus={menus} onToggleImport={() => setImportOpen((prev) => !prev)} />
+          </div>
+        </div>
+
+        {importOpen && <ImportMenuPanel onClose={() => setImportOpen(false)} />}
 
         {sorted.length === 0 ? (
           <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">

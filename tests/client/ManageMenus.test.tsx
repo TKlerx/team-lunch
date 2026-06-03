@@ -81,12 +81,21 @@ describe('ManageMenus', () => {
     expect(screen.getByText('No menus yet. Create one to get started.')).toBeInTheDocument();
   });
 
-  it('shows "Manage Menus" heading and New Menu button', () => {
+  it('shows "Manage Menus" heading and New Menu dropdown button', () => {
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
     expect(screen.getByText('Manage Menus')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /new menu/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /import json/i })).toBeInTheDocument();
+  });
+
+  it('shows dropdown options when clicking New Menu', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: /new menu/i }));
+    expect(screen.getByRole('button', { name: /import from json/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /manually/i })).toBeInTheDocument();
   });
 
   it('loads saved default-meal preferences for the current user', async () => {
@@ -115,21 +124,19 @@ describe('ManageMenus', () => {
     expect(screen.getByRole('checkbox')).toBeChecked();
   });
 
-  it('shows import helper schema and prompt for admins importing menus', async () => {
+  it('shows empty preview hint and disabled Confirm when import panel opens', async () => {
     const user = userEvent.setup();
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
-    await user.click(screen.getByText(/import helper/i));
-    expect(screen.getByRole('button', { name: /copy json schema/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /copy llm prompt/i })).toBeInTheDocument();
-    expect(screen.getAllByText(/\$schema/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/date-created/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/item-number/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/output only one json object/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /new menu/i }));
+    await user.click(screen.getByRole('button', { name: /import from json/i }));
+    expect(screen.getByText(/import or enter menu json to see a preview/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /confirm import/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeEnabled();
   });
 
-  it('copies schema and prompt from import helper', async () => {
+  it('copies AI prompt from import panel', async () => {
     const user = userEvent.setup();
     const clipboardWriteText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(globalThis.navigator, 'clipboard', {
@@ -139,15 +146,12 @@ describe('ManageMenus', () => {
 
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
-    await user.click(screen.getByText(/import helper/i));
+    await user.click(screen.getByRole('button', { name: /new menu/i }));
+    await user.click(screen.getByRole('button', { name: /import from json/i }));
 
-    await user.click(screen.getByRole('button', { name: /copy json schema/i }));
-    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('"$schema"'));
-    expect(await screen.findByText('JSON schema copied.')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: /copy llm prompt/i }));
+    await user.click(screen.getByRole('button', { name: /copy ai prompt/i }));
     expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Return JSON only.'));
-    expect(await screen.findByText('LLM prompt copied.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument();
   });
 
   it('uploads JSON file, shows preview, and imports on confirmation', async () => {
@@ -162,6 +166,9 @@ describe('ManageMenus', () => {
     });
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     const { container } = renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: /new menu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /import from json/i }));
 
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File([
@@ -190,7 +197,8 @@ describe('ManageMenus', () => {
     await vi.waitFor(() => {
       expect(mockImportMenuJson).toHaveBeenCalledTimes(1);
     });
-    expect(screen.getByText(/imported menu/i)).toBeInTheDocument();
+    // Panel closes after successful import
+    expect(screen.queryByLabelText(/paste menu json/i)).not.toBeInTheDocument();
   });
 
   it('previews and imports from pasted JSON text', async () => {
@@ -207,7 +215,10 @@ describe('ManageMenus', () => {
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
-    fireEvent.change(screen.getByLabelText(/paste json/i), {
+    await user.click(screen.getByRole('button', { name: /new menu/i }));
+    await user.click(screen.getByRole('button', { name: /import from json/i }));
+
+    fireEvent.change(screen.getByLabelText(/paste menu json/i), {
       target: {
         value: JSON.stringify({
           menu: [
@@ -222,14 +233,14 @@ describe('ManageMenus', () => {
         }),
       },
     });
-    await user.click(screen.getByRole('button', { name: /preview pasted json/i }));
 
-    expect(await screen.findByText(/confirm import for "thai bowl"/i)).toBeInTheDocument();
+    // Wait for debounced auto-preview (1 s delay)
+    expect(await screen.findByText(/confirm import for "thai bowl"/i, {}, { timeout: 2000 })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /confirm import/i }));
 
     expect(mockImportMenuJson).toHaveBeenCalledTimes(1);
-    expect(screen.getByText(/imported menu/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/paste json/i)).toHaveValue('');
+    // Panel closes after successful import
+    expect(screen.queryByLabelText(/paste menu json/i)).not.toBeInTheDocument();
   });
 
   it('shows validation error when pasted JSON is invalid', async () => {
@@ -237,10 +248,13 @@ describe('ManageMenus', () => {
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
-    fireEvent.change(screen.getByLabelText(/paste json/i), { target: { value: '{ invalid' } });
-    await user.click(screen.getByRole('button', { name: /preview pasted json/i }));
+    await user.click(screen.getByRole('button', { name: /new menu/i }));
+    await user.click(screen.getByRole('button', { name: /import from json/i }));
 
-    expect(await screen.findByText('Pasted content is not valid JSON')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/paste menu json/i), { target: { value: '{ invalid' } });
+
+    // Wait for debounced auto-preview (1 s delay)
+    expect(await screen.findByText('Pasted content is not valid JSON', {}, { timeout: 2000 })).toBeInTheDocument();
   });
 
   it('cancels import from preview without calling import API', async () => {
@@ -252,6 +266,9 @@ describe('ManageMenus', () => {
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     const { container } = renderPage();
 
+    fireEvent.click(screen.getByRole('button', { name: /new menu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /import from json/i }));
+
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File([JSON.stringify({ menu: [{}, {}] })], 'menu.json', { type: 'application/json' });
     fireEvent.change(input, { target: { files: [file] } });
@@ -260,7 +277,8 @@ describe('ManageMenus', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(mockImportMenuJson).not.toHaveBeenCalled();
-    expect(screen.getByText('Import cancelled')).toBeInTheDocument();
+    // Panel closes on cancel
+    expect(screen.queryByLabelText(/paste menu json/i)).not.toBeInTheDocument();
   });
 
   it('renders schema violations from import API error', async () => {
@@ -275,6 +293,10 @@ describe('ManageMenus', () => {
 
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     const { container } = renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: /new menu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /import from json/i }));
+
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File([JSON.stringify({ menu: [] })], 'bad.json', { type: 'application/json' });
 
@@ -285,48 +307,45 @@ describe('ManageMenus', () => {
     expect(screen.getByText(/menu\[1\]\.items\[0\]\.price/)).toBeInTheDocument();
   });
 
-  it('opens create menu form when clicking New Menu', async () => {
+  it('calls createMenu with auto-incremented name via Manually', async () => {
     const user = userEvent.setup();
+    mockCreateMenu.mockResolvedValue(makeMenu({ name: 'New Menu 1' }));
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
     await user.click(screen.getByRole('button', { name: /new menu/i }));
-    expect(screen.getByPlaceholderText(/e.g. italian/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /manually/i }));
+
+    expect(mockCreateMenu).toHaveBeenCalledWith('New Menu 1');
   });
 
-  it('validates empty menu name on create', async () => {
+  it('skips existing menu names when auto-incrementing', async () => {
     const user = userEvent.setup();
-    mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
+    mockCreateMenu.mockResolvedValue(makeMenu({ name: 'New Menu 3' }));
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [
+        makeMenu({ id: 'menu-1', name: 'New Menu 1' }),
+        makeMenu({ id: 'menu-2', name: 'New Menu 2' }),
+      ],
+    });
     renderPage();
 
-    await user.click(screen.getByRole('button', { name: /new menu/i }));
-    await user.click(screen.getByRole('button', { name: 'Create' }));
-    expect(screen.getByText('Menu name cannot be empty')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /^\+ new menu$/i }));
+    await user.click(screen.getByRole('button', { name: /manually/i }));
+
+    expect(mockCreateMenu).toHaveBeenCalledWith('New Menu 3');
   });
 
-  it('calls createMenu API on valid submission', async () => {
-    const user = userEvent.setup();
-    mockCreateMenu.mockResolvedValue(makeMenu({ name: 'Italian' }));
-    mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
-    renderPage();
-
-    await user.click(screen.getByRole('button', { name: /new menu/i }));
-    await user.type(screen.getByPlaceholderText(/e.g. italian/i), 'Italian');
-    await user.click(screen.getByRole('button', { name: 'Create' }));
-
-    expect(mockCreateMenu).toHaveBeenCalledWith('Italian');
-  });
-
-  it('shows API error on create failure', async () => {
+  it('shows API error on manual create failure', async () => {
     const user = userEvent.setup();
     mockCreateMenu.mockRejectedValue(new Error('Duplicate name'));
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
     await user.click(screen.getByRole('button', { name: /new menu/i }));
-    await user.type(screen.getByPlaceholderText(/e.g. italian/i), 'Italian');
-    await user.click(screen.getByRole('button', { name: 'Create' }));
+    await user.click(screen.getByRole('button', { name: /manually/i }));
 
     expect(await screen.findByText('Duplicate name')).toBeInTheDocument();
   });

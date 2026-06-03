@@ -1031,7 +1031,7 @@
 
 - [x] **40.1 Add import helper panel in Manage Menus** *(done)*
   - Added a built-in "Import helper (schema + LLM prompt)" section on the menu management page
-  - Exposes the required JSON schema and a reusable prompt template for admins extracting menu JSON from copied text
+  - Exposes the required JSON schema and a reusable prompt for admins extracting menu JSON from copied text
   - Added copy-to-clipboard actions for both schema and prompt (with fallback messaging when clipboard APIs are unavailable)
 
 - [x] **40.2 Add client coverage for helper UI and copy actions** *(done)*
