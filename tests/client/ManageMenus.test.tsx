@@ -187,7 +187,7 @@ describe('ManageMenus', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    expect(await screen.findByText(/confirm import for/i)).toBeInTheDocument();
+    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
     expect(screen.getByText('Created items: 3')).toBeInTheDocument();
     expect(screen.getByText('Updated items: 2')).toBeInTheDocument();
     expect(screen.getByText('Deleted items: 1')).toBeInTheDocument();
@@ -273,7 +273,7 @@ describe('ManageMenus', () => {
     const file = new File([JSON.stringify({ menu: [{}, {}] })], 'menu.json', { type: 'application/json' });
     fireEvent.change(input, { target: { files: [file] } });
 
-    expect(await screen.findByText(/confirm import for/i)).toBeInTheDocument();
+    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(mockImportMenuJson).not.toHaveBeenCalled();
@@ -302,7 +302,7 @@ describe('ManageMenus', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    expect(await screen.findByText('Import payload validation failed')).toBeInTheDocument();
+    expect(await screen.findByText('Import payload validation failed', {}, { timeout: 2000 })).toBeInTheDocument();
     expect(screen.getByText(/menu\[0\]\.name/)).toBeInTheDocument();
     expect(screen.getByText(/menu\[1\]\.items\[0\]\.price/)).toBeInTheDocument();
   });

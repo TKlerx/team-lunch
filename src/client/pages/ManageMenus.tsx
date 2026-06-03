@@ -491,16 +491,8 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     try {
       const text = await readFileText(file);
       setJsonTextInput(text);
-      const payload = JSON.parse(text) as unknown;
-      await previewImportPayload(payload);
-    } catch (err) {
-      if (err instanceof SyntaxError) {
-        setError('Selected file is not valid JSON');
-      } else {
-        const importError = err as api.ImportMenuError;
-        setError(importError.message || 'Import failed');
-        setViolations(importError.violations ?? []);
-      }
+    } catch {
+      setError('Failed to read file');
     } finally {
       if (event.target) {
         event.target.value = '';
@@ -535,7 +527,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     }
   }, []);
 
-  // Auto-preview pasted JSON after 1 s debounce
+  // Auto-preview after 1 s debounce
   useEffect(() => {
     if (!jsonTextInput.trim()) {
       setError('');
