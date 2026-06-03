@@ -102,6 +102,7 @@ describe('FoodDeliveryView', () => {
           location: null,
           phone: null,
           url: null,
+          orderUrl: null,
           sourceDateCreated: null,
           createdAt: '2026-01-01T00:00:00Z',
           itemCount: 2,
@@ -142,6 +143,7 @@ describe('FoodDeliveryView', () => {
           location: 'Frankfurter Weg 11, Paderborn',
           phone: '+49 5251 6862323',
           url: 'https://pizza-pronto.example',
+          orderUrl: null,
           sourceDateCreated: null,
           createdAt: '2026-01-01T00:00:00Z',
           itemCount: 0,
@@ -160,7 +162,7 @@ describe('FoodDeliveryView', () => {
     expect(screen.getByText(/restaurant contact/i)).toBeInTheDocument();
     expect(screen.getByText(/frankfurter weg 11, paderborn/i)).toBeInTheDocument();
     expect(screen.getByText(/\+49 5251 6862323/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /https:\/\/pizza-pronto\.example/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /https:\/\/pizza-pronto\.example\/…/i })).toBeInTheDocument();
   });
 
   it('copies current order list during delivery', async () => {
@@ -176,6 +178,7 @@ describe('FoodDeliveryView', () => {
           location: null,
           phone: null,
           url: null,
+          orderUrl: null,
           sourceDateCreated: null,
           createdAt: '2026-01-01T00:00:00Z',
           itemCount: 1,

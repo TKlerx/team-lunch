@@ -43,6 +43,7 @@ describe('appReducer state safety', () => {
           location: null,
           phone: null,
           url: null,
+          orderUrl: null,
           sourceDateCreated: null,
           createdAt: '2026-03-02T10:00:00.000Z',
           items: [

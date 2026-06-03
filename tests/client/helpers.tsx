@@ -42,6 +42,7 @@ export function makeMenu(overrides: Partial<Menu> = {}): Menu {
     location: null,
     phone: null,
     url: null,
+    orderUrl: null,
     sourceDateCreated: null,
     createdAt: '2026-01-01T00:00:00Z',
     items: [makeMenuItem()],

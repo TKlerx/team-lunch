@@ -29,7 +29,14 @@
             "url": {
               "type": "string",
               "maxLength": 255,
-              "format": "uri"
+              "format": "uri",
+              "pattern": "^[hH][tT][tT][pP][sS]?://"
+            },
+            "order-url": {
+              "type": "string",
+              "maxLength": 255,
+              "format": "uri",
+              "pattern": "^[hH][tT][tT][pP][sS]?://"
             },
             "date-created": {
               "type": "string",

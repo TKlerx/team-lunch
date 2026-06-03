@@ -13,7 +13,7 @@
   - ESLint 9 flat config used with @typescript-eslint
 
 - [x] **1.2 Docker & database setup** *(done)*
-  - docker-compose.yml (PostgreSQL 16 + app), Dockerfile (multi-stage), .env.example, prisma/init-citext.sql
+  - docker-compose.yml (PostgreSQL 18 + app), Dockerfile (multi-stage), .env.example, prisma/init-citext.sql
 
 - [x] **1.3 Prisma schema & initial migration** *(done)*
   - All 6 tables created with UUID PKs, cascade deletes, unique constraints, snapshot name columns

@@ -115,6 +115,36 @@ describe('Menu service', () => {
     ).rejects.toThrow('URL must be a valid absolute URL');
   });
 
+  it('rejects javascript: scheme in menu URL', async () => {
+    const menu = await menuService.createMenu('Italian');
+    await expect(
+      menuService.updateMenu(menu.id, {
+        name: 'Italian',
+        url: 'javascript:alert(1)',
+      }),
+    ).rejects.toThrow('URL must use http or https');
+  });
+
+  it('rejects data: scheme in menu URL', async () => {
+    const menu = await menuService.createMenu('Italian');
+    await expect(
+      menuService.updateMenu(menu.id, {
+        name: 'Italian',
+        url: 'data:text/html,<h1>XSS</h1>',
+      }),
+    ).rejects.toThrow('URL must use http or https');
+  });
+
+  it('rejects javascript: scheme in order URL', async () => {
+    const menu = await menuService.createMenu('Italian');
+    await expect(
+      menuService.updateMenu(menu.id, {
+        name: 'Italian',
+        orderUrl: 'javascript:alert(1)',
+      }),
+    ).rejects.toThrow('Order URL must use http or https');
+  });
+
   // ─── Delete Menu ─────────────────────────────────────────
 
   it('deletes a menu', async () => {

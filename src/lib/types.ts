@@ -33,6 +33,7 @@ export interface Menu {
   location: string | null;
   phone: string | null;
   url: string | null;
+  orderUrl: string | null;
   sourceDateCreated: string | null;
   createdAt: string;
   items: MenuItem[];
@@ -185,6 +186,7 @@ export interface UpdateMenuRequest {
   location?: string | null;
   phone?: string | null;
   url?: string | null;
+  orderUrl?: string | null;
 }
 
 export interface CreateMenuItemRequest {

@@ -22,6 +22,7 @@ type ParsedMenuImport = {
   location: string | null;
   phone: string | null;
   url: string | null;
+  orderUrl: string | null;
   sourceDateCreated: Date;
   items: ImportItem[];
 };
@@ -129,7 +130,7 @@ function validateMenuPhone(phone?: string | null): string | null {
   return trimmedPhone;
 }
 
-function validateMenuUrl(url?: string | null): string | null {
+function validateMenuUrl(url?: string | null, fieldLabel = 'URL'): string | null {
   if (url === undefined || url === null) {
     return null;
   }
@@ -139,12 +140,16 @@ function validateMenuUrl(url?: string | null): string | null {
     return null;
   }
   if (trimmedUrl.length > 255) {
-    throw Object.assign(new Error('URL must be at most 255 characters'), { statusCode: 400 });
+    throw Object.assign(new Error(`${fieldLabel} must be at most 255 characters`), { statusCode: 400 });
   }
+  let parsed: URL;
   try {
-    new URL(trimmedUrl);
+    parsed = new URL(trimmedUrl);
   } catch {
-    throw Object.assign(new Error('URL must be a valid absolute URL'), { statusCode: 400 });
+    throw Object.assign(new Error(`${fieldLabel} must be a valid absolute URL`), { statusCode: 400 });
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw Object.assign(new Error(`${fieldLabel} must use http or https`), { statusCode: 400 });
   }
 
   return trimmedUrl;
@@ -158,6 +163,7 @@ function formatMenu(m: {
   location: string | null;
   phone: string | null;
   url: string | null;
+  orderUrl: string | null;
   sourceDateCreated: Date | null;
   createdAt: Date;
   items: Array<{
@@ -176,6 +182,7 @@ function formatMenu(m: {
     location: m.location,
     phone: m.phone,
     url: m.url,
+    orderUrl: m.orderUrl,
     sourceDateCreated: m.sourceDateCreated?.toISOString() ?? null,
     createdAt: m.createdAt.toISOString(),
     items: m.items.map(formatMenuItem),
@@ -242,6 +249,7 @@ function parseMenuImportPayload(payload: unknown): {
   const rawLocation = metadata.location;
   const rawPhone = metadata.phone;
   const rawUrl = metadata.url;
+  const rawOrderUrl = metadata['order-url'];
   const rawDateCreated = metadata['date-created'];
 
   const name = typeof rawName === 'string' ? rawName.trim() : '';
@@ -281,10 +289,35 @@ function parseMenuImportPayload(payload: unknown): {
         violations.push({ path: 'menu[0].url', message: 'url must be at most 255 characters' });
       } else {
         try {
-          new URL(trimmedUrl);
-          url = trimmedUrl;
+          const parsed = new URL(trimmedUrl);
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            violations.push({ path: 'menu[0].url', message: 'url must use http or https' });
+          } else {
+            url = trimmedUrl;
+          }
         } catch {
           violations.push({ path: 'menu[0].url', message: 'url must be a valid absolute URL' });
+        }
+      }
+    }
+  }
+
+  let orderUrl: string | null = null;
+  if (typeof rawOrderUrl === 'string') {
+    const trimmedOrderUrl = rawOrderUrl.trim();
+    if (trimmedOrderUrl) {
+      if (trimmedOrderUrl.length > 255) {
+        violations.push({ path: 'menu[0].order-url', message: 'order-url must be at most 255 characters' });
+      } else {
+        try {
+          const parsed = new URL(trimmedOrderUrl);
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            violations.push({ path: 'menu[0].order-url', message: 'order-url must use http or https' });
+          } else {
+            orderUrl = trimmedOrderUrl;
+          }
+        } catch {
+          violations.push({ path: 'menu[0].order-url', message: 'order-url must be a valid absolute URL' });
         }
       }
     }
@@ -407,6 +440,7 @@ function parseMenuImportPayload(payload: unknown): {
       location,
       phone,
       url,
+      orderUrl,
       sourceDateCreated,
       items,
     },
@@ -551,6 +585,7 @@ type UpdateMenuPayload = {
   location?: string | null;
   phone?: string | null;
   url?: string | null;
+  orderUrl?: string | null;
 };
 
 export async function updateMenu(
@@ -585,6 +620,7 @@ export async function updateMenu(
     location?: string | null;
     phone?: string | null;
     url?: string | null;
+    orderUrl?: string | null;
   } = { name: trimmed };
 
   if ('location' in updatePayload) {
@@ -595,6 +631,9 @@ export async function updateMenu(
   }
   if ('url' in updatePayload) {
     updates.url = validateMenuUrl(updatePayload.url);
+  }
+  if ('orderUrl' in updatePayload) {
+    updates.orderUrl = validateMenuUrl(updatePayload.orderUrl, 'Order URL');
   }
 
   const menu = await prisma.menu.update({
@@ -770,6 +809,7 @@ export async function importMenuFromJson(
           location: parsed.location,
           phone: parsed.phone,
           url: parsed.url,
+          orderUrl: parsed.orderUrl,
           sourceDateCreated: parsed.sourceDateCreated,
         },
       });
@@ -801,6 +841,7 @@ export async function importMenuFromJson(
         location: parsed.location,
         phone: parsed.phone,
         url: parsed.url,
+        orderUrl: parsed.orderUrl,
         sourceDateCreated: parsed.sourceDateCreated,
       },
     });

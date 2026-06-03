@@ -108,6 +108,7 @@ export type UpdateMenuPayload = {
   location?: string | null;
   phone?: string | null;
   url?: string | null;
+  orderUrl?: string | null;
 };
 
 export function updateMenu(id: string, payload: string | UpdateMenuPayload): Promise<Menu> {
