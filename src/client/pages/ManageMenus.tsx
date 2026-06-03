@@ -452,6 +452,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
   const [preview, setPreview] = useState<ImportMenuPreviewResponse | null>(null);
   const [jsonTextInput, setJsonTextInput] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const readFileText = async (file: File): Promise<string> => {
     if (typeof file.text === 'function') {
@@ -536,6 +537,9 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
       setPendingPayload(null);
       return;
     }
+    // Clear stale preview while debouncing so Confirm Import is disabled
+    setPreview(null);
+    setPendingPayload(null);
     const timer = setTimeout(() => {
       void triggerJsonTextPreview(jsonTextInput);
     }, 1000);
@@ -549,11 +553,15 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     try {
       await navigator.clipboard.writeText(MENU_IMPORT_LLM_PROMPT);
       setCopyStatus('copied');
-      setTimeout(() => setCopyStatus(''), 2000);
+      clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopyStatus(''), 2000);
     } catch {
       // silently ignore
     }
   };
+
+  // Clean up copy-status timer on unmount
+  useEffect(() => () => clearTimeout(copyTimerRef.current), []);
 
   return (
     <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 shadow-sm">
@@ -646,6 +654,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
                 if (!pendingPayload) return;
                 setSubmitting(true);
                 setError('');
+                let imported = false;
                 try {
                   const result = await api.importMenuJson(pendingPayload);
                   setSuccess(
@@ -656,7 +665,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
                   setJsonTextInput('');
                   setPreview(null);
                   setPendingPayload(null);
-                  onClose();
+                  imported = true;
                 } catch (err) {
                   const importError = err as api.ImportMenuError;
                   setError(importError.message || 'Import failed');
@@ -664,6 +673,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
                 } finally {
                   setSubmitting(false);
                 }
+                if (imported) onClose();
               })();
             }}
             className="rounded bg-emerald-600 px-3 py-1 font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
