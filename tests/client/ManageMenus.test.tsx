@@ -457,6 +457,59 @@ describe('ManageMenus', () => {
     });
   });
 
+  it('sends orderUrl when editing order URL field', async () => {
+    const user = userEvent.setup();
+    mockUpdateMenu.mockResolvedValue({});
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({ name: 'Burger Joint' })],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Burger Joint'));
+    await user.click(screen.getAllByRole('button', { name: 'Edit' })[0]);
+    await user.type(screen.getByLabelText('Order URL'), 'https://order.example.com');
+    await user.click(screen.getByRole('button', { name: /save changes/i }));
+
+    expect(mockUpdateMenu).toHaveBeenCalledWith('menu-1', expect.objectContaining({
+      orderUrl: 'https://order.example.com',
+    }));
+  });
+
+  it('shows validation error for non-http order URL', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({ name: 'Burger Joint' })],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Burger Joint'));
+    await user.click(screen.getAllByRole('button', { name: 'Edit' })[0]);
+    await user.type(screen.getByLabelText('Order URL'), 'javascript:alert(1)');
+    await user.click(screen.getByRole('button', { name: /save changes/i }));
+
+    expect(screen.getByText(/order url.*must use http or https/i)).toBeInTheDocument();
+    expect(mockUpdateMenu).not.toHaveBeenCalled();
+  });
+
+  it('renders Order link with accessible label when orderUrl is set', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({ name: 'Pizza Place', orderUrl: 'https://order.pizza.example' })],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
+    const orderLink = screen.getByRole('link', { name: /order from pizza place/i });
+    expect(orderLink).toHaveAttribute('href', 'https://order.pizza.example');
+    expect(orderLink).toHaveAttribute('target', '_blank');
+    expect(orderLink).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('shows delete confirmation dialog', async () => {
     const user = userEvent.setup();
     mockUseAppState.mockReturnValue({

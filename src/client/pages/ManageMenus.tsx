@@ -1139,6 +1139,8 @@ function MenuCard({
                       href={menu.orderUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Order from ${menu.name}`}
+                      title={menu.orderUrl}
                       className="inline-flex max-w-[14rem] items-center truncate text-xs text-emerald-600 hover:text-emerald-800 hover:underline"
                     >
                       <svg
