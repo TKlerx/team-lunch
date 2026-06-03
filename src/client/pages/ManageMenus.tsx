@@ -537,9 +537,11 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
       setPendingPayload(null);
       return;
     }
-    // Clear stale preview while debouncing so Confirm Import is disabled
+    // Clear stale preview/errors while debouncing so UI doesn't show outdated state
     setPreview(null);
     setPendingPayload(null);
+    setError('');
+    setViolations([]);
     const timer = setTimeout(() => {
       void triggerJsonTextPreview(jsonTextInput);
     }, 1000);
