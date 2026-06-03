@@ -30,13 +30,20 @@ if ($LASTEXITCODE -ne 0) { Write-Error "prisma generate failed"; exit 1 }
 Write-Step "Setting up Python virtual environment"
 
 $venvDir = Join-Path $PSScriptRoot '.venv'
+
+# Detect python executable (python3 on Linux/macOS, python on Windows)
+$pythonExe = if (Get-Command python3 -ErrorAction SilentlyContinue) { 'python3' }
+             elseif (Get-Command python -ErrorAction SilentlyContinue) { 'python' }
+             else { Write-Error 'Neither python3 nor python found on PATH'; exit 1 }
+
 if (-not (Test-Path $venvDir)) {
-    python -m venv $venvDir
+    & $pythonExe -m venv $venvDir
     if ($LASTEXITCODE -ne 0) { Write-Error "python -m venv failed"; exit 1 }
 }
 
 $binDir = if ($IsWindows -or $env:OS -eq 'Windows_NT') { 'Scripts' } else { 'bin' }
-$pipExe = Join-Path $venvDir $binDir 'pip'
+$pipExeName = if ($IsWindows -or $env:OS -eq 'Windows_NT') { 'pip.exe' } else { 'pip' }
+$pipExe = Join-Path $venvDir $binDir $pipExeName
 Write-Step "Installing semgrep into .venv"
 & $pipExe install semgrep
 if ($LASTEXITCODE -ne 0) { Write-Error "pip install semgrep failed"; exit 1 }

@@ -142,10 +142,14 @@ function validateMenuUrl(url?: string | null, fieldLabel = 'URL'): string | null
   if (trimmedUrl.length > 255) {
     throw Object.assign(new Error(`${fieldLabel} must be at most 255 characters`), { statusCode: 400 });
   }
+  let parsed: URL;
   try {
-    new URL(trimmedUrl);
+    parsed = new URL(trimmedUrl);
   } catch {
     throw Object.assign(new Error(`${fieldLabel} must be a valid absolute URL`), { statusCode: 400 });
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw Object.assign(new Error(`${fieldLabel} must use http or https`), { statusCode: 400 });
   }
 
   return trimmedUrl;
@@ -285,8 +289,12 @@ function parseMenuImportPayload(payload: unknown): {
         violations.push({ path: 'menu[0].url', message: 'url must be at most 255 characters' });
       } else {
         try {
-          new URL(trimmedUrl);
-          url = trimmedUrl;
+          const parsed = new URL(trimmedUrl);
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            violations.push({ path: 'menu[0].url', message: 'url must use http or https' });
+          } else {
+            url = trimmedUrl;
+          }
         } catch {
           violations.push({ path: 'menu[0].url', message: 'url must be a valid absolute URL' });
         }
@@ -302,8 +310,12 @@ function parseMenuImportPayload(payload: unknown): {
         violations.push({ path: 'menu[0].order-url', message: 'order-url must be at most 255 characters' });
       } else {
         try {
-          new URL(trimmedOrderUrl);
-          orderUrl = trimmedOrderUrl;
+          const parsed = new URL(trimmedOrderUrl);
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            violations.push({ path: 'menu[0].order-url', message: 'order-url must use http or https' });
+          } else {
+            orderUrl = trimmedOrderUrl;
+          }
         } catch {
           violations.push({ path: 'menu[0].order-url', message: 'order-url must be a valid absolute URL' });
         }

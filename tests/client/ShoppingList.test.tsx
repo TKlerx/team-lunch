@@ -88,8 +88,9 @@ describe('ShoppingList', () => {
     expect(screen.getByText('Oat milk')).toBeInTheDocument();
     const expectedDate1 = new Date('2026-03-11T12:00:00.000Z').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const expectedDate2 = new Date('2026-03-10T16:30:00.000Z').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-    expect(screen.getByText(new RegExp(expectedDate1, 'i'))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(expectedDate2, 'i'))).toBeInTheDocument();
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    expect(screen.getByText(new RegExp(escapeRegex(expectedDate1), 'i'))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(escapeRegex(expectedDate2), 'i'))).toBeInTheDocument();
   });
 
   it('adds a shopping list item', async () => {

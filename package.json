@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\"",
     "continuity:update": "node scripts/update-continuity.js",
-    "semgrep": "node -e \"const p=process.platform==='win32'?'.venv/Scripts/semgrep':'.venv/bin/semgrep';require('child_process').execSync(p+' scan --config auto --error .',{stdio:'inherit'})\"",
+    "semgrep": "node -e \"const p=require('path').join('.venv',process.platform==='win32'?'Scripts':'bin',process.platform==='win32'?'semgrep.exe':'semgrep');require('child_process').execFileSync(p,['scan','--config','auto','--error','.'],{stdio:'inherit'})\"",
     "pretest": "node ./scripts/prisma-generate-safe.mjs",
     "test": "vitest run",
     "pretest:server": "node ./scripts/prisma-generate-safe.mjs",
