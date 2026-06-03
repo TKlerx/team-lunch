@@ -187,6 +187,7 @@ describe('ManageMenus', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
+    // Debounced auto-preview fires after 1s; findByText polls until it appears
     expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
     expect(screen.getByText('Created items: 3')).toBeInTheDocument();
     expect(screen.getByText('Updated items: 2')).toBeInTheDocument();
@@ -234,7 +235,7 @@ describe('ManageMenus', () => {
       },
     });
 
-    // Wait for debounced auto-preview (1 s delay)
+    // Debounced auto-preview fires after 1s
     expect(await screen.findByText(/confirm import for "thai bowl"/i, {}, { timeout: 2000 })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /confirm import/i }));
 
@@ -253,7 +254,7 @@ describe('ManageMenus', () => {
 
     fireEvent.change(screen.getByLabelText(/paste menu json/i), { target: { value: '{ invalid' } });
 
-    // Wait for debounced auto-preview (1 s delay)
+    // Debounced auto-preview fires after 1s
     expect(await screen.findByText('Pasted content is not valid JSON', {}, { timeout: 2000 })).toBeInTheDocument();
   });
 
@@ -273,6 +274,7 @@ describe('ManageMenus', () => {
     const file = new File([JSON.stringify({ menu: [{}, {}] })], 'menu.json', { type: 'application/json' });
     fireEvent.change(input, { target: { files: [file] } });
 
+    // Debounced auto-preview fires after 1s
     expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
@@ -302,6 +304,7 @@ describe('ManageMenus', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
+    // Debounced auto-preview fires after 1s
     expect(await screen.findByText('Import payload validation failed', {}, { timeout: 2000 })).toBeInTheDocument();
     expect(screen.getByText(/menu\[0\]\.name/)).toBeInTheDocument();
     expect(screen.getByText(/menu\[1\]\.items\[0\]\.price/)).toBeInTheDocument();

@@ -453,6 +453,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
   const [jsonTextInput, setJsonTextInput] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
   const copyTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const previewRequestIdRef = useRef(0);
 
   const readFileText = async (file: File): Promise<string> => {
     if (typeof file.text === 'function') {
@@ -465,24 +466,6 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
       reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsText(file);
     });
-  };
-
-  const previewImportPayload = async (payload: unknown) => {
-    setSubmitting(true);
-    setError('');
-    setSuccess('');
-    setViolations([]);
-    try {
-      const previewResult = await api.previewImportMenuJson(payload);
-      setPendingPayload(payload);
-      setPreview(previewResult);
-    } catch (err) {
-      const importError = err as api.ImportMenuError;
-      setError(importError.message || 'Import failed');
-      setViolations(importError.violations ?? []);
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -501,7 +484,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const triggerJsonTextPreview = useCallback(async (text: string) => {
+  const triggerJsonTextPreview = useCallback(async (text: string, requestId: number) => {
     const trimmed = text.trim();
     if (!trimmed) {
       setError('');
@@ -514,8 +497,16 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
 
     try {
       const payload = JSON.parse(trimmed) as unknown;
-      await previewImportPayload(payload);
+      setSubmitting(true);
+      setError('');
+      setSuccess('');
+      setViolations([]);
+      const previewResult = await api.previewImportMenuJson(payload);
+      if (previewRequestIdRef.current !== requestId) return;
+      setPendingPayload(payload);
+      setPreview(previewResult);
     } catch (err) {
+      if (previewRequestIdRef.current !== requestId) return;
       if (err instanceof SyntaxError) {
         setError('Pasted content is not valid JSON');
         setSuccess('');
@@ -525,11 +516,18 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
         setError(importError.message || 'Import failed');
         setViolations(importError.violations ?? []);
       }
+    } finally {
+      if (previewRequestIdRef.current === requestId) {
+        setSubmitting(false);
+      }
     }
   }, []);
 
   // Auto-preview after 1 s debounce
   useEffect(() => {
+    // Bump request ID to invalidate any in-flight preview
+    const requestId = ++previewRequestIdRef.current;
+
     if (!jsonTextInput.trim()) {
       setError('');
       setViolations([]);
@@ -543,7 +541,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     setError('');
     setViolations([]);
     const timer = setTimeout(() => {
-      void triggerJsonTextPreview(jsonTextInput);
+      void triggerJsonTextPreview(jsonTextInput, requestId);
     }, 1000);
     return () => clearTimeout(timer);
   }, [jsonTextInput, triggerJsonTextPreview]);
@@ -1354,14 +1352,20 @@ function NewMenuDropdown({
     return `New Menu ${counter}`;
   };
 
+  const [creating, setCreating] = useState(false);
+
   const handleCreateManually = async () => {
+    if (creating) return;
     setOpen(false);
     setError('');
+    setCreating(true);
     const name = generateMenuName();
     try {
       await api.createMenu(name);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -1476,7 +1480,7 @@ export default function ManageMenus() {
       <div className="space-y-4">
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap gap-2">
-            <NewMenuDropdown menus={menus} onToggleImport={() => setImportOpen((prev) => !prev)} />
+            <NewMenuDropdown menus={menus} onToggleImport={() => setImportOpen(true)} />
           </div>
         </div>
 
