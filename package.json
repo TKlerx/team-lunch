@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.1.0",
   "scripts": {
-    "dev": "npm run ports:check && concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev": "pnpm run ports:check && concurrently \"pnpm:dev:server\" \"pnpm:dev:client\"",
     "dev:server": "tsx watch src/server/index.ts",
     "dev:server:sqlite": "node ./scripts/dev-server-sqlite.mjs",
     "dev:client": "vite",
-    "ports:check": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1",
-    "ports:check:ci": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1 -NonInteractive",
+    "ports:check": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1",
+    "ports:check:ci": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1 -NonInteractive",
     "build": "tsc -p tsconfig.build.json && vite build",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit",
@@ -29,7 +30,7 @@
     "auth:seed": "tsx scripts/auth-seed.ts",
     "prisma:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
     "prisma:push:sqlite": "prisma db push --schema prisma/schema.sqlite.prisma",
-    "validate": "powershell -NoProfile -File ./validate.ps1 all"
+    "validate": "pwsh -NoProfile -File ./validate.ps1 all"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",
@@ -73,7 +74,17 @@
     "vite": "^6.2.0",
     "vitest": "^3.0.7"
   },
-  "overrides": {
-    "effect": "3.21.0"
+  "pnpm": {
+    "overrides": {
+      "effect": "3.21.0"
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "@swc/core",
+      "sharp"
+    ]
   }
 }

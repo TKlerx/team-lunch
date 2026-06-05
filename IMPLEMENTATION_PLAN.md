@@ -1709,7 +1709,7 @@
 ## Priority 74 - Multi-Office Support (Mar 2026)
 
 - [x] **74.1 Write multi-office product/technical spec** *(done)*
-  - Added [specs/multi-office.md](specs/multi-office.md) covering:
+  - Added [specs/old/multi-office.md](specs/old/multi-office.md) covering:
     - office-location entity
     - one office per regular user for phase 1
     - global-admin behavior
@@ -1967,7 +1967,7 @@
 ## Priority 82 - Auth Hardening (Mar 2026)
 
 - [x] **82.1 Write auth hardening spec** *(done)*
-  - Added [specs/auth-hardening.md](specs/auth-hardening.md)
+  - Added [specs/old/auth-hardening.md](specs/old/auth-hardening.md)
   - Scope is intentionally narrow:
     - keep the custom Fastify auth stack
     - harden Entra token validation

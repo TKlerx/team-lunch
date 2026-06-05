@@ -3,21 +3,23 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
+
 ARG VITE_BASE_PATH=/
 ENV VITE_BASE_PATH=${VITE_BASE_PATH}
 
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY prisma ./prisma
-RUN npx prisma generate
+RUN pnpm exec prisma generate
 
 COPY tsconfig.json tsconfig.build.json vite.config.ts index.html tailwind.config.ts postcss.config.js ./
 COPY assets ./assets
 COPY import ./import
 COPY src ./src
 
-RUN npm run build
+RUN pnpm run build
 
 # ── Production stage ───────────────────────────────────────
 FROM node:22-alpine AS runner
@@ -26,8 +28,10 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
 
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/dist ./dist
