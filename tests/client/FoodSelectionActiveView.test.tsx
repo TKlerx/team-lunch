@@ -420,9 +420,49 @@ describe('FoodSelectionActiveView', () => {
 
     renderView();
 
-    expect(screen.getByText(/voted for menu but not ordered yet \(0\)/i)).toBeInTheDocument();
+    expect(screen.queryByText(/voted for menu but not ordered yet/i)).not.toBeInTheDocument();
     expect(screen.getByText(/everyone who voted has ordered/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /click here when you place the order\./i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /ping missing users/i })).not.toBeInTheDocument();
+  });
+
+  it('uses CTA button to complete meal collection when everyone already ordered', async () => {
+    const user = userEvent.setup();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    mockCompleteFoodSelectionNow.mockResolvedValue({});
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus,
+      latestCompletedPoll: makePoll({
+        id: 'poll-1',
+        status: 'finished',
+        winnerMenuId: 'menu-1',
+        winnerMenuName: 'Pizza Place',
+        votes: [
+          {
+            id: 'vote-1',
+            pollId: 'poll-1',
+            menuId: 'menu-1',
+            menuName: 'Pizza Place',
+            nickname: 'Alice',
+            castAt: '2026-01-01T12:01:00.000Z',
+          },
+        ],
+        voteCounts: { 'menu-1': 1 },
+      }),
+      activeFoodSelection: makeFoodSelection({
+        menuId: 'menu-1',
+        menuName: 'Pizza Place',
+        orders: [makeFoodOrder({ nickname: 'Alice', itemId: 'item-1', itemName: 'Margherita' })],
+      }),
+    });
+
+    renderView();
+    await user.click(screen.getByRole('button', { name: /click here when you place the order\./i }));
+
+    expect(mockCompleteFoodSelectionNow).toHaveBeenCalledWith('fs-1');
+    confirmSpy.mockRestore();
   });
 
   it('shows order board with other users\' orders', () => {

@@ -7,7 +7,7 @@ export default [
     ignores: [
       'dist/',
       'node_modules/',
-      'src/server/generated/sqlite-client/**',
+      'src/server/generated/**',
       '*.js',
       '!eslint.config.js',
     ],

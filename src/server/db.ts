@@ -1,4 +1,4 @@
-import type { PrismaClient as PostgresPrismaClient } from '@prisma/client';
+import type { PrismaClient as PostgresPrismaClient } from './generated/client/index.js';
 
 async function loadPrismaClientConstructor(): Promise<new () => PostgresPrismaClient> {
   const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
@@ -16,7 +16,8 @@ async function loadPrismaClientConstructor(): Promise<new () => PostgresPrismaCl
     }
   }
 
-  const postgresClientModule = await import('@prisma/client');
+  const postgresModulePath = './generated/client/index.js';
+  const postgresClientModule = await import(postgresModulePath);
   return postgresClientModule.PrismaClient as new () => PostgresPrismaClient;
 }
 

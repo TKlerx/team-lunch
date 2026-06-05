@@ -1,4 +1,4 @@
-#!/usr/bin/env powershell
+#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Backpressure script - runs after each task to validate the build.
@@ -212,7 +212,7 @@ function Invoke-ValidationStep(
 function Invoke-ContinuityValidation {
     Write-Step "Continuity snapshot (CURRENT-WORK / RECONCILIATION)"
     try {
-        $result = Invoke-NativeCommand "npm run continuity:update"
+        $result = Invoke-NativeCommand "pnpm run continuity:update"
         if ($result.ExitCode -ne 0) {
             Write-CommandLog $result
             throw "continuity updater failed"
@@ -240,15 +240,15 @@ function Invoke-ContinuityValidation {
 $failures = @()
 
 if ($Phase -in "all", "full", "quick", "commit") {
-    Invoke-ValidationStep "Typecheck (tsc --noEmit)" "npm run typecheck" "typecheck" "typecheck failed" { "typecheck passed" }
+    Invoke-ValidationStep "Typecheck (tsc --noEmit)" "pnpm run typecheck" "typecheck" "typecheck failed" { "typecheck passed" }
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Lint (eslint)" "npm run lint" "lint" "lint failed" { "lint passed" }
+    Invoke-ValidationStep "Lint (eslint)" "pnpm run lint" "lint" "lint failed" { "lint passed" }
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Duplication (jscpd)" "npm run duplication" "duplication" "duplication check failed" {
+    Invoke-ValidationStep "Duplication (jscpd)" "pnpm run duplication" "duplication" "duplication check failed" {
         param($result)
         Get-DuplicationSummary $result
     }
@@ -258,7 +258,7 @@ if ($Phase -in "all", "full", "quality", "commit") {
     Write-Step "Security scan (semgrep)"
     try {
         $env:PYTHONUTF8 = "1"
-        $result = Invoke-NativeCommand "npm run semgrep"
+        $result = Invoke-NativeCommand "pnpm run semgrep"
         if ($result.ExitCode -ne 0) {
             Write-CommandLog $result
             throw "semgrep failed"
@@ -272,14 +272,14 @@ if ($Phase -in "all", "full", "quality", "commit") {
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Dependency audit (npm audit --omit=dev)" "npm audit --omit=dev" "npm-audit" "production dependency audit failed" {
+    Invoke-ValidationStep "Dependency audit (pnpm audit --prod)" "pnpm audit --prod" "npm-audit" "production dependency audit failed" {
         param($result)
         Get-NpmAuditSummary $result
     }
 }
 
 if ($Phase -in "all", "full", "test", "commit") {
-    Invoke-ValidationStep "Tests (vitest)" "npm test" "tests" "tests failed" {
+    Invoke-ValidationStep "Tests (vitest)" "pnpm test" "tests" "tests failed" {
         param($result)
         Get-TestSummary $result
     }
@@ -295,7 +295,7 @@ if ($Phase -in "full", "e2e") {
         Write-Warn "playwright skipped (no e2e spec files found)"
     } else {
         try {
-            $result = Invoke-NativeCommand "npm run test:e2e"
+            $result = Invoke-NativeCommand "pnpm run test:e2e"
             if ($result.ExitCode -ne 0) {
                 Write-CommandLog $result
                 throw "playwright tests failed"

@@ -1,6 +1,6 @@
 import prisma from '../db.js';
 import { broadcast } from '../sse.js';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '../generated/client/index.js';
 import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
 import type {
   Menu,
