@@ -149,6 +149,32 @@ Full one-liner (same as CI):
 npm run validate       # typecheck && lint && npm test
 ```
 
+## Test Database (dedicated Postgres)
+
+Server integration tests and e2e run against a **dedicated, ephemeral Postgres
+database**, isolated from the dev/app DB so tests never touch real data.
+
+- Defined as the `db-test` service in `docker-compose.yml` (compose profile
+  `test`, no named volume → data discarded on teardown).
+- Tests pick it up via `TEST_DATABASE_URL`. When that var is set, the whole
+  suite targets it (see `tests/server/setup.ts`); otherwise it falls back to a
+  `TEST_DATABASE_SCHEMA` schema inside `DATABASE_URL`, then to SQLite when
+  Postgres is unreachable.
+- Put `TEST_DATABASE_URL` in a local `.env.test` (gitignored) or export it in CI.
+  Example: `postgresql://teamlunch:teamlunch@localhost:55434/teamlunch_test?schema=team_lunch_test`
+  (host port via `TEST_DB_PORT`, default `55434`). See `.env.example`.
+
+```bash
+pnpm db:test:up        # start the dedicated test Postgres (docker compose db-test, waits healthy)
+pnpm test              # runs against TEST_DATABASE_URL when set in .env.test / env
+pnpm test:e2e          # Playwright e2e against the same test DB
+pnpm db:test:down      # stop + remove the test DB container (discards data)
+```
+
+The migration/seed of the test schema is automatic in `tests/server/setup.ts`
+(`prisma migrate deploy`); the suite refuses to run against schema `public`
+unless `ALLOW_DANGEROUS_TEST_SCHEMA=true`.
+
 ## Test Coverage Requirements
 
 Write tests for ALL of the following — these are the critical business logic paths:

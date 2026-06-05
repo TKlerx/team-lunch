@@ -1,7 +1,12 @@
 node_modules/
 dist/
 .env
+.env.test
+.env.*.local
 *.tsbuildinfo
+# SQLite test-fallback artifacts (created by tests/server/setup.ts)
+*.sqlite
+*.sqlite-journal
 .DS_Store
 coverage/
 .prisma/

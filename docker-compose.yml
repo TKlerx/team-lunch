@@ -18,6 +18,28 @@ services:
       timeout: 3s
       retries: 5
 
+  # Dedicated, ephemeral Postgres used ONLY by the test suites (server
+  # integration + e2e). Isolated from the dev/app `db` so tests never touch
+  # real data. No named volume → data is discarded on `docker compose down`.
+  db-test:
+    image: postgres:18-alpine
+    restart: "no"
+    profiles: ["test"]
+    ports:
+      - "${TEST_DB_PORT:-55434}:5432"
+    environment:
+      POSTGRES_USER: teamlunch
+      POSTGRES_PASSWORD: teamlunch
+      POSTGRES_DB: teamlunch_test
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./prisma/init-citext.sql:/docker-entrypoint-initdb.d/01-citext.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teamlunch -d teamlunch_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
   migrate:
     image: team-lunch:latest
     restart: "no"
