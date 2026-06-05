@@ -161,14 +161,19 @@ database**, isolated from the dev/app DB so tests never touch real data.
   suite targets it (see `tests/server/setup.ts`); otherwise it falls back to a
   `TEST_DATABASE_SCHEMA` schema inside `DATABASE_URL`, then to SQLite when
   Postgres is unreachable.
-- Put `TEST_DATABASE_URL` in a local `.env.test` (gitignored) or export it in CI.
-  Example: `postgresql://teamlunch:teamlunch@localhost:55434/teamlunch_test?schema=team_lunch_test`
-  (host port via `TEST_DB_PORT`, default `55434`). See `.env.example`.
+- Teammates opt in by copying the committed template:
+  `cp .env.test.example .env.test`. `.env.test` is gitignored; the suite then
+  reads `TEST_DATABASE_URL` from it. Host port via `TEST_DB_PORT` (default
+  `55434`). Skip the copy to use the `DATABASE_URL` / SQLite fallback.
+- Caveat: with `.env.test` present, the dedicated DB is authoritative — the
+  suite will NOT silently fall back to SQLite. The git hooks run the suite, so
+  `pnpm db:test:up` must be running before you commit/push.
 
 ```bash
+cp .env.test.example .env.test   # one-time opt-in (gitignored)
 pnpm db:test:up        # start the dedicated test Postgres (docker compose db-test, waits healthy)
 pnpm test              # runs against TEST_DATABASE_URL when set in .env.test / env
-pnpm test:e2e          # Playwright e2e against the same test DB
+pnpm test:e2e          # Playwright e2e against the same test DB (once e2e specs exist)
 pnpm db:test:down      # stop + remove the test DB container (discards data)
 ```
 
