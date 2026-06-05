@@ -13,7 +13,7 @@
     "ports:check:ci": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1 -NonInteractive",
     "db:test:up": "docker compose --profile test up -d --wait db-test",
     "db:test:down": "docker compose --profile test rm -sfv db-test",
-    "build": "tsc -p tsconfig.build.json && vite build",
+    "build": "tsc -p tsconfig.build.json && vite build && node scripts/copy-prisma-client.mjs",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\"",

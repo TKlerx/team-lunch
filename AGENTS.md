@@ -173,13 +173,23 @@ database**, isolated from the dev/app DB so tests never touch real data.
 cp .env.test.example .env.test   # one-time opt-in (gitignored)
 pnpm db:test:up        # start the dedicated test Postgres (docker compose db-test, waits healthy)
 pnpm test              # runs against TEST_DATABASE_URL when set in .env.test / env
-pnpm test:e2e          # Playwright e2e against the same test DB (once e2e specs exist)
+pnpm exec playwright install chromium   # one-time per machine/CI
+pnpm test:e2e          # Playwright e2e against the same test DB
 pnpm db:test:down      # stop + remove the test DB container (discards data)
 ```
 
-The migration/seed of the test schema is automatic in `tests/server/setup.ts`
-(`prisma migrate deploy`); the suite refuses to run against schema `public`
-unless `ALLOW_DANGEROUS_TEST_SCHEMA=true`.
+The migration/seed of the server test schema is automatic in
+`tests/server/setup.ts` (`prisma migrate deploy`); the suite refuses to run
+against schema `public` unless `ALLOW_DANGEROUS_TEST_SCHEMA=true`.
+
+**E2E (Playwright)**: `playwright.config.ts` has a `webServer` that runs
+`pnpm build` then `scripts/e2e-server.mjs` — which migrates the dedicated test
+DB and boots the **production** server (`NODE_ENV=production`, serving
+`dist/client`) on `E2E_PORT` (default `4173`). It requires `TEST_DATABASE_URL`
+(via `.env.test`) and `pnpm db:test:up`. Set `PLAYWRIGHT_BASE_URL` to point at an
+already-running server instead (CI/remote). Note: `pnpm build` now also copies
+the Prisma client into `dist` (`scripts/copy-prisma-client.mjs`), since it's
+generated to `src/server/generated/client` (explicit output for pnpm).
 
 ## Test Coverage Requirements
 

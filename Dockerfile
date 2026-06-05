@@ -33,7 +33,8 @@ RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# The Prisma client (incl. query engine) is bundled into dist by the build step
+# (scripts/copy-prisma-client.mjs), so no separate .prisma copy is needed.
 COPY --from=builder /app/dist ./dist
 COPY prisma ./prisma
 
