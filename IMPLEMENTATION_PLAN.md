@@ -1030,14 +1030,13 @@
 ## Priority 40 - Admin-Facing Menu Import Schema + LLM Prompt Helper (Mar 2026)
 
 - [x] **40.1 Add import helper panel in Manage Menus** *(done)*
-  - Added a built-in "Import helper (schema + LLM prompt)" section on the menu management page
-  - Exposes the required JSON schema and a reusable prompt template for admins extracting menu JSON from copied text
-  - Added copy-to-clipboard actions for both schema and prompt (with fallback messaging when clipboard APIs are unavailable)
+  - Added a "Copy AI prompt" button in the import panel so admins can paste the LLM prompt into their AI assistant to convert menu text into import JSON
+  - The full JSON schema is embedded in the prompt template; no separate schema display is needed
 
 - [x] **40.2 Add client coverage for helper UI and copy actions** *(done)*
   - Extended `tests/client/ManageMenus.test.tsx` to verify:
-    - helper visibility and content
-    - copy-schema and copy-prompt actions
+    - import panel opens via dropdown and shows empty preview hint
+    - "Copy AI prompt" button copies the prompt and shows "Copied" feedback
 
 - [x] **40.3 Validation** *(done)*
   - Ran `./validate.ps1` successfully (`typecheck`, `lint`, `duplication`, `test`)
