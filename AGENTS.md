@@ -27,11 +27,12 @@ User can steer between tasks or say "continue" to proceed to the next item.
 ./validate.ps1 e2e          # Playwright E2E only
 ./validate.ps1 quality      # lint + duplication + semgrep
 ./validate.ps1 commit       # validate all, then git commit + push
-npm run duplication         # jscpd copy-paste detection (src/, 5% threshold)
-npm run semgrep             # Semgrep auto ruleset security scan
-npm run test:e2e           # Playwright E2E tests (skips in validate when no e2e specs exist)
-npm run ports:check         # interactive port blocker check/terminate for 3000 + 5173
-npm run ports:check:ci      # non-interactive port blocker report (no termination)
+pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold)
+pnpm semgrep                # Semgrep auto ruleset security scan
+pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
+pnpm db:test:up             # start the dedicated test Postgres (db-test) for server/e2e tests
+pnpm ports:check            # interactive port blocker check/terminate for 3000 + 5173
+pnpm ports:check:ci         # non-interactive port blocker report (no termination)
 ```
 
 ### Key Rules
@@ -122,13 +123,13 @@ team-lunch/
 ## Build & Run
 
 ```bash
-npm install                        # install all dependencies
-npx prisma generate                # regenerate Prisma client after schema changes
-npx prisma migrate dev             # apply pending DB migrations (dev only)
-npm run dev:server                 # start backend with hot-reload (tsx watch)
-npm run dev:client                 # start Vite dev server for frontend
-npm run build                      # production build (tsc + vite build → dist/)
-npm start                          # run production server (serves static client from dist/)
+pnpm install                       # install all dependencies (pnpm — see packageManager)
+pnpm exec prisma generate          # regenerate Prisma client after schema changes
+pnpm exec prisma migrate dev       # apply pending DB migrations (dev only)
+pnpm dev:server                    # start backend with hot-reload (tsx watch)
+pnpm dev:client                    # start Vite dev server for frontend
+pnpm build                         # production build (tsc + vite build → dist/)
+pnpm start                         # run production server (serves static client from dist/)
 docker compose up --build          # full stack in Docker (preferred for production)
 ```
 
@@ -137,16 +138,16 @@ docker compose up --build          # full stack in Docker (preferred for product
 Run ALL of these after any implementation. Fix every failure before committing.
 
 ```bash
-npm run typecheck      # tsc --noEmit across server + client + lib
-npm run lint           # ESLint for .ts and .tsx files
-npm test               # vitest run — all tests
-npm run test:server    # vitest run --project server (unit + integration)
-npm run test:client    # vitest run --project client (component + hook tests)
+pnpm typecheck         # tsc --noEmit across server + client + lib
+pnpm lint              # ESLint for .ts and .tsx files
+pnpm test              # vitest run — all tests
+pnpm test:server       # vitest run --project server (unit + integration)
+pnpm test:client       # vitest run --project client (component + hook tests)
 ```
 
 Full one-liner (same as CI):
 ```bash
-npm run validate       # typecheck && lint && npm test
+pnpm validate          # typecheck && lint && pnpm test
 ```
 
 ## Test Database (dedicated Postgres)
