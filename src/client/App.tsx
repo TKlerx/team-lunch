@@ -134,8 +134,8 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      <div className="relative z-0 flex min-h-screen flex-col">
+    <div className="relative h-screen overflow-hidden">
+      <div className="relative z-0 flex h-full min-h-0 flex-col">
         <Header
           nickname={nickname}
           onRename={updateNickname}
@@ -205,7 +205,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+            <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-y-auto">
               <Routes>
                 <Route
                   path="/"
