@@ -1,37 +1,14 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { withBasePath } from '../config.js';
-import type { OfficeLocation, OfficeWeekday } from '../../lib/types.js';
-
-type AuthMethod = 'entra' | 'local';
-
-type AdminConfigResponse = {
-  auth: {
-    authenticated: boolean;
-    isAdmin: boolean;
-    user: { username: string; method: AuthMethod } | null;
-    officeLocation: { id: string; key: string; name: string } | null;
-    officeLocations: OfficeLocation[];
-    pendingApprovals: Array<{ email: string; requestedAt: string }>;
-    users: Array<{
-      email: string;
-      approved: boolean;
-      blocked: boolean;
-      isAdmin: boolean;
-      officeLocationId: string | null;
-      officeLocationKey: string | null;
-      officeLocationName: string | null;
-      assignedOfficeLocationIds: string[];
-      assignedOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
-      requestedAt: string;
-      approvedAt: string | null;
-      blockedAt: string | null;
-      updatedAt: string;
-    }>;
-  };
-};
-
-const LOCAL_PASSWORD_MIN_LENGTH = 8;
-const LOCAL_PASSWORD_MAX_LENGTH = 200;
+import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import {
+  LOCAL_PASSWORD_MIN_LENGTH,
+  LOCAL_PASSWORD_MAX_LENGTH,
+  type AuthConfigResponse,
+  type OfficeLocation,
+  type OfficeWeekday,
+} from '../../lib/types.js';
 
 const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
   { value: 'monday', label: 'Mon' },
@@ -51,12 +28,12 @@ type OfficeSettingsDraft = {
   defaultFoodSelectionDurationMinutes: number;
 };
 
-async function fetchAdminConfig(): Promise<AdminConfigResponse> {
+async function fetchAdminConfig(): Promise<AuthConfigResponse> {
   const response = await fetch(withBasePath('/api/auth/config'), { credentials: 'include' });
   if (!response.ok) {
     throw new Error('Failed to load admin config');
   }
-  return response.json() as Promise<AdminConfigResponse>;
+  return response.json() as Promise<AuthConfigResponse>;
 }
 
 function getPreferredOfficeLocationId(
@@ -105,7 +82,7 @@ function getOfficeSettingsDrafts(
 }
 
 function getSelectedUserOfficeMemberships(
-  users: AdminConfigResponse['auth']['users'],
+  users: AuthConfigResponse['auth']['users'],
   current: Record<string, string[]>,
 ): Record<string, string[]> {
   return Object.fromEntries(
@@ -114,8 +91,9 @@ function getSelectedUserOfficeMemberships(
 }
 
 export default function Administration() {
+  const { setPendingApprovalCount } = useAdminOfficeContext();
   const [loading, setLoading] = useState(true);
-  const [config, setConfig] = useState<AdminConfigResponse['auth'] | null>(null);
+  const [config, setConfig] = useState<AuthConfigResponse['auth'] | null>(null);
   const [error, setError] = useState('');
   const [updatingApprovalEmail, setUpdatingApprovalEmail] = useState<string | null>(null);
   const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<string | null>(null);
@@ -154,8 +132,9 @@ export default function Administration() {
     })();
   }, []);
 
-  const applyConfig = (auth: AdminConfigResponse['auth']) => {
+  const applyConfig = (auth: AuthConfigResponse['auth']) => {
     setConfig(auth);
+    setPendingApprovalCount(auth.pendingApprovals.length);
     setNewLocalUserOfficeLocationId((current) =>
       getPreferredOfficeLocationId(auth.officeLocations, current),
     );
@@ -179,13 +158,21 @@ export default function Administration() {
     setSelectedUserOfficeMemberships((current) =>
       getSelectedUserOfficeMemberships(auth.users, current),
     );
-    setOfficeNameDrafts(getOfficeNameDrafts(auth.officeLocations));
+    setOfficeNameDrafts((current) =>
+      Object.fromEntries(
+        auth.officeLocations.map((l) => [l.id, l.id in current ? current[l.id] : l.name]),
+      ),
+    );
     setOfficeSettingsDrafts((current) => getOfficeSettingsDrafts(auth.officeLocations, current));
   };
 
   const refreshConfig = async () => {
-    const payload = await fetchAdminConfig();
-    applyConfig(payload.auth);
+    try {
+      const payload = await fetchAdminConfig();
+      applyConfig(payload.auth);
+    } catch {
+      // refresh failure is non-fatal; the mutation already succeeded
+    }
   };
 
   const localUserPasswordValidationError = useMemo(() => {
@@ -515,7 +502,10 @@ export default function Administration() {
     return (
       <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
         <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          Access denied.
+          <p>Access denied.</p>
+          <Link to="/" className="mt-2 inline-block text-blue-600 hover:underline">
+            ← Back to home
+          </Link>
         </div>
       </div>
     );

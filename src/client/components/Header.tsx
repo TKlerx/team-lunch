@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
 import pizzaLogo from '../../../assets/pizza-logo.png';
 import exampleCompanyLogoSmall from '../../../assets/example-company-logo-small.png';
 
@@ -121,6 +122,12 @@ export default function Header({
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
+  const {
+    canSwitchOfficeLocation,
+    officeLocations,
+    selectedOfficeLocationId,
+    setSelectedOfficeLocationId,
+  } = useAdminOfficeContext();
 
   const showAdminItem = isAdmin;
   const hasPendingApprovals = showAdminItem && pendingApprovalCount > 0;
@@ -191,6 +198,21 @@ export default function Header({
           <CartIcon />
           Shopping List
         </Link>
+
+        {canSwitchOfficeLocation && officeLocations.length > 1 && (
+          <select
+            aria-label="Office location"
+            value={selectedOfficeLocationId ?? ''}
+            onChange={(event) => setSelectedOfficeLocationId(event.target.value)}
+            className="rounded border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 focus:border-blue-500 focus:outline-none"
+          >
+            {officeLocations.map((office) => (
+              <option key={office.id} value={office.id}>
+                {office.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <button
           type="button"
