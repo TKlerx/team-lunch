@@ -6,25 +6,21 @@ import Header from '../../src/client/components/Header.js';
 
 function renderHeader(
   nickname: string | null = 'Alice',
-  onRename = vi.fn(),
   notificationsEnabled = true,
   onToggleNotifications = vi.fn(),
   onLogout?: () => void,
-  officeProps?: {
-    officeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
-    selectedOfficeLocationId: string;
-    onSelectOfficeLocation: (officeLocationId: string) => void;
-  },
+  isAdmin = false,
+  pendingApprovalCount = 0,
 ) {
   return render(
     <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Header
         nickname={nickname}
-        onRename={onRename}
         notificationsEnabled={notificationsEnabled}
         onToggleNotifications={onToggleNotifications}
         onLogout={onLogout}
-        {...officeProps}
+        isAdmin={isAdmin}
+        pendingApprovalCount={pendingApprovalCount}
       />
     </MemoryRouter>,
   );
@@ -52,54 +48,29 @@ describe('Header', () => {
     expect(link).toHaveAttribute('href', '/menus');
   });
 
+  it('shows "Shopping List" navigation link', () => {
+    renderHeader();
+    const link = screen.getByRole('link', { name: /shopping list/i });
+    expect(link).toHaveAttribute('href', '/shopping');
+  });
+
   it('shows notifications toggle with enabled state', () => {
-    renderHeader('Alice', vi.fn(), true);
+    renderHeader('Alice', true);
     expect(screen.getByRole('button', { name: /notifications: on/i })).toBeInTheDocument();
   });
 
   it('calls onToggleNotifications when clicking notifications toggle', async () => {
     const user = userEvent.setup();
     const onToggleNotifications = vi.fn();
-    renderHeader('Alice', vi.fn(), false, onToggleNotifications);
+    renderHeader('Alice', false, onToggleNotifications);
 
     await user.click(screen.getByRole('button', { name: /notifications: off/i }));
     expect(onToggleNotifications).toHaveBeenCalledTimes(1);
   });
 
-  it('shows logout button when onLogout is provided', () => {
-    renderHeader('Alice', vi.fn(), true, vi.fn(), vi.fn());
-    expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
-  });
-
-  it('calls onLogout when clicking logout button', async () => {
-    const user = userEvent.setup();
-    const onLogout = vi.fn();
-    renderHeader('Alice', vi.fn(), true, vi.fn(), onLogout);
-
-    await user.click(screen.getByRole('button', { name: /logout/i }));
-    expect(onLogout).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows an admin office selector and updates it', async () => {
-    const user = userEvent.setup();
-    const onSelectOfficeLocation = vi.fn();
-    renderHeader('Alice', vi.fn(), true, vi.fn(), undefined, {
-      officeLocations: [
-        { id: 'office-1', key: 'default', name: 'Default Office', isActive: true },
-        { id: 'office-2', key: 'berlin', name: 'Berlin', isActive: true },
-      ],
-      selectedOfficeLocationId: 'office-1',
-      onSelectOfficeLocation,
-    });
-
-    expect(screen.getByRole('combobox', { name: /office context/i })).toBeInTheDocument();
-    await user.selectOptions(screen.getByRole('combobox', { name: /office context/i }), 'office-2');
-    expect(onSelectOfficeLocation).toHaveBeenCalledWith('office-2');
-  });
-
   it('shows nickname button when nickname is set', () => {
     renderHeader('Alice');
-    expect(screen.getByRole('button', { name: 'Alice' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /alice/i })).toBeInTheDocument();
   });
 
   it('does not show nickname button when nickname is null', () => {
@@ -107,42 +78,80 @@ describe('Header', () => {
     expect(screen.queryByRole('button', { name: /alice/i })).not.toBeInTheDocument();
   });
 
-  it('opens rename modal when clicking nickname button', async () => {
+  it('opens account dropdown when clicking nickname button', async () => {
     const user = userEvent.setup();
     renderHeader('Alice');
 
-    await user.click(screen.getByRole('button', { name: 'Alice' }));
-
-    // Rename modal should appear
-    expect(screen.getByText('Rename')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /settings/i })).toBeInTheDocument();
   });
 
-  it('calls onRename and closes modal on submit', async () => {
-    const user = userEvent.setup();
-    const onRename = vi.fn();
-    renderHeader('Alice', onRename);
-
-    await user.click(screen.getByRole('button', { name: 'Alice' }));
-
-    // Clear and type new name
-    const input = screen.getByDisplayValue('Alice');
-    await user.clear(input);
-    await user.type(input, 'Bob');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
-
-    expect(onRename).toHaveBeenCalledWith('Bob');
-  });
-
-  it('closes rename modal on cancel', async () => {
+  it('Settings menu item links to /settings', async () => {
     const user = userEvent.setup();
     renderHeader('Alice');
 
-    await user.click(screen.getByRole('button', { name: 'Alice' }));
-    expect(screen.getByText('Rename')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /settings/i })).toHaveAttribute('href', '/settings');
+  });
 
-    await user.click(screen.getByRole('button', { name: 'Cancel' }));
-    // Modal should be gone
-    expect(screen.queryByText('Rename')).not.toBeInTheDocument();
+  it('shows logout button in dropdown when onLogout is provided', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice', true, vi.fn(), vi.fn());
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /logout/i })).toBeInTheDocument();
+  });
+
+  it('calls onLogout when clicking logout in dropdown', async () => {
+    const user = userEvent.setup();
+    const onLogout = vi.fn();
+    renderHeader('Alice', true, vi.fn(), onLogout);
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    await user.click(screen.getByRole('menuitem', { name: /logout/i }));
+    expect(onLogout).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not show logout button in dropdown when onLogout is not provided', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice');
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.queryByRole('menuitem', { name: /logout/i })).not.toBeInTheDocument();
+  });
+
+  it('shows Administration link in dropdown when isAdmin is true', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice', true, vi.fn(), undefined, true);
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /administration/i })).toBeInTheDocument();
+  });
+
+  it('Administration link in dropdown points to /admin', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice', true, vi.fn(), undefined, true);
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /administration/i })).toHaveAttribute('href', '/admin');
+  });
+
+  it('shows pending approval count badge in Administration menu item', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice', true, vi.fn(), undefined, true, 3);
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByLabelText(/3 pending approvals/i)).toBeInTheDocument();
+  });
+
+  it('closes dropdown when Escape is pressed', async () => {
+    const user = userEvent.setup();
+    renderHeader('Alice');
+
+    await user.click(screen.getByRole('button', { name: /alice/i }));
+    expect(screen.getByRole('menuitem', { name: /settings/i })).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('menuitem', { name: /settings/i })).not.toBeInTheDocument();
   });
 });

@@ -717,13 +717,31 @@ export default function FoodSelectionActiveView() {
           />
           </div>
           <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
-            <h3 className="text-sm font-semibold text-indigo-900">
-              Voted for menu but not ordered yet ({votersWithoutOrder.length})
-            </h3>
+            <h3 className="text-sm font-semibold text-indigo-900">Recommended next action</h3>
             {votersWithoutOrder.length === 0 ? (
-              <p className="mt-2 text-sm italic text-indigo-700">Everyone who voted has ordered.</p>
+              <div className="mt-2 space-y-2">
+                <p className="text-sm text-indigo-800">
+                  Everyone who voted has ordered. Click below when you have placed the real order.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void handleFinishNow();
+                  }}
+                  disabled={submitting}
+                  className="w-full rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  Click here when you place the order.
+                </button>
+              </div>
             ) : (
               <>
+                <h4 className="text-sm font-semibold text-indigo-900">
+                  Voted for menu but not ordered yet ({votersWithoutOrder.length})
+                </h4>
+                <p className="mt-1 text-xs text-indigo-800">
+                  CTA: remind these people personally, or use the reminder function below.
+                </p>
                 <ul className="mt-2 space-y-1">
                   {votersWithoutOrder.map((name) => (
                     <li key={name} className="text-sm text-indigo-900">
@@ -744,7 +762,11 @@ export default function FoodSelectionActiveView() {
                     {reminderMessage ? <p className="text-xs text-emerald-700">{reminderMessage}</p> : null}
                     {reminderError ? <p className="text-xs text-red-600">{reminderError}</p> : null}
                   </div>
-                ) : null}
+                ) : (
+                  <p className="mt-2 text-xs text-indigo-700">
+                    Personal reminders are available to everyone. Automatic reminder sending is admin-only.
+                  </p>
+                )}
               </>
             )}
           </div>

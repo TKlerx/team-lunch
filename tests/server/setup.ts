@@ -3,15 +3,38 @@
 import { execSync } from 'node:child_process';
 import net from 'node:net';
 
-if (typeof process.loadEnvFile === 'function') {
+function loadEnvFileIfPresent(file?: string): void {
+	if (typeof process.loadEnvFile !== 'function') {
+		return;
+	}
 	try {
-		process.loadEnvFile();
+		if (file) {
+			process.loadEnvFile(file);
+		} else {
+			process.loadEnvFile();
+		}
 	} catch (error) {
 		const nodeError = error as NodeJS.ErrnoException;
 		if (nodeError.code !== 'ENOENT') {
 			throw error;
 		}
 	}
+}
+
+// Optional test-only env overrides (e.g. TEST_DATABASE_URL) take precedence
+// over .env so the suite can target a dedicated test database.
+loadEnvFileIfPresent('.env.test');
+loadEnvFileIfPresent();
+
+// When a dedicated test database is configured (see docker-compose `db-test`),
+// route the whole suite at it instead of the dev/app DATABASE_URL. This keeps
+// tests fully isolated from real data. Falls back to DATABASE_URL when unset.
+// A dedicated test DB is authoritative: do NOT silently fall back to SQLite if
+// it is unreachable — fail loud so the misconfiguration is visible instead of
+// poisoning the run with a provider mismatch.
+if (process.env.TEST_DATABASE_URL?.trim()) {
+	process.env.DATABASE_URL = process.env.TEST_DATABASE_URL.trim();
+	process.env.FORCE_POSTGRES_TESTS = 'true';
 }
 
 function withTestDbTimeouts(databaseUrl: string): string {
@@ -187,6 +210,12 @@ if (process.env.DATABASE_URL) {
 if ((process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql') === 'postgresql' && process.env.DATABASE_URL) {
 	const postgresReachable = await canReachPostgres(process.env.DATABASE_URL);
 	if (!postgresReachable) {
+		if (process.env.FORCE_POSTGRES_TESTS === 'true') {
+			throw new Error(
+				`Server tests aborted: dedicated test database is unreachable (${process.env.DATABASE_URL}). ` +
+					'Start it with `pnpm db:test:up`, or unset TEST_DATABASE_URL to use the SQLite fallback.',
+			);
+		}
 		switchToSqliteServerTests();
 	}
 }

@@ -1708,7 +1708,7 @@
 ## Priority 74 - Multi-Office Support (Mar 2026)
 
 - [x] **74.1 Write multi-office product/technical spec** *(done)*
-  - Added [specs/multi-office.md](specs/multi-office.md) covering:
+  - Added [specs/old/multi-office.md](specs/old/multi-office.md) covering:
     - office-location entity
     - one office per regular user for phase 1
     - global-admin behavior
@@ -1966,7 +1966,7 @@
 ## Priority 82 - Auth Hardening (Mar 2026)
 
 - [x] **82.1 Write auth hardening spec** *(done)*
-  - Added [specs/auth-hardening.md](specs/auth-hardening.md)
+  - Added [specs/old/auth-hardening.md](specs/old/auth-hardening.md)
   - Scope is intentionally narrow:
     - keep the custom Fastify auth stack
     - harden Entra token validation
@@ -1998,3 +1998,41 @@
   - Updated `validate.ps1` to run `npm audit --omit=dev` alongside the other quality/security checks
   - This keeps the validation gate focused on production/runtime vulnerabilities while avoiding false pressure from dev-only advisories in tooling dependencies
   - Recorded the behavior in `AGENTS.md` for future contributors
+
+- [x] **83.3 Seed local e2e login user for browser coverage** *(done)*
+  - `scripts/e2e-server.mjs` now seeds a real DB-backed local admin user in the dedicated e2e database before starting the production server
+  - Playwright logs in through the normal local-auth UI using `E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD` defaults from `.env.test.example`
+  - This keeps e2e flows able to reach authenticated UI without adding a development auth-bypass route
+  - Validation:
+    - `pnpm test:e2e`
+
+---
+
+## Priority 84 - Workflow CTAs + User Documentation (Apr 2026)
+
+- [x] **84.1 Add phase-guiding CTAs and user guide** *(done)*
+  - Added an explicit "Recommended next action" card in `src/client/components/FoodSelectionActiveView.tsx` with branch-specific CTAs:
+    - missing winner-voters: remind personally or use reminder function
+    - all winner-voters ordered: `Click here when you place the order.`
+  - Wired the new CTA button to the existing "finish meal collection" action so it advances to the ordering phase
+  - Added client test coverage for CTA visibility and CTA-triggered completion
+  - Added `USER_DOCUMENTATION.md` with phase-by-phase workflow guidance and CTA mapping
+  - Linked the new user guide from `README.md`
+  - Validation (attempted in current workspace state):
+    - `npm run test:client -- tests/client/FoodSelectionActiveView.test.tsx tests/client/FoodSelectionOrderingView.test.tsx tests/client/FoodSelectionOvertimeView.test.tsx tests/client/FoodDeliveryView.test.tsx`
+    - `./validate.ps1` *(blocked by pre-existing npm audit findings and unavailable server test DB in this environment)*
+
+---
+
+## Priority 85 - Production Audit Remediation (Apr 2026)
+
+- [x] **85.1 Remediate npm audit (`--omit=dev`) findings** *(done)*
+  - Upgraded production dependencies:
+    - `fastify` to `^5.8.5` (fixes GHSA-247c-9743-5963)
+    - `@fastify/static` to `^9.1.3` (fixes GHSA-pr96-94w5-mx2h and GHSA-x428-ghpx-8j92)
+  - Refreshed lockfile and transitive resolution so production tree now resolves `defu@6.1.7` (fixes GHSA-737v-mqg7-c878)
+  - Discovery: `npm audit fix --omit=dev` can prune local dev dependencies from `node_modules`; run `npm install` before lint/tests afterward
+  - Validation:
+    - `npm audit --omit=dev` (0 vulnerabilities)
+    - `npm run typecheck`
+    - `npm run lint` (existing warning-only baseline)

@@ -2,10 +2,19 @@ node_modules/
 dist/
 .venv/
 .env
+.env.test
+.env.*.local
 *.tsbuildinfo
+# SQLite test-fallback artifacts (created by tests/server/setup.ts)
+*.sqlite
+*.sqlite-journal
 .DS_Store
 coverage/
 .prisma/
+# Playwright e2e artifacts
+test-results/
+playwright-report/
+playwright/.cache/
 src/server/generated/
 src/server/generated/sqlite-client/
 playwright-report/

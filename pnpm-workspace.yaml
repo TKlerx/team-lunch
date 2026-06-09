@@ -1,0 +1,22 @@
+# Approve postinstall build scripts for native deps (engines/binaries).
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@swc/core': true
+  esbuild: true
+  prisma: true
+  sharp: true
+
+# Dependency overrides (pnpm 11 reads these here, not from package.json).
+overrides:
+  effect: 3.21.0
+
+# Audit policy.
+# GHSA-w5hq-g745-h8pq: uuid v3/v5/v6 missing buffer bounds check when a buffer
+# is supplied. Reached only transitively via exceljs, which uses uuid v4
+# (random, no buffer arg), so the vulnerable code path is not exercised.
+# Forcing uuid>=11 breaks exceljs (it deep-imports uuid/v4, removed in v7+),
+# so we accept this advisory instead of upgrading.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-w5hq-g745-h8pq
