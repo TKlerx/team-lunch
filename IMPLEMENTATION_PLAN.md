@@ -1999,6 +1999,13 @@
   - This keeps the validation gate focused on production/runtime vulnerabilities while avoiding false pressure from dev-only advisories in tooling dependencies
   - Recorded the behavior in `AGENTS.md` for future contributors
 
+- [x] **83.3 Seed local e2e login user for browser coverage** *(done)*
+  - `scripts/e2e-server.mjs` now seeds a real DB-backed local admin user in the dedicated e2e database before starting the production server
+  - Playwright logs in through the normal local-auth UI using `E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD` defaults from `.env.test.example`
+  - This keeps e2e flows able to reach authenticated UI without adding a development auth-bypass route
+  - Validation:
+    - `pnpm test:e2e`
+
 ---
 
 ## Priority 84 - Workflow CTAs + User Documentation (Apr 2026)

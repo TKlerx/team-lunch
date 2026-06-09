@@ -29,15 +29,20 @@ if (!testDbUrl) {
 }
 
 const port = process.env.E2E_PORT || '4173';
+const e2eLoginEmail = process.env.E2E_LOGIN_EMAIL || 'e2e-user@team-lunch.test';
+const e2eLoginPassword = process.env.E2E_LOGIN_PASSWORD || 'E2ePassword!123';
 const env = {
   ...process.env,
   DATABASE_URL: testDbUrl,
   NODE_ENV: 'production',
   PORT: port,
+  AUTH_SESSION_SECRET:
+    process.env.AUTH_SESSION_SECRET || 'e2e-session-secret-12345678901234567890',
   // Keep e2e output focused; the connectivity monitor/scheduler add noise.
   DISABLE_DB_CONNECTIVITY_MONITOR: 'true',
   LOG_LEVEL: process.env.LOG_LEVEL || 'warn',
 };
+Object.assign(process.env, env);
 
 // Apply pending migrations to the dedicated test database before serving.
 const migrate = spawnSync(
@@ -48,6 +53,67 @@ const migrate = spawnSync(
 if (migrate.status !== 0) {
   console.error('e2e-server: prisma migrate deploy failed against the test database.');
   process.exit(migrate.status ?? 1);
+}
+
+async function seedE2eLocalUser() {
+  const [{ upsertLocalAuthUser }, { ensureDefaultOfficeLocation }, dbModule] = await Promise.all([
+    import('../dist/server/services/localAuth.js'),
+    import('../dist/server/services/officeLocation.js'),
+    import('../dist/server/db.js'),
+  ]);
+  const prisma = dbModule.default;
+  await prisma.shoppingListItem.deleteMany();
+  await prisma.foodOrder.deleteMany();
+  await prisma.foodSelection.deleteMany();
+  await prisma.pollExcludedMenu.deleteMany();
+  await prisma.pollVote.deleteMany();
+  await prisma.poll.deleteMany();
+  await prisma.menuItem.deleteMany();
+  await prisma.menu.deleteMany();
+  await prisma.userMenuDefaultPreference.deleteMany();
+  await prisma.authAccessUserOffice.deleteMany();
+  await prisma.authAccessUser.deleteMany();
+  await prisma.officeLocation.deleteMany();
+  await prisma.localAuthUser.deleteMany();
+  await prisma.userPreference.deleteMany();
+  await prisma.auditLog.deleteMany();
+
+  const office = await ensureDefaultOfficeLocation();
+  const localUser = await upsertLocalAuthUser(e2eLoginEmail, e2eLoginPassword);
+  const accessUser = await prisma.authAccessUser.upsert({
+    where: { email: localUser.email },
+    create: {
+      email: localUser.email,
+      approved: true,
+      isAdmin: true,
+      blocked: false,
+      officeLocationId: office.id,
+      approvedAt: new Date(),
+    },
+    update: {
+      approved: true,
+      isAdmin: true,
+      blocked: false,
+      officeLocationId: office.id,
+      approvedAt: new Date(),
+      blockedAt: null,
+      updatedAt: new Date(),
+    },
+    select: { id: true },
+  });
+  await prisma.authAccessUserOffice.createMany({
+    data: [{ authAccessUserId: accessUser.id, officeLocationId: office.id }],
+    skipDuplicates: true,
+  });
+  await prisma.$disconnect();
+}
+
+try {
+  await seedE2eLocalUser();
+} catch (error) {
+  console.error('e2e-server: failed to seed local e2e user.');
+  console.error(error);
+  process.exit(1);
 }
 
 // Start the built production server; Playwright waits on /api/health.

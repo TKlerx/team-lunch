@@ -89,6 +89,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - If host port `5433` is already occupied, set `DB_PORT` and update `DATABASE_URL` to match (for example `55433`); Docker Compose now maps Postgres via `${DB_PORT}:5432`.
 - Docker Compose now pins `postgres:18-alpine`; because the official PostgreSQL 18 image uses the newer `/var/lib/postgresql` volume layout, keep the named volume mounted at `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to preserve durable data initialization.
 - Poll and food-selection retention have been removed: records are kept indefinitely for analytics/recommender use.
+- Playwright e2e seeds a real local admin user into the dedicated test DB before booting the production server (`E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD`, defaults in `.env.test.example`) and logs in through the normal local-auth UI; no auth bypass route is required.
 
 ---
 
