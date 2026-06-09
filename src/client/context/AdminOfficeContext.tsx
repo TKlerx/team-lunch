@@ -25,6 +25,7 @@ interface AdminOfficeContextValue {
   selectedOfficeLocationId: string | null;
   canSwitchOfficeLocation: boolean;
   setSelectedOfficeLocationId: (officeLocationId: string) => void;
+  pendingApprovalCount: number;
 }
 
 interface AdminOfficeProviderProps {
@@ -32,6 +33,7 @@ interface AdminOfficeProviderProps {
   isAdmin: boolean;
   officeLocationId: string | null;
   officeLocations: AdminOfficeLocationOption[];
+  pendingApprovalCount?: number;
   children: ReactNode;
 }
 
@@ -43,6 +45,7 @@ const AdminOfficeContext = createContext<AdminOfficeContextValue>({
   setSelectedOfficeLocationId: () => {
     // noop default
   },
+  pendingApprovalCount: 0,
 });
 
 function resolvePreferredOfficeLocationId(
@@ -74,6 +77,7 @@ export function AdminOfficeProvider({
   isAdmin,
   officeLocationId,
   officeLocations,
+  pendingApprovalCount = 0,
   children,
 }: AdminOfficeProviderProps) {
   const activeOfficeLocations = useMemo(
@@ -122,8 +126,15 @@ export function AdminOfficeProvider({
       selectedOfficeLocationId,
       canSwitchOfficeLocation: isAdmin || activeOfficeLocations.length > 1,
       setSelectedOfficeLocationId,
+      pendingApprovalCount,
     }),
-    [activeOfficeLocations, isAdmin, selectedOfficeLocationId, setSelectedOfficeLocationId],
+    [
+      activeOfficeLocations,
+      isAdmin,
+      selectedOfficeLocationId,
+      setSelectedOfficeLocationId,
+      pendingApprovalCount,
+    ],
   );
 
   return <AdminOfficeContext.Provider value={value}>{children}</AdminOfficeContext.Provider>;

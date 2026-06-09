@@ -8,6 +8,8 @@ import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.
 import MainView from './pages/MainView.js';
 import ManageMenus from './pages/ManageMenus.js';
 import ShoppingList from './pages/ShoppingList.js';
+import Settings from './pages/Settings.js';
+import Administration from './pages/Administration.js';
 import { useAppDispatch, useAppState } from './context/AppContext.js';
 import { useAdminOfficeContext } from './context/AdminOfficeContext.js';
 import { useSSE } from './hooks/useSSE.js';
@@ -27,10 +29,9 @@ export default function App() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
-    canSwitchOfficeLocation,
-    officeLocations,
     selectedOfficeLocationId,
-    setSelectedOfficeLocationId,
+    isAdmin,
+    pendingApprovalCount,
   } = useAdminOfficeContext();
   const {
     completedFoodSelectionsHistory,
@@ -138,14 +139,11 @@ export default function App() {
       <div className="relative z-0 flex h-full min-h-0 flex-col">
         <Header
           nickname={nickname}
-          onRename={updateNickname}
-          allowRename={!externalAuthEnabled}
           notificationsEnabled={notificationsEnabled}
           onToggleNotifications={toggleNotificationsEnabled}
           onLogout={externalAuthEnabled ? handleLogout : undefined}
-          officeLocations={canSwitchOfficeLocation ? officeLocations : []}
-          selectedOfficeLocationId={selectedOfficeLocationId}
-          onSelectOfficeLocation={setSelectedOfficeLocationId}
+          isAdmin={isAdmin}
+          pendingApprovalCount={pendingApprovalCount}
         />
 
         {/* Full-screen modal on first visit (no nickname yet) */}
@@ -222,6 +220,17 @@ export default function App() {
                 />
                 <Route path="/menus" element={<ManageMenus />} />
                 <Route path="/shopping" element={<ShoppingList />} />
+                <Route
+                  path="/settings"
+                  element={
+                    <Settings
+                      nickname={nickname}
+                      onRename={updateNickname}
+                      allowRename={!externalAuthEnabled}
+                    />
+                  }
+                />
+                <Route path="/admin" element={<Administration />} />
               </Routes>
             </div>
           </div>
