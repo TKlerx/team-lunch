@@ -93,7 +93,7 @@ export default function AuthGate({ children }: AuthGateProps) {
       }
       localStorage.setItem(NICKNAME_STORAGE_KEY, payload.username);
       localStorage.setItem(AUTH_METHOD_STORAGE_KEY, payload.method ?? 'local');
-      window.location.reload();
+      window.location.href = withBasePath('/');
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Login failed');
     } finally {

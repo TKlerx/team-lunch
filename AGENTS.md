@@ -27,11 +27,12 @@ User can steer between tasks or say "continue" to proceed to the next item.
 ./validate.ps1 e2e          # Playwright E2E only
 ./validate.ps1 quality      # lint + duplication + semgrep
 ./validate.ps1 commit       # validate all, then git commit + push
-npm run duplication         # jscpd copy-paste detection (src/, 5% threshold)
-npm run semgrep             # Semgrep auto ruleset security scan
-npm run test:e2e           # Playwright E2E tests (skips in validate when no e2e specs exist)
-npm run ports:check         # interactive port blocker check/terminate for 3000 + 5173
-npm run ports:check:ci      # non-interactive port blocker report (no termination)
+pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold)
+pnpm semgrep                # Semgrep auto ruleset security scan
+pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
+pnpm db:test:up             # start the dedicated test Postgres (db-test) for server/e2e tests
+pnpm ports:check            # interactive port blocker check/terminate for 3000 + 5173
+pnpm ports:check:ci         # non-interactive port blocker report (no termination)
 ```
 
 ### Key Rules
@@ -83,10 +84,12 @@ npm run ports:check:ci      # non-interactive port blocker report (no terminatio
 - Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit runs `./validate.ps1 all` and pre-push runs `./validate.ps1 full`.
 - Semgrep runs from a project-local Python venv (`.venv/Scripts/semgrep`); run `./setup.ps1` to create the venv and install semgrep alongside npm dependencies.
 - `validate.ps1` now runs `npm audit --omit=dev`, so the dependency gate tracks production/runtime vulnerabilities without failing on dev-only tooling advisories such as `sharp-cli`.
+- Running `npm audit fix --omit=dev` can prune dev dependencies from local `node_modules`; run `npm install` afterward before `npm run lint`/`npm test` to restore full tooling.
 - Server test setup must load `.env` before rewriting `DATABASE_URL` to the test schema; otherwise runtime env loading in app code can make tests hit the wrong schema.
 - If host port `5433` is already occupied, set `DB_PORT` and update `DATABASE_URL` to match (for example `55433`); Docker Compose now maps Postgres via `${DB_PORT}:5432`.
 - Docker Compose now pins `postgres:18-alpine`; because the official PostgreSQL 18 image uses the newer `/var/lib/postgresql` volume layout, keep the named volume mounted at `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to preserve durable data initialization.
 - Poll and food-selection retention have been removed: records are kept indefinitely for analytics/recommender use.
+- Playwright e2e seeds a real local admin user into the dedicated test DB before booting the production server (`E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD`, defaults in `.env.test.example`) and logs in through the normal local-auth UI; no auth bypass route is required.
 
 ---
 
@@ -121,13 +124,13 @@ team-lunch/
 ## Build & Run
 
 ```bash
-npm install                        # install all dependencies
-npx prisma generate                # regenerate Prisma client after schema changes
-npx prisma migrate dev             # apply pending DB migrations (dev only)
-npm run dev:server                 # start backend with hot-reload (tsx watch)
-npm run dev:client                 # start Vite dev server for frontend
-npm run build                      # production build (tsc + vite build → dist/)
-npm start                          # run production server (serves static client from dist/)
+pnpm install                       # install all dependencies (pnpm — see packageManager)
+pnpm exec prisma generate          # regenerate Prisma client after schema changes
+pnpm exec prisma migrate dev       # apply pending DB migrations (dev only)
+pnpm dev:server                    # start backend with hot-reload (tsx watch)
+pnpm dev:client                    # start Vite dev server for frontend
+pnpm build                         # production build (tsc + vite build → dist/)
+pnpm start                         # run production server (serves static client from dist/)
 docker compose up --build          # full stack in Docker (preferred for production)
 ```
 
@@ -136,17 +139,58 @@ docker compose up --build          # full stack in Docker (preferred for product
 Run ALL of these after any implementation. Fix every failure before committing.
 
 ```bash
-npm run typecheck      # tsc --noEmit across server + client + lib
-npm run lint           # ESLint for .ts and .tsx files
-npm test               # vitest run — all tests
-npm run test:server    # vitest run --project server (unit + integration)
-npm run test:client    # vitest run --project client (component + hook tests)
+pnpm typecheck         # tsc --noEmit across server + client + lib
+pnpm lint              # ESLint for .ts and .tsx files
+pnpm test              # vitest run — all tests
+pnpm test:server       # vitest run --project server (unit + integration)
+pnpm test:client       # vitest run --project client (component + hook tests)
 ```
 
 Full one-liner (same as CI):
 ```bash
-npm run validate       # runs ./validate.ps1 all (typecheck + lint + duplication + semgrep + test + audit + continuity)
+pnpm validate          # runs ./validate.ps1 all (typecheck + lint + duplication + semgrep + test + audit + continuity)
 ```
+
+## Test Database (dedicated Postgres)
+
+Server integration tests and e2e run against a **dedicated, ephemeral Postgres
+database**, isolated from the dev/app DB so tests never touch real data.
+
+- Defined as the `db-test` service in `docker-compose.yml` (compose profile
+  `test`, no named volume → data discarded on teardown).
+- Tests pick it up via `TEST_DATABASE_URL`. When that var is set, the whole
+  suite targets it (see `tests/server/setup.ts`); otherwise it falls back to a
+  `TEST_DATABASE_SCHEMA` schema inside `DATABASE_URL`, then to SQLite when
+  Postgres is unreachable.
+- Teammates opt in by copying the committed template:
+  `cp .env.test.example .env.test`. `.env.test` is gitignored; the suite then
+  reads `TEST_DATABASE_URL` from it. Host port via `TEST_DB_PORT` (default
+  `55434`). Skip the copy to use the `DATABASE_URL` / SQLite fallback.
+- Caveat: with `.env.test` present, the dedicated DB is authoritative — the
+  suite will NOT silently fall back to SQLite. The git hooks run the suite, so
+  `pnpm db:test:up` must be running before you commit/push.
+
+```bash
+cp .env.test.example .env.test   # one-time opt-in (gitignored)
+pnpm db:test:up        # start the dedicated test Postgres (docker compose db-test, waits healthy)
+pnpm test              # runs against TEST_DATABASE_URL when set in .env.test / env
+pnpm exec playwright install chromium   # one-time per machine/CI
+pnpm test:e2e          # Playwright e2e against the same test DB
+pnpm db:test:down      # stop + remove the test DB container (discards data)
+```
+
+The migration/seed of the server test schema is automatic in
+`tests/server/setup.ts` (`prisma migrate deploy`); the suite refuses to run
+against schema `public` unless `ALLOW_DANGEROUS_TEST_SCHEMA=true`.
+
+**E2E (Playwright)**: `playwright.config.ts` has a `webServer` that runs
+`pnpm build` then `scripts/e2e-server.mjs` — which migrates the dedicated test
+DB and boots the **production** server (`NODE_ENV=production`, serving
+`dist/client`) on `E2E_PORT` (default `4173`). It requires `TEST_DATABASE_URL`
+(via `.env.test`) and `pnpm db:test:up`. Set `PLAYWRIGHT_BASE_URL` to point at an
+already-running server instead (CI/remote). Note: `pnpm build` now also copies
+the Prisma client into `dist` (`scripts/copy-prisma-client.mjs`), since it's
+generated to `src/server/generated/client` (explicit output for pnpm).
 
 ## Test Coverage Requirements
 

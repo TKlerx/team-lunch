@@ -10,6 +10,10 @@ The app has three main phases:
 
 Everything stays synced across connected browsers through Server-Sent Events (SSE).
 
+## End-User Guide
+
+- See [USER_DOCUMENTATION.md](USER_DOCUMENTATION.md) for the user workflow and phase-by-phase CTAs.
+
 ## What It Includes
 
 - Real-time poll voting
