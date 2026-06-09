@@ -19,7 +19,8 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   } = useAdminOfficeContext();
 
   const [nicknameDraft, setNicknameDraft] = useState(nickname ?? '');
-  const [nicknameSaved, setNicknameSaved] = useState(false);
+  const [nicknameTouched, setNicknameTouched] = useState(false);
+  const [savedNickname, setSavedNickname] = useState<string | null>(null);
 
   const trimmedNickname = nicknameDraft.trim();
   const nicknameError =
@@ -36,7 +37,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
       return;
     }
     onRename(trimmedNickname);
-    setNicknameSaved(true);
+    setSavedNickname(trimmedNickname);
   };
 
   const selectedOfficeName =
@@ -64,15 +65,16 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                   value={nicknameDraft}
                   onChange={(event) => {
                     setNicknameDraft(event.target.value);
-                    setNicknameSaved(false);
+                    setNicknameTouched(true);
+                    setSavedNickname(null);
                   }}
                   maxLength={NICKNAME_MAX_LENGTH}
                   className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
                 />
-                {nicknameError && trimmedNickname.length > 0 && (
+                {nicknameError && nicknameTouched && (
                   <p className="mt-1 text-xs text-red-600">{nicknameError}</p>
                 )}
-                {nicknameSaved && !nicknameError && (
+                {savedNickname !== null && trimmedNickname === savedNickname && (
                   <p className="mt-1 text-xs text-emerald-600">Nickname saved.</p>
                 )}
               </div>

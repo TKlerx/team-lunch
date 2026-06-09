@@ -1,28 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { withBasePath } from '../config.js';
 import { AdminOfficeProvider } from '../context/AdminOfficeContext.js';
-import type { OfficeLocation } from '../../lib/types.js';
-
-type AuthMethod = 'entra' | 'local';
-
-type AuthConfigResponse = {
-  auth: {
-    entraEnabled: boolean;
-    localEnabled: boolean;
-    authenticated: boolean;
-    warning?: string;
-    user: { username: string; method: AuthMethod } | null;
-    officeLocation: { id: string; key: string; name: string } | null;
-    officeLocations: OfficeLocation[];
-    accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
-    approvalRequired: boolean;
-    approved: boolean;
-    blocked: boolean;
-    isAdmin: boolean;
-    role: 'admin' | 'user' | null;
-    pendingApprovals: Array<{ email: string; requestedAt: string }>;
-  };
-};
+import type { AuthConfigResponse, AuthMethod } from '../../lib/types.js';
 
 interface AuthGateProps {
   children: ReactNode;

@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from './components/Header.js';
 import NicknameModal from './components/NicknameModal.js';
 import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
@@ -33,6 +33,14 @@ export default function App() {
     isAdmin,
     pendingApprovalCount,
   } = useAdminOfficeContext();
+
+  const autoOpenedAdmin = useRef(false);
+  useEffect(() => {
+    if (!autoOpenedAdmin.current && isAdmin && pendingApprovalCount > 0) {
+      autoOpenedAdmin.current = true;
+      navigate('/admin');
+    }
+  }, [isAdmin, pendingApprovalCount, navigate]);
   const {
     completedFoodSelectionsHistory,
     activePoll,
