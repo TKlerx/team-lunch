@@ -10,3 +10,5 @@ src/server/generated/
 src/server/generated/sqlite-client/
 playwright-report/
 test-results/
+graphify-out/
+.claude/settings.local.json
