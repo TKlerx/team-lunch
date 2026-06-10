@@ -2008,7 +2008,9 @@
 
 - [x] **83.4 Add Docker Compose deploy helper** *(done)*
   - Added `scripts/deploy.sh` and `pnpm deploy`, modeled after the resource-planning deploy flow
-  - The script validates compose config, builds the app image, waits for the DB, runs `prisma migrate deploy`, and restarts `app`
+  - The script validates compose volumes, builds app + migrate images, waits for the DB, runs data safety checks, creates a PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again
+  - Added `scripts/backup-postgres.sh`, `scripts/prisma-production-data-check.mjs`, and `scripts/prisma-predeploy-check.mjs`
+  - Discovery: deploy-time Prisma CLI checks live in the dedicated `migrate` build target instead of the lean runtime app image; use `ALLOW_EMPTY_DATABASE_DEPLOY=true` only for intentional fresh bootstraps
 
 ---
 

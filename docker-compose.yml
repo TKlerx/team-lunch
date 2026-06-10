@@ -41,7 +41,12 @@ services:
       retries: 10
 
   migrate:
-    image: team-lunch:latest
+    image: team-lunch-migrate:latest
+    build:
+      context: .
+      target: builder
+      args:
+        VITE_BASE_PATH: "${VITE_BASE_PATH:-/}"
     restart: "no"
     environment:
       DATABASE_URL: "postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public"

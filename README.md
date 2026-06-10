@@ -119,9 +119,15 @@ For a production-style deploy, configure `.env` and run:
 pnpm deploy
 ```
 
-This runs `scripts/deploy.sh`, which validates the compose config, builds the
-app image, starts the database, runs `prisma migrate deploy`, and restarts the
-app container.
+This runs `scripts/deploy.sh`, which prints build metadata, lists Compose data
+volumes, builds the app and migrate images, starts the database, verifies the
+target does not look like the wrong/empty database, creates a PostgreSQL backup,
+runs Prisma pre-deploy verification, applies migrations, restarts the app, and
+checks the database again.
+
+Backups are written to `backups/postgres/` by default and pruned by count
+(`BACKUP_KEEP_COUNT`, default `5`) and age (`KEEP_DAYS`, default `90`). For an
+intentional fresh bootstrap, set `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
 
 ## First-Time Setup
 

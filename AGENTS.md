@@ -58,7 +58,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Backend startup now fails fast when both `VITE_BASE_PATH` and `BASE_PATH` are set but do not match.
 - For custom server ports (for example `PORT=3830`), Vite proxy and `ports:check` now follow env vars (`PORT` and optional `VITE_PORT`) instead of fixed `3000/5173`.
 - For local backend testing without Postgres, use `npm run dev:server:sqlite` (or `npm run test:server:sqlite`); this uses `DB_PROVIDER=sqlite` and `prisma/schema.sqlite.prisma`.
-- Docker Compose now runs a dedicated `migrate` service (`npx prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
+- Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
 - When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync `team_lunch_nickname` from the Entra username (rename is disabled).
 - Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured.
 - Entra redirect/login configuration is backend env-driven: set `APP_PUBLIC_URL` and `BASE_PATH` to derive callback URI automatically (`${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`), with optional explicit override via `ENTRA_REDIRECT_URI`.
@@ -90,7 +90,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Docker Compose now pins `postgres:18-alpine`; because the official PostgreSQL 18 image uses the newer `/var/lib/postgresql` volume layout, keep the named volume mounted at `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to preserve durable data initialization.
 - Poll and food-selection retention have been removed: records are kept indefinitely for analytics/recommender use.
 - Playwright e2e seeds a real local admin user into the dedicated test DB before booting the production server (`E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD`, defaults in `.env.test.example`) and logs in through the normal local-auth UI; no auth bypass route is required.
-- Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it validates compose config, builds the app image, starts the DB, runs `prisma migrate deploy` via the `migrate` service, then restarts `app`.
+- Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it prints build metadata, lists Compose data volumes, builds app + migrate images, starts the DB, runs production data safety checks, creates a pre-deploy PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again. For intentional fresh installs, use `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
 
 ---
 
