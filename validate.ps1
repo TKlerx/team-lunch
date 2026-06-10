@@ -240,7 +240,7 @@ function Invoke-ContinuityValidation {
 function Invoke-TrivyImageScan {
     Write-Step "Container image scan (Trivy)"
 
-    $defaultTrivyImage = "aquasec/trivy@sha256:c0ed528623baf6e250e2225010e5fbb4b91f6983595dafc1beb81ff686ba4734"
+    $defaultTrivyImage = "aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500"
     $trivyImage = if ($env:TRIVY_IMAGE) { $env:TRIVY_IMAGE } else { $defaultTrivyImage }
     $scanImage = if ($env:TRIVY_SCAN_IMAGE) { $env:TRIVY_SCAN_IMAGE } else { "team-lunch:trivy-scan" }
     $viteBasePath = if ($env:VITE_BASE_PATH) { $env:VITE_BASE_PATH } else { "/" }

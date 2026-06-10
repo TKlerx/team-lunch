@@ -2001,7 +2001,7 @@
 
 - [x] **83.2a Add pinned Trivy image scan to full validation** *(done)*
   - `./validate.ps1 full` now builds `team-lunch:trivy-scan` and scans it for HIGH/CRITICAL vulnerabilities
-  - The scanner uses the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:c0ed528623baf6e250e2225010e5fbb4b91f6983595dafc1beb81ff686ba4734`, Trivy `0.67.1` manifest list), with `TRIVY_IMAGE` available only as an intentional override
+  - The scanner uses the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500`, Trivy `0.71.0` manifest list), with `TRIVY_IMAGE` available only as an intentional override
 
 - [x] **83.3 Seed local e2e login user for browser coverage** *(done)*
   - `scripts/e2e-server.mjs` now seeds a real DB-backed local admin user in the dedicated e2e database before starting the production server
