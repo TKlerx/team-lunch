@@ -129,6 +129,19 @@ Backups are written to `backups/postgres/` by default and pruned by count
 (`BACKUP_KEEP_COUNT`, default `5`) and age (`KEEP_DAYS`, default `90`). For an
 intentional fresh bootstrap, set `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
 
+Existing deployments that were initialized before the app was renamed may still
+use the old `paiqo` database and PostgreSQL 16 data directory. Keep those values
+in `.env` until you do a dump/restore major-version upgrade:
+
+```env
+POSTGRES_IMAGE="postgres:16-alpine"
+POSTGRES_USER="paiqo"
+POSTGRES_PASSWORD="paiqo"
+POSTGRES_DB="paiqo"
+POSTGRES_PGDATA="/var/lib/postgresql"
+COMPOSE_DATABASE_URL="postgresql://paiqo:paiqo@db:5432/paiqo?schema=public"
+```
+
 ## First-Time Setup
 
 ### Minimal Local Setup

@@ -2015,6 +2015,7 @@
   - The script validates compose volumes, builds app + migrate images, waits for the DB, runs data safety checks, creates a PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again
   - Added `scripts/backup-postgres.sh`, `scripts/prisma-production-data-check.mjs`, and `scripts/prisma-predeploy-check.mjs`
   - Discovery: deploy-time Prisma CLI checks live in the dedicated `migrate` build target instead of the lean runtime app image; use `ALLOW_EMPTY_DATABASE_DEPLOY=true` only for intentional fresh bootstraps
+  - Updated Docker Compose and deploy script so production DB image/version, credentials, PGDATA, backup user/database, and in-container `DATABASE_URL` can be driven from `.env`; legacy Paiqo/Postgres 16 volumes are supported without editing tracked compose files
 
 ---
 
