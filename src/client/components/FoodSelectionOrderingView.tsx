@@ -418,7 +418,7 @@ export default function FoodSelectionOrderingView() {
                           type="button"
                           onClick={() => void handlePlaceFallbackOrder(candidate)}
                           disabled={placingFallbackFor === candidate.nickname || submitting}
-                          className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:opacity-50"
+                          className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
                         >
                           Place default meal
                         </button>

@@ -684,7 +684,7 @@ export default function FoodSelectionActiveView() {
               type="button"
               onClick={() => void handleSavePreferences()}
               disabled={preferencesLoading || preferencesSaving}
-              className="rounded bg-warning-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded bg-warning-solid px-3 py-1.5 text-sm font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
             >
               Save alerts
             </button>

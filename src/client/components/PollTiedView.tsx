@@ -131,7 +131,7 @@ export default function PollTiedView() {
           type="button"
           onClick={() => void handleRandomWinner()}
           disabled={submitting}
-          className="w-full rounded bg-warning-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="w-full rounded bg-warning-solid px-4 py-2 text-sm font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
         >
           Pick randomly
         </button>

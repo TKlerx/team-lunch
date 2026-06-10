@@ -140,7 +140,7 @@ function DashboardInsights({
                   <button
                     type="button"
                     onClick={() => onOpenHistorySelection?.(selection.selectionId)}
-                    className="rounded-lg bg-warning-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90"
+                    className="rounded-lg bg-warning-solid px-3 py-2 text-sm font-medium text-warning-on hover:opacity-90"
                   >
                     Rate now
                   </button>

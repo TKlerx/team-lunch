@@ -35,15 +35,16 @@
   --color-danger: 252 165 165; /* red-300 */
   --color-danger-soft: 254 242 242; /* red-50 */
   --color-danger-fg: 185 28 28; /* red-700 */
-  --color-danger-solid: 239 68 68; /* red-500 */
+  --color-danger-solid: 220 38 38; /* red-600 — white text ≥ AA 4.5 */
   --color-danger-on: 255 255 255; /* white */
 
-  /* Solid status fills (filled action buttons). Same in both themes — readable
-   * with white text on light and dark surfaces — so no `.dark` override. */
-  --color-success-solid: 5 150 105; /* emerald-600 */
+  /* Solid status fills (filled action buttons). Same in both themes — chosen so
+   * the `-on` text clears WCAG AA (4.5) — so no `.dark` override.
+   * Amber uses dark text (white on amber never reaches 4.5). */
+  --color-success-solid: 4 120 87; /* emerald-700 */
   --color-success-on: 255 255 255; /* white */
-  --color-warning-solid: 217 119 6; /* amber-600 */
-  --color-warning-on: 255 255 255; /* white */
+  --color-warning-solid: 245 158 11; /* amber-500 */
+  --color-warning-on: 17 24 39; /* gray-900 — dark text on amber */
 
   color-scheme: light;
 }
@@ -58,7 +59,7 @@
   --color-accent: 96 165 250; /* blue-400 */
   --color-accent-fg: 147 197 253; /* blue-300 */
   --color-accent-soft: 30 58 138; /* blue-900 */
-  --color-accent-solid: 59 130 246; /* blue-500 */
+  --color-accent-solid: 37 99 235; /* blue-600 — white text ≥ AA 4.5 */
   --color-accent-on: 255 255 255; /* white */
 
   --color-success: 4 120 87; /* emerald-700 */
