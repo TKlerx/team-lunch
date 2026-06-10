@@ -245,6 +245,11 @@ Useful validation modes:
 ./validate.ps1 full
 ```
 
+`./validate.ps1 full` builds a local `team-lunch:trivy-scan` image and scans it
+with the official Trivy container image pinned by digest. Override the scanner
+image with `TRIVY_IMAGE` only when intentionally updating the pinned scanner, and
+override the scan target with `TRIVY_SCAN_IMAGE` if needed.
+
 ## Authentication Modes
 
 ### Nickname-only
