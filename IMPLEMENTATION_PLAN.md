@@ -2006,6 +2006,10 @@
   - Validation:
     - `pnpm test:e2e`
 
+- [x] **83.4 Add Docker Compose deploy helper** *(done)*
+  - Added `scripts/deploy.sh` and `pnpm deploy`, modeled after the resource-planning deploy flow
+  - The script validates compose config, builds the app image, waits for the DB, runs `prisma migrate deploy`, and restarts `app`
+
 ---
 
 ## Priority 84 - Workflow CTAs + User Documentation (Apr 2026)
