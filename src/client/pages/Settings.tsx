@@ -1,5 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import { Card } from '../components/ui/Card.js';
+import { Section } from '../components/ui/Section.js';
+import { Input } from '../components/ui/Input.js';
+import { Select } from '../components/ui/Select.js';
+import { Button } from '../components/ui/Button.js';
 
 interface SettingsProps {
   nickname: string | null;
@@ -45,22 +50,21 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
 
   return (
     <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-        <p className="mt-2 text-sm text-gray-600">
+      <Card className="p-6">
+        <h1 className="text-2xl font-semibold text-fg">Settings</h1>
+        <p className="mt-2 text-sm text-fg-muted">
           Manage your personal preferences for Team Lunch.
         </p>
 
         {allowRename && (
-          <section className="mt-6 border-t border-gray-100 pt-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Nickname</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              This is the name shown next to your votes and orders.
-            </p>
-            <form className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start" onSubmit={handleNicknameSubmit}>
+          <Section
+            title="Nickname"
+            description="This is the name shown next to your votes and orders."
+            className="mt-6"
+          >
+            <form className="flex flex-col gap-3 sm:flex-row sm:items-start" onSubmit={handleNicknameSubmit}>
               <div className="flex-1">
-                <input
-                  type="text"
+                <Input
                   aria-label="Nickname"
                   value={nicknameDraft}
                   onChange={(event) => {
@@ -69,51 +73,46 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                     setSavedNickname(null);
                   }}
                   maxLength={NICKNAME_MAX_LENGTH}
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none"
                 />
                 {nicknameError && nicknameTouched && (
-                  <p className="mt-1 text-xs text-red-600">{nicknameError}</p>
+                  <p className="mt-1 text-xs text-danger-fg">{nicknameError}</p>
                 )}
                 {savedNickname !== null && trimmedNickname === savedNickname && (
-                  <p className="mt-1 text-xs text-emerald-600">Nickname saved.</p>
+                  <p className="mt-1 text-xs text-success-fg">Nickname saved.</p>
                 )}
               </div>
-              <button
-                type="submit"
-                disabled={!!nicknameError || nicknameUnchanged}
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
+              <Button type="submit" disabled={!!nicknameError || nicknameUnchanged}>
                 Save
-              </button>
+              </Button>
             </form>
-          </section>
+          </Section>
         )}
 
-        <section className="mt-6 border-t border-gray-100 pt-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Office</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            The office location used for polls, menus, and orders.
-          </p>
+        <Section
+          title="Office"
+          description="The office location used for polls, menus, and orders."
+          className="mt-6"
+        >
           {canSwitchOfficeLocation && officeLocations.length > 0 ? (
-            <select
+            <Select
               aria-label="Office location"
               value={selectedOfficeLocationId ?? ''}
               onChange={(event) => setSelectedOfficeLocationId(event.target.value)}
-              className="mt-3 w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none sm:w-64"
+              className="w-full sm:w-64"
             >
               {officeLocations.map((officeLocation) => (
                 <option key={officeLocation.id} value={officeLocation.id}>
                   {officeLocation.name}
                 </option>
               ))}
-            </select>
+            </Select>
           ) : (
-            <p className="mt-3 text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-fg">
               {selectedOfficeName ?? 'No office assigned.'}
             </p>
           )}
-        </section>
-      </div>
+        </Section>
+      </Card>
     </div>
   );
 }

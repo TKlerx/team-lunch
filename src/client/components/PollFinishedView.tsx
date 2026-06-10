@@ -52,25 +52,25 @@ export default function PollFinishedView() {
 
   return (
     <div className="flex min-h-0 flex-1 items-start justify-center p-4">
-      <div className="w-full max-w-md rounded-lg border border-green-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-1 text-center text-lg font-semibold text-green-700">
+      <div className="w-full max-w-md rounded-lg border border-success bg-surface p-6 shadow-sm">
+        <h2 className="mb-1 text-center text-lg font-semibold text-success-fg">
           Cuisine Poll finished!
         </h2>
 
         {poll.winnerMenuName && (
           <div className="mb-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">{poll.winnerMenuName}</p>
+            <p className="text-2xl font-bold text-fg">{poll.winnerMenuName}</p>
             {poll.winnerSelectedRandomly && (
-              <p className="text-sm text-amber-600">chosen randomly from a tie</p>
+              <p className="text-sm text-warning-fg">chosen randomly from a tie</p>
             )}
             {poll.endedPrematurely && (
-              <p className="text-sm text-blue-600">finished early by user confirmation</p>
+              <p className="text-sm text-accent">finished early by user confirmation</p>
             )}
           </div>
         )}
 
         {!hasVotes && (
-          <div className="mb-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          <div className="mb-4 rounded border border-warning bg-warning-soft p-3 text-sm text-warning-fg">
             No votes were submitted before the timer expired. Phase 2 cannot start. Please start a
             new poll.
           </div>
@@ -78,7 +78,7 @@ export default function PollFinishedView() {
 
         {menuEntries.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
               Final votes
             </h3>
             <div className="mt-1 max-h-[45vh] space-y-1 overflow-y-auto pr-1">
@@ -87,8 +87,8 @@ export default function PollFinishedView() {
                   key={entry.menuId}
                   className={`flex items-center justify-between rounded px-3 py-1 text-sm ${
                     entry.menuId === poll.winnerMenuId
-                      ? 'bg-green-50 font-medium text-green-800'
-                      : 'text-gray-600'
+                      ? 'bg-success-soft font-medium text-success-fg'
+                      : 'text-fg-muted'
                   }`}
                 >
                   <span>{entry.name}</span>
@@ -99,11 +99,11 @@ export default function PollFinishedView() {
           </div>
         )}
 
-        {error && <p className="mb-4 text-center text-sm text-red-600">{error}</p>}
+        {error && <p className="mb-4 text-center text-sm text-danger-fg">{error}</p>}
 
         {hasVotes && (
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Start food selection</label>
+            <label className="block text-sm font-medium text-fg">Start food selection</label>
             <MinutesActionDropdown
               triggerLabel={submitting ? 'Starting...' : `Start (${duration} min)`}
               triggerAriaLabel="Start food selection time menu"

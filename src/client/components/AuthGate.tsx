@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { withBasePath } from '../config.js';
 import { AdminOfficeProvider } from '../context/AdminOfficeContext.js';
+import { Button } from './ui/Button.js';
+import { Card } from './ui/Card.js';
+import { Input } from './ui/Input.js';
+import { Panel } from './ui/Panel.js';
 import type { AuthConfigResponse, AuthMethod } from '../../lib/types.js';
 
 interface AuthGateProps {
@@ -103,7 +107,7 @@ export default function AuthGate({ children }: AuthGateProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-sm text-gray-700">
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted text-sm text-fg-muted">
         Loading authentication...
       </div>
     );
@@ -111,8 +115,8 @@ export default function AuthGate({ children }: AuthGateProps) {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-md rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+        <div className="w-full max-w-md rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
           {error}
         </div>
       </div>
@@ -125,38 +129,38 @@ export default function AuthGate({ children }: AuthGateProps) {
 
   if (config?.authenticated && config.blocked) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-xl rounded-lg border border-red-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Access blocked</h2>
-          <p className="mb-4 text-sm text-gray-700">
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+        <Card className="w-full max-w-xl border-danger p-6">
+          <h2 className="mb-2 text-lg font-semibold text-fg">Access blocked</h2>
+          <p className="mb-4 text-sm text-fg-muted">
             Your account has been blocked by an administrator. Contact the app administrator if this is unexpected.
           </p>
-          <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
             Signed in as {config.user?.username ?? 'unknown user'}.
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
 
   if (config?.authenticated && config.approvalRequired && !config.approved && !config.isAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Welcome</h2>
-          <p className="mb-4 text-sm text-gray-700">
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+        <Card className="w-full max-w-xl p-6">
+          <h2 className="mb-2 text-lg font-semibold text-fg">Welcome</h2>
+          <p className="mb-4 text-sm text-fg-muted">
             Your account is awaiting admin approval. Please contact your lunch app administrator.
           </p>
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">Access status</h3>
-            <p className="text-sm text-gray-600">Pending approval by administrator.</p>
+          <Panel>
+            <h3 className="mb-3 text-sm font-semibold text-fg">Access status</h3>
+            <p className="text-sm text-fg-muted">Pending approval by administrator.</p>
             {config.officeLocation ? (
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-xs text-fg-muted">
                 Assigned office: {config.officeLocation.name}
               </p>
             ) : null}
-          </div>
-        </div>
+          </Panel>
+        </Card>
       </div>
     );
   }
@@ -181,26 +185,25 @@ export default function AuthGate({ children }: AuthGateProps) {
   const showMicrosoftLogin = microsoftConfigured || showLocalLogin;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Sign in</h2>
+    <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+      <Card className="w-full max-w-md p-6">
+        <h2 className="mb-4 text-lg font-semibold text-fg">Sign in</h2>
         {authWarning && (
-          <div className="mb-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div className="mb-4 rounded border border-warning bg-warning-soft p-3 text-sm text-warning-fg">
             {authWarning}
           </div>
         )}
         {error && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div className="mb-4 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
             {error}
           </div>
         )}
 
         <div className={showDualAuth ? 'grid gap-4 md:grid-cols-2' : 'space-y-3'}>
           {showMicrosoftLogin && (
-            <div className="space-y-2 rounded border border-gray-200 p-3">
-              <p className="text-sm font-medium text-gray-700">Microsoft SSO</p>
-              <button
-                type="button"
+            <div className="space-y-2 rounded border border-border p-3">
+              <p className="text-sm font-medium text-fg">Microsoft SSO</p>
+              <Button
                 onClick={() => {
                   if (!microsoftConfigured) return;
                   localStorage.setItem(AUTH_METHOD_STORAGE_KEY, 'entra');
@@ -208,12 +211,12 @@ export default function AuthGate({ children }: AuthGateProps) {
                 }}
                 disabled={!microsoftConfigured}
                 title={!microsoftConfigured ? 'Microsoft Entra sign-in is not configured' : undefined}
-                className="w-full rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                className="w-full"
               >
                 Continue with Microsoft
-              </button>
+              </Button>
               {!microsoftConfigured && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-fg-muted">
                   Microsoft Entra sign-in is not configured for this deployment.
                 </p>
               )}
@@ -223,38 +226,32 @@ export default function AuthGate({ children }: AuthGateProps) {
           {showLocalLogin && (
             <form
               onSubmit={(event) => void handleLocalLogin(event)}
-              className="space-y-3 rounded border border-gray-200 p-3"
+              className="space-y-3 rounded border border-border p-3"
             >
-              <p className="text-sm font-medium text-gray-700">Local account</p>
-              <input
+              <p className="text-sm font-medium text-fg">Local account</p>
+              <Input
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 placeholder="Username"
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
-              <input
+              <Input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password"
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-              >
+              <Button type="submit" disabled={submitting} className="w-full">
                 {submitting ? 'Signing in...' : 'Sign in'}
-              </button>
+              </Button>
             </form>
           )}
         </div>
 
         {!showMicrosoftLogin && !showLocalLogin && (
-          <p className="text-sm text-gray-600">No authentication methods are currently available.</p>
+          <p className="text-sm text-fg-muted">No authentication methods are currently available.</p>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

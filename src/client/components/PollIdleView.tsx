@@ -40,8 +40,8 @@ function DashboardCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+    <section className="rounded-2xl border border-border bg-surface-muted p-5 shadow-sm">
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-fg-muted">
         {title}
       </h3>
       {children}
@@ -65,25 +65,25 @@ function DashboardStats({
   return (
     <DashboardCard title="Quick Stats">
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl bg-slate-50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Last winner</p>
-          <p className="mt-1 text-base font-semibold text-slate-900">{lastWinner ?? 'No winner yet'}</p>
+        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg">Last winner</p>
+          <p className="mt-1 text-base font-semibold text-fg-muted">{lastWinner ?? 'No winner yet'}</p>
         </div>
-        <div className="rounded-xl bg-slate-50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Average rating</p>
-          <p className="mt-1 text-base font-semibold text-slate-900">
+        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg">Average rating</p>
+          <p className="mt-1 text-base font-semibold text-fg-muted">
             {averageRating === null ? 'No ratings yet' : `${averageRating.toFixed(1)} / 5`}
           </p>
         </div>
-        <div className="rounded-xl bg-slate-50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg">
             Most ordered item
           </p>
-          <p className="mt-1 text-base font-semibold text-slate-900">
+          <p className="mt-1 text-base font-semibold text-fg-muted">
             {mostOrderedItem ? `${mostOrderedItem.itemName} (${mostOrderedItem.count})` : 'No orders yet'}
           </p>
           {mostOrderedItem && (
-            <p className="mt-1 text-xs text-slate-500">Most often from {mostOrderedItem.sourceMenuName}</p>
+            <p className="mt-1 text-xs text-fg-muted">Most often from {mostOrderedItem.sourceMenuName}</p>
           )}
         </div>
       </div>
@@ -122,17 +122,17 @@ function DashboardInsights({
       <div className="grid gap-4 xl:grid-cols-2">
         <DashboardCard title="Meals Waiting For Your Rating">
           {pendingRatings.length === 0 ? (
-            <p className="text-sm text-slate-600">You are caught up on meal ratings.</p>
+            <p className="text-sm text-fg-muted">You are caught up on meal ratings.</p>
           ) : (
             <div className="space-y-3">
               {pendingRatings.map((selection) => (
                 <div
                   key={selection.selectionId}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-amber-50 px-4 py-3"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-warning-soft px-4 py-3"
                 >
                   <div>
-                    <p className="font-medium text-slate-900">{selection.menuName}</p>
-                    <p className="text-sm text-slate-600">
+                    <p className="font-medium text-fg">{selection.menuName}</p>
+                    <p className="text-sm text-fg-muted">
                       {selection.unratedCount} unrated meal{selection.unratedCount === 1 ? '' : 's'} |{' '}
                       {formatCompletedAt(selection.completedAt)}
                     </p>
@@ -140,7 +140,7 @@ function DashboardInsights({
                   <button
                     type="button"
                     onClick={() => onOpenHistorySelection?.(selection.selectionId)}
-                    className="rounded-lg bg-amber-500 px-3 py-2 text-sm font-medium text-white hover:bg-amber-600"
+                    className="rounded-lg bg-warning-solid px-3 py-2 text-sm font-medium text-warning-on hover:opacity-90"
                   >
                     Rate now
                   </button>
@@ -152,7 +152,7 @@ function DashboardInsights({
 
         <DashboardCard title="Team Lunch History">
           {recentHistory.length === 0 ? (
-            <p className="text-sm text-slate-600">No completed lunches yet.</p>
+            <p className="text-sm text-fg-muted">No completed lunches yet.</p>
           ) : (
             <div className="space-y-2">
               {recentHistory.map((selection) => (
@@ -160,15 +160,15 @@ function DashboardInsights({
                   key={selection.id}
                   type="button"
                   onClick={() => onOpenHistorySelection?.(selection.id)}
-                  className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left hover:border-slate-300 hover:bg-slate-50"
+                  className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left hover:border-border hover:bg-surface-muted"
                 >
                   <span>
-                    <span className="block font-medium text-slate-900">{selection.menuName}</span>
-                    <span className="block text-sm text-slate-500">
+                    <span className="block font-medium text-fg">{selection.menuName}</span>
+                    <span className="block text-sm text-fg-muted">
                       {selection.orders.length} order{selection.orders.length === 1 ? '' : 's'}
                     </span>
                   </span>
-                  <span className="text-sm text-slate-500">{formatCompletedAt(selection.completedAt)}</span>
+                  <span className="text-sm text-fg-muted">{formatCompletedAt(selection.completedAt)}</span>
                 </button>
               ))}
             </div>
@@ -177,18 +177,18 @@ function DashboardInsights({
 
         <DashboardCard title="Most Popular Menus">
           {popularMenus.length === 0 ? (
-            <p className="text-sm text-slate-600">No menu history yet.</p>
+            <p className="text-sm text-fg-muted">No menu history yet.</p>
           ) : (
             <ol className="space-y-2">
               {popularMenus.map((menu, index) => (
                 <li
                   key={menu.menuName}
-                  className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3"
+                  className="flex items-center justify-between rounded-xl bg-surface-muted px-4 py-3"
                 >
-                  <span className="font-medium text-slate-900">
+                  <span className="font-medium text-fg">
                     {index + 1}. {menu.menuName}
                   </span>
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm text-fg-muted">
                     {menu.count} lunch{menu.count === 1 ? '' : 'es'}
                   </span>
                 </li>
@@ -199,20 +199,20 @@ function DashboardInsights({
 
         <DashboardCard title="Most Popular Meals">
           {popularMeals.length === 0 ? (
-            <p className="text-sm text-slate-600">No meal history yet.</p>
+            <p className="text-sm text-fg-muted">No meal history yet.</p>
           ) : (
             <ol className="space-y-2">
               {popularMeals.map((meal, index) => (
-                <li key={meal.itemName} className="rounded-xl bg-slate-50 px-4 py-3">
+                <li key={meal.itemName} className="rounded-xl bg-surface-muted px-4 py-3">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-medium text-slate-900">
+                    <span className="font-medium text-fg">
                       {index + 1}. {meal.itemName}
                     </span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-fg-muted">
                       {meal.count} order{meal.count === 1 ? '' : 's'}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-500">Most often from {meal.sourceMenuName}</p>
+                  <p className="mt-1 text-sm text-fg-muted">Most often from {meal.sourceMenuName}</p>
                 </li>
               ))}
             </ol>
@@ -221,13 +221,13 @@ function DashboardInsights({
 
         <DashboardCard title="Recently Used Menus">
           {recentMenus.length === 0 ? (
-            <p className="text-sm text-slate-600">No recent menu activity yet.</p>
+            <p className="text-sm text-fg-muted">No recent menu activity yet.</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {recentMenus.map((menuName) => (
                 <span
                   key={menuName}
-                  className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm text-sky-800"
+                  className="rounded-full border border-accent bg-accent-soft px-3 py-1 text-sm text-accent-fg"
                 >
                   {menuName}
                 </span>
@@ -238,7 +238,7 @@ function DashboardInsights({
 
         <DashboardCard title="My Previous Orders">
           {myOrders.length === 0 ? (
-            <p className="text-sm text-slate-600">You have not placed any orders yet.</p>
+            <p className="text-sm text-fg-muted">You have not placed any orders yet.</p>
           ) : (
             <div className="space-y-2">
               {myOrders.map((order, index) => (
@@ -246,31 +246,31 @@ function DashboardInsights({
                   key={`${order.selectionId}-${order.itemName}-${index}`}
                   type="button"
                   onClick={() => onOpenHistorySelection?.(order.selectionId)}
-                  className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left hover:border-slate-300 hover:bg-slate-50"
+                  className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left hover:border-border hover:bg-surface-muted"
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-slate-900">{order.itemName}</span>
-                    <span className="block text-sm text-slate-500">{order.menuName}</span>
+                    <span className="block font-medium text-fg">{order.itemName}</span>
+                    <span className="block text-sm text-fg-muted">{order.menuName}</span>
                     {order.notes && (
-                      <span className="block truncate text-xs text-slate-400">({order.notes})</span>
+                      <span className="block truncate text-xs text-fg-muted">({order.notes})</span>
                     )}
                   </span>
                   <span className="ml-3 flex flex-col items-end gap-1">
                     {order.rating !== null ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-2 py-0.5 text-xs font-semibold text-warning-fg">
                         {order.rating}/5
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-400">
+                      <span className="inline-flex items-center rounded-full bg-surface-muted px-2 py-0.5 text-xs text-fg-muted">
                         Not rated
                       </span>
                     )}
                     {order.feedbackComment && (
-                      <span className="max-w-[160px] truncate text-xs text-slate-400" title={order.feedbackComment}>
+                      <span className="max-w-[160px] truncate text-xs text-fg-muted" title={order.feedbackComment}>
                         {order.feedbackComment}
                       </span>
                     )}
-                    <span className="text-xs text-slate-400">{formatCompletedAt(order.completedAt)}</span>
+                    <span className="text-xs text-fg-muted">{formatCompletedAt(order.completedAt)}</span>
                   </span>
                 </button>
               ))}
@@ -291,10 +291,10 @@ function QuickActions() {
         <button
           type="button"
           onClick={() => navigate('/menus')}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-left hover:bg-slate-50"
+          className="rounded-xl border border-border bg-surface px-4 py-3 text-left hover:bg-surface-muted"
         >
-          <span className="block font-medium text-slate-900">Manage menus</span>
-          <span className="mt-1 block text-sm text-slate-500">
+          <span className="block font-medium text-fg">Manage menus</span>
+          <span className="mt-1 block text-sm text-fg-muted">
             Create, update, clean up, and import menus from the menu management screen.
           </span>
         </button>
@@ -339,20 +339,20 @@ function SingleMenuQuickStart({
 
   return (
     <DashboardCard title="Start Food Selection">
-      <p className="mb-4 text-sm text-slate-600">
+      <p className="mb-4 text-sm text-fg-muted">
         Only one menu is currently available, so the lunch flow can skip straight to ordering.
       </p>
-      <p className="mb-4 text-base font-semibold text-slate-900">{menuName}</p>
+      <p className="mb-4 text-base font-semibold text-fg">{menuName}</p>
       <form onSubmit={(event) => void handleQuickStart(event)} className="space-y-4">
         <div>
-          <label htmlFor="quick-duration" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="quick-duration" className="mb-1 block text-sm font-medium text-fg">
             Duration
           </label>
           <select
             id="quick-duration"
             value={duration}
             onChange={(event) => setDuration(Number(event.target.value))}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-success focus:outline-none"
           >
             {FOOD_DURATIONS.map((value) => (
               <option key={value} value={value}>
@@ -362,12 +362,12 @@ function SingleMenuQuickStart({
           </select>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger-fg">{error}</p>}
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-xl bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+          className="w-full rounded-xl bg-success-solid px-4 py-3 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           {submitting ? 'Starting...' : 'Start Food Selection'}
         </button>
@@ -431,7 +431,7 @@ function PollStartForm({
     <DashboardCard title="Start New Team Lunch">
       <form onSubmit={(event) => void handleStart(event)} className="space-y-4">
         <div>
-          <label htmlFor="poll-desc" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="poll-desc" className="mb-1 block text-sm font-medium text-fg">
             Description
           </label>
           <input
@@ -443,21 +443,21 @@ function PollStartForm({
               setError('');
             }}
             maxLength={120}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
             placeholder="What do we eat today?"
           />
-          <p className="mt-1 text-xs text-slate-400">{description.length}/120</p>
+          <p className="mt-1 text-xs text-fg-muted">{description.length}/120</p>
         </div>
 
         <div>
-          <label htmlFor="poll-duration" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="poll-duration" className="mb-1 block text-sm font-medium text-fg">
             Duration
           </label>
           <select
             id="poll-duration"
             value={duration}
             onChange={(event) => setDuration(Number(event.target.value))}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
           >
             {POLL_DURATIONS.map((value) => (
               <option key={value} value={value}>
@@ -467,15 +467,15 @@ function PollStartForm({
           </select>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="mb-2 text-sm font-medium text-slate-700">Exclude menu options (optional)</p>
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="mb-2 text-sm font-medium text-fg">Exclude menu options (optional)</p>
           <div className="space-y-2">
             {menus.map((menu) => {
               const isExcluded = Object.prototype.hasOwnProperty.call(excludedReasons, menu.id);
 
               return (
-                <div key={menu.id} className="rounded-xl border border-slate-200 bg-white p-3">
-                  <label className="flex items-center gap-2 text-sm text-slate-700">
+                <div key={menu.id} className="rounded-xl border border-border bg-surface p-3">
+                  <label className="flex items-center gap-2 text-sm text-fg">
                     <input
                       type="checkbox"
                       checked={isExcluded}
@@ -505,7 +505,7 @@ function PollStartForm({
                         setError('');
                       }}
                       maxLength={240}
-                      className="mt-2 w-full rounded-xl border border-slate-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                      className="mt-2 w-full rounded-xl border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
                       placeholder="Why is this option excluded?"
                     />
                   )}
@@ -515,12 +515,12 @@ function PollStartForm({
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger-fg">{error}</p>}
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="w-full rounded-xl bg-accent-solid px-4 py-3 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           {submitting ? 'Starting...' : 'Start new Team Lunch'}
         </button>
@@ -546,12 +546,12 @@ export default function PollIdleView({
 
   return (
     <div className="mx-auto flex min-h-0 w-full max-w-[1500px] flex-1 flex-col gap-6 p-4 lg:px-6">
-      <section className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-white via-sky-50 to-amber-50 p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-700">Dashboard</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+      <section className="rounded-[28px] border border-border bg-surface-muted p-6 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fg">Dashboard</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-fg">
           Team Lunch home base
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-fg-muted">
           Start the next lunch round, catch up on ratings, and use recent history to make faster decisions.
         </p>
       </section>
