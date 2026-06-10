@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import ThemeToggle from './ThemeToggle.js';
+import { IconButton } from './ui/IconButton.js';
+import { MenuItem, MenuList } from './ui/Menu.js';
 import pizzaLogo from '../../../assets/pizza-logo.png';
 import exampleCompanyLogoSmall from '../../../assets/example-company-logo-small.png';
 
@@ -158,11 +161,11 @@ export default function Header({
   }, [menuOpen]);
 
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
+    <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 shadow-sm">
       {/* Left: App title */}
       <Link
         to="/"
-        className="flex items-center gap-2 text-xl font-bold text-gray-900 hover:text-blue-600"
+        className="flex items-center gap-2 text-xl font-bold text-fg hover:text-accent"
       >
         <img src={pizzaLogo} alt="Pizza logo" className="h-8 w-8" />
         <img
@@ -179,8 +182,8 @@ export default function Header({
           to="/menus"
           className={`flex items-center gap-1.5 text-sm font-medium ${
             location.pathname === '/menus'
-              ? 'text-blue-600'
-              : 'text-gray-600 hover:text-blue-600'
+              ? 'text-accent'
+              : 'text-fg-muted hover:text-accent'
           }`}
         >
           <MenuIcon />
@@ -191,8 +194,8 @@ export default function Header({
           to="/shopping"
           className={`flex items-center gap-1.5 text-sm font-medium ${
             location.pathname === '/shopping'
-              ? 'text-blue-600'
-              : 'text-gray-600 hover:text-blue-600'
+              ? 'text-accent'
+              : 'text-fg-muted hover:text-accent'
           }`}
         >
           <CartIcon />
@@ -204,7 +207,7 @@ export default function Header({
             aria-label="Office location"
             value={selectedOfficeLocationId ?? ''}
             onChange={(event) => setSelectedOfficeLocationId(event.target.value)}
-            className="rounded border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 focus:border-blue-500 focus:outline-none"
+            className="rounded border border-border bg-surface-muted px-2 py-1 text-xs font-medium text-fg hover:bg-surface focus:border-accent focus:outline-none"
           >
             {officeLocations.map((office) => (
               <option key={office.id} value={office.id}>
@@ -214,23 +217,23 @@ export default function Header({
           </select>
         )}
 
-        <button
-          type="button"
+        <ThemeToggle />
+
+        <IconButton
           onClick={onToggleNotifications}
-          className="rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
           title={notificationsEnabled ? 'Notifications: On' : 'Notifications: Off'}
           aria-label={notificationsEnabled ? 'Notifications: On' : 'Notifications: Off'}
           aria-pressed={notificationsEnabled}
         >
           {notificationsEnabled ? <BellIcon /> : <BellOffIcon />}
-        </button>
+        </IconButton>
 
         {nickname && (
           <div className="relative" ref={accountRef}>
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className="flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200"
+              className="flex items-center gap-2 rounded-full bg-accent-soft/70 px-3 py-1 text-sm font-medium text-accent-fg hover:bg-accent-soft"
               aria-haspopup="menu"
               aria-expanded={menuOpen}
             >
@@ -245,26 +248,21 @@ export default function Header({
             </button>
 
             {menuOpen && (
-              <div
-                role="menu"
-                className="absolute right-0 z-50 mt-2 w-52 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
-              >
-                <Link
+              <MenuList className="w-52">
+                <MenuItem
+                  as={Link}
                   to="/settings"
-                  role="menuitem"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <SettingsIcon />
                   Settings
-                </Link>
+                </MenuItem>
 
                 {showAdminItem && (
-                  <Link
+                  <MenuItem
+                    as={Link}
                     to="/admin"
-                    role="menuitem"
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <ShieldIcon />
                     <span className="flex-1">Administration</span>
@@ -276,24 +274,21 @@ export default function Header({
                         {badgeLabel}
                       </span>
                     )}
-                  </Link>
+                  </MenuItem>
                 )}
 
                 {onLogout && (
-                  <button
-                    type="button"
-                    role="menuitem"
+                  <MenuItem
                     onClick={() => {
                       setMenuOpen(false);
                       onLogout();
                     }}
-                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <LogoutIcon />
                     Logout
-                  </button>
+                  </MenuItem>
                 )}
-              </div>
+              </MenuList>
             )}
           </div>
         )}

@@ -118,33 +118,33 @@ export default function FoodSelectionOrderBoard({
   const uniqueUserCount = ordersByUser.length;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm xl:col-span-1">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm xl:col-span-1">
+      <h3 className="mb-3 text-sm font-semibold text-fg">
         Orders ({selection.orders.length} orders, {uniqueUserCount} users)
       </h3>
       {selection.orders.length === 0 ? (
-        <p className="text-sm italic text-gray-400">No orders placed</p>
+        <p className="text-sm italic text-fg-muted">No orders placed</p>
       ) : mode === 'by-item' ? (
         <div className="max-h-[65vh] space-y-2 overflow-y-auto pr-1">
           {ordersByItem.map((itemGroup) => (
             <div
               key={`${itemGroup.itemId ?? itemGroup.itemName}`}
-              className="rounded border border-sky-200 bg-sky-50 p-2"
+              className="rounded border border-accent bg-accent-soft p-2"
             >
               <div className="flex items-baseline justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-sky-800">
+                  <div className="text-sm font-semibold text-accent-fg">
                     {itemGroup.orderCount}x{' '}
                     {itemGroup.itemNumber ? `${itemGroup.itemNumber} ` : ''}
                     {itemGroup.itemName}
                   </div>
-                  <div className="text-xs text-sky-700">
+                  <div className="text-xs text-accent-fg">
                     {itemGroup.comments.length === 1 && itemGroup.comments[0]?.text === null
                       ? 'No comments'
                       : `${itemGroup.comments.length} comment variant${itemGroup.comments.length === 1 ? '' : 's'}`}
                   </div>
                 </div>
-                <div className="text-right text-xs font-semibold text-emerald-700">
+                <div className="text-right text-xs font-semibold text-success-fg">
                   {formatPrice(itemGroup.totalPrice)}
                 </div>
               </div>
@@ -153,9 +153,9 @@ export default function FoodSelectionOrderBoard({
                   ? itemGroup.orders.map((order) => (
                       <div
                         key={order.id}
-                        className="flex items-baseline justify-between gap-3 rounded bg-white px-2 py-1.5"
+                        className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5"
                       >
-                        <div className="flex min-w-0 items-baseline gap-2 text-xs text-gray-600">
+                        <div className="flex min-w-0 items-baseline gap-2 text-xs text-fg-muted">
                           <input
                             type="checkbox"
                             aria-label={`Processed ${order.itemName} for ${order.nickname}`}
@@ -165,10 +165,10 @@ export default function FoodSelectionOrderBoard({
                               onToggleProcessed?.(order.id, event.currentTarget.checked)
                             }
                           />
-                          <span className="font-semibold text-gray-700">{order.nickname}</span>
+                          <span className="font-semibold text-fg">{order.nickname}</span>
                           <span>{order.notes ? order.notes : 'No comment'}</span>
                         </div>
-                        <span className="w-16 text-right whitespace-nowrap text-xs font-semibold text-emerald-700">
+                        <span className="w-16 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
                           {order.itemId && priceByItemId.has(order.itemId)
                             ? formatPrice(priceByItemId.get(order.itemId) as number)
                             : '-'}
@@ -178,11 +178,11 @@ export default function FoodSelectionOrderBoard({
                   : itemGroup.comments.map((commentGroup) => (
                       <div
                         key={`${commentGroup.text ?? '__none__'}-${commentGroup.nicknames.join('|')}`}
-                        className="rounded bg-white px-2 py-1.5 text-xs text-gray-600"
+                        className="rounded bg-surface px-2 py-1.5 text-xs text-fg-muted"
                       >
-                        <span className="font-semibold text-gray-700">{commentGroup.count}x</span>{' '}
+                        <span className="font-semibold text-fg">{commentGroup.count}x</span>{' '}
                         {commentGroup.text ? commentGroup.text : 'No comment'}
-                        <span className="text-gray-400">
+                        <span className="text-fg-muted">
                           {' '}
                           · {commentGroup.nicknames.join(', ')}
                         </span>
@@ -195,13 +195,13 @@ export default function FoodSelectionOrderBoard({
       ) : (
         <div className="max-h-[65vh] space-y-1 overflow-y-auto pr-1">
           {ordersByUser.map(([userName, userOrders]) => (
-            <div key={userName} className="rounded border border-gray-200 bg-gray-50 p-2">
-              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <div key={userName} className="rounded border border-border bg-surface-muted p-2">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                 {userName} ({userOrders.length})
               </div>
               <div className="space-y-1">
                 {userOrders.map((order) => (
-                  <div key={order.id} className="flex items-baseline justify-between gap-3 rounded bg-white px-2 py-1.5">
+                  <div key={order.id} className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5">
                     <div className="flex min-w-0 items-baseline gap-2">
                       {showProcessedCheckboxes && (
                         <input
@@ -212,10 +212,10 @@ export default function FoodSelectionOrderBoard({
                           onChange={(event) => onToggleProcessed?.(order.id, event.currentTarget.checked)}
                         />
                       )}
-                      <span className="truncate text-sm text-gray-700">{order.itemName}</span>
-                      {order.notes && <span className="truncate text-xs text-gray-400">({order.notes})</span>}
+                      <span className="truncate text-sm text-fg">{order.itemName}</span>
+                      {order.notes && <span className="truncate text-xs text-fg-muted">({order.notes})</span>}
                     </div>
-                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-emerald-700">
+                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
                       {order.itemId && priceByItemId.has(order.itemId)
                         ? formatPrice(priceByItemId.get(order.itemId) as number)
                         : '-'}
@@ -227,8 +227,8 @@ export default function FoodSelectionOrderBoard({
           ))}
         </div>
       )}
-      <div className="mt-2 flex justify-end border-t border-gray-200 pt-2">
-        <span className="text-sm font-semibold text-gray-800">Total: {formatPrice(totalPrice)}</span>
+      <div className="mt-2 flex justify-end border-t border-border pt-2">
+        <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
       </div>
     </div>
   );

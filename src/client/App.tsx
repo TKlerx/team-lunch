@@ -188,7 +188,7 @@ export default function App() {
             }
           />
 
-          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white/95">
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface/95">
             <div
               className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
               aria-hidden

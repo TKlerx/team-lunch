@@ -2,6 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens. Values are space-separated RGB triplets so Tailwind can apply
+ * opacity modifiers via `rgb(var(--token) / <alpha-value>)` (see tailwind.config.ts).
+ * `:root` is the light theme; `.dark` (toggled on <html>) overrides for dark.
+ *
+ * Status families (success/warning/danger) follow the same shape:
+ *   `<status>`       — border / mid shade   (border-<status>)
+ *   `<status>-soft`  — soft background      (bg-<status>-soft)
+ *   `<status>-fg`    — text/icon on soft    (text-<status>-fg)
+ * danger also has `-solid` / `-on` for filled elements (e.g. count badges).
+ */
+:root {
+  --color-surface: 255 255 255; /* white */
+  --color-surface-muted: 243 244 246; /* gray-100 */
+  --color-surface-raised: 255 255 255; /* white */
+  --color-fg: 17 24 39; /* gray-900 */
+  --color-fg-muted: 75 85 99; /* gray-600 */
+  --color-border: 229 231 235; /* gray-200 */
+  --color-accent: 37 99 235; /* blue-600 */
+  --color-accent-fg: 29 78 216; /* blue-700 */
+  --color-accent-soft: 219 234 254; /* blue-100 */
+  --color-accent-solid: 37 99 235; /* blue-600 */
+  --color-accent-on: 255 255 255; /* white */
+
+  --color-success: 110 231 183; /* emerald-300 */
+  --color-success-soft: 236 253 245; /* emerald-50 */
+  --color-success-fg: 4 120 87; /* emerald-700 */
+  --color-warning: 252 211 77; /* amber-300 */
+  --color-warning-soft: 255 251 235; /* amber-50 */
+  --color-warning-fg: 146 64 14; /* amber-800 */
+  --color-danger: 252 165 165; /* red-300 */
+  --color-danger-soft: 254 242 242; /* red-50 */
+  --color-danger-fg: 185 28 28; /* red-700 */
+  --color-danger-solid: 220 38 38; /* red-600 — white text ≥ AA 4.5 */
+  --color-danger-on: 255 255 255; /* white */
+
+  /* Solid status fills (filled action buttons). Same in both themes — chosen so
+   * the `-on` text clears WCAG AA (4.5) — so no `.dark` override.
+   * Amber uses dark text (white on amber never reaches 4.5). */
+  --color-success-solid: 4 120 87; /* emerald-700 */
+  --color-success-on: 255 255 255; /* white */
+  --color-warning-solid: 245 158 11; /* amber-500 */
+  --color-warning-on: 17 24 39; /* gray-900 — dark text on amber */
+
+  color-scheme: light;
+}
+
+.dark {
+  --color-surface: 17 24 39; /* gray-900 */
+  --color-surface-muted: 31 41 55; /* gray-800 */
+  --color-surface-raised: 31 41 55; /* gray-800 */
+  --color-fg: 243 244 246; /* gray-100 */
+  --color-fg-muted: 156 163 175; /* gray-400 */
+  --color-border: 55 65 81; /* gray-700 */
+  --color-accent: 96 165 250; /* blue-400 */
+  --color-accent-fg: 147 197 253; /* blue-300 */
+  --color-accent-soft: 30 58 138; /* blue-900 */
+  --color-accent-solid: 37 99 235; /* blue-600 — white text ≥ AA 4.5 */
+  --color-accent-on: 255 255 255; /* white */
+
+  --color-success: 4 120 87; /* emerald-700 */
+  --color-success-soft: 2 44 34; /* emerald-950 */
+  --color-success-fg: 110 231 183; /* emerald-300 */
+  --color-warning: 180 83 9; /* amber-700 */
+  --color-warning-soft: 69 26 3; /* amber-950 */
+  --color-warning-fg: 253 230 138; /* amber-200 */
+  --color-danger: 153 27 27; /* red-800 */
+  --color-danger-soft: 69 10 10; /* red-950 */
+  --color-danger-fg: 252 165 165; /* red-300 */
+  --color-danger-solid: 239 68 68; /* red-500 */
+  --color-danger-on: 255 255 255; /* white */
+
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-fg;
+  }
+}
+
 @keyframes ringing-clock {
 	0% { transform: rotate(0deg); }
 	20% { transform: rotate(14deg); }
@@ -17,18 +98,19 @@
 	animation: ringing-clock 0.55s ease-in-out infinite;
 }
 
+/* Theme-aware: drives off the danger tokens so it adapts to light/dark. */
 @keyframes delivery-due-alert-flicker {
 	0% {
-		background-color: rgb(254 242 242);
-		border-color: rgb(252 165 165);
+		background-color: rgb(var(--color-danger-soft));
+		border-color: rgb(var(--color-danger));
 	}
 	50% {
-		background-color: rgb(254 226 226);
-		border-color: rgb(248 113 113);
+		background-color: rgb(var(--color-danger) / 0.25);
+		border-color: rgb(var(--color-danger-solid));
 	}
 	100% {
-		background-color: rgb(254 242 242);
-		border-color: rgb(252 165 165);
+		background-color: rgb(var(--color-danger-soft));
+		border-color: rgb(var(--color-danger));
 	}
 }
 

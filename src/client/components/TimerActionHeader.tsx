@@ -56,18 +56,18 @@ export default function TimerActionHeader({
   return (
     <div
       className={`relative mb-4 flex items-center justify-between rounded px-4 py-2 ${
-        dueStyle ? 'delivery-due-alert' : 'bg-blue-50'
+        dueStyle ? 'delivery-due-alert' : 'bg-accent-soft'
       }`}
       ref={containerRef}
     >
-      <span className={`text-sm font-medium ${dueStyle ? 'text-red-700' : 'text-blue-700'}`}>
+      <span className={`text-sm font-medium ${dueStyle ? 'text-danger-fg' : 'text-accent-fg'}`}>
         {title}
       </span>
       <button
         type="button"
         onClick={() => setIsMenuOpen((open) => !open)}
-        className={`inline-flex items-center gap-1 rounded px-2 py-1 text-sm font-bold hover:bg-white/60 ${
-          dueStyle ? 'text-red-700' : 'text-blue-700'
+        className={`inline-flex items-center gap-1 rounded px-2 py-1 text-sm font-bold hover:bg-surface/60 ${
+          dueStyle ? 'text-danger-fg' : 'text-accent-fg'
         }`}
         aria-label={triggerAriaLabel}
       >
@@ -105,7 +105,7 @@ export default function TimerActionHeader({
       </button>
 
       {isMenuOpen && (
-        <div className={`absolute right-4 top-[calc(100%+0.5rem)] z-20 rounded border border-gray-200 bg-white shadow-lg ${menuWidthClass}`}>
+        <div className={`absolute right-4 top-[calc(100%+0.5rem)] z-20 rounded border border-border bg-surface-raised shadow-lg ${menuWidthClass}`}>
           {children({ closeMenu: () => setIsMenuOpen(false) })}
         </div>
       )}

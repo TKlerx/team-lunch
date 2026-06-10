@@ -98,20 +98,20 @@ function ConfirmDialog({
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-        <p className="mb-4 text-gray-900">{message}</p>
+      <div className="mx-4 w-full max-w-sm rounded-lg bg-surface-raised p-6 shadow-xl">
+        <p className="mb-4 text-fg">{message}</p>
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
-            className="rounded px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
+            className="rounded px-4 py-2 text-sm text-fg-muted hover:bg-surface-muted"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            className="rounded bg-danger-solid px-4 py-2 text-sm font-medium text-danger-on transition-colors hover:opacity-90"
           >
             Delete
           </button>
@@ -156,11 +156,11 @@ function MenuEditDialog({
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h4 className="text-base font-semibold text-gray-900">Edit menu {menuName}</h4>
+      <div className="mx-4 w-full max-w-md rounded-lg bg-surface-raised p-6 shadow-xl">
+        <h4 className="text-base font-semibold text-fg">Edit menu {menuName}</h4>
         <div className="mt-4 space-y-3">
           <div>
-            <label htmlFor="menu-edit-name" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <label htmlFor="menu-edit-name" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
               Name
             </label>
             <input
@@ -169,13 +169,13 @@ function MenuEditDialog({
               value={name}
               onChange={(event) => onNameChange(event.target.value)}
               maxLength={60}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="Menu name"
               autoFocus
             />
           </div>
           <div>
-            <label htmlFor="menu-contact-location" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <label htmlFor="menu-contact-location" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
               Location
             </label>
             <input
@@ -184,12 +184,12 @@ function MenuEditDialog({
               value={location}
               onChange={(event) => onLocationChange(event.target.value)}
               maxLength={160}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="Street or office location"
             />
           </div>
           <div>
-            <label htmlFor="menu-contact-phone" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <label htmlFor="menu-contact-phone" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
               Phone
             </label>
             <input
@@ -198,12 +198,12 @@ function MenuEditDialog({
               value={phone}
               onChange={(event) => onPhoneChange(event.target.value)}
               maxLength={40}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="Phone number"
             />
           </div>
           <div>
-            <label htmlFor="menu-contact-url" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <label htmlFor="menu-contact-url" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
               URL
             </label>
             <input
@@ -212,12 +212,12 @@ function MenuEditDialog({
               value={url}
               onChange={(event) => onUrlChange(event.target.value)}
               maxLength={255}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="https://example.com"
             />
           </div>
           <div>
-            <label htmlFor="menu-contact-order-url" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-600">
+            <label htmlFor="menu-contact-order-url" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
               Order URL
             </label>
             <input
@@ -226,17 +226,17 @@ function MenuEditDialog({
               value={orderUrl}
               onChange={(event) => onOrderUrlChange(event.target.value)}
               maxLength={255}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="https://delivery-service.com/order"
             />
           </div>
         </div>
-        {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-danger-fg">{error}</p> : null}
         <div className="mt-4 flex justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
-            className="rounded px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
+            className="rounded px-4 py-2 text-sm text-fg-muted hover:bg-surface-muted"
             disabled={submitting}
           >
             Cancel
@@ -244,7 +244,7 @@ function MenuEditDialog({
           <button
             type="button"
             onClick={onSave}
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50"
             disabled={submitting}
           >
             Save changes
@@ -324,14 +324,14 @@ function MenuItemRow({
 
   if (editing) {
     return (
-      <div className="rounded border border-blue-200 bg-blue-50 p-3">
+      <div className="rounded border border-accent/40 bg-accent-soft/40 p-3">
         <div className="space-y-2">
           <input
             type="text"
             value={itemNumber}
             onChange={(e) => { setItemNumber(e.target.value); setError(''); }}
             maxLength={40}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Meal number (optional)"
           />
           <input
@@ -339,7 +339,7 @@ function MenuItemRow({
             value={name}
             onChange={(e) => { setName(e.target.value); setError(''); }}
             maxLength={80}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Item name"
           />
           <input
@@ -347,7 +347,7 @@ function MenuItemRow({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={200}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Description (optional)"
           />
           <input
@@ -358,16 +358,16 @@ function MenuItemRow({
             max="9999.99"
             value={price}
             onChange={(e) => { setPrice(e.target.value); setError(''); }}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Price (optional)"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-danger-fg">{error}</p>}
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => void handleSave()}
               disabled={submitting}
-              className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50"
             >
               Save
             </button>
@@ -381,7 +381,7 @@ function MenuItemRow({
                 setPrice(item.price === null ? '' : item.price.toFixed(2));
                 setError('');
               }}
-              className="rounded px-3 py-1 text-xs text-gray-600 hover:bg-gray-100"
+              className="rounded px-3 py-1 text-xs text-fg-muted hover:bg-surface-muted"
             >
               Cancel
             </button>
@@ -393,17 +393,17 @@ function MenuItemRow({
 
   return (
     <>
-      <div className="grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] items-start gap-2 rounded px-3 py-2 hover:bg-gray-50">
-        <p className="whitespace-nowrap text-sm font-medium text-gray-500">{item.itemNumber ?? '-'}</p>
-        <p className="truncate text-sm font-medium text-gray-800">{item.name}</p>
-        <p className="whitespace-normal break-words text-left text-sm text-gray-500">{item.description ?? '-'}</p>
-        <p className="whitespace-nowrap text-sm font-medium text-emerald-700">{formatPrice(item.price)}</p>
+      <div className="grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] items-start gap-2 rounded px-3 py-2 hover:bg-surface-muted">
+        <p className="whitespace-nowrap text-sm font-medium text-fg-muted">{item.itemNumber ?? '-'}</p>
+        <p className="truncate text-sm font-medium text-fg">{item.name}</p>
+        <p className="whitespace-normal break-words text-left text-sm text-fg-muted">{item.description ?? '-'}</p>
+        <p className="whitespace-nowrap text-sm font-medium text-success-fg">{formatPrice(item.price)}</p>
         <button
           type="button"
           onClick={() => setEditing(true)}
           aria-label="Edit"
           title="Edit"
-          className="justify-self-center whitespace-nowrap rounded p-1.5 text-blue-600 hover:bg-blue-50"
+          className="justify-self-center whitespace-nowrap rounded p-1.5 text-accent hover:bg-surface-muted"
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
@@ -416,7 +416,7 @@ function MenuItemRow({
           onClick={() => setConfirmDelete(true)}
           aria-label="Delete"
           title="Delete"
-          className="justify-self-center whitespace-nowrap rounded p-1.5 text-red-600 hover:bg-red-50"
+          className="justify-self-center whitespace-nowrap rounded p-1.5 text-danger-fg hover:bg-surface-muted"
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
@@ -564,17 +564,17 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
   useEffect(() => () => clearTimeout(copyTimerRef.current), []);
 
   return (
-    <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4 shadow-sm">
+    <div className="rounded-lg border border-accent/40 bg-accent-soft/40 p-4 shadow-sm">
       {/* Row 1: AI help text with "Copy AI prompt" button */}
-      <div className="rounded border border-gray-200 bg-white p-3">
+      <div className="rounded border border-border bg-surface p-3">
         <div className="flex items-start justify-between gap-4">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-fg-muted">
             You can use AI to generate the menu JSON from a PDF or website. Copy the prompt, paste it into your AI assistant, and provide the menu text.
           </p>
           <button
             type="button"
             onClick={() => { void copyPromptTemplate(); }}
-            className="shrink-0 rounded border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50"
+            className="shrink-0 rounded border border-accent px-3 py-1 text-xs font-medium text-accent-fg hover:bg-surface-muted"
           >
             {copyStatus === 'copied' ? 'Copied' : 'Copy AI prompt'}
           </button>
@@ -582,9 +582,9 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Row 2: JSON textarea with "Import from JSON file" button */}
-      <div className="mt-3 rounded border border-gray-200 bg-white p-3">
+      <div className="mt-3 rounded border border-border bg-surface p-3">
         <div className="mb-2 flex items-center justify-between">
-          <label htmlFor="menu-import-json-text" className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+          <label htmlFor="menu-import-json-text" className="text-xs font-semibold uppercase tracking-wide text-fg-muted">
             Paste menu JSON
           </label>
           <input
@@ -598,7 +598,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             type="button"
             disabled={submitting}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded border border-blue-600 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+            className="rounded border border-accent px-3 py-1 text-xs font-medium text-accent-fg hover:bg-surface-muted disabled:opacity-50"
           >
             Import from JSON file
           </button>
@@ -608,16 +608,16 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
           value={jsonTextInput}
           onChange={(event) => setJsonTextInput(event.target.value)}
           rows={7}
-          className="w-full rounded border border-gray-300 px-3 py-2 font-mono text-xs focus:border-blue-500 focus:outline-none"
+          className="w-full rounded border border-border bg-surface px-3 py-2 font-mono text-xs text-fg focus:border-accent focus:outline-none"
           placeholder="Menu JSON..."
         />
       </div>
 
       {/* Feedback area */}
-      {success && <p className="mt-3 text-xs text-emerald-700">{success}</p>}
-      {error && <p className="mt-3 text-xs text-red-700">{error}</p>}
+      {success && <p className="mt-3 text-xs text-success-fg">{success}</p>}
+      {error && <p className="mt-3 text-xs text-danger-fg">{error}</p>}
       {violations.length > 0 && (
-        <ul className="mt-3 max-h-40 list-disc overflow-y-auto rounded border border-red-200 bg-red-50 p-3 pl-6 text-xs text-red-800">
+        <ul className="mt-3 max-h-40 list-disc overflow-y-auto rounded border border-danger bg-danger-soft p-3 pl-6 text-xs text-danger-fg">
           {violations.map((violation) => (
             <li key={`${violation.path}:${violation.message}`}>
               <span className="font-semibold">{String(violation.path)}</span>: {String(violation.message)}
@@ -627,9 +627,9 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
       )}
 
       {/* Preview panel — always visible */}
-      <div className="mt-3 rounded border border-gray-200 bg-white p-3 text-xs">
+      <div className="mt-3 rounded border border-border bg-surface p-3 text-xs">
         {preview && pendingPayload !== null ? (
-          <div className="text-amber-900">
+          <div className="text-warning-fg">
             <p className="mb-1 font-semibold">Confirm import for &quot;{String(preview.menuName)}&quot;?</p>
             <p className="mb-2">
               {preview.menuExists ? 'Existing menu will be updated.' : 'New menu will be created.'}
@@ -641,7 +641,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             </ul>
           </div>
         ) : (
-          <p className="text-gray-400">
+          <p className="text-fg-muted">
             {error ? 'Fix the errors above to preview the import.' : 'Import or enter menu JSON to see a preview.'}
           </p>
         )}
@@ -676,7 +676,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
                 if (imported) onClose();
               })();
             }}
-            className="rounded bg-emerald-600 px-3 py-1 font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+            className="rounded bg-success-solid px-3 py-1 font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-50"
           >
             Confirm Import
           </button>
@@ -684,7 +684,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             type="button"
             disabled={submitting}
             onClick={onClose}
-            className="rounded border border-gray-300 bg-white px-3 py-1 font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+            className="rounded border border-border bg-surface px-3 py-1 font-medium text-fg hover:bg-surface-muted disabled:opacity-50"
           >
             Cancel
           </button>
@@ -751,7 +751,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-1 text-xs font-medium text-blue-600 hover:text-blue-800"
+        className="mt-1 text-xs font-medium text-accent hover:text-accent-fg"
       >
         + Add item
       </button>
@@ -759,13 +759,13 @@ function AddItemForm({ menuId }: { menuId: string }) {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="mt-2 space-y-2 rounded border border-gray-200 bg-gray-50 p-3">
+    <form onSubmit={(e) => void handleSubmit(e)} className="mt-2 space-y-2 rounded border border-border bg-surface-muted p-3">
       <input
         type="text"
         value={itemNumber}
         onChange={(e) => { setItemNumber(e.target.value); setError(''); }}
         maxLength={40}
-        className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Meal number (optional)"
         autoFocus
       />
@@ -774,7 +774,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
         value={name}
         onChange={(e) => { setName(e.target.value); setError(''); }}
         maxLength={80}
-        className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Item name"
       />
       <input
@@ -782,7 +782,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         maxLength={200}
-        className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Description (optional)"
       />
       <input
@@ -793,15 +793,15 @@ function AddItemForm({ menuId }: { menuId: string }) {
         max="9999.99"
         value={price}
         onChange={(e) => { setPrice(e.target.value); setError(''); }}
-        className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Price (optional)"
       />
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger-fg">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50"
         >
           Add
         </button>
@@ -815,7 +815,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
             setPrice('');
             setError('');
           }}
-          className="rounded px-3 py-1 text-xs text-gray-600 hover:bg-gray-100"
+          className="rounded px-3 py-1 text-xs text-fg-muted hover:bg-surface-muted"
         >
           Cancel
         </button>
@@ -881,15 +881,15 @@ function DefaultMealPreferenceEditor({
   };
 
   return (
-    <div className="mt-4 rounded border border-emerald-200 bg-emerald-50 p-3">
-      <h4 className="text-sm font-semibold text-emerald-900">My default meal</h4>
+    <div className="mt-4 rounded border border-success bg-success-soft p-3">
+      <h4 className="text-sm font-semibold text-success-fg">My default meal</h4>
       {!hasItems ? (
-        <p className="mt-2 text-sm text-emerald-800">
+        <p className="mt-2 text-sm text-success-fg">
           Add menu items before selecting a default meal.
         </p>
       ) : (
         <>
-          <label className="mt-2 block text-xs font-semibold uppercase tracking-wide text-emerald-900">
+          <label className="mt-2 block text-xs font-semibold uppercase tracking-wide text-success-fg">
             Default meal
           </label>
           <select
@@ -904,7 +904,7 @@ function DefaultMealPreferenceEditor({
               setError('');
               setSuccess('');
             }}
-            className="mt-1 w-full rounded border border-emerald-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none"
+            className="mt-1 w-full rounded border border-success bg-surface px-3 py-2 text-sm text-fg focus:border-success focus:outline-none"
             aria-label={`Default meal for ${menu.name}`}
           >
             <option value="">No default meal selected</option>
@@ -915,7 +915,7 @@ function DefaultMealPreferenceEditor({
               </option>
             ))}
           </select>
-          <label className="mt-3 block text-xs font-semibold uppercase tracking-wide text-emerald-900">
+          <label className="mt-3 block text-xs font-semibold uppercase tracking-wide text-success-fg">
             Default comment
           </label>
           <textarea
@@ -928,14 +928,14 @@ function DefaultMealPreferenceEditor({
             disabled={!selectedItemId}
             maxLength={200}
             rows={3}
-            className="mt-1 w-full rounded border border-emerald-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none disabled:bg-emerald-100"
+            className="mt-1 w-full rounded border border-success bg-surface px-3 py-2 text-sm text-fg focus:border-success focus:outline-none disabled:bg-success-soft"
             aria-label={`Default comment for ${menu.name}`}
             placeholder="Optional notes for your saved default meal"
           />
-          <p className="mt-1 text-xs text-emerald-800">
+          <p className="mt-1 text-xs text-success-fg">
             Used as the saved order comment if an organizer places this default meal for you.
           </p>
-          <label className="mt-3 flex items-start gap-2 text-sm text-emerald-900">
+          <label className="mt-3 flex items-start gap-2 text-sm text-success-fg">
             <input
               type="checkbox"
               checked={allowOrganizerFallback}
@@ -954,7 +954,7 @@ function DefaultMealPreferenceEditor({
               type="button"
               onClick={() => void handleSave()}
               disabled={saving}
-              className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+              className="rounded bg-success-solid px-3 py-1.5 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-50"
             >
               Save default
             </button>
@@ -968,13 +968,13 @@ function DefaultMealPreferenceEditor({
                 setSuccess('');
               }}
               disabled={saving || (!selectedItemId && !allowOrganizerFallback)}
-              className="rounded border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-100 disabled:opacity-50"
+              className="rounded border border-success bg-surface px-3 py-1.5 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-50"
             >
               Clear selection
             </button>
           </div>
-          {success ? <p className="mt-2 text-xs text-emerald-700">{success}</p> : null}
-          {error ? <p className="mt-2 text-xs text-red-600">{error}</p> : null}
+          {success ? <p className="mt-2 text-xs text-success-fg">{success}</p> : null}
+          {error ? <p className="mt-2 text-xs text-danger-fg">{error}</p> : null}
         </>
       )}
     </div>
@@ -1079,10 +1079,10 @@ function MenuCard({
 
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-lg border border-border bg-surface shadow-sm">
         {/* Menu header */}
         <div
-          className="flex cursor-pointer items-start justify-between border-b border-gray-100 px-4 py-3"
+          className="flex cursor-pointer items-start justify-between border-b border-border px-4 py-3"
           onClick={() => setCollapsed((prev) => !prev)}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -1097,14 +1097,14 @@ function MenuCard({
           <>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <h3 className="font-semibold text-gray-900">{menu.name}</h3>
+                <h3 className="font-semibold text-fg">{menu.name}</h3>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2" onClick={(event) => event.stopPropagation()}>
                   {menu.url ? (
                     <a
                       href={menu.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
                     >
                       <svg
                         aria-hidden="true"
@@ -1130,7 +1130,7 @@ function MenuCard({
                       rel="noopener noreferrer"
                       aria-label={`Order from ${menu.name}`}
                       title={menu.orderUrl}
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
                     >
                       <svg
                         aria-hidden="true"
@@ -1152,7 +1152,7 @@ function MenuCard({
                   {menu.phone ? (
                     <a
                       href={`tel:${menu.phone}`}
-                      className="inline-flex max-w-[10rem] items-center truncate text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                      className="inline-flex max-w-[10rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
                     >
                       <svg
                         aria-hidden="true"
@@ -1174,7 +1174,7 @@ function MenuCard({
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(menu.location)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
                     >
                       <svg
                         aria-hidden="true"
@@ -1194,7 +1194,7 @@ function MenuCard({
                   ) : null}
                 </div>
               </div>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-fg-muted">
                 {menu.items.length} {menu.items.length === 1 ? 'item' : 'items'}
               </span>
             </div>
@@ -1205,7 +1205,7 @@ function MenuCard({
                   onClick={openEditDialog}
                   aria-label="Edit"
                   title="Edit"
-                  className="rounded p-1.5 text-blue-600 hover:bg-blue-50"
+                  className="rounded p-1.5 text-accent hover:bg-surface-muted"
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
@@ -1218,7 +1218,7 @@ function MenuCard({
                   onClick={() => setConfirmDelete(true)}
                   aria-label="Delete"
                   title="Delete"
-                  className="rounded p-1.5 text-red-600 hover:bg-red-50"
+                  className="rounded p-1.5 text-danger-fg hover:bg-surface-muted"
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 6h18" />
@@ -1235,16 +1235,16 @@ function MenuCard({
         </div>
 
         {error && (
-          <p className="px-4 py-1 text-sm text-red-600">{error}</p>
+          <p className="px-4 py-1 text-sm text-danger-fg">{error}</p>
         )}
 
         {!collapsed && (
           <div className="px-4 py-2">
             {menu.items.length === 0 ? (
-              <p className="text-sm italic text-gray-400">No items yet</p>
+              <p className="text-sm italic text-fg-muted">No items yet</p>
             ) : (
               <>
-                <div className="mb-1 grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <div className="mb-1 grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                   <span>No.</span>
                   <span>Item name</span>
                   <span className="text-left">Description</span>
@@ -1379,7 +1379,7 @@ function NewMenuDropdown({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1.5 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        className="inline-flex items-center gap-1.5 rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90"
         aria-haspopup="true"
         aria-expanded={open}
       >
@@ -1389,24 +1389,24 @@ function NewMenuDropdown({
         </svg>
       </button>
       {open && (
-        <div className="absolute left-0 z-20 mt-1 w-48 rounded border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute left-0 z-20 mt-1 w-48 rounded border border-border bg-surface py-1 shadow-lg">
           <button
             type="button"
             onClick={handleImportFromJson}
-            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            className="w-full px-4 py-2 text-left text-sm text-fg hover:bg-surface-muted"
           >
             Import from JSON
           </button>
           <button
             type="button"
             onClick={() => void handleCreateManually()}
-            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            className="w-full px-4 py-2 text-left text-sm text-fg hover:bg-surface-muted"
           >
             Manually
           </button>
         </div>
       )}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
     </div>
   );
 }
@@ -1468,17 +1468,17 @@ export default function ManageMenus() {
   return (
     <div className="w-full p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Menus</h1>
+        <h1 className="text-2xl font-bold text-fg">Manage Menus</h1>
       </div>
       {defaultsLoading ? (
-        <p className="mb-4 text-sm text-gray-500">Loading your default meals...</p>
+        <p className="mb-4 text-sm text-fg-muted">Loading your default meals...</p>
       ) : null}
       {defaultsError ? (
-        <p className="mb-4 text-sm text-red-600">{defaultsError}</p>
+        <p className="mb-4 text-sm text-danger-fg">{defaultsError}</p>
       ) : null}
 
       <div className="space-y-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
           <div className="flex flex-wrap gap-2">
             <NewMenuDropdown menus={menus} onToggleImport={() => setImportOpen(true)} />
           </div>
@@ -1487,8 +1487,8 @@ export default function ManageMenus() {
         {importOpen && <ImportMenuPanel onClose={() => setImportOpen(false)} />}
 
         {sorted.length === 0 ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-            <p className="text-gray-600">No menus yet. Create one to get started.</p>
+          <div className="rounded-lg border border-border bg-surface p-8 text-center shadow-sm">
+            <p className="text-fg-muted">No menus yet. Create one to get started.</p>
           </div>
         ) : (
           <div className="space-y-4">

@@ -39,11 +39,11 @@ export default function OrdersRail({
   const timerLabel = formatTime(remainingSeconds);
   const isPhase3Due = hasOngoingLunchProcess && inProgressPhaseLabel === '3/3' && remainingSeconds === 0;
   const topActionClass = hasOngoingLunchProcess
-    ? 'mb-4 w-full rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-left text-sm font-semibold text-amber-800 hover:bg-amber-100'
-    : 'mb-4 w-full rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-left text-sm font-semibold text-blue-700 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50';
+    ? 'mb-4 w-full rounded-lg border border-warning bg-warning-soft px-3 py-2 text-left text-sm font-semibold text-warning-fg hover:bg-warning-soft/70'
+    : 'mb-4 w-full rounded-lg border border-accent/50 bg-accent-soft px-3 py-2 text-left text-sm font-semibold text-accent-fg hover:bg-accent-soft/70 disabled:cursor-not-allowed disabled:opacity-50';
 
   return (
-    <aside className="flex min-h-0 w-80 flex-col border-r border-gray-200 bg-white p-4">
+    <aside className="flex min-h-0 w-80 flex-col border-r border-border bg-surface p-4">
       <button
         type="button"
         onClick={onStartNewTeamLunch}
@@ -56,7 +56,7 @@ export default function OrdersRail({
             <span
               data-testid="in-progress-status"
               className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold ${
-                isPhase3Due ? 'delivery-due-alert text-red-700' : 'text-amber-700'
+                isPhase3Due ? 'delivery-due-alert text-danger-fg' : 'text-warning-fg'
               }`}
             >
               {inProgressPhaseLabel ?? '-'} ·
@@ -73,13 +73,13 @@ export default function OrdersRail({
         )}
       </button>
 
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Past Lunches</h2>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-fg-muted">Past Lunches</h2>
 
       {selectedSelectionId && hasOngoingLunchProcess && onBackToOngoing && (
         <button
           type="button"
           onClick={onBackToOngoing}
-          className="mb-4 w-full rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-left text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
+          className="mb-4 w-full rounded-lg border border-success bg-success-soft px-3 py-2 text-left text-sm font-semibold text-success-fg hover:bg-success-soft/70"
         >
           Back to ongoing Team Lunch
         </button>
@@ -95,18 +95,18 @@ export default function OrdersRail({
               onClick={() => onSelectSelection(selection.id)}
               className={`w-full rounded-lg border px-3 py-2 text-left ${
                 isSelected
-                  ? 'border-green-300 bg-green-50'
-                  : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                  ? 'border-success bg-success-soft'
+                  : 'border-border bg-surface-muted hover:bg-surface'
               }`}
             >
-              <p className="text-sm font-medium text-gray-800">{selection.menuName}</p>
-              <p className="text-xs text-gray-500">{formatCompletedAt(selection.completedAt)}</p>
+              <p className="text-sm font-medium text-fg">{selection.menuName}</p>
+              <p className="text-xs text-fg-muted">{formatCompletedAt(selection.completedAt)}</p>
             </button>
           );
         })}
 
         {history.length === 0 && (
-          <p className="rounded border border-dashed border-gray-300 px-3 py-4 text-center text-xs text-gray-500">
+          <p className="rounded border border-dashed border-border px-3 py-4 text-center text-xs text-fg-muted">
             No completed orders yet.
           </p>
         )}

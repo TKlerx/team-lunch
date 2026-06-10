@@ -13,6 +13,8 @@
     "ports:check:ci": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-port-blockers.ps1 -NonInteractive",
     "db:test:up": "docker compose --profile test up -d --wait db-test",
     "db:test:down": "docker compose --profile test rm -sfv db-test",
+    "preinstall": "only-allow pnpm",
+    "prebuild": "node ./scripts/prisma-generate-safe.mjs",
     "build": "tsc -p tsconfig.build.json && vite build && node scripts/copy-prisma-client.mjs",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit",
@@ -39,12 +41,14 @@
     "@fastify/cors": "^10.0.2",
     "@fastify/static": "^9.1.3",
     "@prisma/client": "^6.4.1",
+    "clsx": "^2.1.1",
     "exceljs": "^4.4.0",
     "fastify": "^5.8.5",
     "jose": "^6.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.1"
+    "react-router-dom": "^6.28.1",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
@@ -65,6 +69,7 @@
     "eslint-plugin-sonarjs": "^4.0.0",
     "jscpd": "^4.0.8",
     "jsdom": "^26.0.0",
+    "only-allow": "1.2.2",
     "png-to-ico": "^3.0.1",
     "postcss": "^8.5.3",
     "prettier": "^3.5.2",

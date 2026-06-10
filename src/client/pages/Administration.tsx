@@ -484,7 +484,7 @@ export default function Administration() {
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center text-sm text-gray-500">
+      <div className="flex flex-1 items-center justify-center text-sm text-fg-muted">
         Loading...
       </div>
     );
@@ -493,7 +493,7 @@ export default function Administration() {
   if (error && !config) {
     return (
       <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>
+        <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">{error}</div>
       </div>
     );
   }
@@ -501,9 +501,9 @@ export default function Administration() {
   if (!config?.isAdmin) {
     return (
       <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
           <p>Access denied.</p>
-          <Link to="/" className="mt-2 inline-block text-blue-600 hover:underline">
+          <Link to="/" className="mt-2 inline-block text-accent hover:underline">
             ← Back to home
           </Link>
         </div>
@@ -513,12 +513,12 @@ export default function Administration() {
 
   return (
     <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 p-6 pb-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Administration</h1>
-          <p className="mt-1 text-sm text-gray-600">Approve access requests and manage users and offices.</p>
+      <div className="rounded-xl border border-border bg-surface shadow-sm">
+        <div className="border-b border-border p-6 pb-4">
+          <h1 className="text-2xl font-semibold text-fg">Administration</h1>
+          <p className="mt-1 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
           {error && (
-            <div className="mt-3 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
               {error}
             </div>
           )}
@@ -526,19 +526,19 @@ export default function Administration() {
 
         <div className="space-y-4 p-6">
 
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Pending approvals</h2>
+          <div className="rounded border border-border bg-surface-muted p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">Pending approvals</h2>
             {config.pendingApprovals.length === 0 ? (
-              <p className="text-sm text-gray-600">No pending users.</p>
+              <p className="text-sm text-fg-muted">No pending users.</p>
             ) : (
               <ul className="space-y-2">
                 {config.pendingApprovals.map((entry) => (
                   <li
                     key={entry.email}
-                    className="rounded border border-gray-200 bg-white px-3 py-2 text-sm"
+                    className="rounded border border-border bg-surface px-3 py-2 text-sm"
                   >
                     <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                      <span className="text-gray-800">{entry.email}</span>
+                      <span className="text-fg">{entry.email}</span>
                       <div className="flex flex-wrap items-center gap-2">
                         <select
                           value={selectedApprovalOffices[entry.email] ?? ''}
@@ -548,7 +548,7 @@ export default function Administration() {
                               [entry.email]: event.target.value,
                             }))
                           }
-                          className="rounded border border-gray-300 px-2 py-1 text-xs"
+                          className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
                         >
                           <option value="">Select office</option>
                           {config.officeLocations.filter((l) => l.isActive).map((l) => (
@@ -559,7 +559,7 @@ export default function Administration() {
                           type="button"
                           disabled={updatingApprovalEmail === entry.email || !selectedApprovalOffices[entry.email]}
                           onClick={() => void handleApproveUser(entry.email)}
-                          className="rounded bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-60"
+                          className="rounded bg-success-solid px-3 py-1 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-60"
                         >
                           {updatingApprovalEmail === entry.email ? 'Updating...' : 'Approve'}
                         </button>
@@ -567,7 +567,7 @@ export default function Administration() {
                           type="button"
                           disabled={updatingApprovalEmail === entry.email}
                           onClick={() => void handleDeclineUser(entry.email)}
-                          className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-60"
+                          className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
                         >
                           {updatingApprovalEmail === entry.email ? 'Updating...' : 'Decline'}
                         </button>
@@ -579,8 +579,8 @@ export default function Administration() {
             )}
           </div>
 
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Create local user</h2>
+          <div className="rounded border border-border bg-surface-muted p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">Create local user</h2>
             <form onSubmit={(event) => void handleCreateLocalUser(event)} className="space-y-3">
               <input
                 type="email"
@@ -588,13 +588,13 @@ export default function Administration() {
                 onChange={(event) => setNewLocalUserEmail(event.target.value)}
                 placeholder="Email"
                 required
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               />
               <select
                 aria-label="Office location for new local user"
                 value={newLocalUserOfficeLocationId}
                 onChange={(event) => setNewLocalUserOfficeLocationId(event.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               >
                 <option value="">Select office location</option>
                 {config.officeLocations.filter((l) => l.isActive).map((l) => (
@@ -607,27 +607,27 @@ export default function Administration() {
                 onChange={(event) => setNewLocalUserPassword(event.target.value)}
                 placeholder="Password (leave empty to auto-generate)"
                 aria-invalid={!!localUserPasswordValidationError}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               />
               {localUserPasswordValidationError && (
-                <p className="text-xs text-red-600">{localUserPasswordValidationError}</p>
+                <p className="text-xs text-danger-fg">{localUserPasswordValidationError}</p>
               )}
               <button
                 type="submit"
                 disabled={creatingLocalUser || !!localUserPasswordValidationError || !newLocalUserOfficeLocationId}
-                className="w-full rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                className="w-full rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
               >
                 {creatingLocalUser ? 'Creating...' : 'Create local user'}
               </button>
             </form>
             {createdLocalUser && (
-              <div className="mt-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+              <div className="mt-3 rounded border border-accent/40 bg-accent-soft/40 p-3 text-sm text-accent-fg">
                 <div className="font-medium">Credentials created for {createdLocalUser.email}</div>
                 <div className="mt-1 break-all">
                   Temporary password: <code>{createdLocalUser.password}</code>
                 </div>
                 {createdLocalUser.generated && (
-                  <div className="mt-1 text-xs text-blue-700">
+                  <div className="mt-1 text-xs text-accent-fg">
                     Password was auto-generated. Share it securely once.
                   </div>
                 )}
@@ -635,20 +635,20 @@ export default function Administration() {
             )}
           </div>
 
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Office locations</h2>
+          <div className="rounded border border-border bg-surface-muted p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">Office locations</h2>
             <form onSubmit={(event) => void handleCreateOffice(event)} className="mb-3 flex gap-2">
               <input
                 type="text"
                 value={newOfficeName}
                 onChange={(event) => setNewOfficeName(event.target.value)}
                 placeholder="New office location"
-                className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={creatingOffice || !newOfficeName.trim()}
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
               >
                 {creatingOffice ? 'Creating...' : 'Add office'}
               </button>
@@ -668,12 +668,12 @@ export default function Administration() {
                   settingsDraft.autoStartPollWeekdays.join('|') !== location.autoStartPollWeekdays.join('|');
 
                 return (
-                  <li key={location.id} className="rounded border border-gray-200 bg-white px-3 py-3 text-sm">
+                  <li key={location.id} className="rounded border border-border bg-surface px-3 py-3 text-sm">
                     <div className="flex flex-col gap-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-800">{location.name}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="font-medium text-fg">{location.name}</p>
+                          <p className="text-xs text-fg-muted">
                             Key: {location.key} · {location.isActive ? 'Active' : 'Inactive'}
                           </p>
                         </div>
@@ -689,7 +689,7 @@ export default function Administration() {
                               [location.id]: event.target.value,
                             }))
                           }
-                          className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                         />
                         <div className="flex gap-2">
                           <button
@@ -701,7 +701,7 @@ export default function Administration() {
                               officeNameDrafts[location.id]?.trim() === location.name
                             }
                             onClick={() => void handleRenameOffice(location.id)}
-                            className="rounded border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 hover:bg-slate-100 disabled:opacity-60"
+                            className="rounded border border-border bg-surface-muted px-3 py-2 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
                           >
                             {updatingOfficeId === location.id ? 'Updating...' : 'Rename'}
                           </button>
@@ -714,16 +714,16 @@ export default function Administration() {
                               location.key === 'default'
                             }
                             onClick={() => void handleDeactivateOffice(location.id)}
-                            className="rounded border border-rose-300 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-60"
+                            className="rounded border border-danger bg-danger-soft px-3 py-2 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
                           >
                             {updatingOfficeId === location.id ? 'Updating...' : 'Deactivate'}
                           </button>
                         </div>
                       </div>
 
-                      <div className="rounded border border-slate-200 bg-slate-50 p-3">
+                      <div className="rounded border border-border bg-surface-muted p-3">
                         <div className="flex flex-col gap-3">
-                          <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                          <label className="flex items-center gap-2 text-sm font-medium text-fg">
                             <input
                               type="checkbox"
                               aria-label={`Enable scheduled poll for ${location.key}`}
@@ -744,12 +744,12 @@ export default function Administration() {
 
                           <div className="grid gap-3 lg:grid-cols-2">
                             <div>
-                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Weekdays</p>
+                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Weekdays</p>
                               <div className="flex flex-wrap gap-2">
                                 {OFFICE_WEEKDAY_OPTIONS.map((weekday) => {
                                   const checked = settingsDraft.autoStartPollWeekdays.includes(weekday.value);
                                   return (
-                                    <label key={weekday.value} className="flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700">
+                                    <label key={weekday.value} className="flex items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg">
                                       <input
                                         type="checkbox"
                                         aria-label={`${weekday.label} auto poll for ${location.key}`}
@@ -781,8 +781,8 @@ export default function Administration() {
                               </div>
                             </div>
 
-                            <label className="text-sm text-slate-700">
-                              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            <label className="text-sm text-fg">
+                              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
                                 Poll should finish by
                               </span>
                               <input
@@ -803,13 +803,13 @@ export default function Administration() {
                                     },
                                   }))
                                 }
-                                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100"
+                                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted"
                               />
                             </label>
                           </div>
 
-                          <label className="text-sm text-slate-700">
-                            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          <label className="text-sm text-fg">
+                            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
                               Default food-selection duration
                             </span>
                             <select
@@ -825,7 +825,7 @@ export default function Administration() {
                                   },
                                 }))
                               }
-                              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                             >
                               {FOOD_DURATIONS.map((d) => (
                                 <option key={d} value={d}>{d} min</option>
@@ -839,7 +839,7 @@ export default function Administration() {
                               aria-label={`Save office settings for ${location.key}`}
                               disabled={updatingOfficeId === location.id || !location.isActive || !settingsChanged}
                               onClick={() => void handleUpdateOfficeSettings(location.id)}
-                              className="rounded border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800 hover:bg-emerald-100 disabled:opacity-60"
+                              className="rounded border border-success bg-success-soft px-3 py-2 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
                             >
                               {updatingOfficeId === location.id ? 'Updating...' : 'Save settings'}
                             </button>
@@ -853,27 +853,27 @@ export default function Administration() {
             </ul>
           </div>
 
-          <div className="rounded border border-gray-200 bg-gray-50 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Users</h2>
+          <div className="rounded border border-border bg-surface-muted p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">Users</h2>
             {config.users.length === 0 ? (
-              <p className="text-sm text-gray-600">No users yet.</p>
+              <p className="text-sm text-fg-muted">No users yet.</p>
             ) : (
               <ul className="space-y-2">
                 {config.users.map((entry) => {
                   const isCurrentUser = config.user?.username === entry.email;
                   return (
-                    <li key={entry.email} className="rounded border border-gray-200 bg-white px-3 py-2 text-sm">
+                    <li key={entry.email} className="rounded border border-border bg-surface px-3 py-2 text-sm">
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-gray-800">{entry.email}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="truncate font-medium text-fg">{entry.email}</p>
+                          <p className="text-xs text-fg-muted">
                             {entry.blocked ? 'Blocked' : entry.approved ? 'Approved' : 'Pending'} ·{' '}
                             {entry.isAdmin ? 'Admin' : 'User'}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-fg-muted">
                             Preferred office: {entry.officeLocationName ?? 'Unassigned'}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-fg-muted">
                             Assigned offices:{' '}
                             {entry.assignedOfficeLocations.length > 0
                               ? entry.assignedOfficeLocations.map((l) => l.name).join(', ')
@@ -888,7 +888,7 @@ export default function Administration() {
                                 const selectedMemberships = selectedUserOfficeMemberships[entry.email] ?? [];
                                 const checked = selectedMemberships.includes(location.id);
                                 return (
-                                  <label key={location.id} className="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-700">
+                                  <label key={location.id} className="flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-fg">
                                     <input
                                       type="checkbox"
                                       aria-label={`${location.name} membership for ${entry.email}`}
@@ -934,7 +934,7 @@ export default function Administration() {
                               updatingUserRoleEmail === entry.email ||
                               (selectedUserOfficeMemberships[entry.email] ?? []).length === 0
                             }
-                            className="rounded border border-gray-300 px-2 py-1 text-xs"
+                            className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
                           >
                             <option value="">Select preferred office</option>
                             {config.officeLocations
@@ -955,7 +955,7 @@ export default function Administration() {
                                 (selectedUserOffices[entry.email] ?? '') === (entry.officeLocationId ?? ''))
                             }
                             onClick={() => void handleAssignOffice(entry.email)}
-                            className="rounded border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-800 hover:bg-slate-100 disabled:opacity-60"
+                            className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
                           >
                             {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save offices'}
                           </button>
@@ -964,7 +964,7 @@ export default function Administration() {
                               type="button"
                               disabled={updatingUserRoleEmail === entry.email || isCurrentUser || entry.blocked}
                               onClick={() => void handleDemoteUser(entry.email)}
-                              className="rounded border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100 disabled:opacity-60"
+                              className="rounded border border-warning bg-warning-soft px-3 py-1 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-60"
                             >
                               {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Demote'}
                             </button>
@@ -973,7 +973,7 @@ export default function Administration() {
                               type="button"
                               disabled={updatingUserRoleEmail === entry.email || entry.blocked}
                               onClick={() => void handlePromoteUser(entry.email)}
-                              className="rounded bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+                              className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
                             >
                               {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Promote'}
                             </button>
@@ -983,7 +983,7 @@ export default function Administration() {
                               type="button"
                               disabled={updatingUserRoleEmail === entry.email}
                               onClick={() => void handleUnblockUser(entry.email)}
-                              className="rounded border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100 disabled:opacity-60"
+                              className="rounded border border-success bg-success-soft px-3 py-1 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
                             >
                               {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Unblock'}
                             </button>
@@ -992,7 +992,7 @@ export default function Administration() {
                               type="button"
                               disabled={updatingUserRoleEmail === entry.email || isCurrentUser}
                               onClick={() => void handleBlockUser(entry.email)}
-                              className="rounded bg-rose-600 px-3 py-1 text-xs font-medium text-white hover:bg-rose-700 disabled:opacity-60"
+                              className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
                             >
                               {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Block'}
                             </button>
