@@ -2,6 +2,9 @@ import { useState, type FormEvent } from 'react';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
 import { useNickname } from '../hooks/useNickname.js';
+import { Card } from '../components/ui/Card.js';
+import { Input } from '../components/ui/Input.js';
+import { Button } from '../components/ui/Button.js';
 
 function formatTimestamp(value: string | null): string {
   if (!value) return '';
@@ -87,58 +90,53 @@ export default function ShoppingList() {
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 lg:px-6">
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-900">Shopping List</h1>
-        <p className="mt-2 text-sm text-gray-600">
+      <Card className="p-6">
+        <h1 className="text-2xl font-semibold text-fg">Shopping List</h1>
+        <p className="mt-2 text-sm text-fg-muted">
           Add office supplies or snacks here. Anyone can mark an item as bought once they picked it up.
         </p>
 
         <form className="mt-6 flex flex-col gap-3 sm:flex-row" onSubmit={handleAddItem}>
-          <input
-            type="text"
+          <Input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Coffee beans, oat milk, printer paper..."
-            className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+            className="flex-1"
           />
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-          >
+          <Button type="submit" disabled={saving}>
             Add item
-          </button>
+          </Button>
         </form>
 
-        {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-danger-fg">{error}</p> : null}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <section className="rounded-lg border border-warning bg-warning-soft p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-amber-900">To Buy ({openItems.length})</h2>
+              <h2 className="text-lg font-semibold text-warning-fg">To Buy ({openItems.length})</h2>
               <button
                 type="button"
                 onClick={() => {
                   void handleMarkAllBought();
                 }}
                 disabled={saving || openItems.length === 0}
-                className="rounded bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-warning-on transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Bought all
               </button>
             </div>
             {openItems.length === 0 ? (
-              <p className="mt-3 text-sm italic text-amber-800">Nothing pending right now.</p>
+              <p className="mt-3 text-sm italic text-warning-fg">Nothing pending right now.</p>
             ) : (
               <ul className="mt-4 space-y-3">
                 {openItems.map((item) => (
                   <li
                     key={item.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded border border-amber-200 bg-white px-3 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded border border-warning bg-surface px-3 py-3"
                   >
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-sm font-medium text-fg">{item.name}</div>
+                      <div className="text-xs text-fg-muted">
                         Added by {item.requestedBy} on {formatTimestamp(item.createdAt)}
                       </div>
                     </div>
@@ -148,7 +146,7 @@ export default function ShoppingList() {
                         void handleMarkBought(item.id);
                       }}
                       disabled={saving}
-                      className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
+                      className="rounded bg-success-solid px-3 py-1.5 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-60"
                     >
                       Mark bought
                     </button>
@@ -158,25 +156,25 @@ export default function ShoppingList() {
             )}
           </section>
 
-          <section className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-            <h2 className="text-lg font-semibold text-emerald-900">Bought ({boughtItems.length})</h2>
+          <section className="rounded-lg border border-success bg-success-soft p-4">
+            <h2 className="text-lg font-semibold text-success-fg">Bought ({boughtItems.length})</h2>
             {boughtItems.length === 0 ? (
-              <p className="mt-3 text-sm italic text-emerald-800">No completed purchases yet.</p>
+              <p className="mt-3 text-sm italic text-success-fg">No completed purchases yet.</p>
             ) : (
               <div className="mt-4 space-y-4">
                 {boughtItemsByDate.map((group) => (
                   <div key={group.label}>
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-success-fg">
                       {group.label}
                     </h3>
                     <ul className="mt-2 space-y-3">
                       {group.items.map((item) => (
                         <li
                           key={item.id}
-                          className="rounded border border-emerald-200 bg-white px-3 py-3"
+                          className="rounded border border-success bg-surface px-3 py-3"
                         >
-                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                          <div className="mt-1 text-xs text-gray-500">
+                          <div className="text-sm font-medium text-fg">{item.name}</div>
+                          <div className="mt-1 text-xs text-fg-muted">
                             Added by {item.requestedBy}. Bought by {item.boughtBy ?? 'someone'} on{' '}
                             {formatTimestamp(item.boughtAt)}.
                           </div>
@@ -189,7 +187,7 @@ export default function ShoppingList() {
             )}
           </section>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

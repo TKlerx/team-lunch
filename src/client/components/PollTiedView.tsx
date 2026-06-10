@@ -67,12 +67,12 @@ export default function PollTiedView() {
 
   return (
     <div className="flex min-h-0 flex-1 items-start justify-center p-4">
-      <div className="w-full max-w-md rounded-lg border border-amber-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-2 text-center text-lg font-semibold text-amber-700">
+      <div className="w-full max-w-md rounded-lg border border-warning bg-surface p-6 shadow-sm">
+        <h2 className="mb-2 text-center text-lg font-semibold text-warning-fg">
           It&apos;s a tie!
         </h2>
 
-        <p className="mb-4 text-center text-sm text-gray-600">
+        <p className="mb-4 text-center text-sm text-fg-muted">
           These menus are tied with {maxVotes} {maxVotes === 1 ? 'vote' : 'votes'} each:
         </p>
 
@@ -81,7 +81,7 @@ export default function PollTiedView() {
           {tiedMenuNames.map((name) => (
             <span
               key={name}
-              className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800"
+              className="rounded-full bg-warning-soft px-3 py-1 text-sm font-medium text-warning-fg"
             >
               {name}
             </span>
@@ -89,18 +89,18 @@ export default function PollTiedView() {
           </div>
         </div>
 
-        {error && <p className="mb-4 text-center text-sm text-red-600">{error}</p>}
+        {error && <p className="mb-4 text-center text-sm text-danger-fg">{error}</p>}
 
         {/* Extend voting */}
         <div className="mb-4 space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-fg">
             Extend voting
           </label>
           <div className="flex gap-2">
             <select
               value={extensionMinutes}
               onChange={(e) => setExtensionMinutes(Number(e.target.value))}
-              className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
             >
               {EXTEND_OPTIONS.map((d) => (
                 <option key={d} value={d}>{d} min</option>
@@ -110,20 +110,20 @@ export default function PollTiedView() {
               type="button"
               onClick={() => void handleExtend()}
               disabled={submitting || !canManageTieExtension}
-              className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               Extend
             </button>
           </div>
           {!canManageTieExtension && (
-            <p className="text-sm text-amber-700">Only admins or the poll creator can extend this tie.</p>
+            <p className="text-sm text-warning-fg">Only admins or the poll creator can extend this tie.</p>
           )}
         </div>
 
         <div className="relative my-4 flex items-center">
-          <div className="flex-1 border-t border-gray-200" />
-          <span className="px-3 text-xs text-gray-400">or</span>
-          <div className="flex-1 border-t border-gray-200" />
+          <div className="flex-1 border-t border-border" />
+          <span className="px-3 text-xs text-fg-muted">or</span>
+          <div className="flex-1 border-t border-border" />
         </div>
 
         {/* Random winner */}
@@ -131,7 +131,7 @@ export default function PollTiedView() {
           type="button"
           onClick={() => void handleRandomWinner()}
           disabled={submitting}
-          className="w-full rounded bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+          className="w-full rounded bg-warning-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           Pick randomly
         </button>
@@ -140,20 +140,20 @@ export default function PollTiedView() {
         {canKillPoll && (
           <div className="mt-4 text-center">
             {showAbortConfirm ? (
-              <div className="inline-flex items-center gap-2 rounded border border-red-200 bg-red-50 px-4 py-2">
-                <span className="text-sm text-red-700">Kill this poll?</span>
+              <div className="inline-flex items-center gap-2 rounded border border-danger bg-danger-soft px-4 py-2">
+                <span className="text-sm text-danger-fg">Kill this poll?</span>
                 <button
                   type="button"
                   onClick={() => void handleAbort()}
                   disabled={submitting}
-                  className="rounded bg-red-600 px-3 py-1 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                  className="rounded bg-danger-solid px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
                 >
                   Yes, kill
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowAbortConfirm(false)}
-                  className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:bg-gray-100"
+                  className="rounded border border-border px-3 py-1 text-sm text-fg-muted hover:bg-surface-muted"
                 >
                   Cancel
                 </button>
@@ -162,7 +162,7 @@ export default function PollTiedView() {
               <button
                 type="button"
                 onClick={() => setShowAbortConfirm(true)}
-                className="text-sm text-red-500 hover:text-red-700"
+                className="text-sm text-danger-fg hover:opacity-80"
               >
                 Kill poll (admin)
               </button>

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AppProvider } from './context/AppContext.js';
+import { ThemeProvider } from './context/ThemeContext.js';
 import App from './App.js';
 import AuthGate from './components/AuthGate.js';
 import { getRouterBasename } from './auth.js';
@@ -10,9 +11,11 @@ import './index.css';
 function bootstrap() {
   const app = (
     <BrowserRouter basename={getRouterBasename()}>
-      <AppProvider>
-        <App />
-      </AppProvider>
+      <ThemeProvider>
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 

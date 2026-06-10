@@ -9,6 +9,20 @@
     <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%apple-touch-icon.png" />
     <link rel="manifest" href="%BASE_URL%site.webmanifest" />
     <title>Team Lunch</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+      // Keep in sync with src/client/context/ThemeContext.tsx (storage key + logic).
+      (function () {
+        try {
+          var stored = localStorage.getItem('team_lunch_theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored === 'dark' || ((stored === 'system' || !stored) && prefersDark);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          /* localStorage/matchMedia unavailable — fall back to light. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -217,27 +217,27 @@ export default function FoodSelectionOrderingView() {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] p-4 lg:px-6">
-      <div className="mb-4 rounded bg-sky-50 px-4 py-2 text-center">
-        <span className="text-sm font-medium text-sky-700">
+      <div className="mb-4 rounded bg-accent-soft px-4 py-2 text-center">
+        <span className="text-sm font-medium text-accent-fg">
           {selection.menuName} &mdash; Ready to place order
         </span>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-lg border border-sky-200 bg-white p-6 shadow-sm xl:col-span-2">
-          <h2 className="mb-2 text-lg font-semibold text-sky-700">Place the restaurant order</h2>
-          <p className="mb-4 text-sm text-gray-600">
+        <div className="rounded-lg border border-accent bg-surface p-6 shadow-sm xl:col-span-2">
+          <h2 className="mb-2 text-lg font-semibold text-accent-fg">Place the restaurant order</h2>
+          <p className="mb-4 text-sm text-fg-muted">
             One person now places the real order, checks off processed items, and sets the announced ETA.
           </p>
 
           {(selectionMenu?.phone || selectionMenu?.url || selectionMenu?.orderUrl || selectionMenu?.location) && (
-            <div className="mb-4 rounded border border-gray-200 bg-gray-50 p-3">
-              <table className="text-sm text-gray-700">
+            <div className="mb-4 rounded border border-border bg-surface-muted p-3">
+              <table className="text-sm text-fg">
                 <tbody>
                 {selectionMenu?.orderUrl && (
                   <tr>
                     <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="9" cy="21" r="1" />
                         <circle cx="20" cy="21" r="1" />
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
@@ -249,7 +249,7 @@ export default function FoodSelectionOrderingView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title={selectionMenu.orderUrl}
-                        className="text-blue-700 underline hover:text-blue-800"
+                        className="text-accent-fg underline hover:text-accent-fg"
                       >
                         {(() => { try { const u = new URL(selectionMenu.orderUrl); return `${u.origin}/\u2026`; } catch { return selectionMenu.orderUrl; } })()}
                       </a>
@@ -259,12 +259,12 @@ export default function FoodSelectionOrderingView() {
                 {selectionMenu?.phone && (
                   <tr>
                     <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
                       </svg>
                     </td>
                     <td className="py-0.5">
-                      <a href={`tel:${selectionMenu.phone}`} className="text-blue-700 underline hover:text-blue-800">
+                      <a href={`tel:${selectionMenu.phone}`} className="text-accent-fg underline hover:text-accent-fg">
                         {selectionMenu.phone}
                       </a>
                     </td>
@@ -273,7 +273,7 @@ export default function FoodSelectionOrderingView() {
                 {selectionMenu?.url && (
                   <tr>
                     <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M14 3h7v7" />
                         <path d="M10 14L21 3" />
                         <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
@@ -285,7 +285,7 @@ export default function FoodSelectionOrderingView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title={selectionMenu.url}
-                        className="text-blue-700 underline hover:text-blue-800"
+                        className="text-accent-fg underline hover:text-accent-fg"
                       >
                         {(() => { try { const u = new URL(selectionMenu.url); return `${u.origin}/\u2026`; } catch { return selectionMenu.url; } })()}
                       </a>
@@ -295,7 +295,7 @@ export default function FoodSelectionOrderingView() {
                 {selectionMenu?.location && (
                   <tr>
                     <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
                         <circle cx="12" cy="10" r="3" />
                       </svg>
@@ -305,7 +305,7 @@ export default function FoodSelectionOrderingView() {
                         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectionMenu.location)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-700 underline hover:text-blue-800"
+                        className="text-accent-fg underline hover:text-accent-fg"
                       >
                         {selectionMenu.location}
                       </a>
@@ -317,12 +317,12 @@ export default function FoodSelectionOrderingView() {
             </div>
           )}
 
-          {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+          {error && <p className="mb-4 text-sm text-danger-fg">{error}</p>}
 
           {!isClaimed ? (
-            <div className="mb-4 rounded border border-sky-200 bg-sky-50 p-4">
-              <h3 className="text-sm font-semibold text-sky-900">Nobody has claimed the order yet</h3>
-              <p className="mt-1 text-sm text-sky-800">
+            <div className="mb-4 rounded border border-accent bg-accent-soft p-4">
+              <h3 className="text-sm font-semibold text-accent-fg">Nobody has claimed the order yet</h3>
+              <p className="mt-1 text-sm text-accent-fg">
                 Claim the ordering step first so everyone knows who is calling the restaurant.
               </p>
               <button
@@ -331,17 +331,17 @@ export default function FoodSelectionOrderingView() {
                   void handleClaimOrdering();
                 }}
                 disabled={claimingOrder || submitting}
-                className="mt-4 rounded bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+                className="mt-4 rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
               >
                 {claimingOrder ? 'Claiming order...' : 'I am placing the order'}
               </button>
             </div>
           ) : isClaimedByMe ? (
             <div className="mb-4 space-y-2">
-              <div className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              <div className="rounded border border-success bg-success-soft px-3 py-2 text-sm text-success-fg">
                 You claimed the ordering step. Set the ETA once the restaurant confirms the order.
               </div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-gray-600">
+              <label className="block text-xs font-medium uppercase tracking-wide text-fg-muted">
                 Announced ETA (minutes)
               </label>
               <MinutesActionDropdown
@@ -358,9 +358,9 @@ export default function FoodSelectionOrderingView() {
               />
             </div>
           ) : (
-            <div className="mb-4 rounded border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-semibold text-amber-900">{orderingOwner} is placing the order</h3>
-              <p className="mt-1 text-sm text-amber-800">
+            <div className="mb-4 rounded border border-warning bg-warning-soft p-4">
+              <h3 className="text-sm font-semibold text-warning-fg">{orderingOwner} is placing the order</h3>
+              <p className="mt-1 text-sm text-warning-fg">
                 Wait for {orderingOwner} to confirm the order and ETA so no second person orders in parallel.
               </p>
             </div>
@@ -370,7 +370,7 @@ export default function FoodSelectionOrderingView() {
             <button
               type="button"
               onClick={() => void handleCopyOrders()}
-              className="w-full rounded border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
+              className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft"
             >
               Copy order list
             </button>
@@ -378,14 +378,14 @@ export default function FoodSelectionOrderingView() {
           </div>
 
           {canManageFoodSelection ? (
-            <div className="rounded border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-semibold text-amber-900">
+            <div className="rounded border border-warning bg-warning-soft p-4">
+              <h3 className="text-sm font-semibold text-warning-fg">
                 Missing voters with fallback meals ({fallbackCandidates.length})
               </h3>
               {fallbackLoading ? (
-                <p className="mt-2 text-sm text-amber-800">Loading fallback meal options...</p>
+                <p className="mt-2 text-sm text-warning-fg">Loading fallback meal options...</p>
               ) : fallbackCandidates.length === 0 ? (
-                <p className="mt-2 text-sm italic text-amber-800">
+                <p className="mt-2 text-sm italic text-warning-fg">
                   No eligible fallback meals right now.
                 </p>
               ) : (
@@ -393,14 +393,14 @@ export default function FoodSelectionOrderingView() {
                   {fallbackCandidates.map((candidate) => (
                     <li
                       key={candidate.nickname}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded border border-amber-200 bg-white px-3 py-2"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded border border-warning bg-surface px-3 py-2"
                     >
-                      <div className="text-sm text-gray-800">
+                      <div className="text-sm text-fg">
                         <span className="font-medium">{candidate.nickname}</span>
-                        <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-800">
+                        <span className="ml-2 rounded bg-warning-soft px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning-fg">
                           Default meal configured
                         </span>
-                        <span className="ml-2 text-gray-600">
+                        <span className="ml-2 text-fg-muted">
                           {candidate.itemNumber ? `${candidate.itemNumber} ` : ''}
                           {candidate.itemName}
                         </span>
@@ -410,7 +410,7 @@ export default function FoodSelectionOrderingView() {
                           type="button"
                           onClick={() => void handlePingFallbackCandidate(candidate)}
                           disabled={pingingFallbackFor === candidate.nickname || submitting}
-                          className="rounded border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-800 hover:bg-amber-100 disabled:opacity-50"
+                          className="rounded border border-warning bg-surface px-3 py-1.5 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50"
                         >
                           {pingingFallbackFor === candidate.nickname ? 'Pinging...' : 'Ping user'}
                         </button>
@@ -418,7 +418,7 @@ export default function FoodSelectionOrderingView() {
                           type="button"
                           onClick={() => void handlePlaceFallbackOrder(candidate)}
                           disabled={placingFallbackFor === candidate.nickname || submitting}
-                          className="rounded bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+                          className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:opacity-50"
                         >
                           Place default meal
                         </button>
@@ -427,8 +427,8 @@ export default function FoodSelectionOrderingView() {
                   ))}
                 </ul>
               )}
-              {fallbackSuccess ? <p className="mt-2 text-xs text-emerald-700">{fallbackSuccess}</p> : null}
-              {fallbackError ? <p className="mt-2 text-xs text-red-600">{fallbackError}</p> : null}
+              {fallbackSuccess ? <p className="mt-2 text-xs text-success-fg">{fallbackSuccess}</p> : null}
+              {fallbackError ? <p className="mt-2 text-xs text-danger-fg">{fallbackError}</p> : null}
             </div>
           ) : null}
 

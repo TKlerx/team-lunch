@@ -130,13 +130,13 @@ function OrderForm({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-gray-700">Your order</h3>
+      <h3 className="text-sm font-semibold text-fg">Your order</h3>
 
       <input
         type="text"
         value={itemSearch}
         onChange={(e) => setItemSearch(e.target.value)}
-        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
         placeholder="Search items (min. 3 chars)"
       />
 
@@ -144,28 +144,28 @@ function OrderForm({
         {filteredMenuItems.map((item) => (
           <div
             key={item.id}
-            className="space-y-2 rounded border border-gray-200 p-3 hover:bg-gray-50"
+            className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted"
           >
             <div className="flex items-baseline justify-between gap-3">
-              <span className="truncate text-sm font-medium text-gray-800">
-                {item.itemNumber && <span className="mr-1 text-gray-500">{item.itemNumber}</span>}
+              <span className="truncate text-sm font-medium text-fg">
+                {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
                 <span>{item.name}</span>
               </span>
-              <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-emerald-700">
+              <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
                 {item.price === null ? '-' : formatPrice(item.price)}
               </span>
             </div>
             <div>
               {item.description && (
-                <p className="text-xs text-gray-500">{item.description}</p>
+                <p className="text-xs text-fg-muted">{item.description}</p>
               )}
               {itemWarningsById.get(item.id)?.allergies.length ? (
-                <p className="mt-1 text-xs font-medium text-red-700">
+                <p className="mt-1 text-xs font-medium text-danger-fg">
                   Allergy warning: {itemWarningsById.get(item.id)?.allergies.join(', ')}
                 </p>
               ) : null}
               {itemWarningsById.get(item.id)?.dislikes.length ? (
-                <p className="mt-1 text-xs font-medium text-amber-700">
+                <p className="mt-1 text-xs font-medium text-warning-fg">
                   Contains disliked ingredients: {itemWarningsById.get(item.id)?.dislikes.join(', ')}
                 </p>
               ) : null}
@@ -178,7 +178,7 @@ function OrderForm({
                   setItemNotes((prev) => ({ ...prev, [item.id]: event.target.value }))
                 }
                 maxLength={200}
-                className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="min-w-0 flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
                 placeholder="Size / spiciness / extras / comments"
                 aria-label={`Comment for ${item.name}`}
               />
@@ -186,7 +186,7 @@ function OrderForm({
                 type="button"
                 onClick={() => void handleAddItem(item.id)}
                 disabled={addingItemId === item.id || withdrawingAll}
-                className="shrink-0 rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                className="shrink-0 rounded bg-accent-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Add
               </button>
@@ -194,21 +194,21 @@ function OrderForm({
           </div>
         ))}
         {filteredMenuItems.length === 0 && (
-          <p className="text-sm italic text-gray-400">No matching items found</p>
+          <p className="text-sm italic text-fg-muted">No matching items found</p>
         )}
       </div>
 
       {existingOrders.length > 0 && (
-        <div className="space-y-1 rounded border border-blue-100 bg-blue-50/60 p-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-blue-900">Your added meals</h4>
+        <div className="space-y-1 rounded border border-accent bg-accent-soft/60 p-3">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-accent-fg">Your added meals</h4>
           <ul className="space-y-1">
             {existingOrders.map((order) => {
               const itemNumber = order.itemId ? itemNumberById.get(order.itemId) : null;
               return (
-                <li key={order.id} className="text-sm text-blue-900">
+                <li key={order.id} className="text-sm text-accent-fg">
                   {itemNumber ? `${itemNumber} ` : ''}
                   {order.itemName}
-                  {order.notes ? <span className="text-xs text-blue-800"> ({order.notes})</span> : null}
+                  {order.notes ? <span className="text-xs text-accent-fg"> ({order.notes})</span> : null}
                 </li>
               );
             })}
@@ -216,14 +216,14 @@ function OrderForm({
         </div>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger-fg">{error}</p>}
 
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => void handleWithdraw()}
           disabled={withdrawingAll || addingItemId !== null || existingOrders.length === 0}
-          className="rounded border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="rounded border border-danger px-4 py-2 text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-50"
         >
           Withdraw
         </button>
@@ -274,34 +274,34 @@ function OrderBoard({
   };
 
   if (orders.length === 0) {
-    return <p className="text-sm italic text-gray-400">No orders yet</p>;
+    return <p className="text-sm italic text-fg-muted">No orders yet</p>;
   }
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-gray-700">
+      <h3 className="text-sm font-semibold text-fg">
         Orders ({orders.length} orders, {uniqueUserCount} users)
       </h3>
       <div className="max-h-[65vh] space-y-1 overflow-y-auto pr-1">
         {ordersByUser.map(([userName, userOrders]) => (
-          <div key={userName} className="rounded border border-gray-200 bg-gray-50 p-2">
-            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-600">
+          <div key={userName} className="rounded border border-border bg-surface-muted p-2">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">
               {userName} ({userOrders.length})
             </div>
             <div className="space-y-1">
               {userOrders.map((o) => (
-                <div key={o.id} className="group flex items-center justify-between gap-2 rounded bg-white px-2 py-1.5">
+                <div key={o.id} className="group flex items-center justify-between gap-2 rounded bg-surface px-2 py-1.5">
                   <div className="flex min-w-0 items-baseline gap-2">
-                    <span className="truncate text-sm text-gray-700">
+                    <span className="truncate text-sm text-fg">
                       {o.itemId && itemNumberById.has(o.itemId) && (
-                        <span className="mr-1 text-gray-500">{itemNumberById.get(o.itemId)}</span>
+                        <span className="mr-1 text-fg-muted">{itemNumberById.get(o.itemId)}</span>
                       )}
                       <span>{o.itemName}</span>
                     </span>
-                    {o.notes && <span className="truncate text-xs text-gray-400">({o.notes})</span>}
+                    {o.notes && <span className="truncate text-xs text-fg-muted">({o.notes})</span>}
                   </div>
                   <div className="ml-2 flex items-center gap-2">
-                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-emerald-700">
+                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
                       {o.itemId && priceByItemId.has(o.itemId)
                         ? formatPrice(priceByItemId.get(o.itemId) as number)
                         : '-'}
@@ -311,7 +311,7 @@ function OrderBoard({
                         type="button"
                         onClick={() => void handleRemoveFromBoard(o.id)}
                         disabled={removingOrderId === o.id}
-                        className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 hover:bg-gray-100 disabled:opacity-50"
+                        className="rounded border border-border px-2 py-1 text-xs text-fg-muted opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 hover:bg-surface-muted disabled:opacity-50"
                       >
                         Remove
                       </button>
@@ -323,10 +323,10 @@ function OrderBoard({
           </div>
         ))}
       </div>
-      <div className="flex justify-end border-t border-gray-200 pt-2">
-        <span className="text-sm font-semibold text-gray-800">Total: {formatPrice(totalPrice)}</span>
+      <div className="flex justify-end border-t border-border pt-2">
+        <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger-fg">{error}</p>}
     </div>
   );
 }
@@ -573,7 +573,7 @@ export default function FoodSelectionActiveView() {
                   })();
                 }}
                 disabled={submitting}
-                className="block w-full border-b border-gray-200 bg-green-100 px-3 py-2 text-left text-sm font-medium text-green-800 hover:bg-green-200 disabled:opacity-60"
+                className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
               >
                 Finish meal collection
               </button>
@@ -589,7 +589,7 @@ export default function FoodSelectionActiveView() {
                   })();
                 }}
                 disabled={submitting}
-                className="block w-full border-b border-gray-200 bg-red-100 px-3 py-2 text-left text-sm font-medium text-red-800 hover:bg-red-200 disabled:opacity-60"
+                className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
               >
                 Abort process
               </button>
@@ -597,7 +597,7 @@ export default function FoodSelectionActiveView() {
 
             {canAdjustFoodSelectionTimer ? (
               <>
-                <div className="max-h-40 overflow-y-auto border-b border-gray-200 py-1">
+                <div className="max-h-40 overflow-y-auto border-b border-border py-1">
                   {timerOptions.map((minutes) => (
                     <button
                       key={minutes}
@@ -609,7 +609,7 @@ export default function FoodSelectionActiveView() {
                         })();
                       }}
                       disabled={updatingTimer}
-                      className="block w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                      className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
                     >
                       {minutes} min
                     </button>
@@ -633,13 +633,13 @@ export default function FoodSelectionActiveView() {
                       }
                     }}
                     placeholder="Manual minutes remaining"
-                    className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
                     aria-label="Food selection manual minutes remaining"
                   />
                 </div>
               </>
             ) : (
-              <p className="border-b border-gray-200 px-3 py-2 text-sm text-gray-600">
+              <p className="border-b border-border px-3 py-2 text-sm text-fg-muted">
                 Only admins or the food-selection creator can adjust this timer.
               </p>
             )}
@@ -648,31 +648,31 @@ export default function FoodSelectionActiveView() {
       </TimerActionHeader>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-sm xl:col-span-3">
-          <h3 className="text-sm font-semibold text-amber-900">Your allergy and dislike alerts</h3>
-          <p className="mt-1 text-xs text-amber-800">
+        <div className="rounded-lg border border-warning bg-warning-soft p-4 shadow-sm xl:col-span-3">
+          <h3 className="text-sm font-semibold text-warning-fg">Your allergy and dislike alerts</h3>
+          <p className="mt-1 text-xs text-warning-fg">
             Enter ingredients separated by comma, semicolon, or new line.
           </p>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <label className="text-xs font-medium text-amber-900">
+            <label className="text-xs font-medium text-warning-fg">
               Allergies
               <textarea
                 value={allergiesDraft}
                 onChange={(event) => setAllergiesDraft(event.target.value)}
                 rows={3}
-                className="mt-1 w-full rounded border border-amber-300 px-2 py-1.5 text-sm text-gray-800 focus:border-amber-500 focus:outline-none"
+                className="mt-1 w-full rounded border border-warning px-2 py-1.5 text-sm text-fg focus:border-warning focus:outline-none"
                 placeholder="e.g. peanuts, shrimp, milk"
                 aria-label="Allergies"
                 disabled={preferencesLoading || preferencesSaving}
               />
             </label>
-            <label className="text-xs font-medium text-amber-900">
+            <label className="text-xs font-medium text-warning-fg">
               Dislikes
               <textarea
                 value={dislikesDraft}
                 onChange={(event) => setDislikesDraft(event.target.value)}
                 rows={3}
-                className="mt-1 w-full rounded border border-amber-300 px-2 py-1.5 text-sm text-gray-800 focus:border-amber-500 focus:outline-none"
+                className="mt-1 w-full rounded border border-warning px-2 py-1.5 text-sm text-fg focus:border-warning focus:outline-none"
                 placeholder="e.g. mushrooms, onions"
                 aria-label="Dislikes"
                 disabled={preferencesLoading || preferencesSaving}
@@ -684,17 +684,17 @@ export default function FoodSelectionActiveView() {
               type="button"
               onClick={() => void handleSavePreferences()}
               disabled={preferencesLoading || preferencesSaving}
-              className="rounded bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+              className="rounded bg-warning-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               Save alerts
             </button>
-            {preferencesSavedMessage ? <span className="text-xs text-emerald-700">{preferencesSavedMessage}</span> : null}
-            {preferencesError ? <span className="text-xs text-red-600">{preferencesError}</span> : null}
+            {preferencesSavedMessage ? <span className="text-xs text-success-fg">{preferencesSavedMessage}</span> : null}
+            {preferencesError ? <span className="text-xs text-danger-fg">{preferencesError}</span> : null}
           </div>
         </div>
 
         {/* Left: Order form */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm xl:col-span-2">
+        <div className="rounded-lg border border-border bg-surface p-4 shadow-sm xl:col-span-2">
           <OrderForm
             selectionId={selection.id}
             menuItems={menuItems}
@@ -706,7 +706,7 @@ export default function FoodSelectionActiveView() {
 
         {/* Right: Order board */}
         <div className="space-y-4 xl:col-span-1">
-          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
           <OrderBoard
             orders={selection.orders}
             selectionId={selection.id}
@@ -716,11 +716,11 @@ export default function FoodSelectionActiveView() {
             totalPrice={totalPrice}
           />
           </div>
-          <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
-            <h3 className="text-sm font-semibold text-indigo-900">Recommended next action</h3>
+          <div className="rounded-lg border border-accent bg-accent-soft p-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-accent-fg">Recommended next action</h3>
             {votersWithoutOrder.length === 0 ? (
               <div className="mt-2 space-y-2">
-                <p className="text-sm text-indigo-800">
+                <p className="text-sm text-accent-fg">
                   Everyone who voted has ordered. Click below when you have placed the real order.
                 </p>
                 <button
@@ -729,22 +729,22 @@ export default function FoodSelectionActiveView() {
                     void handleFinishNow();
                   }}
                   disabled={submitting}
-                  className="w-full rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                  className="w-full rounded bg-success-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
                 >
                   Click here when you place the order.
                 </button>
               </div>
             ) : (
               <>
-                <h4 className="text-sm font-semibold text-indigo-900">
+                <h4 className="text-sm font-semibold text-accent-fg">
                   Voted for menu but not ordered yet ({votersWithoutOrder.length})
                 </h4>
-                <p className="mt-1 text-xs text-indigo-800">
+                <p className="mt-1 text-xs text-accent-fg">
                   CTA: remind these people personally, or use the reminder function below.
                 </p>
                 <ul className="mt-2 space-y-1">
                   {votersWithoutOrder.map((name) => (
-                    <li key={name} className="text-sm text-indigo-900">
+                    <li key={name} className="text-sm text-accent-fg">
                       {name}
                     </li>
                   ))}
@@ -755,15 +755,15 @@ export default function FoodSelectionActiveView() {
                       type="button"
                       onClick={() => void handleRemindMissingOrders()}
                       disabled={remindingMissing || votersWithoutOrder.length === 0}
-                      className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                      className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
                     >
                       {remindingMissing ? 'Sending reminders...' : 'Ping missing users'}
                     </button>
-                    {reminderMessage ? <p className="text-xs text-emerald-700">{reminderMessage}</p> : null}
-                    {reminderError ? <p className="text-xs text-red-600">{reminderError}</p> : null}
+                    {reminderMessage ? <p className="text-xs text-success-fg">{reminderMessage}</p> : null}
+                    {reminderError ? <p className="text-xs text-danger-fg">{reminderError}</p> : null}
                   </div>
                 ) : (
-                  <p className="mt-2 text-xs text-indigo-700">
+                  <p className="mt-2 text-xs text-accent-fg">
                     Personal reminders are available to everyone. Automatic reminder sending is admin-only.
                   </p>
                 )}
@@ -773,7 +773,7 @@ export default function FoodSelectionActiveView() {
         </div>
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-sm text-danger-fg">{error}</p>}
     </div>
   );
 }

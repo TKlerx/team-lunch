@@ -25,12 +25,12 @@ function VoteHistogram({
         return (
           <div key={menu.id}>
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-700">{menu.name}</span>
-              <span className="text-gray-500">{count}</span>
+              <span className="font-medium text-fg">{menu.name}</span>
+              <span className="text-fg-muted">{count}</span>
             </div>
-            <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-gray-200">
+            <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-border">
               <div
-                className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                className="h-full rounded-full bg-accent transition-all duration-300"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -100,7 +100,7 @@ function VotingPanel({
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm text-accent hover:text-accent-fg"
         >
           Show voting panel
         </button>
@@ -111,20 +111,20 @@ function VotingPanel({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">Your votes</h3>
+        <h3 className="text-sm font-semibold text-fg">Your votes</h3>
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="text-xs text-gray-500 hover:text-gray-700"
+          className="text-xs text-fg-muted hover:text-fg"
         >
           I&apos;ll sit this one out
         </button>
       </div>
 
-      {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mb-2 text-sm text-danger-fg">{error}</p>}
 
       {disabled && (
-        <p className="mb-3 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        <p className="mb-3 rounded border border-warning bg-warning-soft px-3 py-2 text-sm text-warning-fg">
           Voting is closed. Review the result and complete the poll.
         </p>
       )}
@@ -141,8 +141,8 @@ function VotingPanel({
               disabled={isLoading || disabled}
               className={`w-full rounded border px-4 py-2 text-left text-sm font-medium transition-colors disabled:opacity-50 ${
                 voted
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'border-accent bg-accent-soft text-accent-fg'
+                  : 'border-border bg-surface text-fg hover:bg-surface-muted'
               }`}
             >
               {voted ? '✓ ' : ''}{menu.name}
@@ -156,7 +156,7 @@ function VotingPanel({
           type="button"
           onClick={() => void handleWithdrawAll()}
           disabled={withdrawingAll || myVotedMenuIds.size === 0 || disabled}
-          className="w-full rounded border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="w-full rounded border border-danger px-4 py-2 text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-50"
         >
           Withdraw my votes
         </button>
@@ -188,16 +188,16 @@ function PublicVotesBoard({
   }, [votes, menus]);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-2 text-sm font-semibold text-gray-700">Public votes</h3>
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+      <h3 className="mb-2 text-sm font-semibold text-fg">Public votes</h3>
       {grouped.length === 0 ? (
-        <p className="text-sm italic text-gray-400">No votes yet</p>
+        <p className="text-sm italic text-fg-muted">No votes yet</p>
       ) : (
         <ul className="max-h-[45vh] space-y-1 overflow-y-auto pr-1">
           {grouped.map(([nickname, choices]) => (
-            <li key={nickname} className="text-sm text-gray-700">
+            <li key={nickname} className="text-sm text-fg">
               <span className="font-medium">{nickname}</span>
-              <span className="text-gray-400"> &middot; </span>
+              <span className="text-fg-muted"> &middot; </span>
               <span>{choices.join(', ')}</span>
             </li>
           ))}
@@ -307,7 +307,7 @@ export default function PollActiveView() {
                 })();
               }}
               disabled={submitting}
-              className="block w-full border-b border-gray-200 bg-green-100 px-3 py-2 text-left text-sm font-medium text-green-800 hover:bg-green-200 disabled:opacity-60"
+              className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
             >
               Confirm completion
             </button>
@@ -322,7 +322,7 @@ export default function PollActiveView() {
                   })();
                 }}
                 disabled={aborting || submitting}
-                className="block w-full border-b border-gray-200 bg-red-100 px-3 py-2 text-left text-sm font-medium text-red-800 hover:bg-red-200 disabled:opacity-60"
+                className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
               >
                 Kill poll (admin)
               </button>
@@ -330,7 +330,7 @@ export default function PollActiveView() {
 
             {canAdjustPollTimer ? (
               <>
-                <div className="max-h-40 overflow-y-auto border-b border-gray-200 py-1">
+                <div className="max-h-40 overflow-y-auto border-b border-border py-1">
                   {timerOptions.map((minutes) => (
                     <button
                       key={minutes}
@@ -342,7 +342,7 @@ export default function PollActiveView() {
                         })();
                       }}
                       disabled={updatingTimer}
-                      className="block w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                      className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
                     >
                       {minutes} min
                     </button>
@@ -366,13 +366,13 @@ export default function PollActiveView() {
                       }
                     }}
                     placeholder="Manual minutes remaining"
-                    className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
                     aria-label="Poll manual minutes remaining"
                   />
                 </div>
               </>
             ) : (
-              <p className="border-b border-gray-200 px-3 py-2 text-sm text-gray-600">
+              <p className="border-b border-border px-3 py-2 text-sm text-fg-muted">
                 Only admins or the poll creator can adjust this timer.
               </p>
             )}
@@ -388,9 +388,9 @@ export default function PollActiveView() {
       </div>
 
       {pollExpired && (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-sm">
-          <h2 className="text-base font-semibold text-amber-900">Voting time is up</h2>
-          <p className="mt-1 text-sm text-amber-800">
+        <div className="mb-6 rounded-lg border border-warning bg-warning-soft p-4 shadow-sm">
+          <h2 className="text-base font-semibold text-warning-fg">Voting time is up</h2>
+          <p className="mt-1 text-sm text-warning-fg">
             The menu poll has ended. Finalize the result so everyone can move on to meal selection.
           </p>
           {canKillPoll ? (
@@ -400,12 +400,12 @@ export default function PollActiveView() {
                 void handleFinishNow();
               }}
               disabled={submitting}
-              className="mt-4 rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60"
+              className="mt-4 rounded bg-success-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
             >
               Confirm completion
             </button>
           ) : (
-            <p className="mt-3 text-sm text-amber-900">
+            <p className="mt-3 text-sm text-warning-fg">
               Waiting for an organizer to confirm the result.
             </p>
           )}
@@ -413,7 +413,7 @@ export default function PollActiveView() {
       )}
 
       {/* Voting panel */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
         <VotingPanel
           pollId={activePoll.id}
           menus={votableMenus}

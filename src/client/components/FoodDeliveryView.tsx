@@ -208,7 +208,7 @@ export default function FoodDeliveryView() {
                 })();
               }}
               disabled={isConfirmingArrival}
-              className="block w-full border-b border-gray-200 bg-green-100 px-3 py-2 text-left text-sm font-medium text-green-800 hover:bg-green-200 disabled:opacity-60"
+              className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
             >
               Confirm lunch arrived
             </button>
@@ -222,13 +222,13 @@ export default function FoodDeliveryView() {
                     if (done) closeMenu();
                   })();
                 }}
-                className="block w-full border-b border-gray-200 bg-red-100 px-3 py-2 text-left text-sm font-medium text-red-800 hover:bg-red-200 disabled:opacity-60"
+                className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
               >
                 Abort process
               </button>
             )}
 
-            <div className="max-h-48 overflow-y-auto border-b border-gray-200 py-1">
+            <div className="max-h-48 overflow-y-auto border-b border-border py-1">
               {etaOptions.map((minutes) => (
                 <button
                   key={minutes}
@@ -240,7 +240,7 @@ export default function FoodDeliveryView() {
                     })();
                   }}
                   disabled={isSavingEta}
-                  className="block w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                  className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
                 >
                   {minutes} min
                 </button>
@@ -262,7 +262,7 @@ export default function FoodDeliveryView() {
                   }
                 }}
                 placeholder="Manual minutes remaining"
-                className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
                 aria-label="Manual minutes remaining"
               />
             </div>
@@ -270,17 +270,17 @@ export default function FoodDeliveryView() {
         )}
       </TimerActionHeader>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">{activeFoodSelection.menuName}</h2>
-        <p className="mt-1 text-sm text-gray-600">
+      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+        <h2 className="text-lg font-semibold text-fg">{activeFoodSelection.menuName}</h2>
+        <p className="mt-1 text-sm text-fg-muted">
           Phase 3 delivery tracking is active. Use the timer menu to confirm arrival or update ETA.
         </p>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-fg-muted">
           Tick items as delivered while checking the bags.
         </p>
         <div
           className={`mt-4 rounded border p-3 ${
-            isDue ? 'border-amber-300 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'
+            isDue ? 'border-warning bg-warning-soft text-warning-fg' : 'border-success bg-success-soft text-success-fg'
           }`}
         >
           <p className="text-sm font-semibold">
@@ -288,27 +288,27 @@ export default function FoodDeliveryView() {
               ? `Delivery is late by ${formatLateDuration(lateSeconds)}.`
               : `Delivery is on time. ${formatTime(remaining)} remaining until the announced ETA.`}
           </p>
-          <p className={`mt-1 text-xs ${isDue ? 'text-amber-800' : 'text-emerald-800'}`}>
+          <p className={`mt-1 text-xs ${isDue ? 'text-warning-fg' : 'text-success-fg'}`}>
             {isDue
               ? 'The announced arrival time has passed. Update the ETA or confirm arrival when the food is here.'
               : 'Keep the ETA updated if the restaurant gives you a new estimate.'}
           </p>
         </div>
-        <div className="mt-2 space-y-1 text-xs text-gray-500">
+        <div className="mt-2 space-y-1 text-xs text-fg-muted">
           <p>Order placed: {formatDateTime(selection.orderPlacedAt)}</p>
           {selection.orderPlacedBy && <p>Order placed by: {selection.orderPlacedBy}</p>}
           {selection.deliveryDueAt && <p>Announced arrival: {formatDateTime(selection.deliveryDueAt)}</p>}
         </div>
 
         {(selectionMenu?.location || selectionMenu?.phone || selectionMenu?.url || selectionMenu?.orderUrl) && (
-          <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-3">
-            <h3 className="mb-2 text-sm font-semibold text-gray-700">Restaurant contact</h3>
-            <table className="text-sm text-gray-700">
+          <div className="mt-4 rounded border border-border bg-surface-muted p-3">
+            <h3 className="mb-2 text-sm font-semibold text-fg">Restaurant contact</h3>
+            <table className="text-sm text-fg">
               <tbody>
               {selectionMenu?.location && (
                 <tr>
                   <td className="pr-2 align-top">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
@@ -318,7 +318,7 @@ export default function FoodDeliveryView() {
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectionMenu.location)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-700 underline hover:text-blue-800"
+                      className="text-accent-fg underline hover:text-accent-fg"
                     >
                       {selectionMenu.location}
                     </a>
@@ -328,12 +328,12 @@ export default function FoodDeliveryView() {
               {selectionMenu?.phone && (
                 <tr>
                   <td className="pr-2 align-top">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </td>
                   <td className="py-0.5">
-                    <a href={`tel:${selectionMenu.phone}`} className="text-blue-700 underline hover:text-blue-800">
+                    <a href={`tel:${selectionMenu.phone}`} className="text-accent-fg underline hover:text-accent-fg">
                       {selectionMenu.phone}
                     </a>
                   </td>
@@ -342,7 +342,7 @@ export default function FoodDeliveryView() {
               {selectionMenu?.url && (
                 <tr>
                   <td className="pr-2 align-top">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 3h7v7" />
                       <path d="M10 14L21 3" />
                       <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
@@ -354,7 +354,7 @@ export default function FoodDeliveryView() {
                       target="_blank"
                       rel="noopener noreferrer"
                       title={selectionMenu.url}
-                      className="text-blue-700 underline hover:text-blue-800"
+                      className="text-accent-fg underline hover:text-accent-fg"
                     >
                       {(() => { try { const u = new URL(selectionMenu.url); return `${u.origin}/\u2026`; } catch { return selectionMenu.url; } })()}
                     </a>
@@ -364,7 +364,7 @@ export default function FoodDeliveryView() {
               {selectionMenu?.orderUrl && (
                 <tr>
                   <td className="pr-2 align-top">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="9" cy="21" r="1" />
                       <circle cx="20" cy="21" r="1" />
                       <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
@@ -376,7 +376,7 @@ export default function FoodDeliveryView() {
                       target="_blank"
                       rel="noopener noreferrer"
                       title={selectionMenu.orderUrl}
-                      className="text-blue-700 underline hover:text-blue-800"
+                      className="text-accent-fg underline hover:text-accent-fg"
                     >
                       {(() => { try { const u = new URL(selectionMenu.orderUrl); return `${u.origin}/\u2026`; } catch { return selectionMenu.orderUrl; } })()}
                     </a>
@@ -389,21 +389,21 @@ export default function FoodDeliveryView() {
         )}
 
         <div className="mt-4">
-          <h3 className="mb-2 text-sm font-semibold text-gray-700">
+          <h3 className="mb-2 text-sm font-semibold text-fg">
             Current orders ({selection.orders.length} orders, {uniqueUserCount} users)
           </h3>
           {selection.orders.length === 0 ? (
-            <p className="text-sm italic text-gray-400">No orders were placed</p>
+            <p className="text-sm italic text-fg-muted">No orders were placed</p>
           ) : (
             <div className="max-h-[45vh] space-y-1 overflow-y-auto pr-1">
               {ordersByUser.map(([userName, userOrders]) => (
-                <div key={userName} className="rounded border border-gray-200 bg-gray-50 p-2">
-                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-600">
+                <div key={userName} className="rounded border border-border bg-surface-muted p-2">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                     {userName} ({userOrders.length})
                   </div>
                   <div className="space-y-1">
                     {userOrders.map((order) => (
-                      <div key={order.id} className="flex items-baseline justify-between gap-3 rounded bg-white px-2 py-1.5">
+                      <div key={order.id} className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5">
                         <div className="flex min-w-0 items-baseline gap-2">
                           <input
                             type="checkbox"
@@ -414,7 +414,7 @@ export default function FoodDeliveryView() {
                               void onToggleDelivered(order.id, event.currentTarget.checked);
                             }}
                           />
-                          <span className="truncate text-sm text-gray-700">
+                          <span className="truncate text-sm text-fg">
                             {(() => {
                               const itemNumber = resolveOrderItemNumber(
                                 order,
@@ -424,9 +424,9 @@ export default function FoodDeliveryView() {
                               return itemNumber ? `${itemNumber} ${order.itemName}` : order.itemName;
                             })()}
                           </span>
-                          {order.notes && <span className="truncate text-xs text-gray-400">({order.notes})</span>}
+                          {order.notes && <span className="truncate text-xs text-fg-muted">({order.notes})</span>}
                         </div>
-                        <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-emerald-700">
+                        <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
                           {(() => {
                             const resolvedPrice = resolveOrderPrice(order, priceByItemId, priceByItemName);
                             return resolvedPrice === null ? '-' : formatPrice(resolvedPrice);
@@ -439,15 +439,15 @@ export default function FoodDeliveryView() {
               ))}
             </div>
           )}
-          <div className="mt-2 flex justify-end border-t border-gray-200 pt-2">
-            <span className="text-sm font-semibold text-gray-800">Total: {formatPrice(totalPrice)}</span>
+          <div className="mt-2 flex justify-end border-t border-border pt-2">
+            <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
           </div>
 
           <div className="mt-3">
             <button
               type="button"
               onClick={() => void onCopyOrders()}
-              className="w-full rounded border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100"
+              className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft"
             >
               Copy order list
             </button>
@@ -455,7 +455,7 @@ export default function FoodDeliveryView() {
           </div>
         </div>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
       </div>
     </div>
   );
