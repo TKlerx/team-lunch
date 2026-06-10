@@ -26,6 +26,7 @@ interface AdminOfficeContextValue {
   canSwitchOfficeLocation: boolean;
   setSelectedOfficeLocationId: (officeLocationId: string) => void;
   pendingApprovalCount: number;
+  setPendingApprovalCount: (count: number) => void;
 }
 
 interface AdminOfficeProviderProps {
@@ -46,6 +47,9 @@ const AdminOfficeContext = createContext<AdminOfficeContextValue>({
     // noop default
   },
   pendingApprovalCount: 0,
+  setPendingApprovalCount: () => {
+    // noop default
+  },
 });
 
 function resolvePreferredOfficeLocationId(
@@ -77,9 +81,11 @@ export function AdminOfficeProvider({
   isAdmin,
   officeLocationId,
   officeLocations,
-  pendingApprovalCount = 0,
+  pendingApprovalCount: initialPendingApprovalCount = 0,
   children,
 }: AdminOfficeProviderProps) {
+  const [pendingApprovalCount, setPendingApprovalCount] = useState(initialPendingApprovalCount);
+
   const activeOfficeLocations = useMemo(
     () => officeLocations.filter((location) => location.isActive),
     [officeLocations],
@@ -127,6 +133,7 @@ export function AdminOfficeProvider({
       canSwitchOfficeLocation: isAdmin || activeOfficeLocations.length > 1,
       setSelectedOfficeLocationId,
       pendingApprovalCount,
+      setPendingApprovalCount,
     }),
     [
       activeOfficeLocations,
@@ -134,6 +141,7 @@ export function AdminOfficeProvider({
       selectedOfficeLocationId,
       setSelectedOfficeLocationId,
       pendingApprovalCount,
+      setPendingApprovalCount,
     ],
   );
 

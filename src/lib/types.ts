@@ -175,6 +175,47 @@ export interface ShoppingListItem {
   updatedAt: string;
 }
 
+// ─── Auth config ────────────────────────────────────────────
+
+export type AuthMethod = 'entra' | 'local';
+
+export const LOCAL_PASSWORD_MIN_LENGTH = 8;
+export const LOCAL_PASSWORD_MAX_LENGTH = 200;
+
+export type AuthConfigResponse = {
+  auth: {
+    entraEnabled: boolean;
+    localEnabled: boolean;
+    authenticated: boolean;
+    warning?: string;
+    user: { username: string; method: AuthMethod } | null;
+    officeLocation: { id: string; key: string; name: string } | null;
+    officeLocations: OfficeLocation[];
+    accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
+    approvalRequired: boolean;
+    approved: boolean;
+    blocked: boolean;
+    isAdmin: boolean;
+    role: 'admin' | 'user' | null;
+    pendingApprovals: Array<{ email: string; requestedAt: string }>;
+    users: Array<{
+      email: string;
+      approved: boolean;
+      blocked: boolean;
+      isAdmin: boolean;
+      officeLocationId: string | null;
+      officeLocationKey: string | null;
+      officeLocationName: string | null;
+      assignedOfficeLocationIds: string[];
+      assignedOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
+      requestedAt: string;
+      approvedAt: string | null;
+      blockedAt: string | null;
+      updatedAt: string;
+    }>;
+  };
+};
+
 // ─── API Request shapes ────────────────────────────────────
 
 export interface CreateMenuRequest {
