@@ -107,6 +107,7 @@ export default function ThemeToggle() {
             return (
               <MenuItem
                 key={value}
+                role="menuitemradio"
                 onClick={() => {
                   setTheme(value);
                   setOpen(false);
