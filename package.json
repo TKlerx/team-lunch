@@ -32,6 +32,7 @@
     "auth:seed": "tsx scripts/auth-seed.ts",
     "prisma:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
     "prisma:push:sqlite": "prisma db push --schema prisma/schema.sqlite.prisma",
+    "deploy": "sh ./scripts/deploy.sh",
     "validate": "pwsh -NoProfile -File ./validate.ps1 all"
   },
   "dependencies": {

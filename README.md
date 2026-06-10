@@ -111,6 +111,18 @@ docker compose up --build
 
 Then open `http://localhost:3000`.
 
+### Production Deploy with Docker Compose
+
+For a production-style deploy, configure `.env` and run:
+
+```bash
+pnpm deploy
+```
+
+This runs `scripts/deploy.sh`, which validates the compose config, builds the
+app image, starts the database, runs `prisma migrate deploy`, and restarts the
+app container.
+
 ## First-Time Setup
 
 ### Minimal Local Setup
