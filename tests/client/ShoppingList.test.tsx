@@ -21,10 +21,6 @@ vi.mock('../../src/client/api.js', () => ({
   markShoppingListItemBought: (...args: unknown[]) => mockMarkShoppingListItemBought(...args),
 }));
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({ nickname: 'Alice' }),
-}));
-
 import ShoppingList from '../../src/client/pages/ShoppingList.js';
 
 function renderView() {
@@ -38,6 +34,9 @@ function renderView() {
 describe('ShoppingList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
+    localStorage.setItem('team_lunch_auth_method', 'local');
     mockCreateShoppingListItem.mockResolvedValue({});
     mockMarkShoppingListItemBought.mockResolvedValue({});
     mockUseAppState.mockReturnValue({

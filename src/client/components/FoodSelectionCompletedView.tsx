@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
 import type { FoodSelection } from '../../lib/types.js';
-import { useNickname } from '../hooks/useNickname.js';
+import { getAuthenticatedActorKey, getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import {
   buildOrderLookupMaps,
@@ -45,7 +45,8 @@ export default function FoodSelectionCompletedView({
   onBackToDashboard,
 }: FoodSelectionCompletedViewProps) {
   const { latestCompletedFoodSelection, menus } = useAppState();
-  const { nickname } = useNickname();
+  const actorKey = getAuthenticatedActorKey();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [ratingValues, setRatingValues] = useState<Record<string, number>>({});
   const [feedbackValues, setFeedbackValues] = useState<Record<string, string>>({});
@@ -91,7 +92,7 @@ export default function FoodSelectionCompletedView({
   };
 
   const handleSaveRating = async (orderId: string, currentRating: number | null | undefined) => {
-    if (!nickname) return;
+    if (!actorLabel) return;
     const rating = ratingValues[orderId] ?? currentRating ?? 0;
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       setRatingError('Rating must be between 1 and 5.');
@@ -104,7 +105,7 @@ export default function FoodSelectionCompletedView({
       await api.rateOrder(
         selection.id,
         orderId,
-        nickname,
+        actorLabel,
         rating,
         feedbackValues[orderId] ?? null,
       );
@@ -117,11 +118,11 @@ export default function FoodSelectionCompletedView({
   };
 
   const handleExport = async () => {
-    if (!nickname) return;
+    if (!actorLabel) return;
     setExportState('idle');
     try {
-      const blob = await api.exportMyOrdersExcel(nickname);
-      const fileName = `team-lunch-orders-${nickname.replace(/[^a-zA-Z0-9._-]/g, '_') || 'user'}.xlsx`;
+      const blob = await api.exportMyOrdersExcel(actorLabel);
+      const fileName = `team-lunch-orders-${actorLabel.replace(/[^a-zA-Z0-9._-]/g, '_') || 'user'}.xlsx`;
       const url = window.URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -135,6 +136,9 @@ export default function FoodSelectionCompletedView({
       setExportState('error');
     }
   };
+
+  const isOrderOwnedByCurrentUser = (order: { actorKey?: string | null; nickname: string }): boolean =>
+    actorKey ? order.actorKey === actorKey || (!order.actorKey && order.nickname === actorLabel) : order.nickname === actorLabel;
 
   return (
     <div className="flex min-h-0 flex-1 items-start justify-center p-4">
@@ -194,7 +198,7 @@ export default function FoodSelectionCompletedView({
                     </span>
                     {o.notes && <span className="truncate text-xs text-fg-muted">({o.notes})</span>}
                   </div>
-                  {nickname === o.nickname && (
+                  {isOrderOwnedByCurrentUser(o) && (
                     <div className="mt-1 flex items-center gap-2">
                       <select
                         value={ratingValues[o.id] ?? o.rating ?? ''}
@@ -233,7 +237,7 @@ export default function FoodSelectionCompletedView({
                       </button>
                     </div>
                   )}
-                  {nickname === o.nickname && (o.rating || o.feedbackComment) ? (
+                  {isOrderOwnedByCurrentUser(o) && (o.rating || o.feedbackComment) ? (
                     <div className="mt-1 text-xs text-fg-muted">
                       {o.rating ? <span>Current rating: {o.rating}/5</span> : null}
                       {o.feedbackComment ? (

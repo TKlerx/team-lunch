@@ -46,11 +46,6 @@ function renderPhase(phase: AppPhase) {
 }
 
 describe('MainView — phase routing', () => {
-  it('renders nothing for NICKNAME_PROMPT', () => {
-    const { container } = renderPhase('NICKNAME_PROMPT');
-    expect(container.innerHTML).toBe('');
-  });
-
   it('renders NoMenusView for NO_MENUS', () => {
     renderPhase('NO_MENUS');
     expect(screen.getByTestId('no-menus-view')).toBeInTheDocument();

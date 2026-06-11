@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
+import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
 import type {
@@ -1415,7 +1415,7 @@ function NewMenuDropdown({
 
 export default function ManageMenus() {
   const { menus } = useAppState();
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [importOpen, setImportOpen] = useState(false);
   const [menuDefaultsByMenuId, setMenuDefaultsByMenuId] = useState<
     Record<string, UserMenuDefaultPreference>
@@ -1427,7 +1427,7 @@ export default function ManageMenus() {
     let cancelled = false;
 
     const loadDefaults = async () => {
-      if (!nickname) {
+      if (!actorLabel) {
         setMenuDefaultsByMenuId({});
         setDefaultsError('');
         return;
@@ -1436,7 +1436,7 @@ export default function ManageMenus() {
       setDefaultsLoading(true);
       setDefaultsError('');
       try {
-        const preferences = await api.getUserMenuDefaultPreferences(nickname);
+        const preferences = await api.getUserMenuDefaultPreferences(actorLabel);
         if (cancelled) {
           return;
         }
@@ -1460,7 +1460,7 @@ export default function ManageMenus() {
     return () => {
       cancelled = true;
     };
-  }, [nickname]);
+  }, [actorLabel]);
 
   // Sort alphabetically
   const sorted = [...menus].sort((a, b) => a.name.localeCompare(b.name));
@@ -1496,7 +1496,7 @@ export default function ManageMenus() {
               <MenuCard
                 key={menu.id}
                 menu={menu}
-                nickname={nickname}
+                nickname={actorLabel}
                 defaultPreference={menuDefaultsByMenuId[menu.id]}
                 onDefaultPreferenceSaved={(preference) => {
                   setMenuDefaultsByMenuId((prev) => {

@@ -7,7 +7,6 @@ import {
 } from '../api.js';
 import { useAppDispatch, useAppState } from '../context/AppContext.js';
 import { useCountdown, useElapsedSince, formatTime } from '../hooks/useCountdown.js';
-import { useNickname } from '../hooks/useNickname.js';
 import TimerActionHeader from './TimerActionHeader.js';
 import {
   buildOrderLookupMaps,
@@ -17,7 +16,7 @@ import {
   resolveOrderItemNumber,
   resolveOrderPrice,
 } from '../utils/orderCopy.js';
-import { isAdminAuthenticatedUser } from '../auth.js';
+import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
 
 function formatLateDuration(totalSeconds: number): string {
@@ -44,7 +43,7 @@ export default function FoodDeliveryView() {
   const [updatingDeliveredIds, setUpdatingDeliveredIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const canManageFoodSelection = isAdminAuthenticatedUser();
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
 
   if (
     !activeFoodSelection ||
@@ -168,7 +167,7 @@ export default function FoodDeliveryView() {
     setUpdatingDeliveredIds((previous) => new Set(previous).add(orderId));
     setError(null);
     try {
-      await setOrderDelivered(selection.id, orderId, delivered, nickname ?? undefined);
+      await setOrderDelivered(selection.id, orderId, delivered, actorLabel ?? undefined);
     } catch (requestError: unknown) {
       setError(requestError instanceof Error ? requestError.message : 'Could not update delivery check');
     } finally {

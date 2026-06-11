@@ -16,14 +16,6 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
   };
 });
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({
-    nickname: 'Alice',
-    updateNickname: vi.fn(),
-    clearNickname: vi.fn(),
-  }),
-}));
-
 const mockStartPoll = vi.fn();
 const mockQuickStartFoodSelection = vi.fn();
 
@@ -45,6 +37,9 @@ function renderView(onOpenHistorySelection?: (selectionId: string) => void) {
 describe('PollIdleView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
+    localStorage.setItem('team_lunch_auth_method', 'local');
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,

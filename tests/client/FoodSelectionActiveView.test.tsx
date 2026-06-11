@@ -18,14 +18,6 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
   };
 });
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({
-    nickname: 'Alice',
-    updateNickname: vi.fn(),
-    clearNickname: vi.fn(),
-  }),
-}));
-
 const mockUseCountdown = vi.fn<() => number>();
 vi.mock('../../src/client/hooks/useCountdown.js', async (importOriginal) => {
   const mod = await importOriginal<typeof import('../../src/client/hooks/useCountdown.js')>();

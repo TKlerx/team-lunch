@@ -47,7 +47,7 @@ export default function App() {
     dbConnected,
     dbReconnectAttempts,
   } = useAppState();
-  const phase = useAppPhase(nickname);
+  const phase = useAppPhase();
   usePhaseNotifications(phase, notificationsEnabled, activePoll, activeFoodSelection, nickname);
   const [selectedHistorySelectionId, setSelectedHistorySelectionId] = useState<string | null>(null);
 
@@ -223,13 +223,7 @@ export default function App() {
                 <Route path="/shopping" element={<ShoppingList />} />
                 <Route
                   path="/settings"
-                  element={
-                    <Settings
-                      nickname={nickname}
-                      onRename={() => undefined}
-                      allowRename={false}
-                    />
-                  }
+                  element={<Settings />}
                 />
                 <Route path="/admin" element={<Administration />} />
               </Routes>

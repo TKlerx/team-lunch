@@ -18,14 +18,6 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
   };
 });
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({
-    nickname: 'Alice',
-    updateNickname: vi.fn(),
-    clearNickname: vi.fn(),
-  }),
-}));
-
 const mockIsAdminAuthenticatedUser = vi.fn(() => true);
 const mockIsCreatorAuthenticatedUser = vi.fn<(createdBy: string | null | undefined) => boolean>(() => false);
 vi.mock('../../src/client/auth.js', () => ({

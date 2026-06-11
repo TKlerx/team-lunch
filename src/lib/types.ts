@@ -12,7 +12,6 @@ export type FoodSelectionStatus =
   | 'aborted';
 
 export type AppPhase =
-  | 'NICKNAME_PROMPT'
   | 'NO_MENUS'
   | 'POLL_IDLE'
   | 'POLL_ACTIVE'

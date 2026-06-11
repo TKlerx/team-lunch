@@ -29,6 +29,11 @@ export function getAuthenticatedDisplayLabel(): string | null {
   return actor.length > 0 ? actor : null;
 }
 
+export function getAuthenticatedAuthMethod(): 'entra' | 'local' | null {
+  const value = localStorage.getItem('team_lunch_auth_method');
+  return value === 'entra' || value === 'local' ? value : null;
+}
+
 export function isCreatorAuthenticatedUser(createdBy: string | null | undefined): boolean {
   if (!isExternalAuthEnabled()) {
     return true;

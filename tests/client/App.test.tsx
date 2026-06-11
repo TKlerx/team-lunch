@@ -13,10 +13,6 @@ vi.mock('../../src/client/hooks/useSSE.js', () => ({
   useSSE: vi.fn(),
 }));
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({ nickname: 'Alice', updateNickname: vi.fn() }),
-}));
-
 vi.mock('../../src/client/hooks/useAppPhase.js', () => ({
   useAppPhase: () => mockUseAppPhase(),
 }));
@@ -32,10 +28,6 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
 
 vi.mock('../../src/client/components/Header.js', () => ({
   default: () => <div data-testid="header" />,
-}));
-
-vi.mock('../../src/client/components/NicknameModal.js', () => ({
-  default: () => null,
 }));
 
 vi.mock('../../src/client/pages/MainView.js', () => ({

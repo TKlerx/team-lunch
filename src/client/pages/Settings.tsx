@@ -8,14 +8,6 @@ import { Button } from '../components/ui/Button.js';
 import * as api from '../api.js';
 import type { UserPreferences } from '../../lib/types.js';
 
-interface SettingsProps {
-  nickname: string | null;
-  onRename: (newName: string) => void;
-  allowRename?: boolean;
-}
-
-const NICKNAME_MIN_LENGTH = 1;
-const NICKNAME_MAX_LENGTH = 30;
 const DISPLAY_NAME_MAX_GRAPHEMES = 64;
 const ACTOR_KEY_STORAGE_KEY = 'team_lunch_actor_key';
 const DISPLAY_NAME_STORAGE_KEY = 'team_lunch_display_name';
@@ -49,7 +41,7 @@ function getDisplayNameError(value: string): string {
   return '';
 }
 
-export default function Settings({ nickname, onRename, allowRename = true }: SettingsProps) {
+export default function Settings() {
   const {
     canSwitchOfficeLocation,
     officeLocations,
@@ -57,8 +49,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     setSelectedOfficeLocationId,
   } = useAdminOfficeContext();
 
-  const [nicknameDraft, setNicknameDraft] = useState(nickname ?? '');
-  const [nicknameTouched, setNicknameTouched] = useState(false);
   const [officeLocationDraft, setOfficeLocationDraft] = useState(selectedOfficeLocationId ?? '');
   const [preferences, setPreferences] = useState<UserPreferences>(EMPTY_PREFERENCES);
   const [allergiesDraft, setAllergiesDraft] = useState('');
@@ -72,14 +62,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   const [displayNameDraft, setDisplayNameDraft] = useState('');
   const [displayNameTouched, setDisplayNameTouched] = useState(false);
 
-  const trimmedNickname = nicknameDraft.trim();
-  const nicknameError =
-    trimmedNickname.length < NICKNAME_MIN_LENGTH
-      ? 'Nickname is required.'
-      : trimmedNickname.length > NICKNAME_MAX_LENGTH
-        ? `Nickname must be at most ${NICKNAME_MAX_LENGTH} characters.`
-        : '';
-  const nicknameUnchanged = trimmedNickname === (nickname ?? '');
   const officeUnchanged = officeLocationDraft === (selectedOfficeLocationId ?? '');
   const allergyTerms = parsePreferenceTerms(allergiesDraft);
   const dislikeTerms = parsePreferenceTerms(dislikesDraft);
@@ -91,14 +73,11 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   const displayNameUnchanged = displayNameDraft.trim() === storedDisplayName;
   const canEditDisplayName = authMethod === 'local';
   const settingsUnchanged =
-    (nicknameUnchanged || !allowRename) &&
     (!canEditDisplayName || displayNameUnchanged) &&
     officeUnchanged &&
     preferencesUnchanged;
 
   const resetDrafts = () => {
-    setNicknameDraft(nickname ?? '');
-    setNicknameTouched(false);
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
     setAllergiesDraft(preferences.allergies.join(', '));
     setDislikesDraft(preferences.dislikes.join(', '));
@@ -112,20 +91,18 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     officeLocations.find((location) => location.id === selectedOfficeLocationId)?.name ?? null;
 
   useEffect(() => {
-    setNicknameDraft(nickname ?? '');
-    setNicknameTouched(false);
-    setAccountEmail(localStorage.getItem(ACTOR_KEY_STORAGE_KEY) ?? nickname ?? '');
+    setAccountEmail(localStorage.getItem(ACTOR_KEY_STORAGE_KEY) ?? '');
     setAuthMethod(localStorage.getItem(AUTH_METHOD_STORAGE_KEY) ?? '');
     setDisplayNameDraft(localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '');
     setDisplayNameTouched(false);
-  }, [nickname]);
+  }, []);
 
   useEffect(() => {
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
   }, [selectedOfficeLocationId]);
 
   useEffect(() => {
-    if (!nickname) {
+    if (!accountEmail) {
       setPreferences(EMPTY_PREFERENCES);
       setAllergiesDraft('');
       setDislikesDraft('');
@@ -138,7 +115,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
       setSettingsError('');
       setSettingsSavedMessage('');
       try {
-        const loaded = await api.getUserPreferences(nickname);
+        const loaded = await api.getUserPreferences(accountEmail);
         if (cancelled) return;
         setPreferences(loaded);
         setAllergiesDraft(loaded.allergies.join(', '));
@@ -156,11 +133,11 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     return () => {
       cancelled = true;
     };
-  }, [nickname]);
+  }, [accountEmail]);
 
   const handleSettingsSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if ((allowRename && nicknameError) || (canEditDisplayName && displayNameError) || settingsUnchanged) {
+    if ((canEditDisplayName && displayNameError) || settingsUnchanged) {
       return;
     }
 
@@ -168,11 +145,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     setSettingsError('');
     setSettingsSavedMessage('');
     try {
-      const effectiveNickname = allowRename ? trimmedNickname : nickname;
-      if (allowRename && !nicknameUnchanged) {
-        onRename(trimmedNickname);
-      }
-
       if (canSwitchOfficeLocation && !officeUnchanged && officeLocationDraft) {
         setSelectedOfficeLocationId(officeLocationDraft);
       }
@@ -197,9 +169,9 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
         setDisplayNameDraft(nextDisplay);
       }
 
-      if (effectiveNickname && !preferencesUnchanged) {
+      if (accountEmail && !preferencesUnchanged) {
         const saved = await api.updateUserPreferences(
-          effectiveNickname,
+          accountEmail,
           allergyTerms,
           dislikeTerms,
         );
@@ -280,24 +252,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
           </div>
         </Section>
 
-        {allowRename && (
-          <Section title="Legacy nickname" description="Compatibility setting for older local flows." className="mt-6">
-            <Input
-              aria-label="Nickname"
-              value={nicknameDraft}
-              onChange={(event) => {
-                setNicknameDraft(event.target.value);
-                setNicknameTouched(true);
-                setSettingsSavedMessage('');
-              }}
-              maxLength={NICKNAME_MAX_LENGTH}
-            />
-            {nicknameError && nicknameTouched && (
-              <p className="mt-1 text-xs text-danger-fg">{nicknameError}</p>
-            )}
-          </Section>
-        )}
-
         <Section
           title="Office"
           description="The office location used for polls, menus, and orders."
@@ -345,7 +299,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                   className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                   placeholder="e.g. peanuts, shrimp, milk"
                   aria-label="Ingredients to avoid"
-                  disabled={!nickname || preferencesLoading || settingsSaving}
+                  disabled={!accountEmail || preferencesLoading || settingsSaving}
                 />
               </label>
               <label className="text-xs font-medium text-fg">
@@ -360,7 +314,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                   className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                   placeholder="e.g. mushrooms, onions"
                   aria-label="Less preferred ingredients"
-                  disabled={!nickname || preferencesLoading || settingsSaving}
+                  disabled={!accountEmail || preferencesLoading || settingsSaving}
                 />
               </label>
             </div>
@@ -377,7 +331,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
               settingsSaving ||
               preferencesLoading ||
               settingsUnchanged ||
-              (allowRename && !!nicknameError) ||
               (canEditDisplayName && !!displayNameError)
             }
           >

@@ -2108,7 +2108,7 @@
   - Display names are not unique.
   - Tests: Entra login syncs display name from `name`; local account display name persists; duplicate display names are allowed.
 
-- [ ] **88.3 Validate display names consistently**
+- [x] **88.3 Validate display names consistently** *(done)*
   - Trim leading/trailing whitespace before validation and storage.
   - Limit to 64 user-visible grapheme clusters.
   - Allow Unicode letters/numbers, normal spaces, safe punctuation (`.`, `_`, `-`, `'`, `@`, `(`, `)`), and emojis.
@@ -2125,14 +2125,14 @@
   - UI lunch boards show display snapshot; email is shown only as fallback when no display name exists.
   - Tests: two users with same display name do not collide; withdrawals only affect the signed-in actor; historical rows keep their original shown name.
 
-- [ ] **88.5 Extend auth/config and profile APIs**
+- [x] **88.5 Extend auth/config and profile APIs** *(done)*
   - Extend `GET /api/auth/config` so `auth.user` includes `username`, `method`, `displayName`, and `displayNameSource`.
   - Add `PUT /api/auth/me/display-name` for signed-in local users; empty value clears display name.
   - Reject edits for Entra-managed display names with a clear error.
   - Add admin endpoint support to edit display name for local/manual accounts.
   - Tests: local user self-update, Entra edit rejection, admin update of local display name, blocked/pending users cannot update profile.
 
-- [ ] **88.6 Update Settings account/profile UX**
+- [x] **88.6 Update Settings account/profile UX** *(done)*
   - Show account/email prominently as read-only.
   - Show authentication method:
     - `Authentication: Microsoft Entra`
@@ -2156,7 +2156,7 @@
   - If an admin deletes an active local user, force that user to log out via SSE when possible and reject/expire old-session usage where feasible.
   - Tests: admin edits local display name, admin edits local email, admin deletes local account, Entra edit/delete controls are disabled/rejected, bootstrap admin deletion is rejected, old historical orders remain unchanged, affected local user is forced to re-login.
 
-- [ ] **88.8 Remove frontend nickname dependencies**
+- [x] **88.8 Remove frontend nickname dependencies** *(done)*
   - Replace `useNickname` usage with current authenticated user/profile data.
   - Remove nickname props from app shell where possible.
   - Update Header, phase derivation, voting, ordering, preferences, shopping list, and notifications to use authenticated profile identity.
@@ -2174,7 +2174,10 @@
 - The client auth gate no longer opens the lunch workflow when no auth method exists; lunch action API calls no longer submit user-selected nicknames.
 - Settings now shows account email, auth method, local editable display name, Entra read-only copy, and email-fallback messaging; local display-name save updates `PUT /api/auth/me/display-name`.
 - Administration now shows account email plus display name and can edit local/manual display names through `PUT /api/auth/users/display-name`; Entra-managed names are read-only in the UI and rejected server-side.
-- Remaining Priority 88 work: local account email edit/delete management, forced old-session expiry after account edits/deletes, removal of leftover `useNickname`/`NicknameModal` compatibility dependencies, and the full new identity regression suite.
+- Added focused display-name validation/profile route tests for local self-update, Entra edit rejection, admin update, blocked/pending profile rejection, supported punctuation/emoji, max-length, and unsafe-character rejection.
+- Added Settings coverage for account identity, local display-name editing, Entra read-only display names, validation errors, and email fallback messaging.
+- Removed frontend `useNickname`, `NicknameModal`, `team_lunch_nickname`, and `NICKNAME_PROMPT` dependencies from the authenticated app flow; app phase derivation no longer depends on a nickname.
+- Remaining Priority 88 work: retire the remaining server-side test/compatibility nickname fallbacks from authenticated routes, finish local account email edit/delete management, and force/expire old sessions after local account edits or deletes.
 
 ### Backlog
 

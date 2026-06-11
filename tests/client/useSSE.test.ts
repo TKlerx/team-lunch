@@ -508,7 +508,7 @@ describe('useSSE', () => {
       }
     }
 
-    localStorage.setItem('team_lunch_nickname', 'dana@example.com');
+    localStorage.setItem('team_lunch_actor_key', 'dana@example.com');
     localStorage.setItem('team_lunch_phase_notifications_enabled', 'true');
     vi.stubGlobal('Notification', MockNotification);
 

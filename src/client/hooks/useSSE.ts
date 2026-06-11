@@ -33,7 +33,6 @@ function currentNicknameFromStorage(): string | null {
   try {
     const value =
       localStorage.getItem('team_lunch_actor_key')?.trim() ??
-      localStorage.getItem('team_lunch_nickname')?.trim() ??
       '';
     return value.length > 0 ? value : null;
   } catch {

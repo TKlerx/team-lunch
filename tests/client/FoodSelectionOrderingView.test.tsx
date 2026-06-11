@@ -30,10 +30,6 @@ vi.mock('../../src/client/api.js', () => ({
   pingFallbackCandidate: (...args: unknown[]) => mockPingFallbackCandidate(...args),
 }));
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({ nickname: 'Alice' }),
-}));
-
 import FoodSelectionOrderingView from '../../src/client/components/FoodSelectionOrderingView.js';
 
 function renderView() {
@@ -47,6 +43,10 @@ function renderView() {
 describe('FoodSelectionOrderingView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
+    localStorage.setItem('team_lunch_auth_method', 'local');
+    localStorage.setItem('team_lunch_auth_role', 'admin');
     mockFetchFallbackOrderCandidates.mockResolvedValue([
       {
         nickname: 'Dana',
