@@ -2058,3 +2058,26 @@
   - Client auth bootstrap clears stale auth markers when auth is not configured, so legacy nickname prompt mode remains reachable.
   - Logout clears the account-derived nickname cache along with auth metadata.
   - Updated auth specs/tasks to document nickname identity as legacy/open-mode only.
+
+---
+
+## Priority 87 - Food Selection UI Cleanup (Jun 2026)
+
+- [x] **87.1 Move allergy/dislike alert editing into Settings** *(done)*
+  - Removed the large allergy/dislike editor panel from the active food-selection view so the order flow stays focused on choosing meals
+  - Kept per-item allergy/dislike warning badges and the confirmation prompt before adding a warned item
+  - Added a compact `person_heart` Material Symbol icon link in the `Your order` header that navigates to `/settings`
+  - Added a dedicated `Food alerts` section below Office in Settings for editing allergies and dislikes through the existing user preferences API
+  - Settings now stages nickname, office, and food-alert edits until the Settings-wide `Save settings` action; `Cancel` restores the current persisted/loaded values
+  - Discovery: the office selector previously applied immediately through `setSelectedOfficeLocationId`; it now drafts locally and only applies on Save
+  - Added focused client tests for the order-flow link/decluttering and Settings save/cancel behavior
+
+- [x] **87.2 Make ingredient preferences discoverable during food selection** *(done)*
+  - Changed the compact icon-only settings link in the active order form to a themed `Ingredient Preferences` button with icon and text
+  - Added a tooltip that summarizes the currently configured `Ingredients to avoid` and `Less preferred ingredients` lists, including empty states
+  - Softened user-facing terminology in Settings, menu-item badges, and confirmation copy while keeping existing API/storage field names unchanged
+  - Added focused client coverage for the visible button text, tooltip contents, and revised Settings labels
+
+- [x] **87.3 Remove unnecessary page-level panels** *(done)*
+  - Removed the outer card/panel wrappers from Settings, Shopping List, and Administration so these pages follow the uncluttered Manage Menus layout pattern
+  - Kept functional inner panels for repeated or status-specific content while letting page sections sit directly on the app surface
