@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppState } from '../context/AppContext.js';
 import { useNickname } from '../hooks/useNickname.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
@@ -34,6 +35,19 @@ function computeItemWarnings(
   return { allergies, dislikes };
 }
 
+function formatIngredientPreferencesTooltip(preferences: UserPreferences): string {
+  const ingredientsToAvoid =
+    preferences.allergies.length > 0 ? preferences.allergies.join(', ') : 'None configured';
+  const lessPreferred =
+    preferences.dislikes.length > 0 ? preferences.dislikes.join(', ') : 'None configured';
+
+  return [
+    'Ingredient Preferences',
+    `Ingredients to avoid: ${ingredientsToAvoid}`,
+    `Less preferred ingredients: ${lessPreferred}`,
+  ].join('\n');
+}
+
 // ─── Order form ─────────────────────────────────────────────
 
 function OrderForm({
@@ -42,6 +56,7 @@ function OrderForm({
   nickname,
   existingOrders,
   itemWarningsById,
+  preferences,
 }: {
   selectionId: string;
   menuItems: {
@@ -54,6 +69,7 @@ function OrderForm({
   nickname: string;
   existingOrders: { id: string; itemId: string | null; itemName: string; notes: string | null }[];
   itemWarningsById: Map<string, ItemWarnings>;
+  preferences: UserPreferences;
 }) {
   const [itemNotes, setItemNotes] = useState<Record<string, string>>({});
   const [itemSearch, setItemSearch] = useState('');
@@ -89,10 +105,10 @@ function OrderForm({
     const warnings = itemWarningsById.get(itemId);
     const warningLines: string[] = [];
     if (warnings && warnings.allergies.length > 0) {
-      warningLines.push(`Allergy warning: ${warnings.allergies.join(', ')}`);
+      warningLines.push(`Ingredient alert: ${warnings.allergies.join(', ')}`);
     }
     if (warnings && warnings.dislikes.length > 0) {
-      warningLines.push(`Dislike warning: ${warnings.dislikes.join(', ')}`);
+      warningLines.push(`Preference note: ${warnings.dislikes.join(', ')}`);
     }
     if (warningLines.length > 0) {
       const shouldContinue = window.confirm(
@@ -130,7 +146,20 @@ function OrderForm({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-fg">Your order</h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-fg">Your order</h3>
+        <Link
+          to="/settings"
+          aria-label="Ingredient Preferences"
+          title={formatIngredientPreferencesTooltip(preferences)}
+          className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
+            person_heart
+          </span>
+          <span>Ingredient Preferences</span>
+        </Link>
+      </div>
 
       <input
         type="text"
@@ -161,12 +190,12 @@ function OrderForm({
               )}
               {itemWarningsById.get(item.id)?.allergies.length ? (
                 <p className="mt-1 text-xs font-medium text-danger-fg">
-                  Allergy warning: {itemWarningsById.get(item.id)?.allergies.join(', ')}
+                  Ingredient alert: {itemWarningsById.get(item.id)?.allergies.join(', ')}
                 </p>
               ) : null}
               {itemWarningsById.get(item.id)?.dislikes.length ? (
                 <p className="mt-1 text-xs font-medium text-warning-fg">
-                  Contains disliked ingredients: {itemWarningsById.get(item.id)?.dislikes.join(', ')}
+                  Preference match: {itemWarningsById.get(item.id)?.dislikes.join(', ')}
                 </p>
               ) : null}
             </div>
@@ -342,12 +371,7 @@ export default function FoodSelectionActiveView() {
   const [error, setError] = useState('');
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState('');
   const [preferences, setPreferences] = useState<UserPreferences>(EMPTY_PREFERENCES);
-  const [allergiesDraft, setAllergiesDraft] = useState('');
-  const [dislikesDraft, setDislikesDraft] = useState('');
-  const [preferencesLoading, setPreferencesLoading] = useState(false);
-  const [preferencesSaving, setPreferencesSaving] = useState(false);
   const [preferencesError, setPreferencesError] = useState('');
-  const [preferencesSavedMessage, setPreferencesSavedMessage] = useState('');
   const [remindingMissing, setRemindingMissing] = useState(false);
   const [reminderMessage, setReminderMessage] = useState('');
   const [reminderError, setReminderError] = useState('');
@@ -423,21 +447,14 @@ export default function FoodSelectionActiveView() {
   useEffect(() => {
     let cancelled = false;
     const loadPreferences = async () => {
-      setPreferencesLoading(true);
       setPreferencesError('');
       try {
         const loaded = await api.getUserPreferences(nickname);
         if (cancelled) return;
         setPreferences(loaded);
-        setAllergiesDraft(loaded.allergies.join(', '));
-        setDislikesDraft(loaded.dislikes.join(', '));
       } catch (err) {
         if (cancelled) return;
         setPreferencesError((err as Error).message);
-      } finally {
-        if (!cancelled) {
-          setPreferencesLoading(false);
-        }
       }
     };
     void loadPreferences();
@@ -445,33 +462,6 @@ export default function FoodSelectionActiveView() {
       cancelled = true;
     };
   }, [nickname]);
-
-  const parseTerms = (value: string): string[] =>
-    value
-      .split(/[,\n;]/)
-      .map((part) => part.trim())
-      .filter((part) => part.length > 0);
-
-  const handleSavePreferences = async () => {
-    setPreferencesSaving(true);
-    setPreferencesError('');
-    setPreferencesSavedMessage('');
-    try {
-      const saved = await api.updateUserPreferences(
-        nickname,
-        parseTerms(allergiesDraft),
-        parseTerms(dislikesDraft),
-      );
-      setPreferences(saved);
-      setAllergiesDraft(saved.allergies.join(', '));
-      setDislikesDraft(saved.dislikes.join(', '));
-      setPreferencesSavedMessage('Preferences saved');
-    } catch (err) {
-      setPreferencesError((err as Error).message);
-    } finally {
-      setPreferencesSaving(false);
-    }
-  };
 
   const handleFinishNow = async (): Promise<boolean> => {
     const confirmed = window.confirm('Confirm completion?');
@@ -648,51 +638,6 @@ export default function FoodSelectionActiveView() {
       </TimerActionHeader>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-lg border border-warning bg-warning-soft p-4 shadow-sm xl:col-span-3">
-          <h3 className="text-sm font-semibold text-warning-fg">Your allergy and dislike alerts</h3>
-          <p className="mt-1 text-xs text-warning-fg">
-            Enter ingredients separated by comma, semicolon, or new line.
-          </p>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <label className="text-xs font-medium text-warning-fg">
-              Allergies
-              <textarea
-                value={allergiesDraft}
-                onChange={(event) => setAllergiesDraft(event.target.value)}
-                rows={3}
-                className="mt-1 w-full rounded border border-warning px-2 py-1.5 text-sm text-fg focus:border-warning focus:outline-none"
-                placeholder="e.g. peanuts, shrimp, milk"
-                aria-label="Allergies"
-                disabled={preferencesLoading || preferencesSaving}
-              />
-            </label>
-            <label className="text-xs font-medium text-warning-fg">
-              Dislikes
-              <textarea
-                value={dislikesDraft}
-                onChange={(event) => setDislikesDraft(event.target.value)}
-                rows={3}
-                className="mt-1 w-full rounded border border-warning px-2 py-1.5 text-sm text-fg focus:border-warning focus:outline-none"
-                placeholder="e.g. mushrooms, onions"
-                aria-label="Dislikes"
-                disabled={preferencesLoading || preferencesSaving}
-              />
-            </label>
-          </div>
-          <div className="mt-2 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => void handleSavePreferences()}
-              disabled={preferencesLoading || preferencesSaving}
-              className="rounded bg-warning-solid px-3 py-1.5 text-sm font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
-            >
-              Save alerts
-            </button>
-            {preferencesSavedMessage ? <span className="text-xs text-success-fg">{preferencesSavedMessage}</span> : null}
-            {preferencesError ? <span className="text-xs text-danger-fg">{preferencesError}</span> : null}
-          </div>
-        </div>
-
         {/* Left: Order form */}
         <div className="rounded-lg border border-border bg-surface p-4 shadow-sm xl:col-span-2">
           <OrderForm
@@ -701,6 +646,7 @@ export default function FoodSelectionActiveView() {
             nickname={nickname}
             existingOrders={myOrders.map((o) => ({ id: o.id, itemId: o.itemId, itemName: o.itemName, notes: o.notes }))}
             itemWarningsById={itemWarningsById}
+            preferences={preferences}
           />
         </div>
 
@@ -773,6 +719,7 @@ export default function FoodSelectionActiveView() {
         </div>
       </div>
 
+      {preferencesError && <p className="mt-4 text-sm text-danger-fg">{preferencesError}</p>}
       {error && <p className="mt-4 text-sm text-danger-fg">{error}</p>}
     </div>
   );
