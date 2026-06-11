@@ -2059,3 +2059,7 @@
   - Added a tooltip that summarizes the currently configured `Ingredients to avoid` and `Less preferred ingredients` lists, including empty states
   - Softened user-facing terminology in Settings, menu-item badges, and confirmation copy while keeping existing API/storage field names unchanged
   - Added focused client coverage for the visible button text, tooltip contents, and revised Settings labels
+
+- [x] **86.3 Remove unnecessary page-level panels** *(done)*
+  - Removed the outer card/panel wrappers from Settings, Shopping List, and Administration so these pages follow the uncluttered Manage Menus layout pattern
+  - Kept functional inner panels for repeated or status-specific content while letting page sections sit directly on the app surface

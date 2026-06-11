@@ -54,7 +54,7 @@ describe('Settings', () => {
     expect(screen.getByLabelText(/less preferred ingredients/i)).toHaveValue('mushrooms');
   });
 
-  it('saves nickname and food alerts from the settings-wide save button', async () => {
+  it('saves nickname and ingredient preferences from the settings-wide save button', async () => {
     const user = userEvent.setup();
     const onRename = vi.fn();
     render(<Settings nickname="Alice" onRename={onRename} />);
