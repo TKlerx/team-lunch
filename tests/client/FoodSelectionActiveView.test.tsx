@@ -133,6 +133,16 @@ describe('FoodSelectionActiveView', () => {
   it('renders "Your order" title and menu items', () => {
     renderView();
     expect(screen.getByText('Your order')).toBeInTheDocument();
+    const preferencesLink = screen.getByRole('link', { name: /ingredient preferences/i });
+    expect(preferencesLink).toHaveAttribute('href', '/settings');
+    expect(preferencesLink).toHaveAttribute(
+      'title',
+      [
+        'Ingredient Preferences',
+        'Ingredients to avoid: None configured',
+        'Less preferred ingredients: None configured',
+      ].join('\n'),
+    );
     expect(screen.getByText('12')).toBeInTheDocument();
     expect(screen.getByText('Margherita')).toBeInTheDocument();
     expect(screen.getByText('Classic pizza')).toBeInTheDocument();
@@ -178,6 +188,12 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.getByRole('button', { name: /withdraw/i })).toBeInTheDocument();
   });
 
+  it('does not render the food alerts editor in the order flow', () => {
+    renderView();
+    expect(screen.queryByText(/your ingredient preferences/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /save alerts/i })).not.toBeInTheDocument();
+  });
+
   it('calls placeOrder when clicking Add for an item', async () => {
     const user = userEvent.setup();
     mockPlaceOrder.mockResolvedValue({});
@@ -188,7 +204,7 @@ describe('FoodSelectionActiveView', () => {
     expect(mockPlaceOrder).toHaveBeenCalledWith('fs-1', 'Alice', 'item-1', undefined);
   });
 
-  it('shows allergy warning badges from user preferences', async () => {
+  it('shows ingredient preference badges from user preferences', async () => {
     mockGetUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: ['pizza'],
@@ -197,11 +213,19 @@ describe('FoodSelectionActiveView', () => {
     });
     renderView();
 
-    expect(await screen.findByText(/allergy warning: pizza/i)).toBeInTheDocument();
-    expect(await screen.findByText(/contains disliked ingredients: pepperoni/i)).toBeInTheDocument();
+    expect(await screen.findByText(/ingredient alert: pizza/i)).toBeInTheDocument();
+    expect(await screen.findByText(/preference match: pepperoni/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /ingredient preferences/i })).toHaveAttribute(
+      'title',
+      [
+        'Ingredient Preferences',
+        'Ingredients to avoid: pizza',
+        'Less preferred ingredients: pepperoni',
+      ].join('\n'),
+    );
   });
 
-  it('asks for confirmation before adding an item with allergy warning', async () => {
+  it('asks for confirmation before adding an item with an ingredient alert', async () => {
     const user = userEvent.setup();
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
     mockGetUserPreferences.mockResolvedValue({
@@ -212,7 +236,7 @@ describe('FoodSelectionActiveView', () => {
     });
     renderView();
 
-    await screen.findByText(/allergy warning: pizza/i);
+    await screen.findByText(/ingredient alert: pizza/i);
     await user.click(screen.getAllByRole('button', { name: /^add$/i })[0]);
 
     expect(mockPlaceOrder).not.toHaveBeenCalled();
