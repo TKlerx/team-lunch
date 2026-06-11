@@ -2047,3 +2047,14 @@
     - `npm audit --omit=dev` (0 vulnerabilities)
     - `npm run typecheck`
     - `npm run lint` (existing warning-only baseline)
+
+---
+
+## Priority 86 - Account Identity Cleanup (Jun 2026)
+
+- [x] **86.1 Make authenticated identity authoritative** *(done)*
+  - Authenticated vote and food-order routes now ignore submitted nickname values and derive the actor label from the signed session username.
+  - Unauthenticated/open deployments keep the legacy nickname prompt and request-body fallback.
+  - Client auth bootstrap clears stale auth markers when auth is not configured, so legacy nickname prompt mode remains reachable.
+  - Logout clears the account-derived nickname cache along with auth metadata.
+  - Updated auth specs/tasks to document nickname identity as legacy/open-mode only.

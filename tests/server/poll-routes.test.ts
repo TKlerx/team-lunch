@@ -82,6 +82,34 @@ describe('Poll routes (integration)', () => {
     return res.body;
   }
 
+  async function approvedAuthHeaders(email = 'approved-user@company.com') {
+    const defaultOffice = await ensureDefaultOfficeLocation();
+    await prisma.authAccessUser.upsert({
+      where: { email },
+      update: {
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: defaultOffice.id,
+      },
+      create: {
+        email,
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: defaultOffice.id,
+      },
+    });
+
+    const session = createSessionCookieValue({
+      username: email,
+      method: 'entra',
+      iat: Math.floor(Date.now() / 1000),
+    });
+
+    return { Cookie: `team_lunch_auth_session=${session}` };
+  }
+
   // ─── POST /api/polls ────────────────────────────────────
 
   it('creates a poll successfully', async () => {
@@ -184,6 +212,22 @@ describe('Poll routes (integration)', () => {
     expect(res.body.voteCounts[menu.id]).toBe(1);
   });
 
+  it('uses the authenticated username instead of a submitted vote nickname', async () => {
+    const menu = await createMenu('Italian');
+    const poll = await startPoll();
+    const headers = await approvedAuthHeaders('voter@company.com');
+
+    const res = await supertest(app.server)
+      .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
+      .send({ menuId: menu.id, nickname: 'SpoofedName' })
+      .expect(201);
+
+    expect(res.body.votes).toEqual([
+      expect.objectContaining({ nickname: 'voter@company.com' }),
+    ]);
+  });
+
   it('rejects vote after timer expiry', async () => {
     const menu = await createMenu('Italian');
     const defaultOffice = await ensureDefaultOfficeLocation();
@@ -239,6 +283,26 @@ describe('Poll routes (integration)', () => {
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(200);
     expect(res.body.voteCounts[menu.id]).toBeUndefined();
+  });
+
+  it('withdraws authenticated user votes by session username only', async () => {
+    const menu = await createMenu('Italian');
+    const poll = await startPoll();
+    const headers = await approvedAuthHeaders('voter@company.com');
+
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
+      .send({ menuId: menu.id, nickname: 'voter@company.com' })
+      .expect(201);
+
+    const res = await supertest(app.server)
+      .delete(`/api/polls/${poll.id}/votes`)
+      .set(headers)
+      .send({ menuId: menu.id, nickname: 'SomeoneElse' })
+      .expect(200);
+
+    expect(res.body.votes).toHaveLength(0);
   });
 
   it('withdraws all votes for a user', async () => {
