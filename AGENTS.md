@@ -20,7 +20,7 @@ User can steer between tasks or say "continue" to proceed to the next item.
 
 ```powershell
 ./validate.ps1              # pre-commit default: typecheck + lint + duplication + semgrep + test + continuity freshness
-./validate.ps1 full         # pre-push / before merge: all quality checks + tests + Playwright E2E (skips continuity freshness)
+./validate.ps1 full         # pre-push / before merge: all quality checks + tests + pinned Trivy image scan + Playwright E2E (skips continuity freshness)
 ./validate.ps1 continuity   # refresh CURRENT-WORK/RECONCILIATION and fail if they changed
 ./validate.ps1 quick        # typecheck only (scaffolding phase)
 ./validate.ps1 test         # tests only
@@ -58,7 +58,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Backend startup now fails fast when both `VITE_BASE_PATH` and `BASE_PATH` are set but do not match.
 - For custom server ports (for example `PORT=3830`), Vite proxy and `ports:check` now follow env vars (`PORT` and optional `VITE_PORT`) instead of fixed `3000/5173`.
 - For local backend testing without Postgres, use `npm run dev:server:sqlite` (or `npm run test:server:sqlite`); this uses `DB_PROVIDER=sqlite` and `prisma/schema.sqlite.prisma`.
-- Docker Compose now runs a dedicated `migrate` service (`npx prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
+- Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
 - When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync `team_lunch_nickname` from the Entra username (rename is disabled).
 - Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured.
 - Entra redirect/login configuration is backend env-driven: set `APP_PUBLIC_URL` and `BASE_PATH` to derive callback URI automatically (`${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`), with optional explicit override via `ENTRA_REDIRECT_URI`.
@@ -84,13 +84,15 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit runs `./validate.ps1 all` and pre-push runs `./validate.ps1 full`.
 - Semgrep runs from a project-local Python venv (`.venv/Scripts/semgrep`); run `./setup.ps1` to create the venv and install semgrep alongside npm dependencies.
 - `validate.ps1` now runs `npm audit --omit=dev`, so the dependency gate tracks production/runtime vulnerabilities without failing on dev-only tooling advisories such as `sharp-cli`.
+- `validate.ps1 full` builds `team-lunch:trivy-scan` and scans it with the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500`, Trivy `0.71.0` manifest list). Use `TRIVY_IMAGE` only for deliberate scanner updates.
 - Running `npm audit fix --omit=dev` can prune dev dependencies from local `node_modules`; run `npm install` afterward before `npm run lint`/`npm test` to restore full tooling.
 - Server test setup must load `.env` before rewriting `DATABASE_URL` to the test schema; otherwise runtime env loading in app code can make tests hit the wrong schema.
 - If host port `5433` is already occupied, set `DB_PORT` and update `DATABASE_URL` to match (for example `55433`); Docker Compose now maps Postgres via `${DB_PORT}:5432`.
 - Docker Compose now pins `postgres:18-alpine`; because the official PostgreSQL 18 image uses the newer `/var/lib/postgresql` volume layout, keep the named volume mounted at `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to preserve durable data initialization.
+- Production Compose can override DB identity and major version via `.env`: `POSTGRES_IMAGE`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PGDATA`, and `COMPOSE_DATABASE_URL`. Legacy Paiqo volumes need `postgres:16-alpine`, `POSTGRES_PGDATA=/var/lib/postgresql`, and `COMPOSE_DATABASE_URL=postgresql://paiqo:paiqo@db:5432/paiqo?schema=public` until migrated by dump/restore.
 - Poll and food-selection retention have been removed: records are kept indefinitely for analytics/recommender use.
 - Playwright e2e seeds a real local admin user into the dedicated test DB before booting the production server (`E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD`, defaults in `.env.test.example`) and logs in through the normal local-auth UI; no auth bypass route is required.
-- Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it validates compose config, builds the app image, starts the DB, runs `prisma migrate deploy` via the `migrate` service, then restarts `app`.
+- Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it prints build metadata, lists Compose data volumes, builds app + migrate images, starts the DB, runs production data safety checks, creates a pre-deploy PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again. For intentional fresh installs, use `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
 
 ---
 

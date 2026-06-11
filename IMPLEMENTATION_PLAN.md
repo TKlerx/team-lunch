@@ -1999,6 +1999,10 @@
   - This keeps the validation gate focused on production/runtime vulnerabilities while avoiding false pressure from dev-only advisories in tooling dependencies
   - Recorded the behavior in `AGENTS.md` for future contributors
 
+- [x] **83.2a Add pinned Trivy image scan to full validation** *(done)*
+  - `./validate.ps1 full` now builds `team-lunch:trivy-scan` and scans it for HIGH/CRITICAL vulnerabilities
+  - The scanner uses the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500`, Trivy `0.71.0` manifest list), with `TRIVY_IMAGE` available only as an intentional override
+
 - [x] **83.3 Seed local e2e login user for browser coverage** *(done)*
   - `scripts/e2e-server.mjs` now seeds a real DB-backed local admin user in the dedicated e2e database before starting the production server
   - Playwright logs in through the normal local-auth UI using `E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD` defaults from `.env.test.example`
@@ -2008,7 +2012,10 @@
 
 - [x] **83.4 Add Docker Compose deploy helper** *(done)*
   - Added `scripts/deploy.sh` and `pnpm deploy`, modeled after the resource-planning deploy flow
-  - The script validates compose config, builds the app image, waits for the DB, runs `prisma migrate deploy`, and restarts `app`
+  - The script validates compose volumes, builds app + migrate images, waits for the DB, runs data safety checks, creates a PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again
+  - Added `scripts/backup-postgres.sh`, `scripts/prisma-production-data-check.mjs`, and `scripts/prisma-predeploy-check.mjs`
+  - Discovery: deploy-time Prisma CLI checks live in the dedicated `migrate` build target instead of the lean runtime app image; use `ALLOW_EMPTY_DATABASE_DEPLOY=true` only for intentional fresh bootstraps
+  - Updated Docker Compose and deploy script so production DB image/version, credentials, PGDATA, backup user/database, and in-container `DATABASE_URL` can be driven from `.env`; legacy Paiqo/Postgres 16 volumes are supported without editing tracked compose files
 
 ---
 
