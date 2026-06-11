@@ -1,7 +1,11 @@
 // Server test setup
 // Shared setup for server-side Vitest tests.
 import { execSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { mkdirSync, rmSync } from 'node:fs';
 import net from 'node:net';
+import os from 'node:os';
+import path from 'node:path';
 
 function loadEnvFileIfPresent(file?: string): void {
 	if (typeof process.loadEnvFile !== 'function') {
@@ -145,6 +149,46 @@ function getExecErrorOutput(error: unknown): string {
 	return parts.join('\n');
 }
 
+function sleepSync(milliseconds: number): void {
+	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+}
+
+function getMigrationLockDir(): string {
+	const key = createHash('sha256')
+		.update(process.env.DATABASE_URL ?? 'unknown-database')
+		.digest('hex')
+		.slice(0, 16);
+	return path.join(os.tmpdir(), `team-lunch-prisma-migrate-${key}.lock`);
+}
+
+function withMigrationLock(action: () => void): void {
+	const lockDir = getMigrationLockDir();
+	const startedAt = Date.now();
+	let acquired = false;
+
+	while (!acquired) {
+		try {
+			mkdirSync(lockDir);
+			acquired = true;
+		} catch (error) {
+			const nodeError = error as NodeJS.ErrnoException;
+			if (nodeError.code !== 'EEXIST') {
+				throw error;
+			}
+			if (Date.now() - startedAt > 120_000) {
+				throw new Error(`Timed out waiting for Prisma test migration lock: ${lockDir}`);
+			}
+			sleepSync(250);
+		}
+	}
+
+	try {
+		action();
+	} finally {
+		rmSync(lockDir, { recursive: true, force: true });
+	}
+}
+
 function ensureTestSchemaMigrated(): void {
 	const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
 	if (provider !== 'postgresql') {
@@ -155,9 +199,11 @@ function ensureTestSchemaMigrated(): void {
 	}
 
 	try {
-		execSync('npx prisma migrate deploy --schema prisma/schema.prisma', {
-			stdio: 'pipe',
-			env: process.env as NodeJS.ProcessEnv,
+		withMigrationLock(() => {
+			execSync('npx prisma migrate deploy --schema prisma/schema.prisma', {
+				stdio: 'pipe',
+				env: process.env as NodeJS.ProcessEnv,
+			});
 		});
 	} catch (error) {
 		const output = getExecErrorOutput(error);

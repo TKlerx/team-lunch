@@ -25,6 +25,7 @@ import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
 } from './services/officeContext.js';
+import { getAppVersion } from './buildInfo.js';
 
 if (typeof process.loadEnvFile === 'function') {
   try {
@@ -151,6 +152,11 @@ export async function buildApp() {
       status: db.connected ? 'ok' : 'degraded',
       db,
     };
+  });
+
+  app.get('/api/version', async (_request, reply) => {
+    reply.header('Cache-Control', 'no-store');
+    return getAppVersion();
   });
 
   if (isProduction) {

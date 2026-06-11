@@ -36,6 +36,8 @@ test('account dropdown opens settings, administration, and logout', async ({ pag
   await page.getByRole('menuitem', { name: /settings/i }).click();
   await expect(page).toHaveURL(/\/settings$/);
   await expect(page.getByRole('heading', { name: /settings/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /version/i })).toBeVisible();
+  await expect(page.getByTestId('app-version')).not.toHaveText(/unavailable/i);
 
   await page.getByRole('button', { name: new RegExp(E2E_LOGIN_EMAIL, 'i') }).click();
   await page.getByRole('menuitem', { name: /administration/i }).click();

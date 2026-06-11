@@ -2022,6 +2022,14 @@
   - Discovery: deploy-time Prisma CLI checks live in the dedicated `migrate` build target instead of the lean runtime app image; use `ALLOW_EMPTY_DATABASE_DEPLOY=true` only for intentional fresh bootstraps
   - Updated Docker Compose and deploy script so production DB image/version, credentials, PGDATA, backup user/database, and in-container `DATABASE_URL` can be driven from `.env`; legacy Paiqo/Postgres 16 volumes are supported without editing tracked compose files
 
+- [x] **83.5 Add UI-visible build metadata and demote continuity** *(done)*
+  - Added `GET /api/version` with `APP_VERSION`, `GIT_SHA`, `GIT_BRANCH`, `GIT_DIRTY`, `BUILD_TIME`, Node version, and environment metadata
+  - Settings now shows the deployed app/build metadata for support diagnostics
+  - `scripts/deploy.sh` exports build metadata into Docker Compose; local dev falls back to Git when env metadata is absent
+  - `./validate.ps1 all` no longer refreshes continuity snapshots; `./validate.ps1 continuity` remains available as an explicit/manual check
+  - Discovery: full-suite/client test runs can exceed Vitest's 5s default timeout on a loaded Windows workspace, so the shared test timeout is now 10s while still catching real hangs
+  - Discovery: server test workers can race on `prisma migrate deploy`; test setup now takes a temp-dir migration lock keyed by `DATABASE_URL`
+
 ---
 
 ## Priority 84 - Workflow CTAs + User Documentation (Apr 2026)

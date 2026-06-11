@@ -5,7 +5,7 @@ import { Input } from '../components/ui/Input.js';
 import { Select } from '../components/ui/Select.js';
 import { Button } from '../components/ui/Button.js';
 import * as api from '../api.js';
-import type { UserPreferences } from '../../lib/types.js';
+import type { AppVersionResponse, UserPreferences } from '../../lib/types.js';
 
 interface SettingsProps {
   nickname: string | null;
@@ -47,6 +47,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsError, setSettingsError] = useState('');
   const [settingsSavedMessage, setSettingsSavedMessage] = useState('');
+  const [appVersion, setAppVersion] = useState<AppVersionResponse | null>(null);
 
   const trimmedNickname = nicknameDraft.trim();
   const nicknameError =
@@ -86,6 +87,26 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   useEffect(() => {
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
   }, [selectedOfficeLocationId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadAppVersion = async () => {
+      try {
+        const loaded = await api.fetchAppVersion();
+        if (!cancelled) {
+          setAppVersion(loaded);
+        }
+      } catch {
+        if (!cancelled) {
+          setAppVersion(null);
+        }
+      }
+    };
+    void loadAppVersion();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!nickname) {
@@ -163,6 +184,14 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     preferences.allergies.length > 0 || preferences.dislikes.length > 0
       ? 'These terms are checked against menu item names and descriptions during food selection.'
       : 'Add ingredients you need to avoid or usually prefer not to eat.';
+  const versionLabel = appVersion
+    ? [
+        appVersion.version,
+        appVersion.gitSha,
+        appVersion.dirty ? 'dirty' : null,
+        appVersion.buildTime,
+      ].filter(Boolean).join(' | ')
+    : 'Unavailable';
 
   return (
     <div className="w-full p-6">
@@ -266,6 +295,29 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
               Separate terms with commas, semicolons, or new lines.
             </p>
           </div>
+        </Section>
+
+        <Section
+          title="Version"
+          description="Build metadata for support and fault tracking."
+          className="mt-6"
+        >
+          <dl className="grid gap-2 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
+            <dt className="font-medium text-fg-muted">App</dt>
+            <dd className="break-all font-mono text-xs text-fg" data-testid="app-version">
+              {versionLabel}
+            </dd>
+            {appVersion?.gitBranch ? (
+              <>
+                <dt className="font-medium text-fg-muted">Branch</dt>
+                <dd className="break-all font-mono text-xs text-fg">{appVersion.gitBranch}</dd>
+              </>
+            ) : null}
+            <dt className="font-medium text-fg-muted">Runtime</dt>
+            <dd className="break-all font-mono text-xs text-fg">
+              {appVersion ? `${appVersion.environment} | ${appVersion.nodeVersion}` : 'Unavailable'}
+            </dd>
+          </dl>
         </Section>
 
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">

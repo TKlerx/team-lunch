@@ -6,8 +6,8 @@
 .DESCRIPTION
     Usage: ./validate.ps1 [phase]
     Phases:
-      all        - typecheck + lint + duplication + semgrep + production audit + test + continuity freshness (default, pre-commit)
-      full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge; skips continuity freshness)
+      all        - typecheck + lint + duplication + semgrep + production audit + test (default, pre-commit)
+      full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only
@@ -324,7 +324,7 @@ if ($Phase -eq "full") {
     Invoke-TrivyImageScan
 }
 
-if ($Phase -in "all", "continuity", "commit") {
+if ($Phase -in "continuity") {
     Invoke-ContinuityValidation
 }
 

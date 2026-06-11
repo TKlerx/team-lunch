@@ -31,7 +31,19 @@ generate_app_version() {
 }
 
 APP_VERSION="${APP_VERSION:-$(generate_app_version)}"
+GIT_SHA="${GIT_SHA:-$(git rev-parse --short=12 HEAD)}"
+GIT_BRANCH="${GIT_BRANCH:-$(git branch --show-current)}"
+if [ -n "$(git status --porcelain)" ]; then
+  GIT_DIRTY="${GIT_DIRTY:-true}"
+else
+  GIT_DIRTY="${GIT_DIRTY:-false}"
+fi
+BUILD_TIME="${BUILD_TIME:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 export APP_VERSION
+export GIT_SHA
+export GIT_BRANCH
+export GIT_DIRTY
+export BUILD_TIME
 
 step() {
   printf '\n=== %s ===\n' "$1"
@@ -39,6 +51,10 @@ step() {
 
 step "Build metadata"
 printf 'APP_VERSION=%s\n' "$APP_VERSION"
+printf 'GIT_SHA=%s\n' "$GIT_SHA"
+printf 'GIT_BRANCH=%s\n' "$GIT_BRANCH"
+printf 'GIT_DIRTY=%s\n' "$GIT_DIRTY"
+printf 'BUILD_TIME=%s\n' "$BUILD_TIME"
 printf 'COMPOSE_FILE=%s\n' "$COMPOSE_FILE"
 printf 'COMPOSE_PROJECT_NAME=%s\n' "$COMPOSE_PROJECT_NAME"
 printf 'PORT=%s\n' "${PORT:-3000}"
