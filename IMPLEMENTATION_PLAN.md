@@ -2081,3 +2081,103 @@
 - [x] **87.3 Remove unnecessary page-level panels** *(done)*
   - Removed the outer card/panel wrappers from Settings, Shopping List, and Administration so these pages follow the uncluttered Manage Menus layout pattern
   - Kept functional inner panels for repeated or status-specific content while letting page sections sit directly on the app surface
+
+---
+
+## Priority 88 - Display Name Identity (Jun 2026)
+
+> Product decision: legacy nickname/open mode is replaced by account-based identity
+> plus optional display names. Anonymous lunch guests are no longer supported;
+> manually created local guest accounts remain supported.
+
+### Implement Now
+
+- [ ] **88.1 Make authentication mandatory and remove legacy nickname mode**
+  - Remove anonymous/open-app access when no auth method is configured; show a clear setup/configuration error instead.
+  - Remove `NicknameModal`, `useNickname`, and `team_lunch_nickname` as user identity mechanisms.
+  - Remove request-body nickname fallback from authenticated routes; all user-attributed actions resolve the actor from the signed session.
+  - Keep DB-managed local accounts available for external lunch guests.
+  - Update specs and AGENTS discoveries to reflect that nickname-only identity is retired.
+  - Tests: unauthenticated vote/order/preference requests are rejected, app does not render the lunch workflow without an auth method, local-login guest accounts still reach the app.
+
+- [ ] **88.2 Add persisted display-name model**
+  - Add nullable `display_name` and `display_name_source` to `auth_access_users`.
+  - Use `display_name_source` values: `local`, `entra`, or `null`.
+  - Local/manual accounts can store admin/user-edited display names.
+  - Entra accounts use the ID-token `name` claim as the display name source; refresh cached value on each successful login.
+  - Display names are not unique.
+  - Tests: Entra login syncs display name from `name`; local account display name persists; duplicate display names are allowed.
+
+- [ ] **88.3 Validate display names consistently**
+  - Trim leading/trailing whitespace before validation and storage.
+  - Limit to 64 user-visible grapheme clusters.
+  - Allow Unicode letters/numbers, normal spaces, safe punctuation (`.`, `_`, `-`, `'`, `@`, `(`, `)`), and emojis.
+  - Reject control characters, bidi override characters, invisible spoofing characters, and HTML-sensitive characters such as `<` and `>`.
+  - Backend owns validation; UI mirrors it and shows field-level indicators/errors.
+  - Tests: accepted punctuation/emojis, max-length boundary, rejection of controls/bidi/invisible/HTML-sensitive characters.
+
+- [ ] **88.4 Split stable actor identity from display snapshots**
+  - Add stable actor fields to poll votes and food orders, e.g. `actor_key` / `actor_email`.
+  - Add display snapshot fields, e.g. `display_name_snapshot`.
+  - New writes use session username/email as actor key and `displayName || email` as display snapshot.
+  - Existing historical rows remain unchanged in meaning: migrate old `nickname` into display snapshot and use it as actor fallback where no account mapping exists.
+  - Ownership/withdrawal/rating checks use actor key, not display name.
+  - UI lunch boards show display snapshot; email is shown only as fallback when no display name exists.
+  - Tests: two users with same display name do not collide; withdrawals only affect the signed-in actor; historical rows keep their original shown name.
+
+- [ ] **88.5 Extend auth/config and profile APIs**
+  - Extend `GET /api/auth/config` so `auth.user` includes `username`, `method`, `displayName`, and `displayNameSource`.
+  - Add `PUT /api/auth/me/display-name` for signed-in local users; empty value clears display name.
+  - Reject edits for Entra-managed display names with a clear error.
+  - Add admin endpoint support to edit display name for local/manual accounts.
+  - Tests: local user self-update, Entra edit rejection, admin update of local display name, blocked/pending users cannot update profile.
+
+- [ ] **88.6 Update Settings account/profile UX**
+  - Show account/email prominently as read-only.
+  - Show authentication method:
+    - `Authentication: Microsoft Entra`
+    - `Authentication: Local account`
+  - Show display-name field below account identity.
+  - For local accounts: editable, with copy explaining this name appears in lunch votes and orders.
+  - For Entra accounts: read-only, with copy explaining the name is managed by Microsoft Entra/Microsoft profile.
+  - If no display name exists, show fallback note: account email is displayed until a name is set.
+  - Tests: settings renders account/email, auth method, editable local display name, read-only Entra display name, validation errors, empty-display fallback note.
+
+- [ ] **88.7 Update Administration user management**
+  - Show both account/email and display name for every user.
+  - Allow admins to edit display name for local/manual accounts.
+  - Allow admins to edit account/email for manually created local accounts only.
+  - Allow admins to delete manually created local accounts.
+  - Keep Entra account email/display name read-only in local admin UI.
+  - Do not allow local deletion of Entra-backed users or protected bootstrap admin accounts.
+  - Existing votes/orders remain as historical snapshots after local account deletion.
+  - Existing votes/orders remain as historical snapshots after email edits.
+  - If an admin edits the email of an active local user, force that user to log out via SSE when possible and reject/expire old-session usage where feasible.
+  - If an admin deletes an active local user, force that user to log out via SSE when possible and reject/expire old-session usage where feasible.
+  - Tests: admin edits local display name, admin edits local email, admin deletes local account, Entra edit/delete controls are disabled/rejected, bootstrap admin deletion is rejected, old historical orders remain unchanged, affected local user is forced to re-login.
+
+- [ ] **88.8 Remove frontend nickname dependencies**
+  - Replace `useNickname` usage with current authenticated user/profile data.
+  - Remove nickname props from app shell where possible.
+  - Update Header, phase derivation, voting, ordering, preferences, shopping list, and notifications to use authenticated profile identity.
+  - Ensure UI display rule is consistent: display name first, email fallback.
+  - Tests: main flow works from authenticated profile state without localStorage nickname, all lunch interactions send no user-selected nickname.
+
+### Backlog
+
+- [ ] **88.9 Add Entra/Graph avatar support**
+  - Fetch Microsoft profile photo via Graph when permissions are configured.
+  - Cache/avatar URL strategy to avoid repeated Graph calls.
+  - Fall back to initials/generic avatar when no photo exists or Graph is unavailable.
+
+- [ ] **88.10 Add local guest avatar customization**
+  - Provide generic guest avatar by default.
+  - Allow future admin-selected or uploaded avatars for manually created guest accounts.
+
+- [ ] **88.11 Add profile audit/history**
+  - Track local display-name and email edits with actor, timestamp, old value, and new value.
+  - Consider admin-facing history for guest account maintenance.
+
+- [ ] **88.12 Harden session invalidation with versions**
+  - Add session version or profile version to force logout after sensitive account changes.
+  - Use SSE as user-friendly immediate notification, but keep backend version checks authoritative.
