@@ -7,7 +7,7 @@
     Usage: ./validate.ps1 [phase]
     Phases:
       all        - typecheck + lint + duplication + semgrep + production audit + test + continuity freshness (default, pre-commit)
-      full       - all quality checks + production audit + Playwright E2E tests (pre-push / before merge; skips continuity freshness)
+      full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge; skips continuity freshness)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only
@@ -237,6 +237,41 @@ function Invoke-ContinuityValidation {
     }
 }
 
+function Invoke-TrivyImageScan {
+    Write-Step "Container image scan (Trivy)"
+
+    $defaultTrivyImage = "aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500"
+    $trivyImage = if ($env:TRIVY_IMAGE) { $env:TRIVY_IMAGE } else { $defaultTrivyImage }
+    $scanImage = if ($env:TRIVY_SCAN_IMAGE) { $env:TRIVY_SCAN_IMAGE } else { "team-lunch:trivy-scan" }
+    $viteBasePath = if ($env:VITE_BASE_PATH) { $env:VITE_BASE_PATH } else { "/" }
+
+    try {
+        $dockerVersion = Invoke-NativeCommand "docker --version"
+        if ($dockerVersion.ExitCode -ne 0) {
+            Write-CommandLog $dockerVersion
+            throw "docker not available"
+        }
+
+        $buildResult = Invoke-NativeCommand "docker build --build-arg VITE_BASE_PATH=""$viteBasePath"" -t $scanImage ."
+        if ($buildResult.ExitCode -ne 0) {
+            Write-CommandLog $buildResult
+            throw "docker build failed for $scanImage"
+        }
+
+        $scanResult = Invoke-NativeCommand "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy_cache:/root/.cache $trivyImage image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress $scanImage"
+        if ($scanResult.ExitCode -ne 0) {
+            Write-CommandLog $scanResult
+            throw "trivy found high/critical vulnerabilities in $scanImage"
+        }
+
+        Write-Pass "Trivy image scan passed"
+    } catch {
+        Write-Fail "Trivy image scan failed"
+        Write-Host $_.Exception.Message -ForegroundColor Yellow
+        $script:failures += "trivy"
+    }
+}
+
 $failures = @()
 
 if ($Phase -in "all", "full", "quick", "commit") {
@@ -283,6 +318,10 @@ if ($Phase -in "all", "full", "test", "commit") {
         param($result)
         Get-TestSummary $result
     }
+}
+
+if ($Phase -eq "full") {
+    Invoke-TrivyImageScan
 }
 
 if ($Phase -in "all", "continuity", "commit") {

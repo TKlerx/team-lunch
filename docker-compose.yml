@@ -1,19 +1,19 @@
 services:
   db:
-    image: postgres:18-alpine
+    image: "${POSTGRES_IMAGE:-postgres:18-alpine}"
     restart: unless-stopped
     ports:
       - "${DB_PORT:-5433}:5432"
     environment:
-      POSTGRES_USER: teamlunch
-      POSTGRES_PASSWORD: teamlunch
-      POSTGRES_DB: teamlunch
-      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: "${POSTGRES_USER:-teamlunch}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-teamlunch}"
+      POSTGRES_DB: "${POSTGRES_DB:-teamlunch}"
+      PGDATA: "${POSTGRES_PGDATA:-/var/lib/postgresql/data/pgdata}"
     volumes:
       - pgdata:/var/lib/postgresql
       - ./prisma/init-citext.sql:/docker-entrypoint-initdb.d/01-citext.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U teamlunch"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -41,10 +41,15 @@ services:
       retries: 10
 
   migrate:
-    image: team-lunch:latest
+    image: team-lunch-migrate:latest
+    build:
+      context: .
+      target: builder
+      args:
+        VITE_BASE_PATH: "${VITE_BASE_PATH:-/}"
     restart: "no"
     environment:
-      DATABASE_URL: "postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public"
+      DATABASE_URL: "${COMPOSE_DATABASE_URL:-postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public}"
       NODE_ENV: production
     command: ["pnpm", "exec", "prisma", "migrate", "deploy"]
     depends_on:
@@ -61,7 +66,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     environment:
-      DATABASE_URL: "postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public"
+      DATABASE_URL: "${COMPOSE_DATABASE_URL:-postgresql://teamlunch:teamlunch@db:5432/teamlunch?schema=public}"
       NODE_ENV: production
       PORT: "${PORT:-3000}"
       BASE_PATH: "${BASE_PATH:-}"
