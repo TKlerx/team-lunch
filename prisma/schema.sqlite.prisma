@@ -111,11 +111,14 @@ model PollVote {
   menuId   String   @map("menu_id")
   menuName String   @map("menu_name")
   nickname String
+  actorKey String?  @map("actor_key")
+  actorEmail String? @map("actor_email")
+  displayNameSnapshot String? @map("display_name_snapshot")
   castAt   DateTime @default(now()) @map("cast_at")
   poll     Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu     Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
-  @@unique([pollId, menuId, nickname])
+  @@unique([pollId, menuId, actorKey])
   @@map("poll_votes")
 }
 
@@ -149,6 +152,9 @@ model FoodOrder {
   id              String        @id @default(uuid())
   selectionId     String        @map("selection_id")
   nickname        String
+  actorKey        String?       @map("actor_key")
+  actorEmail      String?       @map("actor_email")
+  displayNameSnapshot String?   @map("display_name_snapshot")
   itemId          String?       @map("item_id")
   itemName        String        @map("item_name")
   notes           String?
@@ -179,6 +185,8 @@ model LocalAuthUser {
 model AuthAccessUser {
   id               String          @id @default(uuid())
   email            String          @unique
+  displayName      String?         @map("display_name")
+  displayNameSource String?        @map("display_name_source")
   approved         Boolean         @default(false)
   isAdmin          Boolean         @default(false) @map("is_admin")
   blocked          Boolean         @default(false)

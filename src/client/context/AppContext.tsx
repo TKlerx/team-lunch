@@ -88,7 +88,10 @@ export type AppAction =
   | { type: 'FOOD_SELECTION_STARTED'; payload: { foodSelection: FoodSelection } }
   | { type: 'ORDER_PLACED'; payload: { order: FoodOrder } }
   | { type: 'ORDER_UPDATED'; payload: { order: FoodOrder } }
-  | { type: 'ORDER_WITHDRAWN'; payload: { nickname: string; selectionId: string; orderId?: string } }
+  | {
+      type: 'ORDER_WITHDRAWN';
+      payload: { nickname: string; actorKey?: string | null; selectionId: string; orderId?: string };
+    }
   | { type: 'FOOD_SELECTION_OVERTIME'; payload: { foodSelectionId: string } }
   | {
       type: 'FOOD_SELECTION_EXTENDED';
@@ -329,13 +332,16 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'ORDER_WITHDRAWN': {
       if (!state.activeFoodSelection) return state;
-      const { nickname, orderId } = action.payload;
+      const { nickname, actorKey, orderId } = action.payload;
       return {
         ...state,
         activeFoodSelection: {
           ...state.activeFoodSelection,
           orders: state.activeFoodSelection.orders.filter((o) => {
-            if (o.nickname !== nickname) return true;
+            const sameActor = actorKey
+              ? o.actorKey === actorKey || (!o.actorKey && o.nickname === nickname)
+              : o.nickname === nickname;
+            if (!sameActor) return true;
             if (!orderId) return false;
             return o.id !== orderId;
           }),

@@ -13,9 +13,12 @@ entraOidc,localAuth,localLoginProtection}.ts`, `src/client/auth.ts`,
 `local-auth.test.ts`, `local-user-management-authz.test.ts`. Original prose:
 `specs/old/auth-hardening.md` (+ `specs/old/identity.md` for nickname).
 
-> Migrated spec. Auth is **optional** — when no auth env is configured the app
-> runs open with nickname-only identity. Nickname identity itself is a separate
-> client-only concern (see `specs/old/identity.md`).
+> Migrated spec, updated June 2026. Auth is required for lunch workflow access:
+> when no auth method is configured the app shows an authentication setup error
+> instead of running open. User-attributed actions resolve identity from the
+> signed session. Optional display names are persisted on auth access records;
+> lunch votes and orders store stable actor keys plus immutable display
+> snapshots for historical rows.
 
 ## User Scenarios & Testing
 
@@ -37,8 +40,9 @@ signed HttpOnly cookie and that protected routes accept it.
 2. **Given** repeated failed logins, **When** they exceed the abuse threshold,
    **Then** per-IP (and/or per-username) rate-limit/backoff rejects or delays
    further attempts predictably; a successful login clears the penalty window.
-3. **Given** no local-auth env configured, **Then** local login routes are
-   inactive and the app runs open.
+3. **Given** no local-auth users and no Entra configuration, **Then** the app
+   reports authentication setup is required and does not render the lunch
+   workflow.
 
 ### User Story 2 - Microsoft Entra SSO (Priority: P1)
 
@@ -53,7 +57,8 @@ the id_token before issuing a session.
    `ENTRA_TENANT_ID` before creating a session.
 2. **Given** any validation step fails, **Then** no session cookie is issued.
 3. **Given** a valid Entra login, **Then** the account username is used as the
-   user's action label and rename is disabled for that session.
+   stable actor key and the ID-token `name` claim is cached as the managed
+   display name.
 
 ### User Story 3 - Approval gate (Priority: P1)
 

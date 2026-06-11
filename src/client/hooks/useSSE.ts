@@ -31,7 +31,10 @@ function notificationsEnabledInStorage(): boolean {
 
 function currentNicknameFromStorage(): string | null {
   try {
-    const value = localStorage.getItem('team_lunch_nickname')?.trim() ?? '';
+    const value =
+      localStorage.getItem('team_lunch_actor_key')?.trim() ??
+      localStorage.getItem('team_lunch_nickname')?.trim() ??
+      '';
     return value.length > 0 ? value : null;
   } catch {
     return null;
@@ -225,7 +228,12 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     });
 
     es.addEventListener('order_withdrawn', (e: MessageEvent) => {
-      const payload = JSON.parse(e.data) as { nickname: string; selectionId: string; orderId?: string };
+      const payload = JSON.parse(e.data) as {
+        nickname: string;
+        actorKey?: string | null;
+        selectionId: string;
+        orderId?: string;
+      };
       dispatchRef.current({ type: 'ORDER_WITHDRAWN', payload });
     });
 

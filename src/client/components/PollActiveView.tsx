@@ -1,10 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
-import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
+import {
+  getAuthenticatedActorKey,
+  getAuthenticatedDisplayLabel,
+  isAdminAuthenticatedUser,
+  isCreatorAuthenticatedUser,
+} from '../auth.js';
 
 // ─── Vote histogram ─────────────────────────────────────────
 
@@ -47,13 +51,15 @@ function VotingPanel({
   pollId,
   menus,
   nickname,
+  actorKey,
   votes,
   disabled = false,
 }: {
   pollId: string;
   menus: { id: string; name: string }[];
   nickname: string;
-  votes: { menuId: string; nickname: string }[];
+  actorKey: string | null;
+  votes: { menuId: string; nickname: string; actorKey?: string | null }[];
   disabled?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -62,8 +68,13 @@ function VotingPanel({
   const [error, setError] = useState('');
 
   const myVotedMenuIds = useMemo(
-    () => new Set(votes.filter((v) => v.nickname === nickname).map((v) => v.menuId)),
-    [votes, nickname],
+    () =>
+      new Set(
+        votes
+          .filter((v) => (actorKey ? v.actorKey === actorKey || (!v.actorKey && v.nickname === nickname) : v.nickname === nickname))
+          .map((v) => v.menuId),
+      ),
+    [votes, actorKey, nickname],
   );
 
   const handleToggle = async (menuId: string) => {
@@ -211,7 +222,8 @@ function PublicVotesBoard({
 
 export default function PollActiveView() {
   const { activePoll, menus } = useAppState();
-  const { nickname } = useNickname();
+  const nickname = getAuthenticatedDisplayLabel();
+  const actorKey = getAuthenticatedActorKey();
   const remaining = useCountdown(activePoll?.endsAt);
   const [submitting, setSubmitting] = useState(false);
   const [aborting, setAborting] = useState(false);
@@ -418,6 +430,7 @@ export default function PollActiveView() {
           pollId={activePoll.id}
           menus={votableMenus}
           nickname={nickname}
+          actorKey={actorKey}
           votes={activePoll.votes}
           disabled={pollExpired}
         />

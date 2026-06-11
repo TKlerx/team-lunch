@@ -31,12 +31,16 @@ import {
   assignUserOfficeByAdmin,
   blockUserByAdmin,
   getBlockedUserMessage,
+  getAuthDisplayProfile,
   declineUserByAdmin,
   demoteUserByAdmin,
   listAccessUsers,
   listPendingAccessRequests,
   promoteUserByAdmin,
   resolveUserApproval,
+  syncEntraDisplayName,
+  updateLocalDisplayName,
+  updateUserDisplayNameByAdmin,
   unblockUserByAdmin,
 } from '../services/authAccess.js';
 import {
@@ -54,7 +58,12 @@ type AuthConfigResponse = {
     localEnabled: boolean;
     authenticated: boolean;
     warning?: string;
-    user: { username: string; method: 'entra' | 'local' } | null;
+    user: {
+      username: string;
+      method: 'entra' | 'local';
+      displayName: string | null;
+      displayNameSource: 'local' | 'entra' | null;
+    } | null;
     officeLocation: { id: string; key: string; name: string } | null;
     officeLocations: OfficeLocation[];
     accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
@@ -66,6 +75,8 @@ type AuthConfigResponse = {
     pendingApprovals: Array<{ email: string; requestedAt: string }>;
     users: Array<{
       email: string;
+      displayName: string | null;
+      displayNameSource: 'local' | 'entra' | null;
       approved: boolean;
       blocked: boolean;
       isAdmin: boolean;
@@ -185,6 +196,12 @@ function getUsernameFromClaims(claims: JWTPayload): string {
   return preferredUsername;
 }
 
+function getDisplayNameFromClaims(claims: JWTPayload): string | null {
+  return typeof claims.name === 'string' && claims.name.trim().length > 0
+    ? claims.name.trim()
+    : null;
+}
+
 function validateCredentials(body: LocalLoginRequest): { username: string; password: string } {
   const username = body.username?.trim();
   const password = body.password;
@@ -266,6 +283,7 @@ export default async function authRoutes(app: FastifyInstance) {
       }
 
       const username = getUsernameFromClaims(idTokenClaims);
+      await syncEntraDisplayName(username, getDisplayNameFromClaims(idTokenClaims));
       const approval = await resolveUserApproval(username);
       if (approval.blocked) {
         throw serviceError(getBlockedUserMessage(), 403);
@@ -291,13 +309,20 @@ export default async function authRoutes(app: FastifyInstance) {
     try {
       const entra = getEntraConfig();
       const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      const localEnabled =
-        !!session || !entra.enabled || (await hasAnyLocalAuthUsers());
+      const localEnabled = !!session || (await hasAnyLocalAuthUsers());
       let warning = '';
       let approvalState = buildDefaultApprovalState();
+      let userProfile: AuthConfigResponse['auth']['user'] = null;
       if (session) {
         try {
           approvalState = await resolveUserApproval(session.username);
+          const displayProfile = await getAuthDisplayProfile(session.username);
+          userProfile = {
+            username: session.username,
+            method: session.method,
+            displayName: displayProfile.displayName,
+            displayNameSource: displayProfile.displayNameSource,
+          };
         } catch {
           warning =
             'Authentication settings are partially unavailable. Local sign-in is still available.';
@@ -334,8 +359,14 @@ export default async function authRoutes(app: FastifyInstance) {
           entraEnabled: entra.enabled,
           localEnabled,
           authenticated: !!session,
-          ...(warning ? { warning } : {}),
-          user: session ? { username: session.username, method: session.method } : null,
+          ...(warning || (!entra.enabled && !localEnabled)
+            ? {
+                warning:
+                  warning ||
+                  'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
+              }
+            : {}),
+          user: userProfile,
           officeLocation: approvalState.officeLocationId
             ? {
                 id: approvalState.officeLocationId,
@@ -389,7 +420,13 @@ export default async function authRoutes(app: FastifyInstance) {
         }),
       );
 
-      return reply.send({ username: authenticatedUsername, method: 'local' as const });
+      const displayProfile = await getAuthDisplayProfile(authenticatedUsername);
+      return reply.send({
+        username: authenticatedUsername,
+        method: 'local' as const,
+        displayName: displayProfile.displayName,
+        displayNameSource: displayProfile.displayNameSource,
+      });
     } catch (err) {
       return sendServiceError(reply, err);
     }
@@ -423,6 +460,59 @@ export default async function authRoutes(app: FastifyInstance) {
         const created = await upsertLocalAuthUser(email, req.body?.password);
         await approveUserByAdmin(created.email, officeLocationId);
         return reply.send(created);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  app.put<{ Body: { displayName?: string | null } }>(
+    '/api/auth/me/display-name',
+    async (req, reply) => {
+      try {
+        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+        if (!session) {
+          throw serviceError('Authentication required', 401);
+        }
+        const access = await resolveUserApproval(session.username);
+        if (access.blocked) {
+          throw serviceError(getBlockedUserMessage(), 403);
+        }
+        if (access.approvalRequired && !access.approved && !access.isAdmin) {
+          throw serviceError('User is awaiting approval', 403);
+        }
+        if (session.method !== 'local') {
+          throw serviceError('Display name is managed by Microsoft Entra', 400);
+        }
+        const profile = await updateLocalDisplayName(session.username, req.body?.displayName);
+        return reply.send(profile);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  app.put<{ Body: { email?: string; displayName?: string | null } }>(
+    '/api/auth/users/display-name',
+    async (req, reply) => {
+      try {
+        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+        if (!session) {
+          throw serviceError('Authentication required', 401);
+        }
+        const access = await resolveUserApproval(session.username);
+        if (access.blocked) {
+          throw serviceError(getBlockedUserMessage(), 403);
+        }
+        if (!access.isAdmin) {
+          throw serviceError('Admin approval required', 403);
+        }
+        const email = req.body?.email?.trim();
+        if (!email) {
+          throw serviceError('Email is required', 400);
+        }
+        const profile = await updateUserDisplayNameByAdmin(email, req.body?.displayName);
+        return reply.send(profile);
       } catch (err) {
         return sendServiceError(reply, err);
       }

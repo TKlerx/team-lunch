@@ -16,8 +16,17 @@ export function isAdminAuthenticatedUser(): boolean {
 }
 
 export function getAuthenticatedActorKey(): string | null {
-  const value = localStorage.getItem('team_lunch_nickname')?.trim().toLowerCase() ?? '';
+  const value = localStorage.getItem('team_lunch_actor_key')?.trim().toLowerCase() ?? '';
   return value.length > 0 ? value : null;
+}
+
+export function getAuthenticatedDisplayLabel(): string | null {
+  const displayName = localStorage.getItem('team_lunch_display_name')?.trim() ?? '';
+  if (displayName.length > 0) {
+    return displayName;
+  }
+  const actor = localStorage.getItem('team_lunch_actor_key')?.trim() ?? '';
+  return actor.length > 0 ? actor : null;
 }
 
 export function isCreatorAuthenticatedUser(createdBy: string | null | undefined): boolean {

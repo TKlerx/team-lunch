@@ -4,12 +4,15 @@ import { serviceError } from '../routes/routeUtils.js';
 import { normalizeEmail } from './localAuth.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
 import { validateOfficeLocationId } from './officeLocation.js';
+import { normalizeDisplayName, resolveDisplayNameSnapshot, type DisplayNameSource } from './displayName.js';
 
 const DB_PROBE_TIMEOUT_MS = 500;
 
 type AuthAccessEntry = {
   id: string;
   email: string;
+  displayName: string | null;
+  displayNameSource: string | null;
   approved: boolean;
   isAdmin: boolean;
   blocked: boolean;
@@ -40,6 +43,8 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
     select?: {
       id?: true;
       email?: true;
+      displayName?: true;
+      displayNameSource?: true;
       approved?: true;
       isAdmin?: true;
       blocked?: true;
@@ -74,6 +79,8 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       AuthAccessEntry,
       | 'id'
       | 'email'
+      | 'displayName'
+      | 'displayNameSource'
       | 'approved'
       | 'isAdmin'
       | 'blocked'
@@ -102,6 +109,8 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       approved?: boolean;
       isAdmin?: boolean;
       blocked?: boolean;
+      displayName?: string | null;
+      displayNameSource?: DisplayNameSource | null;
       officeLocationId?: string | null;
       approvedAt?: Date;
       blockedAt?: Date | null;
@@ -114,6 +123,8 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       approved?: boolean;
       isAdmin?: boolean;
       blocked?: boolean;
+      displayName?: string | null;
+      displayNameSource?: DisplayNameSource | null;
       officeLocationId?: string | null;
       approvedAt?: Date | null;
       blockedAt?: Date | null;
@@ -126,6 +137,8 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
     select: {
       id: true;
       email: true;
+      displayName?: true;
+      displayNameSource?: true;
       approved: true;
       isAdmin: true;
       blocked: true;
@@ -160,6 +173,115 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
 };
 
 const BLOCKED_USER_MESSAGE = 'Your account has been blocked by an administrator';
+
+export type AuthDisplayProfile = {
+  email: string;
+  displayName: string | null;
+  displayNameSource: DisplayNameSource | null;
+  displayNameSnapshot: string;
+};
+
+async function readAuthDisplayProfile(email: string): Promise<AuthDisplayProfile> {
+  const normalized = normalizeEmail(email);
+  const entry = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayName: true, displayNameSource: true },
+  }).catch(() => null) as {
+    email: string;
+    displayName: string | null;
+    displayNameSource: DisplayNameSource | null;
+  } | null;
+
+  const displayName = normalizeDisplayName(entry?.displayName ?? null);
+  const displayNameSource =
+    entry?.displayNameSource === 'local' || entry?.displayNameSource === 'entra'
+      ? entry.displayNameSource
+      : null;
+  return {
+    email: normalized,
+    displayName,
+    displayNameSource,
+    displayNameSnapshot: resolveDisplayNameSnapshot(displayName, normalized),
+  };
+}
+
+export async function getAuthDisplayProfile(email: string): Promise<AuthDisplayProfile> {
+  return readAuthDisplayProfile(email);
+}
+
+export async function syncEntraDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
+  const normalized = normalizeEmail(email);
+  const displayName = normalizeDisplayName(rawDisplayName);
+  await (prisma as any).authAccessUser.upsert({
+    where: { email: normalized },
+    create: {
+      email: normalized,
+      displayName,
+      displayNameSource: 'entra',
+      approved: isAdminUser(normalized) || !isApprovalWorkflowEnabled(),
+      isAdmin: isAdminUser(normalized),
+      blocked: false,
+      approvedAt: isAdminUser(normalized) || !isApprovalWorkflowEnabled() ? new Date() : null,
+    },
+    update: {
+      displayName,
+      displayNameSource: 'entra',
+      updatedAt: new Date(),
+    },
+  });
+  return readAuthDisplayProfile(normalized);
+}
+
+export async function updateLocalDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
+  const normalized = validateManagedEmail(email);
+  const existing = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  });
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Display name is managed by Microsoft Entra', 400);
+  }
+  const displayName = normalizeDisplayName(rawDisplayName);
+  await (prisma as any).authAccessUser.update({
+    where: { email: normalized },
+    data: {
+      displayName,
+      displayNameSource: displayName ? 'local' : null,
+      updatedAt: new Date(),
+    },
+  });
+  return readAuthDisplayProfile(normalized);
+}
+
+export async function updateUserDisplayNameByAdmin(
+  email: string,
+  rawDisplayName: string | null | undefined,
+): Promise<AuthDisplayProfile> {
+  const normalized = validateManagedEmail(email);
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Display name is managed by Microsoft Entra', 400);
+  }
+  const displayName = normalizeDisplayName(rawDisplayName);
+  await authAccessUserModel.update({
+    where: { email: normalized },
+    data: {
+      displayName,
+      displayNameSource: displayName ? 'local' : null,
+      updatedAt: new Date(),
+    },
+  });
+  return readAuthDisplayProfile(normalized);
+}
 
 function getAuditLogDelegate():
   | { create: (args: { data: { event: string; actorEmail: string | null; targetType: string; targetId: string } }) => Promise<unknown> }
@@ -237,6 +359,8 @@ async function listAdminReminderRecipients(): Promise<string[]> {
         select: {
           id: true,
           email: true,
+          displayName: true,
+          displayNameSource: true,
           approved: true,
           isAdmin: true,
           blocked: true,
@@ -795,6 +919,8 @@ export async function listPendingAccessRequests(): Promise<Array<{ email: string
 export async function listAccessUsers(): Promise<
   Array<{
     email: string;
+    displayName: string | null;
+    displayNameSource: DisplayNameSource | null;
     approved: boolean;
     isAdmin: boolean;
     blocked: boolean;
@@ -866,6 +992,8 @@ export async function listAccessUsers(): Promise<
           {
             id: 'bootstrap-admin',
             email: configuredAdmin,
+            displayName: null,
+            displayNameSource: null,
             approved: true,
             isAdmin: true,
             blocked: false,
@@ -885,6 +1013,12 @@ export async function listAccessUsers(): Promise<
       const assignedOfficeLocations = getAssignedOfficeLocations(row);
       return {
         email: row.email,
+        displayName: normalizeDisplayName((row as AuthAccessEntry & { displayName?: string | null }).displayName ?? null),
+        displayNameSource:
+          (row as AuthAccessEntry & { displayNameSource?: string | null }).displayNameSource === 'local' ||
+          (row as AuthAccessEntry & { displayNameSource?: string | null }).displayNameSource === 'entra'
+            ? ((row as AuthAccessEntry & { displayNameSource?: DisplayNameSource }).displayNameSource ?? null)
+            : null,
         approved: row.approved,
         isAdmin: row.isAdmin || isAdminUser(row.email),
         blocked: row.blocked,

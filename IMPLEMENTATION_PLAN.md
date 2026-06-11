@@ -2100,7 +2100,7 @@
   - Update specs and AGENTS discoveries to reflect that nickname-only identity is retired.
   - Tests: unauthenticated vote/order/preference requests are rejected, app does not render the lunch workflow without an auth method, local-login guest accounts still reach the app.
 
-- [ ] **88.2 Add persisted display-name model**
+- [x] **88.2 Add persisted display-name model**
   - Add nullable `display_name` and `display_name_source` to `auth_access_users`.
   - Use `display_name_source` values: `local`, `entra`, or `null`.
   - Local/manual accounts can store admin/user-edited display names.
@@ -2116,7 +2116,7 @@
   - Backend owns validation; UI mirrors it and shows field-level indicators/errors.
   - Tests: accepted punctuation/emojis, max-length boundary, rejection of controls/bidi/invisible/HTML-sensitive characters.
 
-- [ ] **88.4 Split stable actor identity from display snapshots**
+- [x] **88.4 Split stable actor identity from display snapshots**
   - Add stable actor fields to poll votes and food orders, e.g. `actor_key` / `actor_email`.
   - Add display snapshot fields, e.g. `display_name_snapshot`.
   - New writes use session username/email as actor key and `displayName || email` as display snapshot.
@@ -2162,6 +2162,19 @@
   - Update Header, phase derivation, voting, ordering, preferences, shopping list, and notifications to use authenticated profile identity.
   - Ensure UI display rule is consistent: display name first, email fallback.
   - Tests: main flow works from authenticated profile state without localStorage nickname, all lunch interactions send no user-selected nickname.
+
+### Progress / Discoveries
+
+- Added `auth_access_users.display_name` and `display_name_source` plus shared display-name normalization for server-owned validation.
+- Added stable `actor_key` / `actor_email` and immutable `display_name_snapshot` fields to poll votes and food orders; new writes resolve actor identity from signed sessions and keep historical nickname rows as display snapshots.
+- Corrected poll vote uniqueness to use stable actor keys rather than display snapshots, and added a follow-up migration for environments that had already applied the first Display Name Identity migration.
+- Added mocked/unit Entra display-name coverage; live Entra ID testing is currently unavailable because the tenant/app permissions are not available.
+- Removed continuity freshness from default validation/pre-commit flow; `./validate.ps1 continuity` remains available for intentional snapshot refreshes.
+- `GET /api/auth/config` and local login now expose `displayName` / `displayNameSource`; local users can self-update via `PUT /api/auth/me/display-name`, while Entra names are refreshed from the ID-token `name` claim and are read-only.
+- The client auth gate no longer opens the lunch workflow when no auth method exists; lunch action API calls no longer submit user-selected nicknames.
+- Settings now shows account email, auth method, local editable display name, Entra read-only copy, and email-fallback messaging; local display-name save updates `PUT /api/auth/me/display-name`.
+- Administration now shows account email plus display name and can edit local/manual display names through `PUT /api/auth/users/display-name`; Entra-managed names are read-only in the UI and rejected server-side.
+- Remaining Priority 88 work: local account email edit/delete management, forced old-session expiry after account edits/deletes, removal of leftover `useNickname`/`NicknameModal` compatibility dependencies, and the full new identity regression suite.
 
 ### Backlog
 

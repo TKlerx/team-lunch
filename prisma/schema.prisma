@@ -99,13 +99,16 @@ model PollVote {
   pollId   String   @map("poll_id") @db.Uuid
   menuId   String   @map("menu_id") @db.Uuid
   menuName String   @map("menu_name") @db.VarChar(60)
-  nickname String   @db.VarChar(30)
+  nickname String   @db.VarChar(255)
+  actorKey String?  @map("actor_key") @db.VarChar(255)
+  actorEmail String? @map("actor_email") @db.VarChar(255)
+  displayNameSnapshot String? @map("display_name_snapshot") @db.VarChar(255)
   castAt   DateTime @default(now()) @map("cast_at") @db.Timestamptz()
 
   poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
-  @@unique([pollId, menuId, nickname])
+  @@unique([pollId, menuId, actorKey])
   @@map("poll_votes")
 }
 
@@ -139,7 +142,10 @@ model FoodSelection {
 model FoodOrder {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   selectionId     String    @map("selection_id") @db.Uuid
-  nickname        String    @db.VarChar(30)
+  nickname        String    @db.VarChar(255)
+  actorKey        String?   @map("actor_key") @db.VarChar(255)
+  actorEmail      String?   @map("actor_email") @db.VarChar(255)
+  displayNameSnapshot String? @map("display_name_snapshot") @db.VarChar(255)
   itemId          String?   @map("item_id") @db.Uuid
   itemName        String    @map("item_name") @db.VarChar(80)
   notes           String?   @db.VarChar(200)
@@ -186,6 +192,8 @@ model LocalAuthUser {
 model AuthAccessUser {
   id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email            String          @unique @db.VarChar(255)
+  displayName      String?         @map("display_name") @db.VarChar(255)
+  displayNameSource String?        @map("display_name_source") @db.VarChar(20)
   approved         Boolean         @default(false)
   isAdmin          Boolean         @default(false) @map("is_admin")
   blocked          Boolean         @default(false)

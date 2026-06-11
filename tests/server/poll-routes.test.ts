@@ -82,7 +82,7 @@ describe('Poll routes (integration)', () => {
     return res.body;
   }
 
-  async function approvedAuthHeaders(email = 'approved-user@company.com') {
+  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string) {
     const defaultOffice = await ensureDefaultOfficeLocation();
     await prisma.authAccessUser.upsert({
       where: { email },
@@ -90,6 +90,8 @@ describe('Poll routes (integration)', () => {
         approved: true,
         blocked: false,
         isAdmin: false,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
       create: {
@@ -97,6 +99,8 @@ describe('Poll routes (integration)', () => {
         approved: true,
         blocked: false,
         isAdmin: false,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
     });
@@ -303,6 +307,39 @@ describe('Poll routes (integration)', () => {
       .expect(200);
 
     expect(res.body.votes).toHaveLength(0);
+  });
+
+  it('allows users with the same display name to vote independently', async () => {
+    const menu = await createMenu('Shared Display Pizza');
+    await startPoll();
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com', 'Sam');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com', 'Sam');
+
+    await supertest(app.server)
+      .post(`/api/polls/${(await prisma.poll.findFirstOrThrow()).id}/votes`)
+      .set(aliceHeaders)
+      .send({ menuId: menu.id })
+      .expect(201);
+    await supertest(app.server)
+      .post(`/api/polls/${(await prisma.poll.findFirstOrThrow()).id}/votes`)
+      .set(bobHeaders)
+      .send({ menuId: menu.id })
+      .expect(201);
+
+    const votes = await prisma.pollVote.findMany({ orderBy: { actorKey: 'asc' } });
+    expect(votes.map((vote) => vote.nickname)).toEqual(['Sam', 'Sam']);
+    expect(votes.map((vote) => vote.actorKey)).toEqual(['alice@example.com', 'bob@example.com']);
+
+    await supertest(app.server)
+      .delete(`/api/polls/${votes[0].pollId}/votes/all`)
+      .set(aliceHeaders)
+      .send({})
+      .expect(200);
+
+    const remainingVotes = await prisma.pollVote.findMany();
+    expect(remainingVotes).toHaveLength(1);
+    expect(remainingVotes[0].actorKey).toBe('bob@example.com');
+    expect(remainingVotes[0].nickname).toBe('Sam');
   });
 
   it('withdraws all votes for a user', async () => {

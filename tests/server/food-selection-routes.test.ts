@@ -148,7 +148,7 @@ describe('Food selection routes (integration)', () => {
     return res.body;
   }
 
-  async function approvedAuthHeaders(email = 'approved-user@company.com') {
+  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string) {
     const defaultOffice = await ensureDefaultOfficeLocation();
     await prisma.authAccessUser.upsert({
       where: { email },
@@ -156,6 +156,8 @@ describe('Food selection routes (integration)', () => {
         approved: true,
         blocked: false,
         isAdmin: false,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
       create: {
@@ -163,6 +165,8 @@ describe('Food selection routes (integration)', () => {
         approved: true,
         blocked: false,
         isAdmin: false,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
     });
@@ -384,6 +388,39 @@ describe('Food selection routes (integration)', () => {
       where: { selectionId: selection.id },
     });
     expect(orders).toHaveLength(0);
+  });
+
+  it('keeps same-display-name food orders isolated by actor', async () => {
+    const { item, poll } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com', 'Sam');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com', 'Sam');
+
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(aliceHeaders)
+      .send({ itemId: item.id })
+      .expect(201);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(bobHeaders)
+      .send({ itemId: item.id })
+      .expect(201);
+
+    const orders = await prisma.foodOrder.findMany({ orderBy: { actorKey: 'asc' } });
+    expect(orders.map((order) => order.nickname)).toEqual(['Sam', 'Sam']);
+    expect(orders.map((order) => order.actorKey)).toEqual(['alice@example.com', 'bob@example.com']);
+
+    await supertest(app.server)
+      .delete(`/api/food-selections/${selection.id}/orders`)
+      .set(aliceHeaders)
+      .send({})
+      .expect(204);
+
+    const remainingOrders = await prisma.foodOrder.findMany();
+    expect(remainingOrders).toHaveLength(1);
+    expect(remainingOrders[0].actorKey).toBe('bob@example.com');
+    expect(remainingOrders[0].nickname).toBe('Sam');
   });
 
   // ─── GET /api/food-selections/active ─────────────────────

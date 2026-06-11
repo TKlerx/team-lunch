@@ -108,6 +108,7 @@ export default function Administration() {
   const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] = useState<
     Record<string, string[]>
   >({});
+  const [displayNameDrafts, setDisplayNameDrafts] = useState<Record<string, string>>({});
   const [officeNameDrafts, setOfficeNameDrafts] = useState<Record<string, string>>({});
   const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<Record<string, OfficeSettingsDraft>>({});
   const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
@@ -157,6 +158,14 @@ export default function Administration() {
     );
     setSelectedUserOfficeMemberships((current) =>
       getSelectedUserOfficeMemberships(auth.users, current),
+    );
+    setDisplayNameDrafts((current) =>
+      Object.fromEntries(
+        auth.users.map((entry) => [
+          entry.email,
+          entry.email in current ? current[entry.email] : (entry.displayName ?? ''),
+        ]),
+      ),
     );
     setOfficeNameDrafts((current) =>
       Object.fromEntries(
@@ -383,6 +392,28 @@ export default function Administration() {
       await refreshConfig();
     } catch (assignError) {
       setError(assignError instanceof Error ? assignError.message : 'Office assignment failed');
+    } finally {
+      setUpdatingUserRoleEmail(null);
+    }
+  };
+
+  const handleSaveDisplayName = async (email: string) => {
+    setUpdatingUserRoleEmail(email);
+    setError('');
+    try {
+      const response = await fetch(withBasePath('/api/auth/users/display-name'), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, displayName: displayNameDrafts[email]?.trim() || null }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || 'Failed to update display name');
+      }
+      await refreshConfig();
+    } catch (displayNameError) {
+      setError(displayNameError instanceof Error ? displayNameError.message : 'Display name update failed');
     } finally {
       setUpdatingUserRoleEmail(null);
     }
@@ -877,8 +908,42 @@ export default function Administration() {
                               ? entry.assignedOfficeLocations.map((l) => l.name).join(', ')
                               : 'None'}
                           </p>
+                          <p className="text-xs text-fg-muted">
+                            Display name: {entry.displayName || 'Email fallback'}
+                          </p>
                         </div>
                         <div className="flex max-w-xl flex-col gap-2">
+                          <div className="flex flex-col gap-1 sm:flex-row">
+                            <input
+                              type="text"
+                              aria-label={`Display name for ${entry.email}`}
+                              value={displayNameDrafts[entry.email] ?? ''}
+                              disabled={entry.displayNameSource === 'entra' || updatingUserRoleEmail === entry.email}
+                              onChange={(event) =>
+                                setDisplayNameDrafts((current) => ({
+                                  ...current,
+                                  [entry.email]: event.target.value,
+                                }))
+                              }
+                              className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
+                              placeholder="Display name"
+                            />
+                            <button
+                              type="button"
+                              disabled={
+                                entry.displayNameSource === 'entra' ||
+                                updatingUserRoleEmail === entry.email ||
+                                (displayNameDrafts[entry.email] ?? '').trim() === (entry.displayName ?? '')
+                              }
+                              onClick={() => void handleSaveDisplayName(entry.email)}
+                              className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+                            >
+                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save name'}
+                            </button>
+                          </div>
+                          {entry.displayNameSource === 'entra' ? (
+                            <p className="text-xs text-fg-muted">Managed by Microsoft Entra</p>
+                          ) : null}
                           <div className="flex flex-wrap gap-2">
                             {config.officeLocations
                               .filter((l) => l.isActive)

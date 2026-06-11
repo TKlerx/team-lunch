@@ -13,6 +13,7 @@ import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
 } from '../services/officeContext.js';
+import { requireAuthenticatedActor } from './authIdentity.js';
 import type {
   StartFoodSelectionRequest,
   PlaceOrderRequest,
@@ -30,34 +31,6 @@ import type {
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
 } from '../../lib/types.js';
-
-function resolveActingNickname(
-  cookieHeader: string | undefined,
-  providedNickname: string | undefined,
-): Promise<string> | string {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (session) {
-    return (async () => {
-      const approval = await resolveUserApproval(session.username);
-      if (approval.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
-      if (approval.approvalRequired && !approval.approved && !approval.isAdmin) {
-        throw serviceError('User is awaiting approval', 403);
-      }
-      return session.username;
-    })();
-  }
-
-  const nickname = providedNickname?.trim();
-  if (!nickname) {
-    throw serviceError('Nickname is required', 400);
-  }
-  if (nickname.length > 30) {
-    throw serviceError('Nickname must be 1–30 characters', 400);
-  }
-  return nickname;
-}
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
   if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
@@ -206,17 +179,18 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
         const order = await foodSelectionService.placeOrder(
           req.params.id,
-          nickname,
+          actor.displayNameSnapshot,
           req.body.itemId,
           req.body.notes,
           officeLocationId,
+          actor,
         );
         return reply.status(201).send(order);
       } catch (err) {
@@ -230,16 +204,17 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
         await foodSelectionService.withdrawOrder(
           req.params.id,
-          nickname,
+          actor.displayNameSnapshot,
           req.body.orderId,
           officeLocationId,
+          actor,
         );
         return reply.status(204).send();
       } catch (err) {
@@ -349,7 +324,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders/:orderId/rating',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -357,10 +332,11 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
         const order = await foodSelectionService.rateOrder(
           req.params.id,
           req.params.orderId,
-          nickname,
+          actor.displayNameSnapshot,
           req.body.rating,
           req.body.feedbackComment,
           officeLocationId,
+          actor,
         );
         return reply.send(order);
       } catch (err) {
@@ -392,10 +368,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     async (req, reply) => {
       try {
         await requireAdminIfApprovalWorkflowEnabled(req.headers.cookie);
-        const actingNickname = await resolveActingNickname(
-          req.headers.cookie,
-          req.body.actingNickname,
-        );
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.actingNickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -403,7 +376,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
         const order = await foodSelectionService.placeFallbackOrder(
           req.params.id,
           req.body.nickname,
-          actingNickname,
+          actor.displayNameSnapshot,
           officeLocationId,
         );
         return reply.status(201).send(order);
@@ -419,10 +392,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     async (req, reply) => {
       try {
         await requireAdminIfApprovalWorkflowEnabled(req.headers.cookie);
-        const actingNickname = await resolveActingNickname(
-          req.headers.cookie,
-          req.body.actingNickname,
-        );
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.actingNickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -430,7 +400,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
         const result = await foodSelectionService.sendFallbackCandidateReminder(
           req.params.id,
           req.body.nickname,
-          actingNickname,
+          actor.displayNameSnapshot,
           officeLocationId,
         );
         return reply.send(result);
@@ -495,14 +465,14 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/claim-ordering',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
         const selection = await foodSelectionService.claimOrderingResponsibility(
           req.params.id,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
         );
         return reply.send(selection);
@@ -517,7 +487,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/place-order',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -525,7 +495,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
         const selection = await foodSelectionService.placeDeliveryOrder(
           req.params.id,
           req.body.etaMinutes,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
         );
         return reply.send(selection);
@@ -661,9 +631,12 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/export/mine',
     async (req, reply) => {
       try {
-        const nickname = await resolveActingNickname(req.headers.cookie, req.query.nickname);
-        const workbook = await foodSelectionService.exportOrdersForUserXlsx(nickname);
-        const safeNickname = nickname.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.query.nickname);
+        const workbook = await foodSelectionService.exportOrdersForUserXlsx(
+          actor.displayNameSnapshot,
+          actor,
+        );
+        const safeNickname = actor.displayNameSnapshot.replace(/[^a-zA-Z0-9._-]/g, '_');
         const fileName = `team-lunch-orders-${safeNickname || 'user'}.xlsx`;
 
         reply.header(

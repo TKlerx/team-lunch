@@ -1,7 +1,6 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from './components/Header.js';
-import NicknameModal from './components/NicknameModal.js';
 import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
 import OrdersRail from './components/OrdersRail.js';
 import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.js';
@@ -16,14 +15,13 @@ import { useSSE } from './hooks/useSSE.js';
 import { useAppPhase } from './hooks/useAppPhase.js';
 import { usePhaseNotifications } from './hooks/usePhaseNotifications.js';
 import { useNotificationPreference } from './hooks/useNotificationPreference.js';
-import { useNickname } from './hooks/useNickname.js';
-import { isExternalAuthEnabled } from './auth.js';
+import { getAuthenticatedDisplayLabel, isExternalAuthEnabled } from './auth.js';
 import { withBasePath } from './config.js';
 import cuisineAroundTheWorldImage from '../../assets/cuisine-around-the-world.png';
 import exampleCompanyLogoImage from '../../assets/example-company-logo.png';
 
 export default function App() {
-  const { nickname, updateNickname } = useNickname();
+  const nickname = getAuthenticatedDisplayLabel();
   const externalAuthEnabled = isExternalAuthEnabled();
   const { notificationsEnabled, toggleNotificationsEnabled } = useNotificationPreference();
   const navigate = useNavigate();
@@ -137,7 +135,8 @@ export default function App() {
       } finally {
         localStorage.removeItem('team_lunch_auth_method');
         localStorage.removeItem('team_lunch_auth_role');
-        localStorage.removeItem('team_lunch_nickname');
+        localStorage.removeItem('team_lunch_actor_key');
+        localStorage.removeItem('team_lunch_display_name');
         window.location.reload();
       }
     })();
@@ -153,13 +152,6 @@ export default function App() {
           onLogout={externalAuthEnabled ? handleLogout : undefined}
           isAdmin={isAdmin}
           pendingApprovalCount={pendingApprovalCount}
-        />
-
-        {/* Full-screen modal on first visit (no nickname yet) */}
-        <NicknameModal
-          open={!externalAuthEnabled && phase === 'NICKNAME_PROMPT'}
-          title="Welcome! Choose a nickname"
-          onSubmit={updateNickname}
         />
 
         <DatabaseConnectionModal open={!dbConnected} attemptCount={dbReconnectAttempts} />
@@ -234,8 +226,8 @@ export default function App() {
                   element={
                     <Settings
                       nickname={nickname}
-                      onRename={updateNickname}
-                      allowRename={!externalAuthEnabled}
+                      onRename={() => undefined}
+                      allowRename={false}
                     />
                   }
                 />

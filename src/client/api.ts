@@ -172,23 +172,26 @@ export function startPoll(
 }
 
 export function castVote(pollId: string, menuId: string, nickname: string): Promise<Poll> {
+  void nickname;
   return request<Poll>(apiPath(`/polls/${pollId}/votes`), {
     method: 'POST',
-    body: JSON.stringify({ menuId, nickname }),
+    body: JSON.stringify({ menuId }),
   });
 }
 
 export function withdrawVote(pollId: string, menuId: string, nickname: string): Promise<Poll> {
+  void nickname;
   return request<Poll>(apiPath(`/polls/${pollId}/votes`), {
     method: 'DELETE',
-    body: JSON.stringify({ menuId, nickname }),
+    body: JSON.stringify({ menuId }),
   });
 }
 
 export function withdrawAllVotes(pollId: string, nickname: string): Promise<Poll> {
+  void nickname;
   return request<Poll>(apiPath(`/polls/${pollId}/votes/all`), {
     method: 'DELETE',
-    body: JSON.stringify({ nickname }),
+    body: JSON.stringify({}),
   });
 }
 
@@ -236,16 +239,18 @@ export function placeOrder(
   itemId: string,
   notes?: string,
 ): Promise<FoodOrder> {
+  void nickname;
   return request<FoodOrder>(apiPath(`/food-selections/${selectionId}/orders`), {
     method: 'POST',
-    body: JSON.stringify({ nickname, itemId, notes }),
+    body: JSON.stringify({ itemId, notes }),
   });
 }
 
 export function withdrawOrder(selectionId: string, nickname: string, orderId?: string): Promise<void> {
+  void nickname;
   return request<void>(apiPath(`/food-selections/${selectionId}/orders`), {
     method: 'DELETE',
-    body: JSON.stringify({ nickname, orderId }),
+    body: JSON.stringify({ orderId }),
   });
 }
 
@@ -311,9 +316,10 @@ export function rateOrder(
   rating: number,
   feedbackComment?: string | null,
 ): Promise<FoodOrder> {
+  void nickname;
   return request<FoodOrder>(apiPath(`/food-selections/${selectionId}/orders/${orderId}/rating`), {
     method: 'POST',
-    body: JSON.stringify({ nickname, rating, feedbackComment }),
+    body: JSON.stringify({ rating, feedbackComment }),
   });
 }
 
@@ -323,9 +329,10 @@ export function setOrderProcessed(
   processed: boolean,
   nickname?: string,
 ): Promise<FoodOrder> {
+  void nickname;
   return request<FoodOrder>(apiPath(`/food-selections/${selectionId}/orders/${orderId}/processed`), {
     method: 'PATCH',
-    body: JSON.stringify({ processed, nickname }),
+    body: JSON.stringify({ processed }),
   });
 }
 
@@ -335,14 +342,16 @@ export function setOrderDelivered(
   delivered: boolean,
   nickname?: string,
 ): Promise<FoodOrder> {
+  void nickname;
   return request<FoodOrder>(apiPath(`/food-selections/${selectionId}/orders/${orderId}/delivered`), {
     method: 'PATCH',
-    body: JSON.stringify({ delivered, nickname }),
+    body: JSON.stringify({ delivered }),
   });
 }
 
 export async function exportMyOrdersExcel(nickname: string): Promise<Blob> {
-  const url = `${apiPath('/food-selections/export/mine')}?nickname=${encodeURIComponent(nickname)}`;
+  void nickname;
+  const url = apiPath('/food-selections/export/mine');
   const res = await fetch(url);
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText })) as ApiErrorBody;
@@ -359,9 +368,10 @@ export function placeDeliveryOrder(
   etaMinutes: number,
   nickname?: string,
 ): Promise<FoodSelection> {
+  void nickname;
   return request<FoodSelection>(apiPath(`/food-selections/${selectionId}/place-order`), {
     method: 'POST',
-    body: JSON.stringify({ etaMinutes, nickname }),
+    body: JSON.stringify({ etaMinutes }),
   });
 }
 
@@ -369,9 +379,10 @@ export function claimOrderingResponsibility(
   selectionId: string,
   nickname?: string,
 ): Promise<FoodSelection> {
+  void nickname;
   return request<FoodSelection>(apiPath(`/food-selections/${selectionId}/claim-ordering`), {
     method: 'POST',
-    body: JSON.stringify({ nickname }),
+    body: JSON.stringify({}),
   });
 }
 
@@ -419,8 +430,8 @@ export function quickStartFoodSelection(durationMinutes: number): Promise<FoodSe
 }
 
 export function getUserPreferences(nickname: string): Promise<UserPreferences> {
-  const url = `${apiPath('/user/preferences')}?nickname=${encodeURIComponent(nickname)}`;
-  return request<UserPreferences>(url);
+  void nickname;
+  return request<UserPreferences>(apiPath('/user/preferences'));
 }
 
 export function updateUserPreferences(
@@ -428,15 +439,16 @@ export function updateUserPreferences(
   allergies: string[],
   dislikes: string[],
 ): Promise<UserPreferences> {
+  void nickname;
   return request<UserPreferences>(apiPath('/user/preferences'), {
     method: 'PUT',
-    body: JSON.stringify({ nickname, allergies, dislikes }),
+    body: JSON.stringify({ allergies, dislikes }),
   });
 }
 
 export function getUserMenuDefaultPreferences(nickname: string): Promise<UserMenuDefaultPreference[]> {
-  const url = `${apiPath('/user/menu-defaults')}?nickname=${encodeURIComponent(nickname)}`;
-  return request<UserMenuDefaultPreference[]>(url);
+  void nickname;
+  return request<UserMenuDefaultPreference[]>(apiPath('/user/menu-defaults'));
 }
 
 export function updateUserMenuDefaultPreference(
@@ -446,9 +458,10 @@ export function updateUserMenuDefaultPreference(
   defaultComment: string | null,
   allowOrganizerFallback: boolean,
 ): Promise<UserMenuDefaultPreference> {
+  void nickname;
   return request<UserMenuDefaultPreference>(apiPath(`/user/menu-defaults/${menuId}`), {
     method: 'PUT',
-    body: JSON.stringify({ nickname, itemId, defaultComment, allowOrganizerFallback }),
+    body: JSON.stringify({ itemId, defaultComment, allowOrganizerFallback }),
   });
 }
 
@@ -457,9 +470,10 @@ export function fetchShoppingListItems(): Promise<ShoppingListItem[]> {
 }
 
 export function createShoppingListItem(name: string, nickname?: string): Promise<ShoppingListItem> {
+  void nickname;
   return request<ShoppingListItem>(apiPath('/shopping-list'), {
     method: 'POST',
-    body: JSON.stringify({ name, nickname }),
+    body: JSON.stringify({ name }),
   });
 }
 
@@ -467,8 +481,9 @@ export function markShoppingListItemBought(
   itemId: string,
   nickname?: string,
 ): Promise<ShoppingListItem> {
+  void nickname;
   return request<ShoppingListItem>(apiPath(`/shopping-list/${itemId}/bought`), {
     method: 'POST',
-    body: JSON.stringify({ nickname }),
+    body: JSON.stringify({}),
   });
 }

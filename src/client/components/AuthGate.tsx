@@ -11,7 +11,8 @@ interface AuthGateProps {
   children: ReactNode;
 }
 
-const NICKNAME_STORAGE_KEY = 'team_lunch_nickname';
+const ACTOR_KEY_STORAGE_KEY = 'team_lunch_actor_key';
+const DISPLAY_NAME_STORAGE_KEY = 'team_lunch_display_name';
 const AUTH_METHOD_STORAGE_KEY = 'team_lunch_auth_method';
 const AUTH_ROLE_STORAGE_KEY = 'team_lunch_auth_role';
 
@@ -21,19 +22,6 @@ async function fetchAuthConfig(): Promise<AuthConfigResponse> {
     throw new Error('Failed to load authentication config');
   }
   return response.json() as Promise<AuthConfigResponse>;
-}
-
-function getPreferredOfficeLocationId(
-  auth: AuthConfigResponse['auth'],
-  currentOfficeLocationId?: string | null,
-): string {
-  if (
-    currentOfficeLocationId &&
-    auth.officeLocations.some((location) => location.id === currentOfficeLocationId && location.isActive)
-  ) {
-    return currentOfficeLocationId;
-  }
-  return auth.officeLocations.find((location) => location.isActive)?.id ?? '';
 }
 
 export default function AuthGate({ children }: AuthGateProps) {
@@ -55,7 +43,12 @@ export default function AuthGate({ children }: AuthGateProps) {
         setConfig(payload.auth);
         setAuthWarning(payload.auth.warning ?? '');
         if (payload.auth.authenticated && payload.auth.user) {
-          localStorage.setItem(NICKNAME_STORAGE_KEY, payload.auth.user.username);
+          localStorage.setItem(ACTOR_KEY_STORAGE_KEY, payload.auth.user.username);
+          if (payload.auth.user.displayName) {
+            localStorage.setItem(DISPLAY_NAME_STORAGE_KEY, payload.auth.user.displayName);
+          } else {
+            localStorage.removeItem(DISPLAY_NAME_STORAGE_KEY);
+          }
           localStorage.setItem(AUTH_METHOD_STORAGE_KEY, payload.auth.user.method);
           if (payload.auth.role) {
             localStorage.setItem(AUTH_ROLE_STORAGE_KEY, payload.auth.role);
@@ -68,6 +61,8 @@ export default function AuthGate({ children }: AuthGateProps) {
         if (!payload.auth.entraEnabled && !payload.auth.localEnabled) {
           localStorage.removeItem(AUTH_METHOD_STORAGE_KEY);
           localStorage.removeItem(AUTH_ROLE_STORAGE_KEY);
+          localStorage.removeItem(ACTOR_KEY_STORAGE_KEY);
+          localStorage.removeItem(DISPLAY_NAME_STORAGE_KEY);
         }
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Authentication unavailable');
@@ -94,12 +89,17 @@ export default function AuthGate({ children }: AuthGateProps) {
         body: JSON.stringify({ username: username.trim(), password }),
       });
       const payload = (await response.json().catch(() => null)) as
-        | { username?: string; method?: AuthMethod; error?: string }
+        | { username?: string; method?: AuthMethod; displayName?: string | null; error?: string }
         | null;
       if (!response.ok || !payload || typeof payload.username !== 'string') {
         throw new Error(payload?.error || 'Invalid username or password');
       }
-      localStorage.setItem(NICKNAME_STORAGE_KEY, payload.username);
+      localStorage.setItem(ACTOR_KEY_STORAGE_KEY, payload.username);
+      if (payload.displayName) {
+        localStorage.setItem(DISPLAY_NAME_STORAGE_KEY, payload.displayName);
+      } else {
+        localStorage.removeItem(DISPLAY_NAME_STORAGE_KEY);
+      }
       localStorage.setItem(AUTH_METHOD_STORAGE_KEY, payload.method ?? 'local');
       window.location.href = withBasePath('/');
     } catch (submitError) {
@@ -128,7 +128,21 @@ export default function AuthGate({ children }: AuthGateProps) {
   }
 
   if (!authAvailable) {
-    return <>{children}</>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+        <Card className="w-full max-w-xl border-danger p-6">
+          <h2 className="mb-2 text-lg font-semibold text-fg">Authentication setup required</h2>
+          <p className="text-sm text-fg-muted">
+            Configure Microsoft Entra sign-in or create DB-managed local accounts before using Team Lunch.
+          </p>
+          {authWarning && (
+            <div className="mt-4 rounded border border-warning bg-warning-soft p-3 text-sm text-warning-fg">
+              {authWarning}
+            </div>
+          )}
+        </Card>
+      </div>
+    );
   }
 
   if (config?.authenticated && config.blocked) {

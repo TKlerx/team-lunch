@@ -35,6 +35,16 @@ vi.mock('../../src/client/hooks/useCountdown.js', async (importOriginal) => {
   };
 });
 
+const mockIsAdminAuthenticatedUser = vi.fn(() => true);
+const mockIsCreatorAuthenticatedUser = vi.fn<(createdBy: string | null | undefined) => boolean>(() => false);
+vi.mock('../../src/client/auth.js', () => ({
+  getAuthenticatedActorKey: () => 'alice@example.com',
+  getAuthenticatedDisplayLabel: () => 'Alice',
+  isAdminAuthenticatedUser: () => mockIsAdminAuthenticatedUser(),
+  isCreatorAuthenticatedUser: (createdBy: string | null | undefined) =>
+    mockIsCreatorAuthenticatedUser(createdBy),
+}));
+
 const mockPlaceOrder = vi.fn();
 const mockWithdrawOrder = vi.fn();
 const mockCompleteFoodSelectionNow = vi.fn();

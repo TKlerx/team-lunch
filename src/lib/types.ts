@@ -101,6 +101,9 @@ export interface PollVote {
   menuId: string;
   menuName: string;
   nickname: string;
+  actorKey?: string | null;
+  actorEmail?: string | null;
+  displayNameSnapshot?: string | null;
   castAt: string;
 }
 
@@ -127,6 +130,9 @@ export interface FoodOrder {
   id: string;
   selectionId: string;
   nickname: string;
+  actorKey?: string | null;
+  actorEmail?: string | null;
+  displayNameSnapshot?: string | null;
   itemId: string | null;
   itemName: string;
   notes: string | null;
@@ -178,6 +184,7 @@ export interface ShoppingListItem {
 // ─── Auth config ────────────────────────────────────────────
 
 export type AuthMethod = 'entra' | 'local';
+export type DisplayNameSource = 'local' | 'entra';
 
 export const LOCAL_PASSWORD_MIN_LENGTH = 8;
 export const LOCAL_PASSWORD_MAX_LENGTH = 200;
@@ -188,7 +195,12 @@ export type AuthConfigResponse = {
     localEnabled: boolean;
     authenticated: boolean;
     warning?: string;
-    user: { username: string; method: AuthMethod } | null;
+    user: {
+      username: string;
+      method: AuthMethod;
+      displayName: string | null;
+      displayNameSource: DisplayNameSource | null;
+    } | null;
     officeLocation: { id: string; key: string; name: string } | null;
     officeLocations: OfficeLocation[];
     accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
@@ -200,6 +212,8 @@ export type AuthConfigResponse = {
     pendingApprovals: Array<{ email: string; requestedAt: string }>;
     users: Array<{
       email: string;
+      displayName: string | null;
+      displayNameSource: DisplayNameSource | null;
       approved: boolean;
       blocked: boolean;
       isAdmin: boolean;
@@ -281,12 +295,12 @@ export interface StartPollRequest {
 
 export interface CastVoteRequest {
   menuId: string;
-  nickname: string;
+  nickname?: string;
 }
 
 export interface WithdrawVoteRequest {
   menuId: string;
-  nickname: string;
+  nickname?: string;
 }
 
 export interface ExtendPollRequest {
@@ -301,18 +315,18 @@ export interface StartFoodSelectionRequest {
 }
 
 export interface PlaceOrderRequest {
-  nickname: string;
+  nickname?: string;
   itemId: string;
   notes?: string;
 }
 
 export interface WithdrawOrderRequest {
-  nickname: string;
+  nickname?: string;
   orderId?: string;
 }
 
 export interface RateFoodOrderRequest {
-  nickname: string;
+  nickname?: string;
   rating: number;
   feedbackComment?: string | null;
 }
@@ -405,6 +419,9 @@ export interface LocalLoginRequest {
 
 export interface LocalLoginResponse {
   username: string;
+  method: AuthMethod;
+  displayName: string | null;
+  displayNameSource: DisplayNameSource | null;
 }
 
 export interface UpdateOfficeLocationSettingsRequest {
@@ -449,7 +466,7 @@ export type SSEEvent =
   | { type: 'food_selection_started'; payload: { foodSelection: FoodSelection } }
   | { type: 'order_placed'; payload: { order: FoodOrder } }
   | { type: 'order_updated'; payload: { order: FoodOrder } }
-  | { type: 'order_withdrawn'; payload: { nickname: string; selectionId: string; orderId?: string } }
+  | { type: 'order_withdrawn'; payload: { nickname: string; actorKey?: string | null; selectionId: string; orderId?: string } }
   | { type: 'food_selection_overtime'; payload: { foodSelectionId: string } }
   | { type: 'food_selection_extended'; payload: { foodSelectionId: string; newEndsAt: string } }
   | { type: 'food_selection_ordering_started'; payload: { foodSelection: FoodSelection } }

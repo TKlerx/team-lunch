@@ -1,33 +1,15 @@
 import type { FastifyInstance } from 'fastify';
-import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
-import { sendServiceError, serviceError } from './routeUtils.js';
+import { sendServiceError } from './routeUtils.js';
 import * as userPreferencesService from '../services/userPreferences.js';
 import * as userMenuDefaultsService from '../services/userMenuDefaults.js';
-import { getBlockedUserMessage, resolveUserApproval } from '../services/authAccess.js';
+import { requireAuthenticatedActor } from './authIdentity.js';
 import type {
   UpdateUserPreferencesRequest,
   UpdateUserMenuDefaultPreferenceRequest,
 } from '../../lib/types.js';
 
-async function resolveUserKey(cookieHeader: string | undefined, fallbackNickname?: string): Promise<string> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (session) {
-    const approval = await resolveUserApproval(session.username);
-    if (approval.blocked) {
-      throw serviceError(getBlockedUserMessage(), 403);
-    }
-    if (approval.approvalRequired && !approval.approved && !approval.isAdmin) {
-      throw serviceError('User is awaiting approval', 403);
-    }
-    return session.username;
-  }
-
-  const trimmed = fallbackNickname?.trim();
-  if (!trimmed) {
-    throw serviceError('Nickname is required', 400);
-  }
-
-  return trimmed;
+async function resolveUserKey(cookieHeader: string | undefined, testFallbackLabel?: string): Promise<string> {
+  return (await requireAuthenticatedActor(cookieHeader, testFallbackLabel)).actorKey;
 }
 
 export default async function userPreferencesRoutes(app: FastifyInstance) {

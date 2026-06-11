@@ -70,6 +70,9 @@ function formatPoll(poll: {
     menuId: string;
     menuName: string;
     nickname: string;
+    actorKey?: string | null;
+    actorEmail?: string | null;
+    displayNameSnapshot?: string | null;
     castAt: Date;
   }>;
 }): Poll {
@@ -101,7 +104,10 @@ function formatPoll(poll: {
         pollId: v.pollId,
         menuId: v.menuId,
         menuName: v.menuName,
-        nickname: v.nickname,
+        nickname: v.displayNameSnapshot ?? v.nickname,
+        actorKey: v.actorKey ?? null,
+        actorEmail: v.actorEmail ?? null,
+        displayNameSnapshot: v.displayNameSnapshot ?? v.nickname,
         castAt: v.castAt.toISOString(),
       }),
     ),
@@ -129,6 +135,9 @@ function formatFoodSelection(fs: {
     id: string;
     selectionId: string;
     nickname: string;
+    actorKey?: string | null;
+    actorEmail?: string | null;
+    displayNameSnapshot?: string | null;
     itemId: string | null;
     itemName: string;
     notes: string | null;
@@ -162,7 +171,10 @@ function formatFoodSelection(fs: {
       (o): FoodOrder => ({
         id: o.id,
         selectionId: o.selectionId,
-        nickname: o.nickname,
+        nickname: o.displayNameSnapshot ?? o.nickname,
+        actorKey: o.actorKey ?? null,
+        actorEmail: o.actorEmail ?? null,
+        displayNameSnapshot: o.displayNameSnapshot ?? o.nickname,
         itemId: o.itemId,
         itemName: o.itemName,
         notes: o.notes,

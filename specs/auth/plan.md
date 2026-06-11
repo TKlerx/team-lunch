@@ -6,11 +6,13 @@
 
 ## Summary
 
-Optional, custom Fastify auth: DB-managed local username/password and Microsoft
-Entra SSO (authorization-code, fully validated id_token), behind a signed
-HttpOnly session cookie. Approval gate + admin role + office access are resolved
-from application data on each protected request. Local login has in-process abuse
-protection. When no auth env is set, the app runs open with nickname-only identity.
+Custom Fastify auth is mandatory for lunch workflow access: DB-managed local
+username/password and/or Microsoft Entra SSO (authorization-code, fully
+validated id_token), behind a signed HttpOnly session cookie. Approval gate +
+admin role + office access are resolved from application data on each protected
+request. Local login has in-process abuse protection. When no auth method is
+available, the client shows an authentication setup error instead of running
+open with nickname-only identity.
 
 ## Technical Context
 
@@ -24,7 +26,7 @@ protection. When no auth env is set, the app runs open with nickname-only identi
 
 **Project Type**: Single-package full-stack web app
 
-**Constraints**: Cookie signed + HttpOnly; DB re-check of approval/blocked/admin on protected flows; bootstrap admin (`AUTH_ADMIN_EMAIL`) undeletable/demotion-protected; auth fully optional.
+**Constraints**: Cookie signed + HttpOnly; DB re-check of approval/blocked/admin on protected flows; bootstrap admin (`AUTH_ADMIN_EMAIL`) undeletable/demotion-protected; auth required for user-attributed flows; display names are optional and non-unique.
 
 **Scale/Scope**: 5 server services + 1 route module; client `AuthGate.tsx` + `auth.ts`.
 
@@ -47,7 +49,7 @@ src/server/services/entraOidc.ts                # Entra code flow + id_token val
 src/server/services/localAuth.ts                # local credential verify + admin mgmt
 src/server/services/localLoginProtection.ts     # per-IP/username rate limit + lockout
 src/client/auth.ts, src/client/components/AuthGate.tsx
-prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser, LocalAuthUser
+prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser display names, LocalAuthUser
 tests/server/auth-*.test.ts, local-auth.test.ts, local-user-management-authz.test.ts
 ```
 

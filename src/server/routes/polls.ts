@@ -12,6 +12,7 @@ import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
 } from '../services/officeContext.js';
+import { requireAuthenticatedActor } from './authIdentity.js';
 import type {
   StartPollRequest,
   CastVoteRequest,
@@ -84,32 +85,6 @@ async function resolveOptionalApprovedActor(
   return requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
 }
 
-async function resolveVotingNickname(
-  cookieHeader: string | undefined,
-  providedNickname: string | undefined,
-): Promise<string> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (session) {
-    const approval = await resolveUserApproval(session.username);
-    if (approval.blocked) {
-      throw serviceError(getBlockedUserMessage(), 403);
-    }
-    if (approval.approvalRequired && !approval.approved && !approval.isAdmin) {
-      throw serviceError('User is awaiting approval', 403);
-    }
-    return session.username;
-  }
-
-  const nickname = providedNickname?.trim();
-  if (!nickname) {
-    throw serviceError('Nickname is required', 400);
-  }
-  if (nickname.length > 30) {
-    throw serviceError('Nickname must be 1–30 characters', 400);
-  }
-  return nickname;
-}
-
 async function requireAdminOrPollCreator(
   cookieHeader: string | undefined,
   pollId: string,
@@ -175,7 +150,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -183,8 +158,9 @@ export default async function pollRoutes(app: FastifyInstance) {
         const poll = await pollService.castVote(
           req.params.id,
           req.body.menuId,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.status(201).send(poll);
       } catch (err) {
@@ -198,7 +174,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -206,8 +182,9 @@ export default async function pollRoutes(app: FastifyInstance) {
         const poll = await pollService.withdrawVote(
           req.params.id,
           req.body.menuId,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.send(poll);
       } catch (err) {
@@ -221,12 +198,17 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes/all',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
-        const poll = await pollService.withdrawAllVotes(req.params.id, nickname, officeLocationId);
+        const poll = await pollService.withdrawAllVotes(
+          req.params.id,
+          actor.displayNameSnapshot,
+          officeLocationId,
+          actor,
+        );
         return reply.send(poll);
       } catch (err) {
         return sendServiceError(reply, err);

@@ -67,6 +67,7 @@ describe('auth hardening', () => {
     audience?: string;
     tenantId?: string;
     issuer?: string;
+    name?: string;
   }): Promise<{
     token: string;
     jwks: { keys: Awaited<ReturnType<typeof exportJWK>>[] };
@@ -80,6 +81,7 @@ describe('auth hardening', () => {
     const token = await new SignJWT({
       tid: options?.tenantId ?? 'tenant-id',
       preferred_username: 'alice@example.com',
+      ...(options?.name !== undefined ? { name: options.name } : {}),
     })
       .setProtectedHeader({ alg: 'RS256', kid: 'kid-1' })
       .setIssuer(options?.issuer ?? 'https://login.microsoftonline.com/tenant-id/v2.0')
@@ -165,6 +167,34 @@ describe('auth hardening', () => {
     expect(response.json()).toEqual({ error: 'Invalid Entra id_token' });
     expect(asCookieList(response.headers['set-cookie']).some((value) => value.includes('team_lunch_auth_session='))).toBe(false);
     expect(asCookieList(response.headers['set-cookie']).some((value) => value.includes('team_lunch_entra_state=;'))).toBe(true);
+
+    await app.close();
+  });
+
+  it('syncs Entra display name from the ID-token name claim', async () => {
+    const app = await buildApp();
+    const { token, jwks } = await createEntraToken({ name: 'Alice Example' });
+    await mockEntraExchange(token, jwks);
+    const login = await startEntraLogin(app);
+
+    const callbackResponse = await app.inject({
+      method: 'GET',
+      url: `/api/auth/entra/callback?code=code&state=${encodeURIComponent(login.state)}`,
+      headers: { cookie: login.cookieHeader },
+    });
+
+    const configResponse = await app.inject({
+      method: 'GET',
+      url: '/api/auth/config',
+      headers: { cookie: asCookieHeader(callbackResponse.headers['set-cookie']) },
+    });
+
+    expect(configResponse.json().auth.user).toMatchObject({
+      username: 'alice@example.com',
+      method: 'entra',
+      displayName: 'Alice Example',
+      displayNameSource: 'entra',
+    });
 
     await app.close();
   });

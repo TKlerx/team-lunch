@@ -62,7 +62,7 @@ afterEach(() => {
 });
 
 describe('AuthGate sign-in methods', () => {
-  it('clears stale auth markers and renders open app when auth is not configured', async () => {
+  it('clears stale auth markers and shows setup error when auth is not configured', async () => {
     localStorage.setItem('team_lunch_auth_method', 'entra');
     localStorage.setItem('team_lunch_auth_role', 'admin');
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
@@ -92,7 +92,8 @@ describe('AuthGate sign-in methods', () => {
       </AuthGate>,
     );
 
-    expect(await screen.findByText('App content')).toBeInTheDocument();
+    expect(await screen.findByText('Authentication setup required')).toBeInTheDocument();
+    expect(screen.queryByText('App content')).not.toBeInTheDocument();
     expect(localStorage.getItem('team_lunch_auth_method')).toBeNull();
     expect(localStorage.getItem('team_lunch_auth_role')).toBeNull();
   });

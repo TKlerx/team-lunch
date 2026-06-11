@@ -64,7 +64,7 @@ describe('auth routes config', () => {
     await app.close();
   });
 
-  it('keeps local login available when Entra auth is not configured', async () => {
+  it('reports setup required when no auth method is configured', async () => {
     delete process.env.ENTRA_CLIENT_ID;
     delete process.env.ENTRA_CLIENT_SECRET;
     delete process.env.ENTRA_TENANT_ID;
@@ -77,9 +77,11 @@ describe('auth routes config', () => {
     expect(configRes.json()).toMatchObject({
       auth: {
         entraEnabled: false,
-        localEnabled: true,
+        localEnabled: false,
+        authenticated: false,
       },
     });
+    expect(configRes.json().auth.warning).toMatch(/Authentication is required/i);
 
     const loginRes = await app.inject({
       method: 'POST',
@@ -87,7 +89,6 @@ describe('auth routes config', () => {
       payload: { username: 'missing@example.com', password: 'bad-password' },
     });
     expect(loginRes.statusCode).toBe(401);
-    expect(loginRes.json()).toEqual({ error: 'Invalid username or password' });
 
     await app.close();
   });

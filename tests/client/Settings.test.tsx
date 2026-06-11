@@ -19,6 +19,8 @@ vi.mock('../../src/client/api.js', () => ({
 describe('Settings', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
+    vi.unstubAllGlobals();
     mockUseAdminOfficeContext.mockReturnValue({
       canSwitchOfficeLocation: false,
       officeLocations: [{ id: 'office-1', name: 'Berlin' }],
@@ -130,5 +132,36 @@ describe('Settings', () => {
     expect(onRename).not.toHaveBeenCalled();
     expect(mockSetSelectedOfficeLocationId).not.toHaveBeenCalled();
     expect(mockUpdateUserPreferences).not.toHaveBeenCalled();
+  });
+
+  it('shows local account identity and saves display name', async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ displayName: 'Alicia', displayNameSource: 'local' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_auth_method', 'local');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
+
+    render(<Settings nickname="Alice" onRename={vi.fn()} allowRename={false} />);
+
+    expect(screen.getByText('alice@example.com')).toBeInTheDocument();
+    expect(screen.getByText('Local account')).toBeInTheDocument();
+    const displayName = screen.getByLabelText(/display name/i);
+    await user.clear(displayName);
+    await user.type(displayName, 'Alicia');
+    await user.click(screen.getByRole('button', { name: /save settings/i }));
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/auth/me/display-name',
+      expect.objectContaining({
+        method: 'PUT',
+        body: JSON.stringify({ displayName: 'Alicia' }),
+      }),
+    );
+    expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
+    expect(localStorage.getItem('team_lunch_display_name')).toBe('Alicia');
   });
 });

@@ -78,13 +78,12 @@ function state(overrides: Partial<AppState> = {}): AppState {
 // ─── Tests ─────────────────────────────────────────────────
 
 describe('deriveAppPhase', () => {
-  it('returns NICKNAME_PROMPT when nickname is null', () => {
-    expect(deriveAppPhase(state(), null)).toBe('NICKNAME_PROMPT');
+  it('does not prompt for nickname when account identity is absent', () => {
+    expect(deriveAppPhase(state(), null)).toBe('NO_MENUS');
   });
 
-  it('returns NICKNAME_PROMPT when nickname is empty string', () => {
-    // empty string is falsy → treated as no nickname
-    expect(deriveAppPhase(state(), '')).toBe('NICKNAME_PROMPT');
+  it('does not prompt for nickname when identity label is empty', () => {
+    expect(deriveAppPhase(state(), '')).toBe('NO_MENUS');
   });
 
   it('returns NO_MENUS when menus list is empty', () => {
