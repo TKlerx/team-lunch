@@ -1989,6 +1989,11 @@
 
 ## Priority 83 - Dev Infra Maintenance (Mar 2026)
 
+- [x] **83.0 Upgrade runtime baseline to Node.js 24 LTS** *(done)*
+  - Updated Docker builder/runtime images from `node:22-alpine` to `node:24-alpine`
+  - Updated Node typings to `@types/node@^24`
+  - Documented Node 24 as the preferred local/runtime baseline
+
 - [x] **83.1 Upgrade Docker Compose Postgres image to 18** *(done)*
   - Updated `docker-compose.yml` from `postgres:16-alpine` to `postgres:18-alpine`
   - Adjusted the named-volume mount to `/var/lib/postgresql` and set `PGDATA=/var/lib/postgresql/data/pgdata` to match the PostgreSQL 18+ Docker image layout

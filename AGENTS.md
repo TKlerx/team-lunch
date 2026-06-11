@@ -45,6 +45,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Docker images use Node.js 24 LTS (`node:24-alpine`); keep local tooling on Node 24 where possible, or at least Node 20+ when not using Docker.
 - After any Prisma schema change, run `npx prisma migrate dev` before running server tests; otherwise tests may fail with missing DB column errors even if TypeScript compiles.
 - Server tests run against a dedicated Postgres schema (`TEST_DATABASE_SCHEMA`, default `team_lunch_test`) and migrate it automatically in test setup; app data in `public` is preserved unless `TEST_DATABASE_SCHEMA` is set to `public`.
 - Server test table cleanup (`deleteMany` via `tests/server/helpers/db.ts`) is now guarded by a setup runtime flag (`SERVER_TEST_RUNTIME=true`), so cleanup cannot run outside server test runtime.
