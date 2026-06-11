@@ -52,8 +52,8 @@ the id_token before issuing a session.
    validates signature, issuer, audience/client-id, expiry, **and** the allowed
    `ENTRA_TENANT_ID` before creating a session.
 2. **Given** any validation step fails, **Then** no session cookie is issued.
-3. **Given** a valid Entra login, **Then** `team_lunch_nickname` is synced from the
-   Entra username and rename is disabled for that session.
+3. **Given** a valid Entra login, **Then** the account username is used as the
+   user's action label and rename is disabled for that session.
 
 ### User Story 3 - Approval gate (Priority: P1)
 
@@ -150,6 +150,7 @@ An admin generates local credentials and promotes/demotes users.
 
 - Custom Fastify auth is retained deliberately — no Auth.js/Next migration.
 - No external/shared session store (in-process; single-instance).
-- Nickname identity is client-only (`localStorage` `team_lunch_nickname`); Entra
-  overrides + locks it. See `specs/old/identity.md`.
+- Nickname identity is legacy/open-mode only. Authenticated deployments use the
+  signed session username as the authoritative actor label for votes, orders,
+  preferences, and delivery actions.
 - Audit logging for auth attempts is a known follow-up, not fully present.

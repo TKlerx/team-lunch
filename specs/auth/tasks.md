@@ -30,7 +30,7 @@ description: "Migrated task list — Authentication & Access Control (already im
 
 - [x] T010 [US2] Entra authorization-code flow + callback URI derivation in `entraOidc.ts`
 - [x] T011 [US2] Full id_token validation (signature/issuer/audience/expiry/state) + allowed-tenant check via `jose`
-- [x] T012 [US2] Sync `team_lunch_nickname` from Entra username; disable rename
+- [x] T012 [US2] Use authenticated username as action identity; disable rename
 - [x] T013 [US2] Tests: failed-validation paths in `auth-hardening.test.ts`, config in `auth-routes-config.test.ts`
 
 ## Phase 5: User Story 3 — Approval gate (P1)

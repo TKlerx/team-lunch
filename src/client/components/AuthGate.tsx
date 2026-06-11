@@ -65,6 +65,10 @@ export default function AuthGate({ children }: AuthGateProps) {
         } else {
           localStorage.removeItem(AUTH_ROLE_STORAGE_KEY);
         }
+        if (!payload.auth.entraEnabled && !payload.auth.localEnabled) {
+          localStorage.removeItem(AUTH_METHOD_STORAGE_KEY);
+          localStorage.removeItem(AUTH_ROLE_STORAGE_KEY);
+        }
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Authentication unavailable');
       } finally {

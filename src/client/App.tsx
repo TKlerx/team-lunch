@@ -137,6 +137,7 @@ export default function App() {
       } finally {
         localStorage.removeItem('team_lunch_auth_method');
         localStorage.removeItem('team_lunch_auth_role');
+        localStorage.removeItem('team_lunch_nickname');
         window.location.reload();
       }
     })();

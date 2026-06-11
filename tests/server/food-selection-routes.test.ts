@@ -252,6 +252,19 @@ describe('Food selection routes (integration)', () => {
     expect(res.body.notes).toBe('Extra spicy');
   });
 
+  it('uses the authenticated username instead of a submitted order nickname', async () => {
+    const { poll, item } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+
+    const res = await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(await approvedAuthHeaders('eater@company.com'))
+      .send({ nickname: 'SpoofedName', itemId: item.id, notes: 'Extra spicy' })
+      .expect(201);
+
+    expect(res.body.nickname).toBe('eater@company.com');
+  });
+
   it('rejects order after timer expiry (overtime)', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
@@ -348,6 +361,29 @@ describe('Food selection routes (integration)', () => {
     });
     expect(orders).toHaveLength(1);
     expect(orders[0].itemId).toBe(extraItem.id);
+  });
+
+  it('withdraws authenticated user orders by session username only', async () => {
+    const { poll, item } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('eater@company.com');
+
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
+      .send({ nickname: 'eater@company.com', itemId: item.id })
+      .expect(201);
+
+    await supertest(app.server)
+      .delete(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
+      .send({ nickname: 'SomeoneElse' })
+      .expect(204);
+
+    const orders = await prisma.foodOrder.findMany({
+      where: { selectionId: selection.id },
+    });
+    expect(orders).toHaveLength(0);
   });
 
   // ─── GET /api/food-selections/active ─────────────────────

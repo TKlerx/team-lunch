@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import AuthGate from '../../src/client/components/AuthGate.js';
 import type { OfficeLocation } from '../../src/lib/types.js';
 
@@ -63,6 +62,41 @@ afterEach(() => {
 });
 
 describe('AuthGate sign-in methods', () => {
+  it('clears stale auth markers and renders open app when auth is not configured', async () => {
+    localStorage.setItem('team_lunch_auth_method', 'entra');
+    localStorage.setItem('team_lunch_auth_role', 'admin');
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({
+          auth: {
+            ...baseAuthState,
+            entraEnabled: false,
+            localEnabled: false,
+            authenticated: false,
+            user: null,
+            approvalRequired: false,
+            approved: false,
+            isAdmin: false,
+            role: null,
+          },
+        });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <AuthGate>
+        <div>App content</div>
+      </AuthGate>,
+    );
+
+    expect(await screen.findByText('App content')).toBeInTheDocument();
+    expect(localStorage.getItem('team_lunch_auth_method')).toBeNull();
+    expect(localStorage.getItem('team_lunch_auth_role')).toBeNull();
+  });
+
   it('shows SSO button and local username/password form together when both are enabled', async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = typeof input === 'string' ? input : input.toString();

@@ -206,13 +206,14 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
+        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
         const order = await foodSelectionService.placeOrder(
           req.params.id,
-          req.body.nickname,
+          nickname,
           req.body.itemId,
           req.body.notes,
           officeLocationId,
@@ -229,13 +230,14 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
+        const nickname = await resolveActingNickname(req.headers.cookie, req.body.nickname);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
         await foodSelectionService.withdrawOrder(
           req.params.id,
-          req.body.nickname,
+          nickname,
           req.body.orderId,
           officeLocationId,
         );

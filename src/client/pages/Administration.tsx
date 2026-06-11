@@ -492,7 +492,7 @@ export default function Administration() {
 
   if (error && !config) {
     return (
-      <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
+      <div className="w-full p-6">
         <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">{error}</div>
       </div>
     );
@@ -500,7 +500,7 @@ export default function Administration() {
 
   if (!config?.isAdmin) {
     return (
-      <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
+      <div className="w-full p-6">
         <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
           <p>Access denied.</p>
           <Link to="/" className="mt-2 inline-block text-accent hover:underline">
@@ -512,20 +512,18 @@ export default function Administration() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl p-4 lg:px-6">
-      <div className="rounded-xl border border-border bg-surface shadow-sm">
-        <div className="border-b border-border p-6 pb-4">
-          <h1 className="text-2xl font-semibold text-fg">Administration</h1>
-          <p className="mt-1 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
-          {error && (
-            <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
-              {error}
-            </div>
-          )}
-        </div>
+    <div className="w-full p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-fg">Administration</h1>
+        <p className="mt-2 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
+        {error && (
+          <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
+            {error}
+          </div>
+        )}
+      </div>
 
-        <div className="space-y-4 p-6">
-
+      <div className="space-y-4">
           <div className="rounded border border-border bg-surface-muted p-4">
             <h2 className="mb-3 text-sm font-semibold text-fg">Pending approvals</h2>
             {config.pendingApprovals.length === 0 ? (
@@ -1006,7 +1004,6 @@ export default function Administration() {
             )}
           </div>
 
-        </div>
       </div>
     </div>
   );
