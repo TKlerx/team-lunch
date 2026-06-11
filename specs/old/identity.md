@@ -3,6 +3,10 @@
 ## Topic of Concern
 The identity system handles how a user is recognized across the app without any formal user accounts or authentication.
 
+> Legacy/open-mode note: authenticated deployments now use the signed session
+> username as the authoritative action identity. This nickname flow applies only
+> when auth is not configured and the app runs open.
+
 ## Requirements
 
 ### First Visit
