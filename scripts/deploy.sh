@@ -6,10 +6,15 @@ REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 ENV_FILE="${ENV_FILE:-.env}"
-if [ -f "$ENV_FILE" ]; then
+case "$ENV_FILE" in
+  /*) RESOLVED_ENV_FILE="$ENV_FILE" ;;
+  *) RESOLVED_ENV_FILE="$REPO_ROOT/$ENV_FILE" ;;
+esac
+
+if [ -f "$RESOLVED_ENV_FILE" ]; then
   set -a
   # shellcheck disable=SC1090
-  . "$ENV_FILE"
+  . "$RESOLVED_ENV_FILE"
   set +a
 fi
 
