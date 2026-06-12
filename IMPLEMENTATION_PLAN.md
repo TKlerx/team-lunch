@@ -2179,7 +2179,7 @@
 
 ### In Progress
 
-- [ ] **88.9 Harden session invalidation with versions**
+- [x] **88.9 Harden session invalidation with versions** *(done)*
   - Add `session_version` to `auth_access_users` so one authoritative invalidation path covers both local and Entra sessions.
   - Include `sessionVersion` in the signed auth-session cookie on login.
   - Reject protected requests with `401 Session expired` when the cookie version differs from the current DB version.
@@ -2187,6 +2187,9 @@
   - Do not increment the version for display-name edits; display names continue to update live without forcing logout.
   - Keep `auth_session_revoked` SSE as the user-friendly immediate signal, but make backend version checks authoritative for missed SSE/offline tabs.
   - Tests: stale session cookies are rejected after version increments, fresh login receives the new version, display-name edits do not invalidate sessions, and local/Entra version checks use the same `auth_access_users` source.
+  - Added migration `20260612103000_add_auth_access_session_version` and updated PostgreSQL + SQLite schemas.
+  - Centralized version checks through auth route helpers, authenticated actor resolution, and office context.
+  - Replaced SQLite-incompatible `createMany(... skipDuplicates)` in auth office membership sync with per-office upsert.
 
 - [ ] **88.10 Add profile audit/history**
   - Add DB-only profile/access audit history; no admin UI is required in this task.

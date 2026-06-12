@@ -30,9 +30,12 @@ import {
   approveUserByAdmin,
   assignUserOfficesByAdmin,
   assignUserOfficeByAdmin,
+  assertAuthSessionVersion,
   blockUserByAdmin,
   deleteLocalUserByAdmin,
+  ensureAuthAccessUserForLogin,
   getBlockedUserMessage,
+  getAuthAccessSessionVersion,
   getAuthDisplayProfile,
   declineUserByAdmin,
   demoteUserByAdmin,
@@ -232,6 +235,26 @@ function getRequesterIpAddress(req: FastifyRequest): string {
   return req.ip;
 }
 
+async function requireCurrentAuthSession(cookieHeader: string | undefined): Promise<{
+  session: NonNullable<ReturnType<typeof getAuthSessionFromCookieHeader>>;
+  access: Awaited<ReturnType<typeof resolveUserApproval>>;
+}> {
+  const session = getAuthSessionFromCookieHeader(cookieHeader);
+  if (!session) {
+    throw serviceError('Authentication required', 401);
+  }
+  if (session.method === 'local' && !(await localAuthUserExists(session.username))) {
+    throw serviceError('Session expired', 401);
+  }
+  const access = await resolveUserApproval(session.username);
+  await ensureAuthAccessUserForLogin(session.username);
+  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
+  if (access.blocked) {
+    throw serviceError(getBlockedUserMessage(), 403);
+  }
+  return { session, access };
+}
+
 export default async function authRoutes(app: FastifyInstance) {
   const handleEntraCallback = async (
     req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
@@ -294,12 +317,14 @@ export default async function authRoutes(app: FastifyInstance) {
       if (approval.blocked) {
         throw serviceError(getBlockedUserMessage(), 403);
       }
+      const sessionVersion = await getAuthAccessSessionVersion(username);
 
       reply.header('Set-Cookie', [
         buildSetSessionCookieHeader({
           username,
           method: 'entra',
           iat: Math.floor(Date.now() / 1000),
+          sessionVersion,
         }),
         buildClearEntraStateCookieHeader(),
       ]);
@@ -325,6 +350,8 @@ export default async function authRoutes(app: FastifyInstance) {
       if (session) {
         try {
           approvalState = await resolveUserApproval(session.username);
+          await ensureAuthAccessUserForLogin(session.username);
+          await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
           const displayProfile = await getAuthDisplayProfile(session.username);
           userProfile = {
             username: session.username,
@@ -418,6 +445,7 @@ export default async function authRoutes(app: FastifyInstance) {
       if (approval.blocked) {
         throw serviceError(getBlockedUserMessage(), 403);
       }
+      const sessionVersion = await ensureAuthAccessUserForLogin(authenticatedUsername);
       clearLocalLoginPenalty(loginAttempt);
 
       reply.header(
@@ -426,6 +454,7 @@ export default async function authRoutes(app: FastifyInstance) {
           username: authenticatedUsername,
           method: 'local',
           iat: Math.floor(Date.now() / 1000),
+          sessionVersion,
         }),
       );
 
@@ -445,14 +474,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/local/users/generate',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin role required', 403);
         }
@@ -479,14 +501,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/me/display-name',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (access.approvalRequired && !access.approved && !access.isAdmin) {
           throw serviceError('User is awaiting approval', 403);
         }
@@ -505,14 +520,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/users/display-name',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }
@@ -532,14 +540,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/users/email',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }
@@ -564,14 +565,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/users',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }
@@ -593,15 +587,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string; officeLocationId?: string } }>('/api/auth/users/approve', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -624,15 +610,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string } }>('/api/auth/users/decline', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -651,15 +629,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string } }>('/api/auth/users/promote', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -678,15 +648,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string } }>('/api/auth/users/block', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -705,15 +667,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string } }>('/api/auth/users/unblock', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -732,15 +686,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { email?: string; officeLocationId?: string } }>('/api/auth/users/demote', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -761,15 +707,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/users/assign-office',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }
@@ -799,15 +737,7 @@ export default async function authRoutes(app: FastifyInstance) {
     };
   }>('/api/auth/users/assign-offices', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -834,15 +764,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Body: { name?: string } }>('/api/auth/offices', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -863,15 +785,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/offices/:officeId/rename',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }
@@ -891,15 +805,7 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.post<{ Params: { officeId: string } }>('/api/auth/offices/:officeId/deactivate', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (!session) {
-        throw serviceError('Authentication required', 401);
-      }
-
-      const access = await resolveUserApproval(session.username);
-      if (access.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
         throw serviceError('Admin approval required', 403);
       }
@@ -915,15 +821,7 @@ export default async function authRoutes(app: FastifyInstance) {
     '/api/auth/offices/:officeId/settings',
     async (req, reply) => {
       try {
-        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
-        if (!session) {
-          throw serviceError('Authentication required', 401);
-        }
-
-        const access = await resolveUserApproval(session.username);
-        if (access.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
-        }
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
           throw serviceError('Admin approval required', 403);
         }

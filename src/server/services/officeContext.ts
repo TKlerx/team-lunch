@@ -1,5 +1,10 @@
 import { getAuthSessionFromCookieHeader } from './authSession.js';
-import { getBlockedUserMessage, resolveUserApproval } from './authAccess.js';
+import {
+  assertAuthSessionVersion,
+  ensureAuthAccessUserForLogin,
+  getBlockedUserMessage,
+  resolveUserApproval,
+} from './authAccess.js';
 import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
 import { serviceError } from '../routes/routeUtils.js';
 
@@ -27,6 +32,8 @@ export async function resolveOfficeLocationIdFromCookie(
   }
 
   const approval = await resolveUserApproval(session.username);
+  await ensureAuthAccessUserForLogin(session.username);
+  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
   if (approval.blocked) {
     throw serviceError(getBlockedUserMessage(), 403);
   }

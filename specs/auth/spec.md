@@ -30,7 +30,8 @@ accounts; a signed HttpOnly session cookie is issued.
 **Why this priority**: Primary gate when local auth is enabled.
 
 **Independent Test**: Seed a local user, `POST /api/auth/local/login`, confirm a
-signed HttpOnly cookie and that protected routes accept it.
+   signed HttpOnly cookie and that protected routes accept it while the cookie
+   session version matches `auth_access_users.session_version`.
 
 **Acceptance Scenarios**:
 
@@ -116,13 +117,16 @@ An admin generates local credentials and promotes/demotes users.
 - **FR-008**: Auth MUST be mandatory for the lunch workflow; unconfigured auth
   MUST show a setup/configuration error instead of falling back to open access.
 - **FR-009**: Cookie protections (signed, HttpOnly) MUST NOT be weakened.
+- **FR-010**: Session cookies MUST carry the current `auth_access_users.session_version`; protected requests MUST return `401 Session expired` when the cookie version no longer matches the database version.
 
 ### Key Entities
 
 - **AuthAccessUser** (`auth_access_users`): email, is_admin, approval/blocked
-  state, office access.
+  state, office access, and `session_version` for authoritative session
+  invalidation.
 - **LocalAuthUser** (`local_auth_users`): email, password hash, admin-managed.
-- **Session cookie**: signed HttpOnly — username, auth method, issued-at.
+- **Session cookie**: signed HttpOnly — username, auth method, issued-at, and
+  auth-access session version.
 - **AuditLog**: sign-in / admin actions (follow-up candidate, partial today).
 
 ### Realtime / SSE Events

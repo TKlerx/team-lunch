@@ -4,6 +4,8 @@ import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
 import {
+  assertAuthSessionVersion,
+  ensureAuthAccessUserForLogin,
   getBlockedUserMessage,
   isApprovalWorkflowEnabled,
   resolveUserApproval,
@@ -36,6 +38,8 @@ async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | unde
   }
 
   const approval = await resolveUserApproval(session.username);
+  await ensureAuthAccessUserForLogin(session.username);
+  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
   if (approval.blocked) {
     throw serviceError(getBlockedUserMessage(), 403);
   }
@@ -62,6 +66,8 @@ async function requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader: strin
   }
 
   const approval = await resolveUserApproval(session.username);
+  await ensureAuthAccessUserForLogin(session.username);
+  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
   if (approval.blocked) {
     throw serviceError(getBlockedUserMessage(), 403);
   }

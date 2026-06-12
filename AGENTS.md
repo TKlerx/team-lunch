@@ -67,6 +67,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - For Nginx reverse proxy deployments, keep the app prefix in forwarded URLs (no prefix stripping) and disable proxy buffering for SSE (`/api/events`) to preserve realtime updates.
 - Local auth now supports DB-backed email/password users with admin-managed credential generation via `POST /api/auth/local/users/generate` guarded by authenticated admin session role.
 - Authenticated user-attributed routes now ignore request-body nickname compatibility fields and require a signed session; local-session cookies are rejected once the matching `local_auth_users` row is edited away or deleted.
+- Auth-session cookies include `sessionVersion`, checked against `auth_access_users.session_version`; sensitive access/account mutations increment it and stale protected requests return `401 Session expired`, while display-name edits do not force logout.
 - Admins can edit/delete manually created local accounts in Administration; email edits/deletes broadcast `auth_session_revoked` over SSE for connected browsers and preserve historical vote/order display snapshots.
 - Admins can now promote/demote approved users via `POST /api/auth/users/promote` and `POST /api/auth/users/demote`; role state persists in `auth_access_users.is_admin` while `AUTH_ADMIN_EMAIL` remains an undeletable/demotion-protected bootstrap admin.
 - If `AUTH_ADMIN_EMAIL` is set, approval workflow is enabled: non-admin users stay blocked in a waiting screen until the admin approves them (persisted in `auth_access_users`).

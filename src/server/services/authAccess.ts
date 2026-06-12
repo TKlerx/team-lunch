@@ -13,6 +13,7 @@ type AuthAccessEntry = {
   email: string;
   displayName: string | null;
   displayNameSource: string | null;
+  sessionVersion?: number;
   approved: boolean;
   isAdmin: boolean;
   blocked: boolean;
@@ -45,6 +46,7 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       email?: true;
       displayName?: true;
       displayNameSource?: true;
+      sessionVersion?: true;
       approved?: true;
       isAdmin?: true;
       blocked?: true;
@@ -81,6 +83,7 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       | 'email'
       | 'displayName'
       | 'displayNameSource'
+      | 'sessionVersion'
       | 'approved'
       | 'isAdmin'
       | 'blocked'
@@ -111,6 +114,7 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       blocked?: boolean;
       displayName?: string | null;
       displayNameSource?: DisplayNameSource | null;
+      sessionVersion?: { increment: number };
       officeLocationId?: string | null;
       approvedAt?: Date;
       blockedAt?: Date | null;
@@ -125,6 +129,7 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       blocked?: boolean;
       displayName?: string | null;
       displayNameSource?: DisplayNameSource | null;
+      sessionVersion?: { increment: number };
       officeLocationId?: string | null;
       approvedAt?: Date | null;
       blockedAt?: Date | null;
@@ -139,6 +144,7 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       email: true;
       displayName?: true;
       displayNameSource?: true;
+      sessionVersion?: true;
       approved: true;
       isAdmin: true;
       blocked: true;
@@ -352,7 +358,11 @@ export async function updateLocalUserEmailByAdmin(email: string, newEmail: strin
       }),
       prisma.authAccessUser.update({
         where: { email: normalized },
-        data: { email: normalizedNewEmail, updatedAt: new Date() },
+        data: {
+          email: normalizedNewEmail,
+          sessionVersion: { increment: 1 },
+          updatedAt: new Date(),
+        },
       }),
     ]);
   } catch {
@@ -386,6 +396,13 @@ export async function deleteLocalUserByAdmin(email: string, actorEmail?: string)
 
   try {
     await prisma.$transaction([
+      prisma.authAccessUser.update({
+        where: { email: normalized },
+        data: {
+          sessionVersion: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      }),
       prisma.localAuthUser.delete({ where: { email: normalized } }),
       prisma.authAccessUser.delete({ where: { email: normalized } }),
     ]);
@@ -551,6 +568,70 @@ function validateManagedEmail(email: string): string {
   return normalized;
 }
 
+async function readSessionVersion(email: string): Promise<number | null> {
+  const normalized = normalizeEmail(email);
+  const entry = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { sessionVersion: true },
+  }).catch(() => null) as { sessionVersion: number } | null;
+  return typeof entry?.sessionVersion === 'number' ? entry.sessionVersion : null;
+}
+
+export async function getAuthAccessSessionVersion(email: string): Promise<number> {
+  const version = await readSessionVersion(email);
+  if (version === null) {
+    throw serviceError('Session expired', 401);
+  }
+  return version;
+}
+
+export async function ensureAuthAccessUserForLogin(email: string): Promise<number> {
+  const normalized = validateManagedEmail(email);
+  const existingVersion = await readSessionVersion(normalized);
+  if (existingVersion !== null) {
+    return existingVersion;
+  }
+
+  if (isAdminUser(normalized)) {
+    await ensureBootstrapAdminAccessUser(normalized);
+  } else if (!isApprovalWorkflowEnabled()) {
+    await (prisma as any).authAccessUser.create({
+      data: {
+        email: normalized,
+        approved: true,
+        isAdmin: false,
+        blocked: false,
+        approvedAt: new Date(),
+      },
+    });
+  } else {
+    await ensurePendingAccessRequest(normalized);
+  }
+
+  return getAuthAccessSessionVersion(normalized);
+}
+
+export async function assertAuthSessionVersion(
+  email: string,
+  sessionVersion: number,
+): Promise<void> {
+  const currentVersion = await getAuthAccessSessionVersion(email);
+  if (currentVersion !== sessionVersion) {
+    throw serviceError('Session expired', 401);
+  }
+}
+
+async function incrementAuthAccessSessionVersion(email: string): Promise<void> {
+  const normalized = validateManagedEmail(email);
+  await (prisma as any).authAccessUser.update({
+    where: { email: normalized },
+    data: {
+      sessionVersion: { increment: 1 },
+      updatedAt: new Date(),
+    },
+  });
+}
+
 function dedupeOfficeLocations(
   locations: Array<{ id: string; key: string; name: string; isActive: boolean }>,
 ): Array<{ id: string; key: string; name: string; isActive: boolean }> {
@@ -594,13 +675,21 @@ async function syncUserOfficeMemberships(
     return;
   }
 
-  await prisma.authAccessUserOffice.createMany({
-    data: officeLocationIds.map((officeLocationId) => ({
-      authAccessUserId,
-      officeLocationId,
-    })),
-    skipDuplicates: true,
-  });
+  for (const officeLocationId of officeLocationIds) {
+    await prisma.authAccessUserOffice.upsert({
+      where: {
+        authAccessUserId_officeLocationId: {
+          authAccessUserId,
+          officeLocationId,
+        },
+      },
+      create: {
+        authAccessUserId,
+        officeLocationId,
+      },
+      update: {},
+    });
+  }
 }
 
 async function validateOfficeLocationIds(officeLocationIds: string[]): Promise<string[]> {
@@ -802,6 +891,7 @@ export async function approveUserByAdmin(email: string, officeLocationId: string
         approvedAt: new Date(),
         blocked: false,
         blockedAt: null,
+        sessionVersion: { increment: 1 },
         updatedAt: new Date(),
       },
     });
@@ -837,6 +927,7 @@ export async function promoteUserByAdmin(email: string): Promise<void> {
       blocked: false,
       approvedAt: new Date(),
       blockedAt: null,
+      sessionVersion: { increment: 1 },
       updatedAt: new Date(),
     },
   });
@@ -906,6 +997,7 @@ export async function demoteUserByAdmin(email: string, officeLocationId?: string
       data: {
         isAdmin: false,
         officeLocationId: resolvedOfficeLocationId,
+        sessionVersion: { increment: 1 },
         updatedAt: new Date(),
       },
     });
@@ -937,6 +1029,7 @@ export async function blockUserByAdmin(email: string, actorEmail?: string): Prom
     update: {
       blocked: true,
       blockedAt: new Date(),
+      sessionVersion: { increment: 1 },
       updatedAt: new Date(),
     },
   });
@@ -954,7 +1047,12 @@ export async function unblockUserByAdmin(email: string, actorEmail?: string): Pr
   try {
     await authAccessUserModel.update({
       where: { email: normalized },
-      data: { blocked: false, blockedAt: null, updatedAt: new Date() },
+      data: {
+        blocked: false,
+        blockedAt: null,
+        sessionVersion: { increment: 1 },
+        updatedAt: new Date(),
+      },
     });
   } catch {
     throw serviceError('User not found', 404);

@@ -2,13 +2,15 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 
 export type AuthMethod = 'entra' | 'local';
 
-// The signed cookie stores only the auth method, username, and issued-at timestamp.
+// The signed cookie stores only auth method, username, issued-at timestamp, and
+// auth-access session version. Authz state is still resolved from DB per request.
 // Approval, blocked-state, admin role, and office access are resolved from application data
 // on protected requests so logout only clears the browser cookie, not server-side user state.
 export interface AuthSession {
   username: string;
   method: AuthMethod;
   iat: number;
+  sessionVersion?: number;
 }
 
 const SESSION_COOKIE_NAME = 'team_lunch_auth_session';
@@ -57,7 +59,10 @@ function normalizeCookiePath(): string {
 }
 
 export function createSessionCookieValue(session: AuthSession): string {
-  const payload = base64UrlEncode(JSON.stringify(session));
+  const payload = base64UrlEncode(JSON.stringify({
+    ...session,
+    sessionVersion: session.sessionVersion ?? 0,
+  }));
   const signature = signData(payload);
   return `${payload}.${signature}`;
 }
@@ -82,11 +87,17 @@ export function parseSessionCookieValue(value: string | undefined): AuthSession 
     ) {
       return null;
     }
+    const sessionVersion =
+      typeof parsed.sessionVersion === 'number' && Number.isInteger(parsed.sessionVersion)
+        ? parsed.sessionVersion
+        : 0;
+    if (sessionVersion < 0) return null;
     if (Date.now() / 1000 - parsed.iat > SESSION_TTL_SECONDS) return null;
     return {
       username: parsed.username,
       method: parsed.method,
       iat: parsed.iat,
+      sessionVersion,
     };
   } catch {
     return null;

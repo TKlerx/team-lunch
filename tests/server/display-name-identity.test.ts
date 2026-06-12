@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import prisma from '../../src/server/db.js';
 import { cleanDatabase } from './helpers/db.js';
 import {
+  blockUserByAdmin,
   deleteLocalUserByAdmin,
   getAuthDisplayProfile,
+  promoteUserByAdmin,
   syncEntraDisplayName,
   updateLocalUserEmailByAdmin,
   updateLocalDisplayName,
@@ -11,7 +13,10 @@ import {
 import { normalizeDisplayName } from '../../src/server/services/displayName.js';
 import { upsertLocalAuthUser } from '../../src/server/services/localAuth.js';
 import { buildApp } from '../../src/server/index.js';
-import { createSessionCookieValue } from '../../src/server/services/authSession.js';
+import {
+  createSessionCookieValue,
+  parseSessionCookieValue,
+} from '../../src/server/services/authSession.js';
 import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
 
 describe('display name identity services', () => {
@@ -25,6 +30,13 @@ describe('display name identity services', () => {
     delete process.env.AUTH_ADMIN_EMAIL;
     await cleanDatabase();
   });
+
+  function readSessionCookieValue(setCookieHeader: string | string[]): string {
+    const header = Array.isArray(setCookieHeader) ? setCookieHeader[0] : setCookieHeader;
+    const match = /team_lunch_auth_session=([^;]+)/.exec(header);
+    expect(match?.[1]).toBeTruthy();
+    return match![1];
+  }
 
   afterEach(() => {
     for (const [key, value] of Object.entries(originalEnv)) {
@@ -57,6 +69,25 @@ describe('display name identity services', () => {
       displayNameSnapshot: 'Alice Example',
     });
     expect(reloaded).toEqual(updated);
+  });
+
+  it('does not invalidate sessions when only the display name changes', async () => {
+    await upsertLocalAuthUser('alice@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'alice@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+
+    await updateLocalDisplayName('alice@example.com', 'Alice Example');
+
+    await expect(prisma.authAccessUser.findUnique({
+      where: { email: 'alice@example.com' },
+      select: { sessionVersion: true },
+    })).resolves.toEqual({ sessionVersion: 0 });
   });
 
   it('allows duplicate display names across users', async () => {
@@ -214,6 +245,8 @@ describe('display name identity services', () => {
         { email: 'blocked@example.com', approved: true, blocked: true, isAdmin: false },
       ],
     });
+    await upsertLocalAuthUser('pending@example.com', 'Secret#1234');
+    await upsertLocalAuthUser('blocked@example.com', 'Secret#1234');
     await syncEntraDisplayName('entra@example.com', 'Entra User');
     const app = await buildApp();
 
@@ -241,6 +274,7 @@ describe('display name identity services', () => {
 
   it('lets admins edit local display names and rejects Entra-managed admin edits', async () => {
     process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('admin@example.com', 'Secret#1234');
     await upsertLocalAuthUser('local@example.com', 'Secret#1234');
     await prisma.authAccessUser.createMany({
       data: [
@@ -313,6 +347,66 @@ describe('display name identity services', () => {
     });
     expect(response.statusCode).toBe(401);
     expect(response.json()).toEqual({ error: 'Session expired' });
+    await app.close();
+  });
+
+  it('rejects stale local sessions after an access-version change', async () => {
+    process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'local@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+    const staleSession = createSessionCookieValue({
+      username: 'local@example.com',
+      method: 'local',
+      iat: Math.floor(Date.now() / 1000),
+      sessionVersion: 0,
+    });
+
+    await blockUserByAdmin('local@example.com', 'admin@example.com');
+
+    const app = await buildApp();
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/user/preferences',
+      headers: { cookie: `team_lunch_auth_session=${staleSession}` },
+    });
+    expect(response.statusCode).toBe(401);
+    expect(response.json()).toEqual({ error: 'Session expired' });
+    await app.close();
+  });
+
+  it('issues fresh local-login cookies with the current access-session version', async () => {
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'local@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+    await promoteUserByAdmin('local@example.com');
+    const app = await buildApp();
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/auth/local/login',
+      payload: { username: 'local@example.com', password: 'Secret#1234' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const sessionValue = readSessionCookieValue(response.headers['set-cookie'] as string | string[]);
+    expect(parseSessionCookieValue(sessionValue)).toMatchObject({
+      username: 'local@example.com',
+      method: 'local',
+      sessionVersion: 1,
+    });
     await app.close();
   });
 

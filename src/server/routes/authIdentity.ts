@@ -2,6 +2,8 @@ import { getAuthSessionFromCookieHeader, type AuthMethod } from '../services/aut
 import {
   getAuthDisplayProfile,
   getBlockedUserMessage,
+  assertAuthSessionVersion,
+  ensureAuthAccessUserForLogin,
   resolveUserApproval,
 } from '../services/authAccess.js';
 import { localAuthUserExists } from '../services/localAuth.js';
@@ -27,6 +29,8 @@ export async function requireAuthenticatedActor(
   }
 
   const approval = await resolveUserApproval(session.username);
+  await ensureAuthAccessUserForLogin(session.username);
+  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
   if (approval.blocked) {
     throw serviceError(getBlockedUserMessage(), 403);
   }

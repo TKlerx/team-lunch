@@ -187,6 +187,7 @@ model AuthAccessUser {
   email            String          @unique
   displayName      String?         @map("display_name")
   displayNameSource String?        @map("display_name_source")
+  sessionVersion   Int             @default(0) @map("session_version")
   approved         Boolean         @default(false)
   isAdmin          Boolean         @default(false) @map("is_admin")
   blocked          Boolean         @default(false)
