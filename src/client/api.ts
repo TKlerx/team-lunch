@@ -15,8 +15,9 @@ import type {
   PingFallbackCandidateRequest,
   PingFallbackCandidateResponse,
   ShoppingListItem,
+  AppVersionResponse,
 } from '../lib/types.js';
-import { withOfficeLocationContext } from './config.js';
+import { withBasePath, withOfficeLocationContext } from './config.js';
 
 type ApiErrorBody = {
   error?: string;
@@ -58,6 +59,12 @@ function apiPath(path: string): string {
 
 export function fetchMenus(): Promise<Menu[]> {
   return request<Menu[]>(apiPath('/menus'));
+}
+
+export function fetchAppVersion(): Promise<AppVersionResponse> {
+  return request<AppVersionResponse>(withBasePath('/api/version'), {
+    cache: 'no-store',
+  });
 }
 
 export function createMenu(name: string): Promise<Menu> {

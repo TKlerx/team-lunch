@@ -10,8 +10,10 @@ vi.mock('../../src/client/context/AdminOfficeContext.js', () => ({
 
 const mockGetUserPreferences = vi.fn();
 const mockUpdateUserPreferences = vi.fn();
+const mockFetchAppVersion = vi.fn();
 const mockSetSelectedOfficeLocationId = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
+  fetchAppVersion: (...args: unknown[]) => mockFetchAppVersion(...args),
   getUserPreferences: (...args: unknown[]) => mockGetUserPreferences(...args),
   updateUserPreferences: (...args: unknown[]) => mockUpdateUserPreferences(...args),
 }));
@@ -42,6 +44,15 @@ describe('Settings', () => {
       dislikes: ['mushrooms', 'onions'],
       updatedAt: '2026-01-01T00:00:00.000Z',
     });
+    mockFetchAppVersion.mockResolvedValue({
+      version: '20260611.1',
+      gitSha: 'abc123def456',
+      gitBranch: 'main',
+      buildTime: '2026-06-11T08:30:00Z',
+      dirty: false,
+      nodeVersion: 'v24.0.0',
+      environment: 'test',
+    });
   });
 
   it('loads ingredient preferences into the settings page', async () => {
@@ -59,6 +70,16 @@ describe('Settings', () => {
     });
     expect(await screen.findByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts');
     expect(screen.getByLabelText(/less preferred ingredients/i)).toHaveValue('mushrooms');
+  });
+
+  it('shows app build metadata for support diagnostics', async () => {
+    render(<Settings />);
+
+    expect(await screen.findByTestId('app-version')).toHaveTextContent(
+      '20260611.1 | abc123def456 | 2026-06-11T08:30:00Z',
+    );
+    expect(screen.getByText('main')).toBeInTheDocument();
+    expect(screen.getByText('test | v24.0.0')).toBeInTheDocument();
   });
 
   it('saves ingredient preferences from the settings-wide save button', async () => {

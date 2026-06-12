@@ -180,6 +180,16 @@ export interface ShoppingListItem {
   updatedAt: string;
 }
 
+export interface AppVersionResponse {
+  version: string;
+  gitSha: string | null;
+  gitBranch: string | null;
+  buildTime: string | null;
+  dirty: boolean | null;
+  nodeVersion: string;
+  environment: string;
+}
+
 // ─── Auth config ────────────────────────────────────────────
 
 export type AuthMethod = 'entra' | 'local';

@@ -38,7 +38,7 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 
 ## Prerequisites
 
-- **Node.js** (v18+)
+- **Node.js** (v24 LTS recommended; v20+ for local tooling)
 - **Python** (v3.10+) — used only for the semgrep security scanner
 - **PowerShell** (v7+) — `pwsh` is used for setup and validation scripts ([install guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
 - **Docker** — for PostgreSQL (unless using SQLite)
@@ -119,11 +119,11 @@ For a production-style deploy, configure `.env` and run:
 pnpm deploy
 ```
 
-This runs `scripts/deploy.sh`, which prints build metadata, lists Compose data
-volumes, builds the app and migrate images, starts the database, verifies the
-target does not look like the wrong/empty database, creates a PostgreSQL backup,
-runs Prisma pre-deploy verification, applies migrations, restarts the app, and
-checks the database again.
+This runs `scripts/deploy.sh`, which exports and prints build metadata, lists
+Compose data volumes, builds the app and migrate images, starts the database,
+verifies the target does not look like the wrong/empty database, creates a
+PostgreSQL backup, runs Prisma pre-deploy verification, applies migrations,
+restarts the app, and checks the database again.
 
 Backups are written to `backups/postgres/` by default and pruned by count
 (`BACKUP_KEEP_COUNT`, default `5`) and age (`KEEP_DAYS`, default `90`). For an
@@ -193,6 +193,20 @@ The repo ships a documented `.env.example`. The most important variables are:
 - `VITE_PORT`: frontend dev-server port; mainly relevant in local development when Vite and the backend run as separate processes
 - `DEFAULT_FOOD_SELECTION_DURATION_MINUTES`: optional global fallback for auto-started food selection; if unset or invalid, the app falls back to `30`
 - `AUTH_ADMIN_EMAIL` and `AUTH_ADMIN_PASSWORD`: bootstrap local admin account
+
+### Optional Build Metadata Settings
+
+The app exposes `GET /api/version` and shows the same metadata on the Settings
+page for support diagnostics.
+
+- `APP_VERSION`: displayed app version, for example a release tag in production or `20260611.3` in staging
+- `GIT_SHA`: deployed commit SHA
+- `GIT_BRANCH`: deployed branch name
+- `GIT_DIRTY`: `true` when the deployed worktree had local changes
+- `BUILD_TIME`: UTC build/deploy timestamp
+
+`pnpm deploy` sets these automatically from Git unless you override them in the
+environment. In local dev, `/api/version` falls back to reading Git directly.
 
 ### Optional Path Prefix Settings
 
@@ -335,7 +349,7 @@ src/
   lib/      shared types
 prisma/     Prisma schema and migrations
 tests/      client and server tests
-specs/      planning and continuity docs
+specs/      planning docs and optional continuity snapshots
 ```
 
 ## Notes
