@@ -52,8 +52,9 @@ describe('User preferences routes (integration)', () => {
   }
 
   async function createMenuFixture(name = 'Italian') {
+    const id = randomUUID().slice(0, 8);
     const office = await prisma.officeLocation.create({
-      data: { key: `office-${randomUUID()}`, name: `Office ${randomUUID()}` },
+      data: { key: `office-${id}`, name: `Office ${id}` },
     });
     return prisma.menu.create({
       data: { name, officeLocationId: office.id },

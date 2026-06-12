@@ -66,7 +66,7 @@ describe('auth approval gate', () => {
     const app = await buildApp();
     const session = createSessionCookieValue({
       username: 'user@company.com',
-      method: 'local',
+      method: 'entra',
       iat: Math.floor(Date.now() / 1000),
     });
 

@@ -2180,6 +2180,7 @@
 - Retired remaining server-side test/compatibility nickname fallbacks from authenticated routes; user-attributed routes now require a signed session and ignore nickname request fields.
 - Administration now marks local vs external/bootstrap accounts, lets admins edit/delete manually created local accounts, keeps Entra/bootstrap protected in local admin UI, and preserves historical vote/order snapshots after account changes.
 - Local account email edits/deletes broadcast `auth_session_revoked` over SSE for connected browsers and old local-session cookies expire because the original `local_auth_users` row no longer exists.
+- Reconciliation against the actual codebase confirmed Priority 88 implementation is present; remaining validation failures were stale tests/docs that still used unauthenticated nickname-era route setup. Server route tests now authenticate signed actors, and data-model/AGENTS guidance reflects actor-key ownership plus display snapshots.
 - Remaining Priority 88 work is backlog-only: avatar support, profile audit/history, and stronger session-version invalidation.
 
 ### Backlog

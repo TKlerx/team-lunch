@@ -212,8 +212,8 @@ Write tests for ALL of the following — these are the critical business logic p
 - Poll persistence rule: finished/aborted polls are retained (no automatic poll deletion)
 
 **Food selection service (`src/server/services/foodSelection.ts`)**
-- Duration validation: only 10, 15, or 30 minutes are accepted
-- One order per nickname: second submission from same nickname replaces the first
+- Duration validation: 1 minute or multiples of 5 between 5–30 minutes are accepted
+- Food orders use line-item semantics; ownership checks use stable actor keys, not display names
 - No order changes accepted once `status=overtime`
 - Extension sets `ends_at = now + extension`, returns `status=active`
 - Food-selection persistence rule: completed food selections are retained (no automatic deletion)
@@ -231,7 +231,7 @@ Write tests for ALL of the following — these are the critical business logic p
 
 **Client hooks**
 - `useAppPhase` correctly derives phase enum from `initial_state` payload
-- Nickname is read from `team_lunch_nickname` localStorage key
+- Authenticated display label is read from current auth/profile state, with email fallback
 
 ## Codebase Patterns
 
@@ -240,7 +240,7 @@ Write tests for ALL of the following — these are the critical business logic p
 - **SSE**: call `broadcast(eventName, payload)` from services after any state change; see `realtime-events.md` for the full event catalogue
 - **Name snapshots**: when persisting a poll vote, food order, etc., always store the name string alongside the FK (e.g. `menu_name`, `item_name`) — FKs can become null if the source is deleted
 - **Display identity**: user-attributed writes resolve the stable actor from the signed auth session (`actor_key` / `actor_email`) and store `display_name_snapshot`; display names are optional, non-unique, and validated server-side.
-- **Legacy nickname**: `team_lunch_nickname` and request-body nickname values are compatibility/test fallback only, not production identity.
+- **Retired nickname identity**: `team_lunch_nickname` is no longer an identity mechanism. Request-body nickname fields may remain in compatibility payloads, but authenticated routes ignore them for ownership/attribution.
 - **Shared types**: define request/response shapes and domain enums in `src/lib/` and import from both server and client — no type duplication
 - **Error responses**: `{ error: string }` JSON body with appropriate HTTP status codes (400 validation, 409 conflict, 404 not found)
 
