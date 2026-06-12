@@ -2213,6 +2213,6 @@
   - Discovery: avatar support reuses the Entra app's client-credentials Graph token flow; Graph photo-readable app permissions are deployment prerequisites, otherwise the endpoint returns fallback `204`.
 
 - [ ] **88.12 Add local guest avatar customization**
-  - Provide one shared generic avatar for manually created local guest accounts.
+  - Use a generic avatar for manually created local accounts using their derived initials.
   - Do not add local avatar upload, admin-selected avatars, or backend persistence in this task.
   - Tests: local/manual users render the generic avatar and do not trigger Graph avatar fetches.
