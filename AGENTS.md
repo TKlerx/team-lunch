@@ -1,15 +1,15 @@
 ## Working Mode
 
-This project uses an interactive Ralph-style workflow via **GitHub Copilot in VS Code** (not Claude Code CLI).
+This project uses an interactive Ralph-style workflow via **AI agent in VS Code** (not CLI).
 
 ### Task Loop
 
-Each task follows this cycle — Copilot executes steps 1–7, user observes and steers:
+Each task follows this cycle — AI agent execute steps 1–7, user observes and steers:
 
 1. **Orient** — read `specs/*` relevant to the task
 2. **Read plan** — check `IMPLEMENTATION_PLAN.md` for the next highest-priority unchecked item
 3. **Investigate** — search `src/` to confirm what exists (don't assume not implemented)
-4. **Implement** — complete the task fully (no stubs or placeholders)
+4. **Implement** — complete the task fully (no stubs or placeholders) including tests in `tests/`
 5. **Validate** — run `./validate.ps1` (typecheck + lint + duplication + semgrep + test); fix all failures
 6. **Update plan** — mark task `[x]` in `IMPLEMENTATION_PLAN.md`, note any discoveries
 7. **Commit** — `git add -A && git commit -m "<description>"`
@@ -254,3 +254,6 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## RTK
+@(.agents|.codex|.claude)/skills/rtk/SKILL.md
