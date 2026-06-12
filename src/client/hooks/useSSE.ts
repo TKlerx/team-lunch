@@ -49,6 +49,20 @@ function isHealthResponse(value: unknown): value is HealthResponse {
   return typeof db.connected === 'boolean' && typeof db.attemptCount === 'number';
 }
 
+async function fetchJsonArray<T>(url: string): Promise<T[]> {
+  const response = await fetch(url);
+  if (response.ok === false) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  const payload = (await response.json()) as unknown;
+  if (!Array.isArray(payload)) {
+    throw new Error('Expected array response');
+  }
+
+  return payload as T[];
+}
+
 /**
  * Connects to the SSE endpoint and dispatches state updates.
  * Also fetches the initial menus list via REST.
@@ -105,22 +119,21 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     }, 2000);
 
     // Fetch menus list (not included in SSE initial_state)
-    fetch(withOfficeLocationContext('/api/menus', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<Menu[]>)
+    fetchJsonArray<Menu>(withOfficeLocationContext('/api/menus', selectedOfficeLocationId))
       .then((menus) => dispatchRef.current({ type: 'SET_MENUS', payload: menus }))
       .catch(() => {
         /* menu fetch failure is non-fatal — SSE events will provide updates */
       });
 
-    fetch(withOfficeLocationContext('/api/food-selections/history', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<FoodSelection[]>)
+    fetchJsonArray<FoodSelection>(
+      withOfficeLocationContext('/api/food-selections/history', selectedOfficeLocationId),
+    )
       .then((history) => dispatchRef.current({ type: 'SET_COMPLETED_HISTORY', payload: history }))
       .catch(() => {
         /* history fetch failure is non-fatal — initial_state or later events will sync */
       });
 
-    fetch(withOfficeLocationContext('/api/shopping-list', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<ShoppingListItem[]>)
+    fetchJsonArray<ShoppingListItem>(withOfficeLocationContext('/api/shopping-list', selectedOfficeLocationId))
       .then((items) => dispatchRef.current({ type: 'SET_SHOPPING_LIST', payload: items }))
       .catch(() => {
         /* shopping-list fetch failure is non-fatal — later SSE events will sync */

@@ -162,6 +162,42 @@ describe('display name identity services', () => {
     await app.close();
   });
 
+  it('lets the bootstrap local admin create a missing access profile when editing display name', async () => {
+    process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('admin@example.com', 'Secret#1234');
+    const app = await buildApp();
+    const session = createSessionCookieValue({
+      username: 'admin@example.com',
+      method: 'local',
+      iat: Math.floor(Date.now() / 1000),
+    });
+
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/auth/me/display-name',
+      headers: { cookie: `team_lunch_auth_session=${session}` },
+      payload: { displayName: 'Admin Example' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toMatchObject({
+      email: 'admin@example.com',
+      displayName: 'Admin Example',
+      displayNameSource: 'local',
+      displayNameSnapshot: 'Admin Example',
+    });
+    await expect(prisma.authAccessUser.findUnique({
+      where: { email: 'admin@example.com' },
+    })).resolves.toMatchObject({
+      email: 'admin@example.com',
+      approved: true,
+      isAdmin: true,
+      blocked: false,
+    });
+
+    await app.close();
+  });
+
   it('rejects Entra and pending or blocked profile display-name edits', async () => {
     process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
     const office = await createOfficeLocation('Berlin');

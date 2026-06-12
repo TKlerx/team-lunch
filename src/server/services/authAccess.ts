@@ -234,12 +234,30 @@ export async function syncEntraDisplayName(email: string, rawDisplayName: string
 
 export async function updateLocalDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
   const normalized = validateManagedEmail(email);
-  const existing = await (prisma as any).authAccessUser.findUnique({
+  let existing = await (prisma as any).authAccessUser.findUnique({
     where: { email: normalized },
     select: { email: true, displayNameSource: true },
-  });
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
   if (!existing) {
-    throw serviceError('User not found', 404);
+    if (!(await localAuthUserExists(normalized))) {
+      throw serviceError('User not found', 404);
+    }
+    if (isAdminUser(normalized)) {
+      await ensureBootstrapAdminAccessUser(normalized);
+    } else if (!isApprovalWorkflowEnabled()) {
+      await (prisma as any).authAccessUser.create({
+        data: {
+          email: normalized,
+          approved: true,
+          isAdmin: false,
+          blocked: false,
+          approvedAt: new Date(),
+        },
+      });
+    } else {
+      throw serviceError('User not found', 404);
+    }
+    existing = { email: normalized, displayNameSource: null };
   }
   if (existing.displayNameSource === 'entra') {
     throw serviceError('Display name is managed by Microsoft Entra', 400);
