@@ -230,6 +230,23 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+model AuthAuditLog {
+  id          String   @id @default(uuid())
+  event       String
+  actorEmail  String?  @map("actor_email")
+  targetEmail String?  @map("target_email")
+  targetType  String   @default("auth_user") @map("target_type")
+  field       String?
+  oldValue    String?  @map("old_value")
+  newValue    String?  @map("new_value")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([targetEmail, createdAt], map: "auth_audit_logs_target_email_idx")
+  @@index([event, createdAt], map: "auth_audit_logs_event_idx")
+  @@map("auth_audit_logs")
+}
+
 model UserPreference {
   id            String   @id @default(uuid())
   userKey       String   @unique @map("user_key")

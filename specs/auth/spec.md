@@ -127,7 +127,8 @@ An admin generates local credentials and promotes/demotes users.
 - **LocalAuthUser** (`local_auth_users`): email, password hash, admin-managed.
 - **Session cookie**: signed HttpOnly — username, auth method, issued-at, and
   auth-access session version.
-- **AuditLog**: sign-in / admin actions (follow-up candidate, partial today).
+- **AuthAuditLog** (`auth_audit_logs`): DB-only profile/access/login history
+  with actor email, target email, field, old/new values, metadata, and timestamp.
 
 ### Realtime / SSE Events
 
@@ -166,4 +167,5 @@ An admin generates local credentials and promotes/demotes users.
   username as the authoritative actor key for votes, orders, preferences,
   shopping-list actions, and delivery actions. Display names are presentation
   snapshots, never ownership keys.
-- Audit logging for auth attempts is a known follow-up, not fully present.
+- Auth/profile audit history is persisted for backend inspection; no admin UI is
+  part of this feature slice.

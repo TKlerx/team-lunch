@@ -5,6 +5,7 @@ import { localAuthUserExists, normalizeEmail } from './localAuth.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
 import { validateOfficeLocationId } from './officeLocation.js';
 import { normalizeDisplayName, resolveDisplayNameSnapshot, type DisplayNameSource } from './displayName.js';
+import { recordAuthAuditLog } from './authAudit.js';
 
 const DB_PROBE_TIMEOUT_MS = 500;
 
@@ -217,6 +218,10 @@ export async function getAuthDisplayProfile(email: string): Promise<AuthDisplayP
 
 export async function syncEntraDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
   const normalized = normalizeEmail(email);
+  const existing = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { displayName: true, displayNameSource: true },
+  }).catch(() => null) as { displayName: string | null; displayNameSource: string | null } | null;
   const displayName = normalizeDisplayName(rawDisplayName);
   await (prisma as any).authAccessUser.upsert({
     where: { email: normalized },
@@ -235,15 +240,37 @@ export async function syncEntraDisplayName(email: string, rawDisplayName: string
       updatedAt: new Date(),
     },
   });
+  if (!existing) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_created',
+      actorEmail: normalized,
+      targetEmail: normalized,
+      metadata: { source: 'entra' },
+    });
+  } else if (normalizeDisplayName(existing.displayName) !== displayName || existing.displayNameSource !== 'entra') {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail: normalized,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: normalizeDisplayName(existing.displayName),
+      newValue: displayName,
+      metadata: { source: 'entra' },
+    });
+  }
   return readAuthDisplayProfile(normalized);
 }
 
-export async function updateLocalDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
+export async function updateLocalDisplayName(
+  email: string,
+  rawDisplayName: string | null | undefined,
+  actorEmail?: string | null,
+): Promise<AuthDisplayProfile> {
   const normalized = validateManagedEmail(email);
   let existing = await (prisma as any).authAccessUser.findUnique({
     where: { email: normalized },
-    select: { email: true, displayNameSource: true },
-  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+    select: { email: true, displayName: true, displayNameSource: true },
+  }) as { email: string; displayName: string | null; displayNameSource: DisplayNameSource | null } | null;
   if (!existing) {
     if (!(await localAuthUserExists(normalized))) {
       throw serviceError('User not found', 404);
@@ -263,7 +290,7 @@ export async function updateLocalDisplayName(email: string, rawDisplayName: stri
     } else {
       throw serviceError('User not found', 404);
     }
-    existing = { email: normalized, displayNameSource: null };
+    existing = { email: normalized, displayName: null, displayNameSource: null };
   }
   if (existing.displayNameSource === 'entra') {
     throw serviceError('Display name is managed by Microsoft Entra', 400);
@@ -272,6 +299,7 @@ export async function updateLocalDisplayName(email: string, rawDisplayName: stri
     throw serviceError('Only local accounts can edit display names', 400);
   }
   const displayName = normalizeDisplayName(rawDisplayName);
+  const previousDisplayName = normalizeDisplayName((existing as { displayName?: string | null }).displayName ?? null);
   await (prisma as any).authAccessUser.update({
     where: { email: normalized },
     data: {
@@ -280,18 +308,30 @@ export async function updateLocalDisplayName(email: string, rawDisplayName: stri
       updatedAt: new Date(),
     },
   });
+  if (previousDisplayName !== displayName) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail: actorEmail ?? normalized,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: previousDisplayName,
+      newValue: displayName,
+      metadata: { source: 'local' },
+    });
+  }
   return readAuthDisplayProfile(normalized);
 }
 
 export async function updateUserDisplayNameByAdmin(
   email: string,
   rawDisplayName: string | null | undefined,
+  actorEmail?: string | null,
 ): Promise<AuthDisplayProfile> {
   const normalized = validateManagedEmail(email);
   const existing = await authAccessUserModel.findUnique({
     where: { email: normalized },
-    select: { email: true, displayNameSource: true },
-  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+    select: { email: true, displayName: true, displayNameSource: true },
+  }) as { email: string; displayName: string | null; displayNameSource: DisplayNameSource | null } | null;
   if (!existing) {
     throw serviceError('User not found', 404);
   }
@@ -302,6 +342,7 @@ export async function updateUserDisplayNameByAdmin(
     throw serviceError('Only local accounts can edit display names', 400);
   }
   const displayName = normalizeDisplayName(rawDisplayName);
+  const previousDisplayName = normalizeDisplayName((existing as { displayName?: string | null }).displayName ?? null);
   await authAccessUserModel.update({
     where: { email: normalized },
     data: {
@@ -310,10 +351,21 @@ export async function updateUserDisplayNameByAdmin(
       updatedAt: new Date(),
     },
   });
+  if (previousDisplayName !== displayName) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: previousDisplayName,
+      newValue: displayName,
+      metadata: { source: 'admin' },
+    });
+  }
   return readAuthDisplayProfile(normalized);
 }
 
-export async function updateLocalUserEmailByAdmin(email: string, newEmail: string): Promise<{
+export async function updateLocalUserEmailByAdmin(email: string, newEmail: string, actorEmail?: string | null): Promise<{
   email: string;
   previousEmail: string;
 }> {
@@ -368,6 +420,15 @@ export async function updateLocalUserEmailByAdmin(email: string, newEmail: strin
   } catch {
     throw serviceError('Failed to update local account email', 500);
   }
+  await recordAuthAuditLog({
+    event: 'auth_profile_field_updated',
+    actorEmail,
+    targetEmail: normalizedNewEmail,
+    field: 'email',
+    oldValue: normalized,
+    newValue: normalizedNewEmail,
+    metadata: { previousEmail: normalized },
+  });
   return { email: normalizedNewEmail, previousEmail: normalized };
 }
 
@@ -409,6 +470,12 @@ export async function deleteLocalUserByAdmin(email: string, actorEmail?: string)
   } catch {
     throw serviceError('Failed to delete local account', 500);
   }
+  await recordAuthAuditLog({
+    event: 'auth_profile_deleted',
+    actorEmail,
+    targetEmail: normalized,
+    metadata: { localAccount: true },
+  });
   return { email: normalized };
 }
 
@@ -864,7 +931,7 @@ export async function isApprovedUser(email: string): Promise<boolean> {
   }
 }
 
-export async function approveUserByAdmin(email: string, officeLocationId: string): Promise<void> {
+export async function approveUserByAdmin(email: string, officeLocationId: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   const officeLocation = await validateOfficeLocationId(officeLocationId);
 
@@ -903,12 +970,21 @@ export async function approveUserByAdmin(email: string, officeLocationId: string
       throw serviceError('Failed to approve user', 500);
     }
     await syncUserOfficeMemberships(approvedUser.id, [officeLocation.id]);
+    await recordAuthAuditLog({
+      event: 'auth_access_approved',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'approved',
+      oldValue: false,
+      newValue: true,
+      metadata: { officeLocationId: officeLocation.id },
+    });
   } catch {
     throw serviceError('Failed to approve user', 500);
   }
 }
 
-export async function promoteUserByAdmin(email: string): Promise<void> {
+export async function promoteUserByAdmin(email: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   await authAccessUserModel.upsert({
     where: { email: normalized },
@@ -931,9 +1007,17 @@ export async function promoteUserByAdmin(email: string): Promise<void> {
       updatedAt: new Date(),
     },
   });
+  await recordAuthAuditLog({
+    event: 'auth_access_promoted',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'isAdmin',
+    oldValue: false,
+    newValue: true,
+  });
 }
 
-export async function demoteUserByAdmin(email: string, officeLocationId?: string): Promise<void> {
+export async function demoteUserByAdmin(email: string, officeLocationId?: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   if (isAdminUser(normalized)) {
     throw serviceError('Configured admin cannot be demoted', 400);
@@ -1002,6 +1086,15 @@ export async function demoteUserByAdmin(email: string, officeLocationId?: string
       },
     });
     await syncUserOfficeMemberships(existing.id, assignedOfficeLocationIds);
+    await recordAuthAuditLog({
+      event: 'auth_access_demoted',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'isAdmin',
+      oldValue: true,
+      newValue: false,
+      metadata: { officeLocationId: resolvedOfficeLocationId },
+    });
   } catch {
     throw serviceError('User not found', 404);
   }
@@ -1039,6 +1132,14 @@ export async function blockUserByAdmin(email: string, actorEmail?: string): Prom
     actorEmail ? normalizeEmail(actorEmail) : null,
     normalized,
   );
+  await recordAuthAuditLog({
+    event: 'auth_access_blocked',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'blocked',
+    oldValue: false,
+    newValue: true,
+  });
 }
 
 export async function unblockUserByAdmin(email: string, actorEmail?: string): Promise<void> {
@@ -1063,14 +1164,28 @@ export async function unblockUserByAdmin(email: string, actorEmail?: string): Pr
     actorEmail ? normalizeEmail(actorEmail) : null,
     normalized,
   );
+  await recordAuthAuditLog({
+    event: 'auth_access_unblocked',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'blocked',
+    oldValue: true,
+    newValue: false,
+  });
 }
 
-export async function declineUserByAdmin(email: string): Promise<void> {
+export async function declineUserByAdmin(email: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
 
   try {
     await authAccessUserModel.delete({
       where: { email: normalized },
+    });
+    await recordAuthAuditLog({
+      event: 'auth_access_declined',
+      actorEmail,
+      targetEmail: normalized,
+      metadata: { deletedPendingRequest: true },
     });
   } catch {
     // If there is no pending record, treat it as an idempotent no-op.

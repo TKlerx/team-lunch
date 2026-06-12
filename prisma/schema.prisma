@@ -237,6 +237,23 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+model AuthAuditLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event       String   @db.VarChar(80)
+  actorEmail  String?  @map("actor_email") @db.VarChar(255)
+  targetEmail String?  @map("target_email") @db.VarChar(255)
+  targetType  String   @default("auth_user") @map("target_type") @db.VarChar(40)
+  field       String?  @db.VarChar(80)
+  oldValue    String?  @map("old_value") @db.Text
+  newValue    String?  @map("new_value") @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([targetEmail, createdAt], map: "auth_audit_logs_target_email_idx")
+  @@index([event, createdAt], map: "auth_audit_logs_event_idx")
+  @@map("auth_audit_logs")
+}
+
 model UserPreference {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userKey       String   @unique @map("user_key") @db.VarChar(255)

@@ -14,7 +14,8 @@ request. The cookie carries `sessionVersion`, checked against
 `auth_access_users.session_version` so sensitive account/access changes
 invalidate missed-SSE/offline sessions. Local login has in-process abuse protection. When no auth method is
 available, the client shows an authentication setup error instead of running
-open with nickname-only identity.
+open with nickname-only identity. Auth profile/access/login events are recorded
+to `auth_audit_logs` for future admin-facing history without adding UI now.
 
 ## Technical Context
 
@@ -51,7 +52,7 @@ src/server/services/entraOidc.ts                # Entra code flow + id_token val
 src/server/services/localAuth.ts                # local credential verify + admin mgmt
 src/server/services/localLoginProtection.ts     # per-IP/username rate limit + lockout
 src/client/auth.ts, src/client/components/AuthGate.tsx
-prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser display names/session version, LocalAuthUser
+prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser display names/session version, LocalAuthUser, AuthAuditLog
 tests/server/auth-*.test.ts, local-auth.test.ts, local-user-management-authz.test.ts
 ```
 

@@ -91,6 +91,16 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 - `session_version` INT default 0; increments for sensitive access/identity changes and is embedded in signed auth cookies
 - approval/admin/blocking flags and office assignment fields
 
+### auth_audit_logs
+- `event` VARCHAR(80)
+- `actor_email` VARCHAR(255) nullable
+- `target_email` VARCHAR(255) nullable
+- `target_type` VARCHAR(40) default `auth_user`
+- `field` VARCHAR(80) nullable
+- `old_value` / `new_value` text snapshots nullable
+- `metadata` JSON nullable
+- `created_at` timestamp default now
+
 ## Lifecycle timestamps
 
 - Real order placement: `order_placed_at`
@@ -111,4 +121,5 @@ These fields allow early/late comparison (`completed_at` vs `delivery_due_at`).
 - Default-meal preferences are user preferences, not order history; they are deleted if the referenced menu or menu item is deleted.
 - `auth_access_users.office_location_id` assigns regular users to a single office in the phase-1 multi-office model; configured/global admins may remain unassigned.
 - `auth_access_users.session_version` is the authoritative invalidation source for both local and Entra sessions; display-name edits do not increment it.
+- `auth_audit_logs` is DB-only history for profile/access/login events; it intentionally has no UI in Priority 88.10.
 - Menus, shopping-list items, polls, and food selections are office-scoped as of phases 74.3 and 74.4.

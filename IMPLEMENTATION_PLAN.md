@@ -2191,12 +2191,15 @@
   - Centralized version checks through auth route helpers, authenticated actor resolution, and office context.
   - Replaced SQLite-incompatible `createMany(... skipDuplicates)` in auth office membership sync with per-office upsert.
 
-- [ ] **88.10 Add profile audit/history**
+- [x] **88.10 Add profile audit/history** *(done)*
   - Add DB-only profile/access audit history; no admin UI is required in this task.
   - Track user profile creation, editing, and deletion with actor, target, timestamp, field, old value, and new value where applicable.
   - Track successful logins and failed login attempts for local auth and Entra auth where the backend can determine the target email/error.
   - Store enough structured metadata to support a future admin-facing history view without changing the core event model.
   - Tests: audit rows are written for create/edit/delete, successful local/Entra logins, failed local login, and failed Entra callback/login cases with known reasons.
+  - Added `auth_audit_logs` to PostgreSQL + SQLite schemas with event, actor/target email, target type, field, old/new values, metadata, and timestamp.
+  - Added `src/server/services/authAudit.ts` and wired auth access/profile services plus local/Entra login routes.
+  - Added `tests/server/auth-audit.test.ts`; expanded cleanup for the new model.
 
 - [ ] **88.11 Add Entra/Graph avatar support**
   - Fetch Microsoft profile photo via Graph in the backend when permissions are configured; do not expose Graph URLs or tokens to the client.
