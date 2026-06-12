@@ -2201,13 +2201,16 @@
   - Added `src/server/services/authAudit.ts` and wired auth access/profile services plus local/Entra login routes.
   - Added `tests/server/auth-audit.test.ts`; expanded cleanup for the new model.
 
-- [ ] **88.11 Add Entra/Graph avatar support**
+- [x] **88.11 Add Entra/Graph avatar support** *(done)*
   - Fetch Microsoft profile photo via Graph in the backend when permissions are configured; do not expose Graph URLs or tokens to the client.
   - Cache avatar bytes only in bounded backend memory with TTLs for success, no-photo, and Graph/auth errors; do not persist avatars in the database or filesystem.
   - Return cached avatar image responses from an app backend endpoint with appropriate private cache headers.
   - Fall back to initials/generic avatar when no photo exists, Graph is unavailable, permissions are missing, or cache fetch fails.
   - Document expected operational behavior: per-instance cache in multi-container deployments, refetch after app restart, possible first-load latency, and TTL-delayed freshness.
   - Tests: Graph success returns image bytes, no-photo/errors fall back cleanly, cache avoids repeated Graph calls within TTL, and local/manual accounts skip Graph.
+  - Added `GET /api/auth/me/avatar`, backed by `src/server/services/authAvatar.ts`.
+  - Header now renders the backend avatar image and falls back to initials if no image loads.
+  - Discovery: avatar support reuses the Entra app's client-credentials Graph token flow; Graph photo-readable app permissions are deployment prerequisites, otherwise the endpoint returns fallback `204`.
 
 - [ ] **88.12 Add local guest avatar customization**
   - Provide one shared generic avatar for manually created local guest accounts.

@@ -59,6 +59,7 @@ import {
 } from '../services/officeLocation.js';
 import type { JWTPayload } from 'jose';
 import { recordAuthAuditLog } from '../services/authAudit.js';
+import { getAuthAvatarForUser } from '../services/authAvatar.js';
 
 type AuthConfigResponse = {
   auth: {
@@ -436,6 +437,23 @@ export default async function authRoutes(app: FastifyInstance) {
       };
 
       return reply.send(response);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.get('/api/auth/me/avatar', async (req, reply) => {
+    try {
+      const { session } = await requireCurrentAuthSession(req.headers.cookie);
+      const avatar = await getAuthAvatarForUser(session.username, session.method);
+      reply.header('Cache-Control', `private, max-age=${avatar.maxAgeSeconds}`);
+      if (avatar.kind === 'fallback') {
+        return reply.status(204).send();
+      }
+
+      return reply
+        .type(avatar.contentType)
+        .send(avatar.bytes);
     } catch (err) {
       return sendServiceError(reply, err);
     }

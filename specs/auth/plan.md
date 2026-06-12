@@ -16,6 +16,9 @@ invalidate missed-SSE/offline sessions. Local login has in-process abuse protect
 available, the client shows an authentication setup error instead of running
 open with nickname-only identity. Auth profile/access/login events are recorded
 to `auth_audit_logs` for future admin-facing history without adding UI now.
+Entra profile photos are fetched through a backend Graph avatar endpoint when
+app permissions are configured, with bounded per-process memory TTL caching and
+client-side initials/generic fallback.
 
 ## Technical Context
 
@@ -49,6 +52,7 @@ src/server/routes/auth.ts                       # /api/auth/* handlers (thin)
 src/server/services/authSession.ts              # cookie issue/verify, session shape
 src/server/services/authAccess.ts               # approval/blocked/admin/office resolution
 src/server/services/entraOidc.ts                # Entra code flow + id_token validation
+src/server/services/authAvatar.ts               # Graph photo fetch + bounded memory cache
 src/server/services/localAuth.ts                # local credential verify + admin mgmt
 src/server/services/localLoginProtection.ts     # per-IP/username rate limit + lockout
 src/client/auth.ts, src/client/components/AuthGate.tsx
@@ -69,3 +73,4 @@ local / abuse), routes orchestrate. Entra config is backend env-driven
 | In-process login lockout | Operationally cheap for single-app | Not shared across instances |
 | DB re-check of authz state each request | Cookie must not be sole source of truth | Slightly more queries, safer |
 | Stateless session (no server store) | Simplicity | Logout can't invalidate other sessions/id_tokens |
+| In-process avatar cache | Avoid DB/filesystem avatar persistence | Not shared across instances; restart refetches |

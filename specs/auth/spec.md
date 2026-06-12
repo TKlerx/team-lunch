@@ -60,6 +60,12 @@ the id_token before issuing a session.
 3. **Given** a valid Entra login, **Then** the account username is used as the
    stable actor key and the ID-token `name` claim is cached as the managed
    display name.
+4. **Given** Microsoft Graph app permissions are available, **When** the signed-in
+   Entra user has a profile photo, **Then** the backend serves the image bytes
+   through an app endpoint without exposing Graph URLs or tokens to the client.
+5. **Given** no photo, missing Graph configuration, Graph/auth errors, or a local
+   account, **Then** avatar display falls back to initials/generic UI and no
+   avatar bytes are persisted.
 
 ### User Story 3 - Approval gate (Priority: P1)
 
@@ -118,6 +124,9 @@ An admin generates local credentials and promotes/demotes users.
   MUST show a setup/configuration error instead of falling back to open access.
 - **FR-009**: Cookie protections (signed, HttpOnly) MUST NOT be weakened.
 - **FR-010**: Session cookies MUST carry the current `auth_access_users.session_version`; protected requests MUST return `401 Session expired` when the cookie version no longer matches the database version.
+- **FR-011**: Entra profile photos MUST be fetched server-side from Microsoft Graph only when Entra app credentials are configured and Graph permissions allow it.
+- **FR-012**: Avatar bytes MUST NOT be persisted in the database or filesystem; successful photos, no-photo responses, and Graph/auth errors MAY be cached only in bounded per-process memory with TTLs.
+- **FR-013**: The client MUST consume only the app backend avatar endpoint and MUST gracefully fall back to initials/generic avatar when the endpoint returns no image.
 
 ### Key Entities
 
@@ -129,6 +138,9 @@ An admin generates local credentials and promotes/demotes users.
   auth-access session version.
 - **AuthAuditLog** (`auth_audit_logs`): DB-only profile/access/login history
   with actor email, target email, field, old/new values, metadata, and timestamp.
+- **Avatar memory cache**: bounded per-instance process cache for Entra Graph
+  photo bytes and fallback states; cleared on app restart and not shared between
+  containers.
 
 ### Realtime / SSE Events
 
@@ -169,3 +181,6 @@ An admin generates local credentials and promotes/demotes users.
   snapshots, never ownership keys.
 - Auth/profile audit history is persisted for backend inspection; no admin UI is
   part of this feature slice.
+- Entra avatars use per-instance memory cache only. Multi-container deployments
+  may fetch the same photo once per instance; app restart clears the cache; first
+  loads may wait on Graph; photo freshness can lag until the relevant TTL expires.

@@ -122,4 +122,7 @@ These fields allow early/late comparison (`completed_at` vs `delivery_due_at`).
 - `auth_access_users.office_location_id` assigns regular users to a single office in the phase-1 multi-office model; configured/global admins may remain unassigned.
 - `auth_access_users.session_version` is the authoritative invalidation source for both local and Entra sessions; display-name edits do not increment it.
 - `auth_audit_logs` is DB-only history for profile/access/login events; it intentionally has no UI in Priority 88.10.
+- Entra/Graph avatars are intentionally not part of the persistent data model.
+  Avatar image bytes and fallback states live only in bounded backend memory with
+  TTLs, so multi-container instances cache independently and restart refetches.
 - Menus, shopping-list items, polls, and food selections are office-scoped as of phases 74.3 and 74.4.
