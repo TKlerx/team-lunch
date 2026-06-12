@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { buildApp } from '../../src/server/index.js';
+import { cleanDatabase } from './helpers/db.js';
 
 describe('auth routes config', () => {
   const originalEnv = {
@@ -19,7 +20,8 @@ describe('auth routes config', () => {
     delete process.env.ENTRA_REDIRECT_URI;
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await cleanDatabase();
     for (const [key, value] of Object.entries(originalEnv)) {
       if (value === undefined) {
         delete process.env[key];
@@ -65,6 +67,7 @@ describe('auth routes config', () => {
   });
 
   it('reports setup required when no auth method is configured', async () => {
+    await cleanDatabase();
     delete process.env.ENTRA_CLIENT_ID;
     delete process.env.ENTRA_CLIENT_SECRET;
     delete process.env.ENTRA_TENANT_ID;

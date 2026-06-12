@@ -15,6 +15,11 @@ describe('auth audit history', () => {
   const originalEnv = {
     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
     AUTH_ADMIN_EMAIL: process.env.AUTH_ADMIN_EMAIL,
+    ENTRA_CLIENT_ID: process.env.ENTRA_CLIENT_ID,
+    ENTRA_CLIENT_SECRET: process.env.ENTRA_CLIENT_SECRET,
+    ENTRA_TENANT_ID: process.env.ENTRA_TENANT_ID,
+    ENTRA_REDIRECT_URI: process.env.ENTRA_REDIRECT_URI,
+    APP_PUBLIC_URL: process.env.APP_PUBLIC_URL,
   };
 
   beforeEach(async () => {
@@ -130,6 +135,11 @@ describe('auth audit history', () => {
   });
 
   it('writes Entra callback failure audit rows with known reason metadata', async () => {
+    delete process.env.ENTRA_CLIENT_ID;
+    delete process.env.ENTRA_CLIENT_SECRET;
+    delete process.env.ENTRA_TENANT_ID;
+    delete process.env.ENTRA_REDIRECT_URI;
+    delete process.env.APP_PUBLIC_URL;
     const app = await buildApp();
 
     const response = await app.inject({

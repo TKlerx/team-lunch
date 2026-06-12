@@ -83,14 +83,14 @@ describe('Poll routes (integration)', () => {
     return res.body;
   }
 
-  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string) {
+  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string, isAdmin = false) {
     const defaultOffice = await ensureDefaultOfficeLocation();
     await prisma.authAccessUser.upsert({
       where: { email },
       update: {
         approved: true,
         blocked: false,
-        isAdmin: false,
+        isAdmin,
         displayName: displayName ?? null,
         displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
@@ -99,7 +99,7 @@ describe('Poll routes (integration)', () => {
         email,
         approved: true,
         blocked: false,
-        isAdmin: false,
+        isAdmin,
         displayName: displayName ?? null,
         displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
@@ -113,6 +113,10 @@ describe('Poll routes (integration)', () => {
     });
 
     return { Cookie: `team_lunch_auth_session=${session}` };
+  }
+
+  async function adminAuthHeaders(email = 'admin@example.com') {
+    return approvedAuthHeaders(email, undefined, true);
   }
 
   // ─── POST /api/polls ────────────────────────────────────
@@ -469,7 +473,10 @@ describe('Poll routes (integration)', () => {
     });
 
     // End poll → tied
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
 
     // Extend
     const res = await supertest(app.server)
@@ -624,7 +631,7 @@ describe('Poll routes (integration)', () => {
     const poll = await startPoll();
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/abort`)
-      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .set(await adminAuthHeaders())
       .expect(200);
     expect(res.body.status).toBe('aborted');
   });
@@ -640,7 +647,7 @@ describe('Poll routes (integration)', () => {
       .set(await approvedAuthHeaders('poll-creator@example.com'));
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/abort`)
-      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .set(await adminAuthHeaders())
       .expect(400);
     expect(res.body.error).toContain('Only active or tied');
   });
@@ -649,7 +656,7 @@ describe('Poll routes (integration)', () => {
     const poll = await startPoll();
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/abort`)
-      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .set(await adminAuthHeaders())
       .expect(200);
     const res = await supertest(app.server)
       .post('/api/polls')

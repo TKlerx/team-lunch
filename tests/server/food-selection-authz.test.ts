@@ -41,6 +41,19 @@ describe('food selection route authorization', () => {
     await disconnectDatabase();
   });
 
+  async function createApprovedNonAdmin(email: string) {
+    const defaultOffice = await ensureDefaultOfficeLocation();
+    await prisma.authAccessUser.create({
+      data: {
+        email,
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: defaultOffice.id,
+      },
+    });
+  }
+
   it('rejects unauthenticated start-food-selection requests before business validation', async () => {
     const app = await buildApp();
 
@@ -231,6 +244,7 @@ describe('food selection route authorization', () => {
 
   it('rejects abort food selection for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',
@@ -308,6 +322,7 @@ describe('food selection route authorization', () => {
 
   it('rejects remind-missing for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',
@@ -328,6 +343,7 @@ describe('food selection route authorization', () => {
 
   it('rejects fallback-orders for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',
