@@ -15,6 +15,10 @@ rtk npm run build
 rtk pytest -q
 ```
 
+```powershell
+rtk pwsh script-file.ps1
+```
+
 ## Meta Commands
 
 ```bash
