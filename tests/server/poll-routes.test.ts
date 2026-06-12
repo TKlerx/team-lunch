@@ -77,6 +77,7 @@ describe('Poll routes (integration)', () => {
   ) {
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description, durationMinutes, excludedMenuJustifications })
       .expect(201);
     return res.body;
@@ -123,10 +124,31 @@ describe('Poll routes (integration)', () => {
     expect(poll.id).toBeDefined();
   });
 
+  it('rejects unauthenticated poll lifecycle mutations', async () => {
+    const poll = await startPoll();
+
+    await supertest(app.server)
+      .post('/api/polls')
+      .send({ description: 'No session', durationMinutes: 5 })
+      .expect(401);
+    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(401);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/timer`)
+      .send({ remainingMinutes: 20 })
+      .expect(401);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/extend`)
+      .send({ extensionMinutes: 10 })
+      .expect(401);
+    await supertest(app.server).post(`/api/polls/${poll.id}/random-winner`).expect(401);
+    await supertest(app.server).post(`/api/polls/${poll.id}/abort`).expect(401);
+  });
+
   it('rejects with 409 if active poll exists', async () => {
     await startPoll();
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Another', durationMinutes: 60 })
       .expect(409);
     expect(res.body.error).toContain('already in progress');
@@ -178,6 +200,7 @@ describe('Poll routes (integration)', () => {
   it('rejects with 400 for invalid duration', async () => {
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Test', durationMinutes: 3 })
       .expect(400);
     expect(res.body.error).toContain('multiple of 5');
@@ -186,6 +209,7 @@ describe('Poll routes (integration)', () => {
   it('rejects with 400 for empty description', async () => {
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: '', durationMinutes: 60 })
       .expect(400);
     expect(res.body.error).toContain('1–120 characters');
@@ -450,6 +474,7 @@ describe('Poll routes (integration)', () => {
     // Extend
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/extend`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ extensionMinutes: 10 })
       .expect(200);
     expect(res.body.status).toBe('active');
@@ -459,6 +484,7 @@ describe('Poll routes (integration)', () => {
     const poll = await startPoll();
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .expect(200);
 
     expect(res.body.status).toBe('finished');
@@ -484,6 +510,7 @@ describe('Poll routes (integration)', () => {
     const menu = await createMenu('Italian');
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({
         description: 'Lunch poll',
         durationMinutes: 5,
@@ -497,6 +524,7 @@ describe('Poll routes (integration)', () => {
     const poll = await startPoll();
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/extend`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ extensionMinutes: 10 })
       .expect(400);
     expect(res.body.error).toContain('Only tied polls');
@@ -509,6 +537,7 @@ describe('Poll routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/timer`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ remainingMinutes: 20 })
       .expect(200);
 
@@ -522,10 +551,14 @@ describe('Poll routes (integration)', () => {
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/timer`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ remainingMinutes: 20 })
       .expect(400);
 
@@ -555,10 +588,14 @@ describe('Poll routes (integration)', () => {
       data: { endsAt: new Date(Date.now() - 1000) },
     });
 
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/random-winner`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .expect(200);
     expect(res.body.status).toBe('finished');
     expect(res.body.winnerSelectedRandomly).toBe(true);
@@ -576,6 +613,7 @@ describe('Poll routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .expect(200);
     expect(res.body.status).toBe('finished');
   });
@@ -586,6 +624,7 @@ describe('Poll routes (integration)', () => {
     const poll = await startPoll();
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/abort`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .expect(200);
     expect(res.body.status).toBe('aborted');
   });
@@ -596,18 +635,25 @@ describe('Poll routes (integration)', () => {
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'));
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/abort`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .expect(400);
     expect(res.body.error).toContain('Only active or tied');
   });
 
   it('allows starting a new poll after aborting', async () => {
     const poll = await startPoll();
-    await supertest(app.server).post(`/api/polls/${poll.id}/abort`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/abort`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
     const res = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'New poll', durationMinutes: 5 })
       .expect(201);
     expect(res.body.status).toBe('active');

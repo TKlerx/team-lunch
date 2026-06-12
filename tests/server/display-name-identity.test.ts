@@ -381,6 +381,41 @@ describe('display name identity services', () => {
     await app.close();
   });
 
+  it('treats stale auth-config sessions as unauthenticated and clears the cookie', async () => {
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'local@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+    const staleSession = createSessionCookieValue({
+      username: 'local@example.com',
+      method: 'local',
+      iat: Math.floor(Date.now() / 1000),
+      sessionVersion: 0,
+    });
+    await promoteUserByAdmin('local@example.com');
+
+    const app = await buildApp();
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/auth/config',
+      headers: { cookie: `team_lunch_auth_session=${staleSession}` },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().auth).toMatchObject({
+      authenticated: false,
+      user: null,
+      warning: 'Your session expired. Please sign in again.',
+    });
+    expect(String(response.headers['set-cookie'])).toContain('team_lunch_auth_session=;');
+    await app.close();
+  });
+
   it('issues fresh local-login cookies with the current access-session version', async () => {
     await upsertLocalAuthUser('local@example.com', 'Secret#1234');
     await prisma.authAccessUser.create({

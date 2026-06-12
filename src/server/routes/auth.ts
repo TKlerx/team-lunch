@@ -374,8 +374,10 @@ export default async function authRoutes(app: FastifyInstance) {
             displayNameSource: displayProfile.displayNameSource,
           };
         } catch {
+          session = null;
+          reply.header('Set-Cookie', buildClearSessionCookieHeader());
           warning =
-            'Authentication settings are partially unavailable. Local sign-in is still available.';
+            'Your session expired. Please sign in again.';
         }
       }
       let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];

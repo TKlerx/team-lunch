@@ -3,14 +3,7 @@ import * as foodSelectionService from '../services/foodSelection.js';
 import * as pollService from '../services/poll.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
-import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
-import {
-  assertAuthSessionVersion,
-  ensureAuthAccessUserForLogin,
-  getBlockedUserMessage,
-  isApprovalWorkflowEnabled,
-  resolveUserApproval,
-} from '../services/authAccess.js';
+import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
 import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
@@ -35,26 +28,12 @@ import type {
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    return;
-  }
-
+  const actor = await requireAuthenticatedActor(cookieHeader);
   if (!isApprovalWorkflowEnabled()) {
     return;
   }
 
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  await ensureAuthAccessUserForLogin(session.username);
-  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin) {
+  if (!actor.isAdmin) {
     throw serviceError('Admin role required', 403);
   }
 }
@@ -63,42 +42,13 @@ async function requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader: strin
   actorKey: string | null;
   isAdmin: boolean;
 }> {
-  if (!isApprovalWorkflowEnabled()) {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return {
-      actorKey: session?.username?.trim().toLowerCase() ?? null,
-      isAdmin: false,
-    };
-  }
-
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  await ensureAuthAccessUserForLogin(session.username);
-  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin && !approval.approved) {
-    throw serviceError('User is awaiting approval', 403);
-  }
-
-  return {
-    actorKey: session.username.trim().toLowerCase(),
-    isAdmin: approval.isAdmin,
-  };
+  const actor = await requireAuthenticatedActor(cookieHeader);
+  return { actorKey: actor.actorKey, isAdmin: actor.isAdmin };
 }
 
 async function resolveOptionalApprovedActor(
   cookieHeader: string | undefined,
 ): Promise<{ actorKey: string | null; isAdmin: boolean } | null> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    return null;
-  }
   return requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
 }
 
@@ -106,11 +56,6 @@ async function requireAdminOrSelectionCreator(
   cookieHeader: string | undefined,
   selectionId: string,
 ): Promise<{ actorKey: string | null; isAdmin: boolean }> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return { actorKey: session?.username?.trim().toLowerCase() ?? null, isAdmin: true };
-  }
-
   const actor = await requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
   if (actor.isAdmin) {
     return actor;
@@ -234,6 +179,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/expire',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -421,6 +367,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders/:orderId/processed',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         if (typeof req.body?.processed !== 'boolean') {
           throw serviceError('Processed flag must be boolean', 400);
         }
@@ -446,6 +393,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders/:orderId/delivered',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         if (typeof req.body?.delivered !== 'boolean') {
           throw serviceError('Delivered flag must be boolean', 400);
         }
@@ -556,6 +504,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/eta',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -577,6 +526,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/confirm-arrival',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),

@@ -3,13 +3,7 @@ import * as pollService from '../services/poll.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
-import {
-  assertAuthSessionVersion,
-  ensureAuthAccessUserForLogin,
-  getBlockedUserMessage,
-  isApprovalWorkflowEnabled,
-  resolveUserApproval,
-} from '../services/authAccess.js';
+import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
 import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
@@ -24,26 +18,12 @@ import type {
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    return;
-  }
-
+  const actor = await requireAuthenticatedActor(cookieHeader);
   if (!isApprovalWorkflowEnabled()) {
     return;
   }
 
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  await ensureAuthAccessUserForLogin(session.username);
-  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin) {
+  if (!actor.isAdmin) {
     throw serviceError('Admin role required', 403);
   }
 }
@@ -52,42 +32,13 @@ async function requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader: strin
   actorKey: string | null;
   isAdmin: boolean;
 }> {
-  if (!isApprovalWorkflowEnabled()) {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return {
-      actorKey: session?.username?.trim().toLowerCase() ?? null,
-      isAdmin: false,
-    };
-  }
-
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  await ensureAuthAccessUserForLogin(session.username);
-  await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin && !approval.approved) {
-    throw serviceError('User is awaiting approval', 403);
-  }
-
-  return {
-    actorKey: session.username.trim().toLowerCase(),
-    isAdmin: approval.isAdmin,
-  };
+  const actor = await requireAuthenticatedActor(cookieHeader);
+  return { actorKey: actor.actorKey, isAdmin: actor.isAdmin };
 }
 
 async function resolveOptionalApprovedActor(
   cookieHeader: string | undefined,
 ): Promise<{ actorKey: string | null; isAdmin: boolean } | null> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    return null;
-  }
   return requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
 }
 
@@ -95,11 +46,6 @@ async function requireAdminOrPollCreator(
   cookieHeader: string | undefined,
   pollId: string,
 ): Promise<{ actorKey: string | null; isAdmin: boolean }> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return { actorKey: session?.username?.trim().toLowerCase() ?? null, isAdmin: true };
-  }
-
   const actor = await requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
   if (actor.isAdmin) {
     return actor;
@@ -225,7 +171,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // POST /api/polls/:id/end — trigger timer expiry / end poll
   app.post<{ Params: { id: string } }>('/api/polls/:id/end', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -233,7 +179,7 @@ export default async function pollRoutes(app: FastifyInstance) {
       return reply.send(
         await pollService.endPoll(req.params.id, {
           allowPremature: true,
-          actorEmail: session?.username,
+          actorEmail: actor.actorEmail,
         }, officeLocationId),
       );
     } catch (err) {
@@ -283,6 +229,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // POST /api/polls/:id/random-winner — pick random winner from tie
   app.post<{ Params: { id: string } }>('/api/polls/:id/random-winner', async (req, reply) => {
     try {
+      await requireAdminOrPollCreator(req.headers.cookie, req.params.id);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),

@@ -41,7 +41,7 @@ describe('food selection route authorization', () => {
     await disconnectDatabase();
   });
 
-  it('allows unauthenticated start-food-selection requests to continue to business validation', async () => {
+  it('rejects unauthenticated start-food-selection requests before business validation', async () => {
     const app = await buildApp();
 
     const res = await app.inject({
@@ -50,8 +50,8 @@ describe('food selection route authorization', () => {
       payload: { pollId: '00000000-0000-0000-0000-000000000000', durationMinutes: 10 },
     });
 
-    expect(res.statusCode).toBe(404);
-    expect(res.json()).toEqual({ error: 'Poll not found' });
+    expect(res.statusCode).toBe(401);
+    expect(res.json()).toEqual({ error: 'Authentication required' });
     await app.close();
   });
 
