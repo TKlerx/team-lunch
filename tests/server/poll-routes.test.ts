@@ -208,9 +208,11 @@ describe('Poll routes (integration)', () => {
   it('casts a vote successfully', async () => {
     const menu = await createMenu('Italian');
     const poll = await startPoll();
+    const headers = await approvedAuthHeaders('alice@example.com');
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
     expect(res.body.voteCounts[menu.id]).toBe(1);
@@ -235,6 +237,7 @@ describe('Poll routes (integration)', () => {
   it('rejects vote after timer expiry', async () => {
     const menu = await createMenu('Italian');
     const defaultOffice = await ensureDefaultOfficeLocation();
+    const headers = await approvedAuthHeaders('alice@example.com');
 
     // Create an already-expired poll directly in DB
     const now = new Date();
@@ -250,6 +253,7 @@ describe('Poll routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/polls/${expiredPoll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(400);
     expect(res.body.error).toContain('expired');
@@ -258,14 +262,17 @@ describe('Poll routes (integration)', () => {
   it('rejects duplicate vote for same menu by same user', async () => {
     const menu = await createMenu('Italian');
     const poll = await startPoll();
+    const headers = await approvedAuthHeaders('alice@example.com');
 
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
 
     const res = await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(409);
     expect(res.body.error).toContain('already voted');
@@ -276,14 +283,17 @@ describe('Poll routes (integration)', () => {
   it('withdraws a vote successfully', async () => {
     const menu = await createMenu('Italian');
     const poll = await startPoll();
+    const headers = await approvedAuthHeaders('alice@example.com');
 
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
 
     const res = await supertest(app.server)
       .delete(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(200);
     expect(res.body.voteCounts[menu.id]).toBeUndefined();
@@ -346,18 +356,22 @@ describe('Poll routes (integration)', () => {
     const menuA = await createMenu('Italian');
     const menuB = await createMenu('Chinese');
     const poll = await startPoll();
+    const headers = await approvedAuthHeaders('alice@example.com');
 
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menuA.id, nickname: 'Alice' })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menuB.id, nickname: 'Alice' })
       .expect(201);
 
     const res = await supertest(app.server)
       .delete(`/api/polls/${poll.id}/votes/all`)
+      .set(headers)
       .send({ nickname: 'Alice' })
       .expect(200);
 
@@ -371,20 +385,25 @@ describe('Poll routes (integration)', () => {
     const menuA = await createMenu('Italian');
     const menuB = await createMenu('Chinese');
     const poll = await startPoll();
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com');
 
     // Alice votes for both menus
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(aliceHeaders)
       .send({ menuId: menuA.id, nickname: 'Alice' })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(aliceHeaders)
       .send({ menuId: menuB.id, nickname: 'Alice' })
       .expect(201);
 
     // Bob votes for Italian
     const afterBob = await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(bobHeaders)
       .send({ menuId: menuA.id, nickname: 'Bob' })
       .expect(201);
     expect(afterBob.body.voteCounts[menuA.id]).toBe(2);
@@ -393,6 +412,7 @@ describe('Poll routes (integration)', () => {
     // Alice withdraws Italian vote
     const afterWithdraw = await supertest(app.server)
       .delete(`/api/polls/${poll.id}/votes`)
+      .set(aliceHeaders)
       .send({ menuId: menuA.id, nickname: 'Alice' })
       .expect(200);
     expect(afterWithdraw.body.voteCounts[menuA.id]).toBe(1);
@@ -405,13 +425,17 @@ describe('Poll routes (integration)', () => {
     const menuA = await createMenu('Italian');
     const menuB = await createMenu('Chinese');
     const poll = await startPoll();
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com');
 
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(aliceHeaders)
       .send({ menuId: menuA.id, nickname: 'Alice' })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(bobHeaders)
       .send({ menuId: menuB.id, nickname: 'Bob' })
       .expect(201);
 
@@ -514,12 +538,16 @@ describe('Poll routes (integration)', () => {
     const menuA = await createMenu('Italian');
     const menuB = await createMenu('Chinese');
     const poll = await startPoll();
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com');
 
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(aliceHeaders)
       .send({ menuId: menuA.id, nickname: 'Alice' });
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(bobHeaders)
       .send({ menuId: menuB.id, nickname: 'Bob' });
 
     await prisma.poll.update({

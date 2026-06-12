@@ -29,7 +29,7 @@ export default async function shoppingListRoutes(app: FastifyInstance) {
     '/api/shopping-list',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -46,7 +46,7 @@ export default async function shoppingListRoutes(app: FastifyInstance) {
     '/api/shopping-list/:id/bought',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),

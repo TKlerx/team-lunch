@@ -88,8 +88,10 @@ An admin generates local credentials and promotes/demotes users.
 ### Edge Cases
 
 - **Dual auth**: local + Entra can both be enabled; user may use either.
-- **Logout**: clears the session cookie; does not invalidate prior id_tokens or
-  other sessions (no server session store).
+- **Logout**: clears the session cookie. Admin local-account email edits and
+  deletions also revoke matching local browser state over SSE when connected and
+  make old local-session cookies fail because the original local account no
+  longer exists.
 - **Blocked user**: re-checked from DB; blocked state denies protected flows even
   with a valid cookie.
 
@@ -111,7 +113,8 @@ An admin generates local credentials and promotes/demotes users.
   on protected requests, not trusted from the cookie alone.
 - **FR-007**: Admins MUST be able to generate local users and promote/demote;
   the bootstrap admin MUST be undeletable and demotion-protected.
-- **FR-008**: Auth MUST be optional — unconfigured auth env ⇒ open app.
+- **FR-008**: Auth MUST be mandatory for the lunch workflow; unconfigured auth
+  MUST show a setup/configuration error instead of falling back to open access.
 - **FR-009**: Cookie protections (signed, HttpOnly) MUST NOT be weakened.
 
 ### Key Entities
@@ -155,7 +158,8 @@ An admin generates local credentials and promotes/demotes users.
 
 - Custom Fastify auth is retained deliberately — no Auth.js/Next migration.
 - No external/shared session store (in-process; single-instance).
-- Nickname identity is legacy/open-mode only. Authenticated deployments use the
-  signed session username as the authoritative actor label for votes, orders,
-  preferences, and delivery actions.
+- Nickname identity is retired. Authenticated deployments use the signed session
+  username as the authoritative actor key for votes, orders, preferences,
+  shopping-list actions, and delivery actions. Display names are presentation
+  snapshots, never ownership keys.
 - Audit logging for auth attempts is a known follow-up, not fully present.

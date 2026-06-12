@@ -111,6 +111,7 @@ describe('Food selection routes (integration)', () => {
   }
 
   async function createFinishedPoll() {
+    const headers = await approvedAuthHeaders('alice@example.com');
     const menu = await createMenu('Thai Food');
     const item = await createMenuItem(menu.id, 'Pad Thai', 'Noodles');
 
@@ -124,6 +125,7 @@ describe('Food selection routes (integration)', () => {
     // Cast a vote
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
 
@@ -143,6 +145,7 @@ describe('Food selection routes (integration)', () => {
   async function startFoodSelection(pollId: string, durationMinutes = 10) {
     const res = await supertest(app.server)
       .post('/api/food-selections')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ pollId, durationMinutes })
       .expect(201);
     return res.body;

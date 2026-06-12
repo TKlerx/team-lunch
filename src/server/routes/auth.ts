@@ -17,6 +17,7 @@ import {
 import {
   authenticateLocalUser,
   hasAnyLocalAuthUsers,
+  localAuthUserExists,
   upsertLocalAuthUser,
 } from '../services/localAuth.js';
 import { verifyEntraIdToken } from '../services/entraOidc.js';
@@ -30,6 +31,7 @@ import {
   assignUserOfficesByAdmin,
   assignUserOfficeByAdmin,
   blockUserByAdmin,
+  deleteLocalUserByAdmin,
   getBlockedUserMessage,
   getAuthDisplayProfile,
   declineUserByAdmin,
@@ -39,10 +41,12 @@ import {
   promoteUserByAdmin,
   resolveUserApproval,
   syncEntraDisplayName,
+  updateLocalUserEmailByAdmin,
   updateLocalDisplayName,
   updateUserDisplayNameByAdmin,
   unblockUserByAdmin,
 } from '../services/authAccess.js';
+import { broadcast } from '../sse.js';
 import {
   createOfficeLocation,
   deactivateOfficeLocation,
@@ -77,6 +81,8 @@ type AuthConfigResponse = {
       email: string;
       displayName: string | null;
       displayNameSource: 'local' | 'entra' | null;
+      localAccount: boolean;
+      protectedBootstrapAdmin: boolean;
       approved: boolean;
       blocked: boolean;
       isAdmin: boolean;
@@ -308,7 +314,10 @@ export default async function authRoutes(app: FastifyInstance) {
   app.get('/api/auth/config', async (req, reply) => {
     try {
       const entra = getEntraConfig();
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+      let session = getAuthSessionFromCookieHeader(req.headers.cookie);
+      if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
+        session = null;
+      }
       const localEnabled = !!session || (await hasAnyLocalAuthUsers());
       let warning = '';
       let approvalState = buildDefaultApprovalState();
@@ -513,6 +522,69 @@ export default async function authRoutes(app: FastifyInstance) {
         }
         const profile = await updateUserDisplayNameByAdmin(email, req.body?.displayName);
         return reply.send(profile);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  app.put<{ Body: { email?: string; newEmail?: string } }>(
+    '/api/auth/users/email',
+    async (req, reply) => {
+      try {
+        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+        if (!session) {
+          throw serviceError('Authentication required', 401);
+        }
+        const access = await resolveUserApproval(session.username);
+        if (access.blocked) {
+          throw serviceError(getBlockedUserMessage(), 403);
+        }
+        if (!access.isAdmin) {
+          throw serviceError('Admin approval required', 403);
+        }
+        const email = req.body?.email?.trim();
+        const newEmail = req.body?.newEmail?.trim();
+        if (!email || !newEmail) {
+          throw serviceError('Email and new email are required', 400);
+        }
+        const result = await updateLocalUserEmailByAdmin(email, newEmail);
+        broadcast('auth_session_revoked', {
+          actorKey: result.previousEmail,
+          reason: 'account_updated',
+        });
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  app.delete<{ Body: { email?: string } }>(
+    '/api/auth/users',
+    async (req, reply) => {
+      try {
+        const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+        if (!session) {
+          throw serviceError('Authentication required', 401);
+        }
+        const access = await resolveUserApproval(session.username);
+        if (access.blocked) {
+          throw serviceError(getBlockedUserMessage(), 403);
+        }
+        if (!access.isAdmin) {
+          throw serviceError('Admin approval required', 403);
+        }
+        const email = req.body?.email?.trim();
+        if (!email) {
+          throw serviceError('Email is required', 400);
+        }
+        const result = await deleteLocalUserByAdmin(email, session.username);
+        broadcast('auth_session_revoked', {
+          actorKey: result.email,
+          reason: 'account_deleted',
+        });
+        return reply.send({ email: result.email, deleted: true });
       } catch (err) {
         return sendServiceError(reply, err);
       }

@@ -314,6 +314,22 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
       dispatchRef.current({ type: 'FOOD_SELECTION_ETA_UPDATED', payload });
     });
 
+    es.addEventListener('auth_session_revoked', (e: MessageEvent) => {
+      const payload = JSON.parse(e.data) as {
+        actorKey: string;
+        reason: 'account_updated' | 'account_deleted';
+      };
+      const currentActorKey = currentNicknameFromStorage();
+      if (!currentActorKey || currentActorKey.trim().toLowerCase() !== payload.actorKey.trim().toLowerCase()) {
+        return;
+      }
+      localStorage.removeItem('team_lunch_auth_method');
+      localStorage.removeItem('team_lunch_auth_role');
+      localStorage.removeItem('team_lunch_actor_key');
+      localStorage.removeItem('team_lunch_display_name');
+      window.location.reload();
+    });
+
     // ── Connection status ──────────────────────────────
     es.onopen = () => {
       dispatchRef.current({ type: 'SET_CONNECTED', payload: true });

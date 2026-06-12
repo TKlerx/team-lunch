@@ -110,6 +110,33 @@ describe('Poll service', () => {
     return pollService.startPoll('Test poll', durationMinutes);
   }
 
+  async function registerApprovedUser(email: string, officeLocationId: string, isAdmin = false) {
+    const user = await prisma.authAccessUser.upsert({
+      where: { email },
+      update: {
+        approved: true,
+        blocked: false,
+        isAdmin,
+        officeLocationId,
+        approvedAt: new Date(),
+        blockedAt: null,
+        updatedAt: new Date(),
+      },
+      create: {
+        email,
+        approved: true,
+        blocked: false,
+        isAdmin,
+        officeLocationId,
+        requestedAt: new Date(),
+        approvedAt: new Date(),
+      },
+    });
+    await prisma.authAccessUserOffice.create({
+      data: { authAccessUserId: user.id, officeLocationId },
+    }).catch(() => undefined);
+  }
+
   // ─── Duration validation ─────────────────────────────────
 
   describe('duration validation', () => {
@@ -178,8 +205,8 @@ describe('Poll service', () => {
   describe('poll start notifications', () => {
     it('emails approved unblocked registered users when a poll starts', async () => {
       const defaultOffice = await ensureDefaultOfficeLocation();
-      await authAccessService.approveUserByAdmin('alice@example.com', defaultOffice.id);
-      await authAccessService.approveUserByAdmin('bob@example.com', defaultOffice.id);
+      await registerApprovedUser('alice@example.com', defaultOffice.id);
+      await registerApprovedUser('bob@example.com', defaultOffice.id);
       await authAccessService.blockUserByAdmin('bob@example.com', 'admin@example.com');
 
       await pollService.startPoll('Lunch vote', 60);
@@ -196,7 +223,7 @@ describe('Poll service', () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       vi.mocked(sendEmail).mockRejectedValueOnce(new Error('graph unavailable'));
       const defaultOffice = await ensureDefaultOfficeLocation();
-      await authAccessService.approveUserByAdmin('alice@example.com', defaultOffice.id);
+      await registerApprovedUser('alice@example.com', defaultOffice.id);
 
       const poll = await pollService.startPoll('Lunch vote', 60);
 
@@ -208,10 +235,9 @@ describe('Poll service', () => {
       const berlin = await createOfficeLocation('Berlin');
       const munich = await createOfficeLocation('Munich');
 
-      await authAccessService.approveUserByAdmin('berlin@example.com', berlin.id);
-      await authAccessService.approveUserByAdmin('munich@example.com', munich.id);
-      await authAccessService.approveUserByAdmin('admin@example.com', berlin.id);
-      await authAccessService.promoteUserByAdmin('admin@example.com');
+      await registerApprovedUser('berlin@example.com', berlin.id);
+      await registerApprovedUser('munich@example.com', munich.id);
+      await registerApprovedUser('admin@example.com', berlin.id, true);
 
       await pollService.startPoll('Berlin lunch', 60, undefined, berlin.id);
 

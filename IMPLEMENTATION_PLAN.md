@@ -2092,7 +2092,7 @@
 
 ### Implement Now
 
-- [ ] **88.1 Make authentication mandatory and remove legacy nickname mode**
+- [x] **88.1 Make authentication mandatory and remove legacy nickname mode** *(done)*
   - Remove anonymous/open-app access when no auth method is configured; show a clear setup/configuration error instead.
   - Remove `NicknameModal`, `useNickname`, and `team_lunch_nickname` as user identity mechanisms.
   - Remove request-body nickname fallback from authenticated routes; all user-attributed actions resolve the actor from the signed session.
@@ -2143,7 +2143,7 @@
   - If no display name exists, show fallback note: account email is displayed until a name is set.
   - Tests: settings renders account/email, auth method, editable local display name, read-only Entra display name, validation errors, empty-display fallback note.
 
-- [ ] **88.7 Update Administration user management**
+- [x] **88.7 Update Administration user management** *(done)*
   - Show both account/email and display name for every user.
   - Allow admins to edit display name for local/manual accounts.
   - Allow admins to edit account/email for manually created local accounts only.
@@ -2177,7 +2177,10 @@
 - Added focused display-name validation/profile route tests for local self-update, Entra edit rejection, admin update, blocked/pending profile rejection, supported punctuation/emoji, max-length, and unsafe-character rejection.
 - Added Settings coverage for account identity, local display-name editing, Entra read-only display names, validation errors, and email fallback messaging.
 - Removed frontend `useNickname`, `NicknameModal`, `team_lunch_nickname`, and `NICKNAME_PROMPT` dependencies from the authenticated app flow; app phase derivation no longer depends on a nickname.
-- Remaining Priority 88 work: retire the remaining server-side test/compatibility nickname fallbacks from authenticated routes, finish local account email edit/delete management, and force/expire old sessions after local account edits or deletes.
+- Retired remaining server-side test/compatibility nickname fallbacks from authenticated routes; user-attributed routes now require a signed session and ignore nickname request fields.
+- Administration now marks local vs external/bootstrap accounts, lets admins edit/delete manually created local accounts, keeps Entra/bootstrap protected in local admin UI, and preserves historical vote/order snapshots after account changes.
+- Local account email edits/deletes broadcast `auth_session_revoked` over SSE for connected browsers and old local-session cookies expire because the original `local_auth_users` row no longer exists.
+- Remaining Priority 88 work is backlog-only: avatar support, profile audit/history, and stronger session-version invalidation.
 
 ### Backlog
 

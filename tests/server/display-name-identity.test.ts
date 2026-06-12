@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import prisma from '../../src/server/db.js';
 import { cleanDatabase } from './helpers/db.js';
 import {
+  deleteLocalUserByAdmin,
   getAuthDisplayProfile,
   syncEntraDisplayName,
+  updateLocalUserEmailByAdmin,
   updateLocalDisplayName,
 } from '../../src/server/services/authAccess.js';
 import { normalizeDisplayName } from '../../src/server/services/displayName.js';
@@ -58,6 +60,8 @@ describe('display name identity services', () => {
   });
 
   it('allows duplicate display names across users', async () => {
+    await upsertLocalAuthUser('alice@example.com', 'Secret#1234');
+    await upsertLocalAuthUser('bob@example.com', 'Secret#1234');
     await prisma.authAccessUser.createMany({
       data: [
         { email: 'alice@example.com', approved: true, blocked: false, isAdmin: false },
@@ -112,6 +116,7 @@ describe('display name identity services', () => {
   });
 
   it('lets signed-in local users update and clear their display name', async () => {
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
     await prisma.authAccessUser.create({
       data: {
         email: 'local@example.com',
@@ -200,6 +205,7 @@ describe('display name identity services', () => {
 
   it('lets admins edit local display names and rejects Entra-managed admin edits', async () => {
     process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
     await prisma.authAccessUser.createMany({
       data: [
         { email: 'local@example.com', approved: true, blocked: false, isAdmin: false },
@@ -236,5 +242,127 @@ describe('display name identity services', () => {
     expect(entraResponse.json()).toEqual({ error: 'Display name is managed by Microsoft Entra' });
 
     await app.close();
+  });
+
+  it('lets admins edit local account emails and expires the old local session', async () => {
+    process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'local@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+
+    await expect(updateLocalUserEmailByAdmin('local@example.com', 'renamed@example.com')).resolves.toEqual({
+      email: 'renamed@example.com',
+      previousEmail: 'local@example.com',
+    });
+    await expect(prisma.localAuthUser.findUnique({ where: { email: 'local@example.com' } })).resolves.toBeNull();
+    await expect(prisma.localAuthUser.findUnique({ where: { email: 'renamed@example.com' } })).resolves.toBeTruthy();
+    await expect(prisma.authAccessUser.findUnique({ where: { email: 'renamed@example.com' } })).resolves.toBeTruthy();
+
+    const app = await buildApp();
+    const oldSession = createSessionCookieValue({
+      username: 'local@example.com',
+      method: 'local',
+      iat: Math.floor(Date.now() / 1000),
+    });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/user/preferences',
+      headers: { cookie: `team_lunch_auth_session=${oldSession}` },
+    });
+    expect(response.statusCode).toBe(401);
+    expect(response.json()).toEqual({ error: 'Session expired' });
+    await app.close();
+  });
+
+  it('lets admins delete local accounts while preserving historical snapshots', async () => {
+    process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await upsertLocalAuthUser('local@example.com', 'Secret#1234');
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'local@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+      },
+    });
+    const office = await createOfficeLocation('Berlin');
+    const menu = await prisma.menu.create({
+      data: { name: 'Pizza', officeLocationId: office.id },
+    });
+    const poll = await prisma.poll.create({
+      data: {
+        officeLocationId: office.id,
+        description: 'Lunch',
+        status: 'finished',
+        startedAt: new Date(),
+        endsAt: new Date(),
+      },
+    });
+    await prisma.pollVote.create({
+      data: {
+        pollId: poll.id,
+        menuId: menu.id,
+        menuName: menu.name,
+        nickname: 'Old Local',
+        actorKey: 'local@example.com',
+        actorEmail: 'local@example.com',
+        displayNameSnapshot: 'Old Local',
+      },
+    });
+    const selection = await prisma.foodSelection.create({
+      data: {
+        officeLocationId: office.id,
+        pollId: poll.id,
+        menuId: menu.id,
+        menuName: menu.name,
+        status: 'completed',
+        startedAt: new Date(),
+        endsAt: new Date(),
+        completedAt: new Date(),
+      },
+    });
+    await prisma.foodOrder.create({
+      data: {
+        selectionId: selection.id,
+        nickname: 'Old Local',
+        actorKey: 'local@example.com',
+        actorEmail: 'local@example.com',
+        displayNameSnapshot: 'Old Local',
+        itemName: 'Margherita',
+      },
+    });
+
+    await expect(deleteLocalUserByAdmin('local@example.com', 'admin@example.com')).resolves.toEqual({
+      email: 'local@example.com',
+    });
+    await expect(prisma.localAuthUser.findUnique({ where: { email: 'local@example.com' } })).resolves.toBeNull();
+    await expect(prisma.authAccessUser.findUnique({ where: { email: 'local@example.com' } })).resolves.toBeNull();
+    const historicalVote = await prisma.pollVote.findFirstOrThrow();
+    expect(historicalVote.displayNameSnapshot).toBe('Old Local');
+    expect(historicalVote.actorEmail).toBe('local@example.com');
+    const historicalOrder = await prisma.foodOrder.findFirstOrThrow();
+    expect(historicalOrder.displayNameSnapshot).toBe('Old Local');
+    expect(historicalOrder.actorEmail).toBe('local@example.com');
+  });
+
+  it('rejects local admin email/delete changes for Entra and bootstrap admin accounts', async () => {
+    process.env.AUTH_ADMIN_EMAIL = 'admin@example.com';
+    await syncEntraDisplayName('entra@example.com', 'Entra User');
+
+    await expect(updateLocalUserEmailByAdmin('entra@example.com', 'renamed@example.com')).rejects.toThrow(
+      'Microsoft Entra accounts cannot be edited locally',
+    );
+    await expect(deleteLocalUserByAdmin('entra@example.com', 'admin@example.com')).rejects.toThrow(
+      'Microsoft Entra accounts cannot be deleted locally',
+    );
+    await expect(deleteLocalUserByAdmin('admin@example.com', 'other@example.com')).rejects.toThrow(
+      'Configured admin cannot be deleted',
+    );
   });
 });

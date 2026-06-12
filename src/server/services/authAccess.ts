@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
-import { normalizeEmail } from './localAuth.js';
+import { localAuthUserExists, normalizeEmail } from './localAuth.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
 import { validateOfficeLocationId } from './officeLocation.js';
 import { normalizeDisplayName, resolveDisplayNameSnapshot, type DisplayNameSource } from './displayName.js';
@@ -244,6 +244,9 @@ export async function updateLocalDisplayName(email: string, rawDisplayName: stri
   if (existing.displayNameSource === 'entra') {
     throw serviceError('Display name is managed by Microsoft Entra', 400);
   }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can edit display names', 400);
+  }
   const displayName = normalizeDisplayName(rawDisplayName);
   await (prisma as any).authAccessUser.update({
     where: { email: normalized },
@@ -271,6 +274,9 @@ export async function updateUserDisplayNameByAdmin(
   if (existing.displayNameSource === 'entra') {
     throw serviceError('Display name is managed by Microsoft Entra', 400);
   }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can edit display names', 400);
+  }
   const displayName = normalizeDisplayName(rawDisplayName);
   await authAccessUserModel.update({
     where: { email: normalized },
@@ -281,6 +287,94 @@ export async function updateUserDisplayNameByAdmin(
     },
   });
   return readAuthDisplayProfile(normalized);
+}
+
+export async function updateLocalUserEmailByAdmin(email: string, newEmail: string): Promise<{
+  email: string;
+  previousEmail: string;
+}> {
+  const normalized = validateManagedEmail(email);
+  const normalizedNewEmail = validateManagedEmail(newEmail);
+  if (isAdminUser(normalized)) {
+    throw serviceError('Configured admin email cannot be edited', 400);
+  }
+
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Microsoft Entra accounts cannot be edited locally', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can be edited', 400);
+  }
+  if (normalized === normalizedNewEmail) {
+    return { email: normalized, previousEmail: normalized };
+  }
+  if (await localAuthUserExists(normalizedNewEmail)) {
+    throw serviceError('Email is already in use', 409);
+  }
+  const accessConflict = await authAccessUserModel.findUnique({
+    where: { email: normalizedNewEmail },
+    select: { email: true },
+  });
+  if (accessConflict) {
+    throw serviceError('Email is already in use', 409);
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.localAuthUser.update({
+        where: { email: normalized },
+        data: { email: normalizedNewEmail },
+      }),
+      prisma.authAccessUser.update({
+        where: { email: normalized },
+        data: { email: normalizedNewEmail, updatedAt: new Date() },
+      }),
+    ]);
+  } catch {
+    throw serviceError('Failed to update local account email', 500);
+  }
+  return { email: normalizedNewEmail, previousEmail: normalized };
+}
+
+export async function deleteLocalUserByAdmin(email: string, actorEmail?: string): Promise<{ email: string }> {
+  const normalized = validateManagedEmail(email);
+  if (isAdminUser(normalized)) {
+    throw serviceError('Configured admin cannot be deleted', 400);
+  }
+  if (actorEmail && normalizeEmail(actorEmail) === normalized) {
+    throw serviceError('You cannot delete your own account', 400);
+  }
+
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Microsoft Entra accounts cannot be deleted locally', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can be deleted', 400);
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.localAuthUser.delete({ where: { email: normalized } }),
+      prisma.authAccessUser.delete({ where: { email: normalized } }),
+    ]);
+  } catch {
+    throw serviceError('Failed to delete local account', 500);
+  }
+  return { email: normalized };
 }
 
 function getAuditLogDelegate():
@@ -921,6 +1015,8 @@ export async function listAccessUsers(): Promise<
     email: string;
     displayName: string | null;
     displayNameSource: DisplayNameSource | null;
+    localAccount: boolean;
+    protectedBootstrapAdmin: boolean;
     approved: boolean;
     isAdmin: boolean;
     blocked: boolean;
@@ -936,12 +1032,16 @@ export async function listAccessUsers(): Promise<
   }>
 > {
   try {
+    const localRows = await prisma.localAuthUser.findMany({ select: { email: true } }).catch(() => []);
+    const localEmails = new Set(localRows.map((row) => normalizeEmail(row.email)));
     const rows = await Promise.race([
       authAccessUserModel.findMany({
         orderBy: { requestedAt: 'asc' },
         select: {
           id: true,
           email: true,
+          displayName: true,
+          displayNameSource: true,
           approved: true,
           isAdmin: true,
           blocked: true,
@@ -1019,6 +1119,8 @@ export async function listAccessUsers(): Promise<
           (row as AuthAccessEntry & { displayNameSource?: string | null }).displayNameSource === 'entra'
             ? ((row as AuthAccessEntry & { displayNameSource?: DisplayNameSource }).displayNameSource ?? null)
             : null,
+        localAccount: localEmails.has(normalizeEmail(row.email)),
+        protectedBootstrapAdmin: isAdminUser(row.email),
         approved: row.approved,
         isAdmin: row.isAdmin || isAdminUser(row.email),
         blocked: row.blocked,

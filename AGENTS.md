@@ -59,12 +59,14 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - For custom server ports (for example `PORT=3830`), Vite proxy and `ports:check` now follow env vars (`PORT` and optional `VITE_PORT`) instead of fixed `3000/5173`.
 - For local backend testing without Postgres, use `npm run dev:server:sqlite` (or `npm run test:server:sqlite`); this uses `DB_PROVIDER=sqlite` and `prisma/schema.sqlite.prisma`.
 - Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
-- When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync `team_lunch_nickname` from the Entra username (rename is disabled).
-- Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured.
+- When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync the Entra `name` claim into the account display-name cache; nickname/localStorage identity is retired.
+- Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured; without any configured auth method, the app shows an auth setup error instead of open access.
 - Entra redirect/login configuration is backend env-driven: set `APP_PUBLIC_URL` and `BASE_PATH` to derive callback URI automatically (`${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`), with optional explicit override via `ENTRA_REDIRECT_URI`.
 - In Docker, `VITE_BASE_PATH` is build-time (image build arg) while `BASE_PATH` is runtime; for prefixed deployments set both to the same value and rebuild with `docker compose up --build`.
 - For Nginx reverse proxy deployments, keep the app prefix in forwarded URLs (no prefix stripping) and disable proxy buffering for SSE (`/api/events`) to preserve realtime updates.
 - Local auth now supports DB-backed email/password users with admin-managed credential generation via `POST /api/auth/local/users/generate` guarded by authenticated admin session role.
+- Authenticated user-attributed routes now ignore request-body nickname compatibility fields and require a signed session; local-session cookies are rejected once the matching `local_auth_users` row is edited away or deleted.
+- Admins can edit/delete manually created local accounts in Administration; email edits/deletes broadcast `auth_session_revoked` over SSE for connected browsers and preserve historical vote/order display snapshots.
 - Admins can now promote/demote approved users via `POST /api/auth/users/promote` and `POST /api/auth/users/demote`; role state persists in `auth_access_users.is_admin` while `AUTH_ADMIN_EMAIL` remains an undeletable/demotion-protected bootstrap admin.
 - If `AUTH_ADMIN_EMAIL` is set, approval workflow is enabled: non-admin users stay blocked in a waiting screen until the admin approves them (persisted in `auth_access_users`).
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.

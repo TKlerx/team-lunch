@@ -150,7 +150,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -174,7 +174,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -198,7 +198,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes/all',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),

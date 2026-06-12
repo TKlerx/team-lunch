@@ -61,6 +61,7 @@ function renderAdministration() {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe('Administration page', () => {
@@ -562,5 +563,143 @@ describe('Administration user management', () => {
     expect(await screen.findByRole('button', { name: /^unblock$/i })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /^unblock$/i }));
     expect(await screen.findByRole('button', { name: /^block$/i })).toBeInTheDocument();
+  });
+
+  it('lets admins edit a local user email', async () => {
+    let email = 'guest@company.com';
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({
+          auth: {
+            ...baseAdminConfig,
+            users: [{
+              email,
+              displayName: 'Guest',
+              displayNameSource: 'local',
+              localAccount: true,
+              protectedBootstrapAdmin: false,
+              approved: true,
+              blocked: false,
+              isAdmin: false,
+              officeLocationId: 'office-1',
+              officeLocationKey: 'default',
+              officeLocationName: 'Default Office',
+              assignedOfficeLocationIds: ['office-1'],
+              assignedOfficeLocations: [{ id: 'office-1', key: 'default', name: 'Default Office', isActive: true }],
+              requestedAt: '2026-03-04T07:00:00Z',
+              approvedAt: '2026-03-04T07:10:00Z',
+              blockedAt: null,
+              updatedAt: '2026-03-04T07:10:00Z',
+            }],
+          },
+        });
+      }
+      if (url.endsWith('/api/auth/users/email')) {
+        expect(init?.method).toBe('PUT');
+        expect(String(init?.body)).toContain('"email":"guest@company.com"');
+        expect(String(init?.body)).toContain('"newEmail":"renamed@company.com"');
+        email = 'renamed@company.com';
+        return jsonResponse({ email, previousEmail: 'guest@company.com' });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const user = userEvent.setup();
+    renderAdministration();
+
+    await screen.findByRole('heading', { name: /administration/i });
+    const emailInput = screen.getByRole('textbox', { name: /account email for guest@company.com/i });
+    await user.clear(emailInput);
+    await user.type(emailInput, 'renamed@company.com');
+    await user.click(screen.getByRole('button', { name: /save email/i }));
+
+    expect(await screen.findByText('renamed@company.com')).toBeInTheDocument();
+  });
+
+  it('lets admins delete a local user after confirmation', async () => {
+    let users = [{
+      email: 'guest@company.com',
+      displayName: 'Guest',
+      displayNameSource: 'local',
+      localAccount: true,
+      protectedBootstrapAdmin: false,
+      approved: true,
+      blocked: false,
+      isAdmin: false,
+      officeLocationId: 'office-1',
+      officeLocationKey: 'default',
+      officeLocationName: 'Default Office',
+      assignedOfficeLocationIds: ['office-1'],
+      assignedOfficeLocations: [{ id: 'office-1', key: 'default', name: 'Default Office', isActive: true }],
+      requestedAt: '2026-03-04T07:00:00Z',
+      approvedAt: '2026-03-04T07:10:00Z',
+      blockedAt: null,
+      updatedAt: '2026-03-04T07:10:00Z',
+    }];
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({ auth: { ...baseAdminConfig, users } });
+      }
+      if (url.endsWith('/api/auth/users')) {
+        expect(init?.method).toBe('DELETE');
+        expect(String(init?.body)).toContain('"email":"guest@company.com"');
+        users = [];
+        return jsonResponse({ email: 'guest@company.com', deleted: true });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const user = userEvent.setup();
+    renderAdministration();
+
+    await screen.findByRole('heading', { name: /administration/i });
+    await user.click(screen.getByRole('button', { name: /delete local account/i }));
+
+    expect(await screen.findByText(/no users yet/i)).toBeInTheDocument();
+  });
+
+  it('keeps Entra account management read-only', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({
+          auth: {
+            ...baseAdminConfig,
+            users: [{
+              email: 'entra@company.com',
+              displayName: 'Entra User',
+              displayNameSource: 'entra',
+              localAccount: false,
+              protectedBootstrapAdmin: false,
+              approved: true,
+              blocked: false,
+              isAdmin: false,
+              officeLocationId: 'office-1',
+              officeLocationKey: 'default',
+              officeLocationName: 'Default Office',
+              assignedOfficeLocationIds: ['office-1'],
+              assignedOfficeLocations: [{ id: 'office-1', key: 'default', name: 'Default Office', isActive: true }],
+              requestedAt: '2026-03-04T07:00:00Z',
+              approvedAt: '2026-03-04T07:10:00Z',
+              blockedAt: null,
+              updatedAt: '2026-03-04T07:10:00Z',
+            }],
+          },
+        });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    }));
+
+    renderAdministration();
+
+    await screen.findByRole('heading', { name: /administration/i });
+    expect(screen.getByRole('textbox', { name: /account email for entra@company.com/i })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: /display name for entra@company.com/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /delete local account/i })).toBeDisabled();
   });
 });

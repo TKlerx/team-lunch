@@ -213,6 +213,8 @@ export type AuthConfigResponse = {
       email: string;
       displayName: string | null;
       displayNameSource: DisplayNameSource | null;
+      localAccount: boolean;
+      protectedBootstrapAdmin: boolean;
       approved: boolean;
       blocked: boolean;
       isAdmin: boolean;
@@ -485,6 +487,7 @@ export type SSEEvent =
   | { type: 'food_selection_delivery_due'; payload: { foodSelectionId: string } }
   | { type: 'food_selection_completed'; payload: { foodSelection: FoodSelection } }
   | { type: 'food_selection_aborted'; payload: { foodSelectionId: string } }
+  | { type: 'auth_session_revoked'; payload: { actorKey: string; reason: 'account_updated' | 'account_deleted' } }
   | {
       type: 'food_selection_eta_updated';
       payload: { foodSelectionId: string; etaMinutes: number; etaSetAt: string; deliveryDueAt: string };

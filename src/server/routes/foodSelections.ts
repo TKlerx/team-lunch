@@ -179,7 +179,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -204,7 +204,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -324,7 +324,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/orders/:orderId/rating',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -368,7 +368,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     async (req, reply) => {
       try {
         await requireAdminIfApprovalWorkflowEnabled(req.headers.cookie);
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.actingNickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -392,7 +392,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     async (req, reply) => {
       try {
         await requireAdminIfApprovalWorkflowEnabled(req.headers.cookie);
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.actingNickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -465,7 +465,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/claim-ordering',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -487,7 +487,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/place-order',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -631,7 +631,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     '/api/food-selections/export/mine',
     async (req, reply) => {
       try {
-        const actor = await requireAuthenticatedActor(req.headers.cookie, req.query.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const workbook = await foodSelectionService.exportOrdersForUserXlsx(
           actor.displayNameSnapshot,
           actor,

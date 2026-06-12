@@ -8,14 +8,14 @@ import type {
   UpdateUserMenuDefaultPreferenceRequest,
 } from '../../lib/types.js';
 
-async function resolveUserKey(cookieHeader: string | undefined, testFallbackLabel?: string): Promise<string> {
-  return (await requireAuthenticatedActor(cookieHeader, testFallbackLabel)).actorKey;
+async function resolveUserKey(cookieHeader: string | undefined): Promise<string> {
+  return (await requireAuthenticatedActor(cookieHeader)).actorKey;
 }
 
 export default async function userPreferencesRoutes(app: FastifyInstance) {
   app.get<{ Querystring: { nickname?: string } }>('/api/user/preferences', async (req, reply) => {
     try {
-      const userKey = await resolveUserKey(req.headers.cookie, req.query.nickname);
+      const userKey = await resolveUserKey(req.headers.cookie);
       const preferences = await userPreferencesService.getUserPreferences(userKey);
       return reply.send(preferences);
     } catch (err) {
@@ -25,7 +25,7 @@ export default async function userPreferencesRoutes(app: FastifyInstance) {
 
   app.put<{ Body: UpdateUserPreferencesRequest }>('/api/user/preferences', async (req, reply) => {
     try {
-      const userKey = await resolveUserKey(req.headers.cookie, req.body.nickname);
+      const userKey = await resolveUserKey(req.headers.cookie);
       const preferences = await userPreferencesService.upsertUserPreferences(
         userKey,
         req.body.allergies,
@@ -39,7 +39,7 @@ export default async function userPreferencesRoutes(app: FastifyInstance) {
 
   app.get<{ Querystring: { nickname?: string } }>('/api/user/menu-defaults', async (req, reply) => {
     try {
-      const userKey = await resolveUserKey(req.headers.cookie, req.query.nickname);
+      const userKey = await resolveUserKey(req.headers.cookie);
       const preferences = await userMenuDefaultsService.listUserMenuDefaultPreferences(userKey);
       return reply.send(preferences);
     } catch (err) {
@@ -51,7 +51,7 @@ export default async function userPreferencesRoutes(app: FastifyInstance) {
     '/api/user/menu-defaults/:menuId',
     async (req, reply) => {
       try {
-        const userKey = await resolveUserKey(req.headers.cookie, req.body.nickname);
+        const userKey = await resolveUserKey(req.headers.cookie);
         const preference = await userMenuDefaultsService.upsertUserMenuDefaultPreference(
           userKey,
           req.params.menuId,
