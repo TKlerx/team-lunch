@@ -6,15 +6,16 @@ import { Card } from './ui/Card.js';
 import { Input } from './ui/Input.js';
 import { Panel } from './ui/Panel.js';
 import type { AuthConfigResponse, AuthMethod } from '../../lib/types.js';
+import {
+  ACTOR_KEY_STORAGE_KEY,
+  AUTH_METHOD_STORAGE_KEY,
+  AUTH_ROLE_STORAGE_KEY,
+  DISPLAY_NAME_STORAGE_KEY,
+} from '../auth.js';
 
 interface AuthGateProps {
   children: ReactNode;
 }
-
-const ACTOR_KEY_STORAGE_KEY = 'team_lunch_actor_key';
-const DISPLAY_NAME_STORAGE_KEY = 'team_lunch_display_name';
-const AUTH_METHOD_STORAGE_KEY = 'team_lunch_auth_method';
-const AUTH_ROLE_STORAGE_KEY = 'team_lunch_auth_role';
 
 async function fetchAuthConfig(): Promise<AuthConfigResponse> {
   const response = await fetch(withBasePath('/api/auth/config'), { credentials: 'include' });

@@ -618,6 +618,67 @@ describe('Administration user management', () => {
     expect(await screen.findByText('renamed@company.com')).toBeInTheDocument();
   });
 
+  it('updates current auth profile cache when admin edits own display name', async () => {
+    let displayName = 'Admin';
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({
+          auth: {
+            ...baseAdminConfig,
+            user: { username: 'admin@company.com', method: 'local' as const, displayName },
+            users: [{
+              email: 'admin@company.com',
+              displayName,
+              displayNameSource: 'local',
+              localAccount: true,
+              protectedBootstrapAdmin: true,
+              approved: true,
+              blocked: false,
+              isAdmin: true,
+              officeLocationId: 'office-1',
+              officeLocationKey: 'default',
+              officeLocationName: 'Default Office',
+              assignedOfficeLocationIds: ['office-1'],
+              assignedOfficeLocations: [{ id: 'office-1', key: 'default', name: 'Default Office', isActive: true }],
+              requestedAt: '2026-03-04T07:00:00Z',
+              approvedAt: '2026-03-04T07:10:00Z',
+              blockedAt: null,
+              updatedAt: '2026-03-04T07:10:00Z',
+            }],
+          },
+        });
+      }
+      if (url.endsWith('/api/auth/users/display-name')) {
+        expect(init?.method).toBe('PUT');
+        expect(String(init?.body)).toContain('"email":"admin@company.com"');
+        expect(String(init?.body)).toContain('"displayName":"Admin Renamed"');
+        displayName = 'Admin Renamed';
+        return jsonResponse({ email: 'admin@company.com', displayName, displayNameSource: 'local' });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    localStorage.setItem('team_lunch_actor_key', 'admin@company.com');
+    localStorage.setItem('team_lunch_display_name', 'Admin');
+    const profileUpdated = vi.fn();
+    window.addEventListener('team_lunch_auth_profile_updated', profileUpdated);
+
+    const user = userEvent.setup();
+    renderAdministration();
+
+    await screen.findByRole('heading', { name: /administration/i });
+    const displayNameInput = screen.getByRole('textbox', { name: /display name for admin@company.com/i });
+    await user.clear(displayNameInput);
+    await user.type(displayNameInput, 'Admin Renamed');
+    await user.click(screen.getByRole('button', { name: /save name/i }));
+
+    expect(await screen.findByText(/display name: admin renamed/i)).toBeInTheDocument();
+    expect(localStorage.getItem('team_lunch_display_name')).toBe('Admin Renamed');
+    expect(profileUpdated).toHaveBeenCalledTimes(1);
+    window.removeEventListener('team_lunch_auth_profile_updated', profileUpdated);
+  });
+
   it('lets admins delete a local user after confirmation', async () => {
     let users = [{
       email: 'guest@company.com',

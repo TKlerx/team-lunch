@@ -140,6 +140,8 @@ describe('Settings', () => {
     localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
     localStorage.setItem('team_lunch_auth_method', 'local');
     localStorage.setItem('team_lunch_display_name', 'Alice');
+    const profileUpdated = vi.fn();
+    window.addEventListener('team_lunch_auth_profile_updated', profileUpdated);
 
     render(<Settings />);
 
@@ -159,6 +161,8 @@ describe('Settings', () => {
     );
     expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
     expect(localStorage.getItem('team_lunch_display_name')).toBe('Alicia');
+    expect(profileUpdated).toHaveBeenCalledTimes(1);
+    window.removeEventListener('team_lunch_auth_profile_updated', profileUpdated);
   });
 
   it('renders Entra display names as read-only with email fallback copy', async () => {

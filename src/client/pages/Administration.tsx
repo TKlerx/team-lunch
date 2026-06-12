@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { withBasePath } from '../config.js';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
 import {
   LOCAL_PASSWORD_MIN_LENGTH,
   LOCAL_PASSWORD_MAX_LENGTH,
@@ -417,6 +418,12 @@ export default function Administration() {
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         throw new Error(payload?.error || 'Failed to update display name');
+      }
+      const payload = (await response.json().catch(() => null)) as {
+        displayName?: string | null;
+      } | null;
+      if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
+        setAuthenticatedDisplayName(payload?.displayName ?? null);
       }
       await refreshConfig();
     } catch (displayNameError) {

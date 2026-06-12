@@ -15,12 +15,21 @@ import { useSSE } from './hooks/useSSE.js';
 import { useAppPhase } from './hooks/useAppPhase.js';
 import { usePhaseNotifications } from './hooks/usePhaseNotifications.js';
 import { useNotificationPreference } from './hooks/useNotificationPreference.js';
-import { getAuthenticatedDisplayLabel, isExternalAuthEnabled } from './auth.js';
+import {
+  ACTOR_KEY_STORAGE_KEY,
+  AUTH_METHOD_STORAGE_KEY,
+  AUTH_PROFILE_UPDATED_EVENT,
+  AUTH_ROLE_STORAGE_KEY,
+  DISPLAY_NAME_STORAGE_KEY,
+  getAuthenticatedDisplayLabel,
+  isExternalAuthEnabled,
+} from './auth.js';
 import { withBasePath } from './config.js';
 import cuisineAroundTheWorldImage from '../../assets/cuisine-around-the-world.png';
 import exampleCompanyLogoImage from '../../assets/example-company-logo.png';
 
 export default function App() {
+  const [, setAuthProfileVersion] = useState(0);
   const nickname = getAuthenticatedDisplayLabel();
   const externalAuthEnabled = isExternalAuthEnabled();
   const { notificationsEnabled, toggleNotificationsEnabled } = useNotificationPreference();
@@ -57,6 +66,16 @@ export default function App() {
   useEffect(() => {
     setSelectedHistorySelectionId(null);
   }, [selectedOfficeLocationId]);
+
+  useEffect(() => {
+    const handleAuthProfileUpdated = () => {
+      setAuthProfileVersion((version) => version + 1);
+    };
+    window.addEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    return () => {
+      window.removeEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    };
+  }, []);
 
   const selectedHistorySelection = useMemo(
     () =>
@@ -133,10 +152,10 @@ export default function App() {
       } catch {
         // Ignore network errors and still clear local auth hints.
       } finally {
-        localStorage.removeItem('team_lunch_auth_method');
-        localStorage.removeItem('team_lunch_auth_role');
-        localStorage.removeItem('team_lunch_actor_key');
-        localStorage.removeItem('team_lunch_display_name');
+        localStorage.removeItem(AUTH_METHOD_STORAGE_KEY);
+        localStorage.removeItem(AUTH_ROLE_STORAGE_KEY);
+        localStorage.removeItem(ACTOR_KEY_STORAGE_KEY);
+        localStorage.removeItem(DISPLAY_NAME_STORAGE_KEY);
         window.location.reload();
       }
     })();

@@ -7,11 +7,15 @@ import { Select } from '../components/ui/Select.js';
 import { Button } from '../components/ui/Button.js';
 import * as api from '../api.js';
 import type { UserPreferences } from '../../lib/types.js';
+import {
+  ACTOR_KEY_STORAGE_KEY,
+  AUTH_METHOD_STORAGE_KEY,
+  AUTH_PROFILE_UPDATED_EVENT,
+  DISPLAY_NAME_STORAGE_KEY,
+  setAuthenticatedDisplayName,
+} from '../auth.js';
 
 const DISPLAY_NAME_MAX_GRAPHEMES = 64;
-const ACTOR_KEY_STORAGE_KEY = 'team_lunch_actor_key';
-const DISPLAY_NAME_STORAGE_KEY = 'team_lunch_display_name';
-const AUTH_METHOD_STORAGE_KEY = 'team_lunch_auth_method';
 const EMPTY_PREFERENCES: UserPreferences = {
   userKey: '',
   allergies: [],
@@ -98,6 +102,19 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
+    const handleAuthProfileUpdated = () => {
+      const nextDisplayName = localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '';
+      if (!displayNameTouched) {
+        setDisplayNameDraft(nextDisplayName);
+      }
+    };
+    window.addEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    return () => {
+      window.removeEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    };
+  }, [displayNameTouched]);
+
+  useEffect(() => {
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
   }, [selectedOfficeLocationId]);
 
@@ -165,7 +182,7 @@ export default function Settings() {
           throw new Error(payload?.error || 'Failed to update display name');
         }
         const nextDisplay = payload?.displayName ?? '';
-        localStorage.setItem(DISPLAY_NAME_STORAGE_KEY, nextDisplay);
+        setAuthenticatedDisplayName(nextDisplay);
         setDisplayNameDraft(nextDisplay);
       }
 

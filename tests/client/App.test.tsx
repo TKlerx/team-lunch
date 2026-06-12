@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../src/client/App.js';
@@ -27,7 +27,7 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
 });
 
 vi.mock('../../src/client/components/Header.js', () => ({
-  default: () => <div data-testid="header" />,
+  default: ({ nickname }: { nickname: string | null }) => <div data-testid="header">{nickname}</div>,
 }));
 
 vi.mock('../../src/client/pages/MainView.js', () => ({
@@ -47,6 +47,7 @@ vi.mock('../../src/client/components/FoodSelectionCompletedView.js', () => ({
 describe('App layout with Orders rail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     mockUseAppPhase.mockReturnValue('POLL_IDLE');
     mockUseAppState.mockReturnValue({
       activePoll: null,
@@ -63,6 +64,26 @@ describe('App layout with Orders rail', () => {
       dbConnected: true,
       dbReconnectAttempts: 0,
     });
+  });
+
+  it('refreshes header label after current auth profile changes in the same tab', () => {
+    localStorage.setItem('team_lunch_actor_key', 'admin@example.com');
+    localStorage.setItem('team_lunch_display_name', 'Admin');
+
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('header')).toHaveTextContent('Admin');
+
+    act(() => {
+      localStorage.setItem('team_lunch_display_name', 'Admin Renamed');
+      window.dispatchEvent(new Event('team_lunch_auth_profile_updated'));
+    });
+
+    expect(screen.getByTestId('header')).toHaveTextContent('Admin Renamed');
   });
 
   it('renders orders rail and main view by default', () => {
