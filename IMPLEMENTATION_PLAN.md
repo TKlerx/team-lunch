@@ -2177,8 +2177,6 @@
   - Kept the UI display rule consistent: display name first, email fallback.
   - Tests covered authenticated-profile main flow without localStorage nickname and verified lunch interactions no longer send user-selected nicknames.
 
-### In Progress
-
 - [x] **88.9 Harden session invalidation with versions** *(done)*
   - Add `session_version` to `auth_access_users` so one authoritative invalidation path covers both local and Entra sessions.
   - Include `sessionVersion` in the signed auth-session cookie on login.
@@ -2222,3 +2220,71 @@
     - `pnpm exec vitest run --project client tests/client/Header.test.tsx`
     - `pnpm exec vitest run --project server tests/server/auth-avatar.test.ts`
     - `./validate.ps1`
+
+### In Progress
+- [ ] **88.13 Test Entra ID account handling manually**
+  - Purpose: cover live Microsoft Entra account behavior that unit/mocked tests cannot verify without tenant/app permissions.
+  - Preconditions:
+    - Tester has access to a real Entra tenant and app registration used by the deployment.
+    - App registration has correct redirect URI: `${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`.
+    - Deployment has `APP_PUBLIC_URL`, `BASE_PATH`, `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, and `AUTH_SESSION_SECRET` configured.
+    - For avatar tests, app registration has Graph profile-photo read permissions and admin consent, or tester records the expected fallback when permissions are absent.
+    - Tester has at least two Entra users: one regular user and one admin/bootstrap user from `AUTH_ADMIN_EMAIL`.
+    - Tester has one local/manual guest account for comparison.
+  - Login and tenant validation:
+    - Sign in with a valid Entra user from the configured tenant; verify login succeeds and the app renders the lunch workflow.
+    - Sign in with a user from an unapproved/different tenant if available; verify callback fails and no app session is created.
+    - Start Entra login, tamper/reuse the callback `state`, or retry an old callback URL; verify no session is issued.
+    - Verify `GET /api/auth/config` after login reports `authenticated: true`, `user.method: "entra"`, the Entra email/username, and the expected role/approval state.
+    - Verify logout clears the session and protected API calls return unauthorized afterward.
+  - Display-name handling:
+    - Sign in as an Entra user with a Microsoft profile display name; verify Settings shows `Authentication: Microsoft Entra`.
+    - Verify the display name shown in Header/Settings matches the Entra ID-token `name` claim when present.
+    - Verify the display-name field is read-only and explains it is managed by Microsoft Entra/Microsoft profile.
+    - Attempt `PUT /api/auth/me/display-name` as the Entra user; verify it is rejected with the Entra-managed display-name error.
+    - Remove or omit the Entra `name` claim in a test user/app claim setup if possible; verify UI falls back to account email.
+    - Sign in with two Entra accounts that share the same display name; verify votes/orders remain isolated by account email/actor key.
+  - Lunch identity behavior:
+    - Create/cast/withdraw poll votes as Entra user A; verify rows use stable `actor_key` / `actor_email` and display `display_name_snapshot`.
+    - Change the user's Microsoft profile display name, sign in again after token refresh, then create new votes/orders; verify new snapshots use the new name and historical snapshots stay unchanged.
+    - Place/withdraw food orders as Entra user A; verify user B with same display name cannot withdraw or edit A's orders.
+    - Verify shopping-list and preference actions attribute to the signed Entra account, not any legacy nickname/body value.
+  - Approval, roles, and admin management:
+    - With `AUTH_ADMIN_EMAIL` configured, sign in as a new non-admin Entra user; verify waiting/approval screen appears.
+    - Approve the pending Entra user as admin; verify the user can access the workflow after refresh/re-login.
+    - Block the Entra user as admin; verify active/future protected requests are denied.
+    - Promote and demote an Entra user where allowed; verify role changes appear in `/api/auth/config` and UI navigation.
+    - Verify Entra account email/display name are read-only in Administration.
+    - Attempt local-account email edit/delete flows against an Entra-backed user; verify server rejects them.
+    - Verify bootstrap admin cannot be demoted/deleted when it is an Entra account.
+  - Session invalidation:
+    - Keep an Entra user logged in in two browser sessions; block/unblock or change approval/role in admin; verify old session behavior matches expected `session_version` invalidation.
+    - Verify stale protected API calls return `401 Session expired` after version increment.
+    - Verify display-name sync/update does not force logout by itself.
+    - Verify missed SSE/offline tabs are still rejected by backend session-version checks after sensitive account changes.
+  - Avatar behavior:
+    - For an Entra user with a Microsoft profile photo, verify Header requests `/api/auth/me/avatar` and renders the image.
+    - Verify browser/devtools never expose Microsoft Graph photo URLs or Graph access tokens.
+    - Verify avatar response has a private cache header and image content type.
+    - Reload within the success TTL; verify repeated page loads do not repeatedly fetch Graph server-side if logs/telemetry are available.
+    - For an Entra user without a photo, verify the app falls back to initials/generic avatar.
+    - Remove/deny Graph photo permission or use a deployment without Graph permissions; verify avatar endpoint returns fallback behavior without breaking login.
+    - Restart the app instance; verify the first avatar request refetches because cache is in-memory only.
+    - In multi-instance deployment if available, verify each instance can cache independently and fallback still works.
+    - Verify local/manual guest account renders initials and does not request `/api/auth/me/avatar` from the client.
+  - Audit/history verification:
+    - Verify successful Entra logins create `auth_audit_logs` entries with expected actor/target email and metadata.
+    - Verify failed Entra callback/login attempts create audit entries with known error reasons where the backend can determine them.
+    - Verify profile creation/sync on first Entra login creates expected audit/profile state without duplicate users on repeated login.
+    - Verify admin approval/block/promote/demote changes for Entra accounts create audit rows with actor and target.
+  - Multi-office behavior if enabled:
+    - Assign an Entra user to one office; verify menus, polls, food selections, shopping list, and history are scoped to that office.
+    - Give admin/global access to multiple offices; verify office switcher appears and switching scopes data correctly.
+    - Verify regular Entra users cannot access another office's protected data by changing request parameters.
+  - Evidence testers should capture:
+    - Deployment/environment configuration keys used, excluding secret values.
+    - Tenant/app registration redirect URI and Graph permission/admin-consent status.
+    - Test account matrix: Entra admin, Entra regular, Entra pending/blocked, local/manual guest.
+    - Screenshots or API responses for Settings, Administration, avatar rendering/fallback, approval gate, and session-expired behavior.
+    - Relevant `auth_access_users` and `auth_audit_logs` rows with sensitive values redacted.
+    - Any deviations caused by tenant policy, Conditional Access, missing Graph permission, or app registration limits.
