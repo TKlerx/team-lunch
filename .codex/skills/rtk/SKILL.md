@@ -1,3 +1,8 @@
+---
+name: rtk
+description: Token-optimized CLI proxy for shell commands. Use when running shell commands in this project so commands are prefixed with rtk and PowerShell cmdlets are invoked through pwsh.
+---
+
 # RTK - Rust Token Killer
 
 **Usage**: Token-optimized CLI proxy for shell commands.
