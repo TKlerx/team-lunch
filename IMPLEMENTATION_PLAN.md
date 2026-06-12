@@ -2164,21 +2164,33 @@
   - Kept the UI display rule consistent: display name first, email fallback.
   - Tests covered authenticated-profile main flow without localStorage nickname and verified lunch interactions no longer send user-selected nicknames.
 
-### Backlog
+### In Progress
 
-- [ ] **88.9 Add Entra/Graph avatar support**
-  - Fetch Microsoft profile photo via Graph when permissions are configured.
-  - Cache/avatar URL strategy to avoid repeated Graph calls.
-  - Fall back to initials/generic avatar when no photo exists or Graph is unavailable.
+- [ ] **88.9 Harden session invalidation with versions**
+  - Add `session_version` to `auth_access_users` so one authoritative invalidation path covers both local and Entra sessions.
+  - Include `sessionVersion` in the signed auth-session cookie on login.
+  - Reject protected requests with `401 Session expired` when the cookie version differs from the current DB version.
+  - Increment the version for sensitive identity/access changes: local email edits, local account deletion, block/unblock, approval changes, admin promote/demote, and local credential regeneration/reset if applicable.
+  - Do not increment the version for display-name edits; display names continue to update live without forcing logout.
+  - Keep `auth_session_revoked` SSE as the user-friendly immediate signal, but make backend version checks authoritative for missed SSE/offline tabs.
+  - Tests: stale session cookies are rejected after version increments, fresh login receives the new version, display-name edits do not invalidate sessions, and local/Entra version checks use the same `auth_access_users` source.
 
-- [ ] **88.10 Add local guest avatar customization**
-  - Provide generic guest avatar by default.
-  - Allow future admin-selected or uploaded avatars for manually created guest accounts.
+- [ ] **88.10 Add profile audit/history**
+  - Add DB-only profile/access audit history; no admin UI is required in this task.
+  - Track user profile creation, editing, and deletion with actor, target, timestamp, field, old value, and new value where applicable.
+  - Track successful logins and failed login attempts for local auth and Entra auth where the backend can determine the target email/error.
+  - Store enough structured metadata to support a future admin-facing history view without changing the core event model.
+  - Tests: audit rows are written for create/edit/delete, successful local/Entra logins, failed local login, and failed Entra callback/login cases with known reasons.
 
-- [ ] **88.11 Add profile audit/history**
-  - Track local display-name and email edits with actor, timestamp, old value, and new value.
-  - Consider admin-facing history for guest account maintenance.
+- [ ] **88.11 Add Entra/Graph avatar support**
+  - Fetch Microsoft profile photo via Graph in the backend when permissions are configured; do not expose Graph URLs or tokens to the client.
+  - Cache avatar bytes only in bounded backend memory with TTLs for success, no-photo, and Graph/auth errors; do not persist avatars in the database or filesystem.
+  - Return cached avatar image responses from an app backend endpoint with appropriate private cache headers.
+  - Fall back to initials/generic avatar when no photo exists, Graph is unavailable, permissions are missing, or cache fetch fails.
+  - Document expected operational behavior: per-instance cache in multi-container deployments, refetch after app restart, possible first-load latency, and TTL-delayed freshness.
+  - Tests: Graph success returns image bytes, no-photo/errors fall back cleanly, cache avoids repeated Graph calls within TTL, and local/manual accounts skip Graph.
 
-- [ ] **88.12 Harden session invalidation with versions**
-  - Add session version or profile version to force logout after sensitive account changes.
-  - Use SSE as user-friendly immediate notification, but keep backend version checks authoritative.
+- [ ] **88.12 Add local guest avatar customization**
+  - Provide one shared generic avatar for manually created local guest accounts.
+  - Do not add local avatar upload, admin-selected avatars, or backend persistence in this task.
+  - Tests: local/manual users render the generic avatar and do not trigger Graph avatar fetches.
