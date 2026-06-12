@@ -2212,7 +2212,13 @@
   - Header now renders the backend avatar image and falls back to initials if no image loads.
   - Discovery: avatar support reuses the Entra app's client-credentials Graph token flow; Graph photo-readable app permissions are deployment prerequisites, otherwise the endpoint returns fallback `204`.
 
-- [ ] **88.12 Add local guest avatar customization**
+- [x] **88.12 Add local guest avatar customization** *(done)*
   - Use a generic avatar for manually created local accounts using their derived initials.
   - Do not add local avatar upload, admin-selected avatars, or backend persistence in this task.
   - Tests: local/manual users render the generic avatar and do not trigger Graph avatar fetches.
+  - Header now receives the authenticated method and only requests `/api/auth/me/avatar` for Entra users.
+  - Local/manual accounts render derived initials directly, avoiding unnecessary backend/Graph avatar lookups.
+  - Validation:
+    - `pnpm exec vitest run --project client tests/client/Header.test.tsx`
+    - `pnpm exec vitest run --project server tests/server/auth-avatar.test.ts`
+    - `./validate.ps1`

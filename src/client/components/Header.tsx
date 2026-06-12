@@ -7,9 +7,11 @@ import { MenuItem, MenuList } from './ui/Menu.js';
 import pizzaLogo from '../../../assets/pizza-logo.png';
 import exampleCompanyLogoSmall from '../../../assets/example-company-logo-small.png';
 import { withBasePath } from '../config.js';
+import type { AuthMethod } from '../../lib/types.js';
 
 interface HeaderProps {
   nickname: string | null;
+  authMethod?: AuthMethod | null;
   notificationsEnabled: boolean;
   onToggleNotifications: () => void;
   onLogout?: () => void;
@@ -71,7 +73,7 @@ function BellOffIcon() {
   );
 }
 
-function AccountAvatar({ label }: { label: string }) {
+function AccountAvatar({ label, authMethod }: { label: string; authMethod?: AuthMethod | null }) {
   const [imageUnavailable, setImageUnavailable] = useState(false);
   const initials = label
     .split(/\s+/)
@@ -80,7 +82,7 @@ function AccountAvatar({ label }: { label: string }) {
     .map((part) => part[0]?.toUpperCase() ?? '')
     .join('') || label.slice(0, 1).toUpperCase();
 
-  if (imageUnavailable) {
+  if (authMethod !== 'entra' || imageUnavailable) {
     return (
       <span
         className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-[0.65rem] font-semibold text-white"
@@ -139,6 +141,7 @@ function LogoutIcon() {
 
 export default function Header({
   nickname,
+  authMethod = null,
   notificationsEnabled,
   onToggleNotifications,
   onLogout,
@@ -261,7 +264,7 @@ export default function Header({
               aria-expanded={menuOpen}
             >
               <span className="relative inline-flex">
-                <AccountAvatar label={nickname} />
+                <AccountAvatar label={nickname} authMethod={authMethod} />
                 {hasPendingApprovals && (
                   <span className="absolute -right-1.5 -top-1.5 inline-flex h-3 w-3 rounded-full bg-red-500" />
                 )}

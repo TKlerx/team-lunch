@@ -22,6 +22,7 @@ import {
   AUTH_ROLE_STORAGE_KEY,
   DISPLAY_NAME_STORAGE_KEY,
   getAuthenticatedDisplayLabel,
+  getAuthenticatedAuthMethod,
   isExternalAuthEnabled,
 } from './auth.js';
 import { withBasePath } from './config.js';
@@ -31,6 +32,7 @@ import exampleCompanyLogoImage from '../../assets/example-company-logo.png';
 export default function App() {
   const [, setAuthProfileVersion] = useState(0);
   const nickname = getAuthenticatedDisplayLabel();
+  const authMethod = getAuthenticatedAuthMethod();
   const externalAuthEnabled = isExternalAuthEnabled();
   const { notificationsEnabled, toggleNotificationsEnabled } = useNotificationPreference();
   const navigate = useNavigate();
@@ -166,6 +168,7 @@ export default function App() {
       <div className="relative z-0 flex h-full min-h-0 flex-col">
         <Header
           nickname={nickname}
+          authMethod={authMethod}
           notificationsEnabled={notificationsEnabled}
           onToggleNotifications={toggleNotificationsEnabled}
           onLogout={externalAuthEnabled ? handleLogout : undefined}
