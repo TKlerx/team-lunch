@@ -1,15 +1,15 @@
 ## Working Mode
 
-This project uses an interactive Ralph-style workflow via **GitHub Copilot in VS Code** (not Claude Code CLI).
+This project uses an interactive Ralph-style workflow via **AI agent in VS Code** (not CLI).
 
 ### Task Loop
 
-Each task follows this cycle — Copilot executes steps 1–7, user observes and steers:
+Each task follows this cycle — AI agent execute steps 1–7, user observes and steers:
 
 1. **Orient** — read `specs/*` relevant to the task
 2. **Read plan** — check `IMPLEMENTATION_PLAN.md` for the next highest-priority unchecked item
 3. **Investigate** — search `src/` to confirm what exists (don't assume not implemented)
-4. **Implement** — complete the task fully (no stubs or placeholders)
+4. **Implement** — complete the task fully (no stubs or placeholders) including tests in `tests/`
 5. **Validate** — run `./validate.ps1` (typecheck + lint + duplication + semgrep + test); fix all failures
 6. **Update plan** — mark task `[x]` in `IMPLEMENTATION_PLAN.md`, note any discoveries
 7. **Commit** — `git add -A && git commit -m "<description>"`
@@ -60,12 +60,17 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - For custom server ports (for example `PORT=3830`), Vite proxy and `ports:check` now follow env vars (`PORT` and optional `VITE_PORT`) instead of fixed `3000/5173`.
 - For local backend testing without Postgres, use `npm run dev:server:sqlite` (or `npm run test:server:sqlite`); this uses `DB_PROVIDER=sqlite` and `prisma/schema.sqlite.prisma`.
 - Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
-- When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync `team_lunch_nickname` from the Entra username (rename is disabled).
-- Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured.
+- When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync the Entra `name` claim into the account display-name cache; nickname/localStorage identity is retired.
+- Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured; without any configured auth method, the app shows an auth setup error instead of open access.
 - Entra redirect/login configuration is backend env-driven: set `APP_PUBLIC_URL` and `BASE_PATH` to derive callback URI automatically (`${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`), with optional explicit override via `ENTRA_REDIRECT_URI`.
 - In Docker, `VITE_BASE_PATH` is build-time (image build arg) while `BASE_PATH` is runtime; for prefixed deployments set both to the same value and rebuild with `docker compose up --build`.
 - For Nginx reverse proxy deployments, keep the app prefix in forwarded URLs (no prefix stripping) and disable proxy buffering for SSE (`/api/events`) to preserve realtime updates.
 - Local auth now supports DB-backed email/password users with admin-managed credential generation via `POST /api/auth/local/users/generate` guarded by authenticated admin session role.
+- Authenticated user-attributed routes now ignore request-body nickname compatibility fields and require a signed session; local-session cookies are rejected once the matching `local_auth_users` row is edited away or deleted.
+- Auth-session cookies include `sessionVersion`, checked against `auth_access_users.session_version`; sensitive access/account mutations increment it and stale protected requests return `401 Session expired`, while display-name edits do not force logout.
+- Auth/profile history is stored in `auth_audit_logs` for profile create/edit/delete, access changes, and local/Entra login success/failure; it is DB-only for now and has no admin UI.
+- Entra profile photos are served only through the backend `/api/auth/me/avatar` endpoint; Graph URLs/tokens stay server-side, avatar bytes are cached only in bounded per-instance memory with TTLs, and clients must fall back to initials/generic UI on `204` or image load failure.
+- Admins can edit/delete manually created local accounts in Administration; email edits/deletes broadcast `auth_session_revoked` over SSE for connected browsers and preserve historical vote/order display snapshots.
 - Admins can now promote/demote approved users via `POST /api/auth/users/promote` and `POST /api/auth/users/demote`; role state persists in `auth_access_users.is_admin` while `AUTH_ADMIN_EMAIL` remains an undeletable/demotion-protected bootstrap admin.
 - If `AUTH_ADMIN_EMAIL` is set, approval workflow is enabled: non-admin users stay blocked in a waiting screen until the admin approves them (persisted in `auth_access_users`).
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.
@@ -211,8 +216,8 @@ Write tests for ALL of the following — these are the critical business logic p
 - Poll persistence rule: finished/aborted polls are retained (no automatic poll deletion)
 
 **Food selection service (`src/server/services/foodSelection.ts`)**
-- Duration validation: only 10, 15, or 30 minutes are accepted
-- One order per nickname: second submission from same nickname replaces the first
+- Duration validation: 1 minute or multiples of 5 between 5–30 minutes are accepted
+- Food orders use line-item semantics; ownership checks use stable actor keys, not display names
 - No order changes accepted once `status=overtime`
 - Extension sets `ends_at = now + extension`, returns `status=active`
 - Food-selection persistence rule: completed food selections are retained (no automatic deletion)
@@ -230,7 +235,7 @@ Write tests for ALL of the following — these are the critical business logic p
 
 **Client hooks**
 - `useAppPhase` correctly derives phase enum from `initial_state` payload
-- Nickname is read from `team_lunch_nickname` localStorage key
+- Authenticated display label is read from current auth/profile state, with email fallback
 
 ## Codebase Patterns
 
@@ -238,8 +243,8 @@ Write tests for ALL of the following — these are the critical business logic p
 - **Business logic**: lives in `src/server/services/` — route handlers must stay thin (validate input → call service → return result)
 - **SSE**: call `broadcast(eventName, payload)` from services after any state change; see `realtime-events.md` for the full event catalogue
 - **Name snapshots**: when persisting a poll vote, food order, etc., always store the name string alongside the FK (e.g. `menu_name`, `item_name`) — FKs can become null if the source is deleted
-- **Nickname**: never stored as a user entity; passed by the client in request bodies and stored as a plain `VARCHAR` on domain records
-- **localStorage key**: `team_lunch_nickname`
+- **Display identity**: user-attributed writes resolve the stable actor from the signed auth session (`actor_key` / `actor_email`) and store `display_name_snapshot`; display names are optional, non-unique, and validated server-side.
+- **Retired nickname identity**: `team_lunch_nickname` is no longer an identity mechanism. Request-body nickname fields may remain in compatibility payloads, but authenticated routes ignore them for ownership/attribution.
 - **Shared types**: define request/response shapes and domain enums in `src/lib/` and import from both server and client — no type duplication
 - **Error responses**: `{ error: string }` JSON body with appropriate HTTP status codes (400 validation, 409 conflict, 404 not found)
 
@@ -255,3 +260,6 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## RTK
+@(.agents|.codex|.claude)/skills/rtk/SKILL.md

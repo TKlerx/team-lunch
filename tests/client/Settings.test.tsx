@@ -21,6 +21,11 @@ vi.mock('../../src/client/api.js', () => ({
 describe('Settings', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
+    vi.unstubAllGlobals();
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_auth_method', 'local');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
     mockUseAdminOfficeContext.mockReturnValue({
       canSwitchOfficeLocation: false,
       officeLocations: [{ id: 'office-1', name: 'Berlin' }],
@@ -51,7 +56,7 @@ describe('Settings', () => {
   });
 
   it('loads ingredient preferences into the settings page', async () => {
-    render(<Settings nickname="Alice" onRename={vi.fn()} />);
+    render(<Settings />);
 
     expect(screen.getByRole('heading', { name: /settings/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /ingredient preferences/i })).toBeInTheDocument();
@@ -60,16 +65,15 @@ describe('Settings', () => {
         screen.getByRole('heading', { name: /ingredient preferences/i }),
       ) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    expect(mockGetUserPreferences).toHaveBeenCalledWith('Alice');
-    const allergies = await screen.findByLabelText(/ingredients to avoid/i);
     await waitFor(() => {
-      expect(allergies).toHaveValue('peanuts');
+      expect(mockGetUserPreferences).toHaveBeenCalledWith('alice@example.com');
     });
+    expect(await screen.findByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts');
     expect(screen.getByLabelText(/less preferred ingredients/i)).toHaveValue('mushrooms');
   });
 
   it('shows app build metadata for support diagnostics', async () => {
-    render(<Settings nickname="Alice" onRename={vi.fn()} />);
+    render(<Settings />);
 
     expect(await screen.findByTestId('app-version')).toHaveTextContent(
       '20260611.1 | abc123def456 | 2026-06-11T08:30:00Z',
@@ -78,13 +82,10 @@ describe('Settings', () => {
     expect(screen.getByText('test | v24.0.0')).toBeInTheDocument();
   });
 
-  it('saves nickname and ingredient preferences from the settings-wide save button', async () => {
+  it('saves ingredient preferences from the settings-wide save button', async () => {
     const user = userEvent.setup();
-    const onRename = vi.fn();
-    render(<Settings nickname="Alice" onRename={onRename} />);
+    render(<Settings />);
 
-    await user.clear(screen.getByLabelText(/nickname/i));
-    await user.type(screen.getByLabelText(/nickname/i), 'Alicia');
     const allergies = await screen.findByLabelText(/ingredients to avoid/i);
     const dislikes = screen.getByLabelText(/less preferred ingredients/i);
     await user.clear(allergies);
@@ -93,9 +94,8 @@ describe('Settings', () => {
     await user.type(dislikes, 'mushrooms; onions');
     await user.click(screen.getByRole('button', { name: /save settings/i }));
 
-    expect(onRename).toHaveBeenCalledWith('Alicia');
     expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
-      'Alicia',
+      'alice@example.com',
       ['peanuts', 'shrimp'],
       ['mushrooms', 'onions'],
     );
@@ -116,7 +116,7 @@ describe('Settings', () => {
       selectedOfficeLocationId: 'office-1',
       setSelectedOfficeLocationId: mockSetSelectedOfficeLocationId,
     });
-    render(<Settings nickname="Alice" onRename={vi.fn()} />);
+    render(<Settings />);
 
     await screen.findByLabelText(/ingredients to avoid/i);
     await user.selectOptions(screen.getByLabelText(/office location/i), 'office-2');
@@ -138,21 +138,81 @@ describe('Settings', () => {
       selectedOfficeLocationId: 'office-1',
       setSelectedOfficeLocationId: mockSetSelectedOfficeLocationId,
     });
-    const onRename = vi.fn();
-    render(<Settings nickname="Alice" onRename={onRename} />);
+    render(<Settings />);
 
-    await user.clear(screen.getByLabelText(/nickname/i));
-    await user.type(screen.getByLabelText(/nickname/i), 'Alicia');
     await user.selectOptions(screen.getByLabelText(/office location/i), 'office-2');
     await user.clear(await screen.findByLabelText(/ingredients to avoid/i));
     await user.type(screen.getByLabelText(/ingredients to avoid/i), 'shrimp');
     await user.click(screen.getByRole('button', { name: /cancel/i }));
 
-    expect(screen.getByLabelText(/nickname/i)).toHaveValue('Alice');
     expect(screen.getByLabelText(/office location/i)).toHaveValue('office-1');
     expect(screen.getByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts');
-    expect(onRename).not.toHaveBeenCalled();
     expect(mockSetSelectedOfficeLocationId).not.toHaveBeenCalled();
     expect(mockUpdateUserPreferences).not.toHaveBeenCalled();
+  });
+
+  it('shows local account identity and saves display name', async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ displayName: 'Alicia', displayNameSource: 'local' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_auth_method', 'local');
+    localStorage.setItem('team_lunch_display_name', 'Alice');
+    const profileUpdated = vi.fn();
+    window.addEventListener('team_lunch_auth_profile_updated', profileUpdated);
+
+    render(<Settings />);
+
+    expect(screen.getByText('alice@example.com')).toBeInTheDocument();
+    expect(screen.getByText('Local account')).toBeInTheDocument();
+    const displayName = screen.getByLabelText(/display name/i);
+    await user.clear(displayName);
+    await user.type(displayName, 'Alicia');
+    await user.click(screen.getByRole('button', { name: /save settings/i }));
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/auth/me/display-name',
+      expect.objectContaining({
+        method: 'PUT',
+        body: JSON.stringify({ displayName: 'Alicia' }),
+      }),
+    );
+    expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
+    expect(localStorage.getItem('team_lunch_display_name')).toBe('Alicia');
+    expect(profileUpdated).toHaveBeenCalledTimes(1);
+    window.removeEventListener('team_lunch_auth_profile_updated', profileUpdated);
+  });
+
+  it('renders Entra display names as read-only with email fallback copy', async () => {
+    localStorage.setItem('team_lunch_actor_key', 'entra@example.com');
+    localStorage.setItem('team_lunch_auth_method', 'entra');
+    localStorage.removeItem('team_lunch_display_name');
+
+    render(<Settings />);
+
+    expect(await screen.findByText('entra@example.com')).toBeInTheDocument();
+    expect(screen.getByText('Microsoft Entra')).toBeInTheDocument();
+    expect(screen.getByLabelText(/display name/i)).toBeDisabled();
+    expect(screen.getByText(/managed by microsoft entra/i)).toBeInTheDocument();
+    expect(screen.getByText(/account email is displayed until a name is set/i)).toBeInTheDocument();
+  });
+
+  it('shows display-name validation errors before saving', async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<Settings />);
+
+    const displayName = screen.getByLabelText(/display name/i);
+    await user.clear(displayName);
+    await user.type(displayName, 'Bad<Name');
+
+    expect(screen.getByText(/unsupported characters/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /save settings/i })).toBeDisabled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

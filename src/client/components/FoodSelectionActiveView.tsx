@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
 import { formatPrice } from '../utils/orderCopy.js';
-import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
+import {
+  getAuthenticatedActorKey,
+  getAuthenticatedDisplayLabel,
+  isAdminAuthenticatedUser,
+  isCreatorAuthenticatedUser,
+} from '../auth.js';
 import type { UserPreferences } from '../../lib/types.js';
 
 type ItemWarnings = {
@@ -267,13 +271,22 @@ function OrderBoard({
   orders,
   selectionId,
   nickname,
+  actorKey,
   priceByItemId,
   itemNumberById,
   totalPrice,
 }: {
-  orders: { id: string; nickname: string; itemId: string | null; itemName: string; notes: string | null }[];
+  orders: {
+    id: string;
+    nickname: string;
+    actorKey?: string | null;
+    itemId: string | null;
+    itemName: string;
+    notes: string | null;
+  }[];
   selectionId: string;
   nickname: string;
+  actorKey: string | null;
   priceByItemId: Map<string, number>;
   itemNumberById: Map<string, string>;
   totalPrice: number;
@@ -335,7 +348,7 @@ function OrderBoard({
                         ? formatPrice(priceByItemId.get(o.itemId) as number)
                         : '-'}
                     </span>
-                    {o.nickname === nickname && (
+                    {(actorKey ? o.actorKey === actorKey || (!o.actorKey && o.nickname === nickname) : o.nickname === nickname) && (
                       <button
                         type="button"
                         onClick={() => void handleRemoveFromBoard(o.id)}
@@ -364,7 +377,8 @@ function OrderBoard({
 
 export default function FoodSelectionActiveView() {
   const { activeFoodSelection, latestCompletedPoll, menus } = useAppState();
-  const { nickname } = useNickname();
+  const nickname = getAuthenticatedDisplayLabel();
+  const actorKey = getAuthenticatedActorKey();
   const remaining = useCountdown(activeFoodSelection?.endsAt);
   const [submitting, setSubmitting] = useState(false);
   const [updatingTimer, setUpdatingTimer] = useState(false);
@@ -416,8 +430,11 @@ export default function FoodSelectionActiveView() {
 
   // Find current user's existing orders
   const myOrders = useMemo(
-    () => selection.orders.filter((o) => o.nickname === nickname),
-    [selection.orders, nickname],
+    () =>
+      selection.orders.filter((o) =>
+        actorKey ? o.actorKey === actorKey || (!o.actorKey && o.nickname === nickname) : o.nickname === nickname,
+      ),
+    [selection.orders, actorKey, nickname],
   );
   const votersWithoutOrder = useMemo(() => {
     if (!latestCompletedPoll || latestCompletedPoll.id !== selection.pollId) {
@@ -657,6 +674,7 @@ export default function FoodSelectionActiveView() {
             orders={selection.orders}
             selectionId={selection.id}
             nickname={nickname}
+            actorKey={actorKey}
             priceByItemId={priceByItemId}
             itemNumberById={itemNumberById}
             totalPrice={totalPrice}

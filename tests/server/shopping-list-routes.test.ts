@@ -17,6 +17,14 @@ vi.mock('../../src/server/sse.js', () => ({
 
 let app: FastifyInstance;
 
+function authCookie(email: string): string {
+  return `team_lunch_auth_session=${createSessionCookieValue({
+    username: email,
+    method: 'entra',
+    iat: Math.floor(Date.now() / 1000),
+  })}`;
+}
+
 describe('shopping list routes', () => {
   beforeAll(async () => {
     app = await buildApp();
@@ -25,6 +33,13 @@ describe('shopping list routes', () => {
 
   beforeEach(async () => {
     await cleanDatabase();
+    const office = await createOfficeLocation('Default');
+    await prisma.authAccessUser.createMany({
+      data: [
+        { email: 'alice@example.com', approved: true, blocked: false, isAdmin: false, officeLocationId: office.id },
+        { email: 'bob@example.com', approved: true, blocked: false, isAdmin: false, officeLocationId: office.id },
+      ],
+    });
   });
 
   afterAll(async () => {
@@ -34,15 +49,18 @@ describe('shopping list routes', () => {
   });
 
   it('creates and lists shopping list items', async () => {
+    const cookie = authCookie('alice@example.com');
+
     const created = await supertest(app.server)
       .post('/api/shopping-list')
-      .send({ name: 'Printer paper', nickname: 'alice@example.com' })
+      .set('Cookie', cookie)
+      .send({ name: 'Printer paper' })
       .expect(201);
 
     expect(created.body.name).toBe('Printer paper');
     expect(created.body.requestedBy).toBe('alice@example.com');
 
-    const listed = await supertest(app.server).get('/api/shopping-list').expect(200);
+    const listed = await supertest(app.server).get('/api/shopping-list').set('Cookie', cookie).expect(200);
     expect(listed.body).toEqual([
       expect.objectContaining({
         id: created.body.id,
@@ -52,14 +70,19 @@ describe('shopping list routes', () => {
   });
 
   it('marks a shopping list item as bought', async () => {
+    const aliceCookie = authCookie('alice@example.com');
+    const bobCookie = authCookie('bob@example.com');
+
     const created = await supertest(app.server)
       .post('/api/shopping-list')
-      .send({ name: 'Tea bags', nickname: 'alice@example.com' })
+      .set('Cookie', aliceCookie)
+      .send({ name: 'Tea bags' })
       .expect(201);
 
     const updated = await supertest(app.server)
       .post(`/api/shopping-list/${created.body.id}/bought`)
-      .send({ nickname: 'bob@example.com' })
+      .set('Cookie', bobCookie)
+      .send({})
       .expect(200);
 
     expect(updated.body.bought).toBe(true);
@@ -76,16 +99,8 @@ describe('shopping list routes', () => {
       ],
     });
 
-    const berlinCookie = `team_lunch_auth_session=${createSessionCookieValue({
-      username: 'berlin@company.com',
-      method: 'entra',
-      iat: Math.floor(Date.now() / 1000),
-    })}`;
-    const munichCookie = `team_lunch_auth_session=${createSessionCookieValue({
-      username: 'munich@company.com',
-      method: 'entra',
-      iat: Math.floor(Date.now() / 1000),
-    })}`;
+    const berlinCookie = authCookie('berlin@company.com');
+    const munichCookie = authCookie('munich@company.com');
 
     await supertest(app.server).post('/api/shopping-list').set('Cookie', berlinCookie).send({ name: 'Berlin coffee' }).expect(201);
     await supertest(app.server).post('/api/shopping-list').set('Cookie', munichCookie).send({ name: 'Munich tea' }).expect(201);

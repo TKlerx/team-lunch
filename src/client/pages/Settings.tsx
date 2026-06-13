@@ -1,20 +1,21 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import { withBasePath } from '../config.js';
 import { Section } from '../components/ui/Section.js';
 import { Input } from '../components/ui/Input.js';
 import { Select } from '../components/ui/Select.js';
 import { Button } from '../components/ui/Button.js';
 import * as api from '../api.js';
 import type { AppVersionResponse, UserPreferences } from '../../lib/types.js';
+import {
+  ACTOR_KEY_STORAGE_KEY,
+  AUTH_METHOD_STORAGE_KEY,
+  AUTH_PROFILE_UPDATED_EVENT,
+  DISPLAY_NAME_STORAGE_KEY,
+  setAuthenticatedDisplayName,
+} from '../auth.js';
 
-interface SettingsProps {
-  nickname: string | null;
-  onRename: (newName: string) => void;
-  allowRename?: boolean;
-}
-
-const NICKNAME_MIN_LENGTH = 1;
-const NICKNAME_MAX_LENGTH = 30;
+const DISPLAY_NAME_MAX_GRAPHEMES = 64;
 const EMPTY_PREFERENCES: UserPreferences = {
   userKey: '',
   allergies: [],
@@ -29,7 +30,22 @@ function parsePreferenceTerms(value: string): string[] {
     .filter((part) => part.length > 0);
 }
 
-export default function Settings({ nickname, onRename, allowRename = true }: SettingsProps) {
+function countGraphemes(value: string): number {
+  const segmenter = 'Segmenter' in Intl ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+  return segmenter ? [...segmenter.segment(value)].length : [...value].length;
+}
+
+function getDisplayNameError(value: string): string {
+  if (countGraphemes(value.trim()) > DISPLAY_NAME_MAX_GRAPHEMES) {
+    return `Display name must be at most ${DISPLAY_NAME_MAX_GRAPHEMES} characters.`;
+  }
+  if (/[\u0000-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069\u200B-\u200F\uFEFF<>&"]/.test(value)) {
+    return 'Display name contains unsupported characters.';
+  }
+  return '';
+}
+
+export default function Settings() {
   const {
     canSwitchOfficeLocation,
     officeLocations,
@@ -37,8 +53,6 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     setSelectedOfficeLocationId,
   } = useAdminOfficeContext();
 
-  const [nicknameDraft, setNicknameDraft] = useState(nickname ?? '');
-  const [nicknameTouched, setNicknameTouched] = useState(false);
   const [officeLocationDraft, setOfficeLocationDraft] = useState(selectedOfficeLocationId ?? '');
   const [preferences, setPreferences] = useState<UserPreferences>(EMPTY_PREFERENCES);
   const [allergiesDraft, setAllergiesDraft] = useState('');
@@ -47,31 +61,33 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsError, setSettingsError] = useState('');
   const [settingsSavedMessage, setSettingsSavedMessage] = useState('');
+  const [accountEmail, setAccountEmail] = useState('');
+  const [authMethod, setAuthMethod] = useState('');
+  const [displayNameDraft, setDisplayNameDraft] = useState('');
+  const [displayNameTouched, setDisplayNameTouched] = useState(false);
   const [appVersion, setAppVersion] = useState<AppVersionResponse | null>(null);
 
-  const trimmedNickname = nicknameDraft.trim();
-  const nicknameError =
-    trimmedNickname.length < NICKNAME_MIN_LENGTH
-      ? 'Nickname is required.'
-      : trimmedNickname.length > NICKNAME_MAX_LENGTH
-        ? `Nickname must be at most ${NICKNAME_MAX_LENGTH} characters.`
-        : '';
-  const nicknameUnchanged = trimmedNickname === (nickname ?? '');
   const officeUnchanged = officeLocationDraft === (selectedOfficeLocationId ?? '');
   const allergyTerms = parsePreferenceTerms(allergiesDraft);
   const dislikeTerms = parsePreferenceTerms(dislikesDraft);
   const preferencesUnchanged =
     allergyTerms.join('\u0000') === preferences.allergies.join('\u0000') &&
     dislikeTerms.join('\u0000') === preferences.dislikes.join('\u0000');
+  const storedDisplayName = localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '';
+  const displayNameError = getDisplayNameError(displayNameDraft);
+  const displayNameUnchanged = displayNameDraft.trim() === storedDisplayName;
+  const canEditDisplayName = authMethod === 'local';
   const settingsUnchanged =
-    (nicknameUnchanged || !allowRename) && officeUnchanged && preferencesUnchanged;
+    (!canEditDisplayName || displayNameUnchanged) &&
+    officeUnchanged &&
+    preferencesUnchanged;
 
   const resetDrafts = () => {
-    setNicknameDraft(nickname ?? '');
-    setNicknameTouched(false);
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
     setAllergiesDraft(preferences.allergies.join(', '));
     setDislikesDraft(preferences.dislikes.join(', '));
+    setDisplayNameDraft(storedDisplayName);
+    setDisplayNameTouched(false);
     setSettingsError('');
     setSettingsSavedMessage('');
   };
@@ -80,9 +96,24 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     officeLocations.find((location) => location.id === selectedOfficeLocationId)?.name ?? null;
 
   useEffect(() => {
-    setNicknameDraft(nickname ?? '');
-    setNicknameTouched(false);
-  }, [nickname]);
+    setAccountEmail(localStorage.getItem(ACTOR_KEY_STORAGE_KEY) ?? '');
+    setAuthMethod(localStorage.getItem(AUTH_METHOD_STORAGE_KEY) ?? '');
+    setDisplayNameDraft(localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '');
+    setDisplayNameTouched(false);
+  }, []);
+
+  useEffect(() => {
+    const handleAuthProfileUpdated = () => {
+      const nextDisplayName = localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '';
+      if (!displayNameTouched) {
+        setDisplayNameDraft(nextDisplayName);
+      }
+    };
+    window.addEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    return () => {
+      window.removeEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    };
+  }, [displayNameTouched]);
 
   useEffect(() => {
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
@@ -109,7 +140,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
   }, []);
 
   useEffect(() => {
-    if (!nickname) {
+    if (!accountEmail) {
       setPreferences(EMPTY_PREFERENCES);
       setAllergiesDraft('');
       setDislikesDraft('');
@@ -122,7 +153,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
       setSettingsError('');
       setSettingsSavedMessage('');
       try {
-        const loaded = await api.getUserPreferences(nickname);
+        const loaded = await api.getUserPreferences(accountEmail);
         if (cancelled) return;
         setPreferences(loaded);
         setAllergiesDraft(loaded.allergies.join(', '));
@@ -140,11 +171,11 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     return () => {
       cancelled = true;
     };
-  }, [nickname]);
+  }, [accountEmail]);
 
   const handleSettingsSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if ((allowRename && nicknameError) || settingsUnchanged) {
+    if ((canEditDisplayName && displayNameError) || settingsUnchanged) {
       return;
     }
 
@@ -152,18 +183,33 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
     setSettingsError('');
     setSettingsSavedMessage('');
     try {
-      const effectiveNickname = allowRename ? trimmedNickname : nickname;
-      if (allowRename && !nicknameUnchanged) {
-        onRename(trimmedNickname);
-      }
-
       if (canSwitchOfficeLocation && !officeUnchanged && officeLocationDraft) {
         setSelectedOfficeLocationId(officeLocationDraft);
       }
 
-      if (effectiveNickname && !preferencesUnchanged) {
+      if (canEditDisplayName && !displayNameUnchanged) {
+        const response = await fetch(withBasePath('/api/auth/me/display-name'), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ displayName: displayNameDraft.trim() || null }),
+        });
+        const payload = (await response.json().catch(() => null)) as {
+          displayName?: string | null;
+          displayNameSnapshot?: string;
+          error?: string;
+        } | null;
+        if (!response.ok) {
+          throw new Error(payload?.error || 'Failed to update display name');
+        }
+        const nextDisplay = payload?.displayName ?? '';
+        setAuthenticatedDisplayName(nextDisplay);
+        setDisplayNameDraft(nextDisplay);
+      }
+
+      if (accountEmail && !preferencesUnchanged) {
         const saved = await api.updateUserPreferences(
-          effectiveNickname,
+          accountEmail,
           allergyTerms,
           dislikeTerms,
         );
@@ -203,27 +249,54 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
           </p>
         </div>
 
-        {allowRename && (
-          <Section
-            title="Nickname"
-            description="This is the name shown next to your votes and orders."
-            className="mt-6"
-          >
-            <Input
-              aria-label="Nickname"
-              value={nicknameDraft}
-              onChange={(event) => {
-                setNicknameDraft(event.target.value);
-                setNicknameTouched(true);
-                setSettingsSavedMessage('');
-              }}
-              maxLength={NICKNAME_MAX_LENGTH}
-            />
-            {nicknameError && nicknameTouched && (
-              <p className="mt-1 text-xs text-danger-fg">{nicknameError}</p>
-            )}
-          </Section>
-        )}
+        <Section
+          title="Account"
+          description="Your account identity and the name shown in lunch votes and orders."
+          className="mt-6"
+        >
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-medium text-fg-muted">Account</p>
+              <p className="text-sm font-medium text-fg">{accountEmail || 'Unknown account'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-fg-muted">Authentication</p>
+              <p className="text-sm text-fg">
+                {authMethod === 'entra'
+                  ? 'Microsoft Entra'
+                  : authMethod === 'local'
+                    ? 'Local account'
+                    : 'Unknown'}
+              </p>
+            </div>
+            <label className="block text-xs font-medium text-fg">
+              Display name
+              <Input
+                aria-label="Display name"
+                value={displayNameDraft}
+                disabled={!canEditDisplayName}
+                onChange={(event) => {
+                  setDisplayNameDraft(event.target.value);
+                  setDisplayNameTouched(true);
+                  setSettingsSavedMessage('');
+                }}
+                maxLength={128}
+                className="mt-1"
+              />
+            </label>
+            {displayNameError && displayNameTouched ? (
+              <p className="text-xs text-danger-fg">{displayNameError}</p>
+            ) : null}
+            <p className="text-xs text-fg-muted">
+              {canEditDisplayName
+                ? 'This name appears in lunch votes and orders.'
+                : 'This name is managed by Microsoft Entra.'}
+            </p>
+            {!displayNameDraft.trim() ? (
+              <p className="text-xs text-fg-muted">Your account email is displayed until a name is set.</p>
+            ) : null}
+          </div>
+        </Section>
 
         <Section
           title="Office"
@@ -272,7 +345,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                   className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                   placeholder="e.g. peanuts, shrimp, milk"
                   aria-label="Ingredients to avoid"
-                  disabled={!nickname || preferencesLoading || settingsSaving}
+                  disabled={!accountEmail || preferencesLoading || settingsSaving}
                 />
               </label>
               <label className="text-xs font-medium text-fg">
@@ -287,7 +360,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
                   className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
                   placeholder="e.g. mushrooms, onions"
                   aria-label="Less preferred ingredients"
-                  disabled={!nickname || preferencesLoading || settingsSaving}
+                  disabled={!accountEmail || preferencesLoading || settingsSaving}
                 />
               </label>
             </div>
@@ -327,7 +400,7 @@ export default function Settings({ nickname, onRename, allowRename = true }: Set
               settingsSaving ||
               preferencesLoading ||
               settingsUnchanged ||
-              (allowRename && !!nicknameError)
+              (canEditDisplayName && !!displayNameError)
             }
           >
             {settingsSaving ? 'Saving...' : 'Save settings'}

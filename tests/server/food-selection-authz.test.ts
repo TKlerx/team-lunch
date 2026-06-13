@@ -41,7 +41,20 @@ describe('food selection route authorization', () => {
     await disconnectDatabase();
   });
 
-  it('allows unauthenticated start-food-selection requests to continue to business validation', async () => {
+  async function createApprovedNonAdmin(email: string) {
+    const defaultOffice = await ensureDefaultOfficeLocation();
+    await prisma.authAccessUser.create({
+      data: {
+        email,
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: defaultOffice.id,
+      },
+    });
+  }
+
+  it('rejects unauthenticated start-food-selection requests before business validation', async () => {
     const app = await buildApp();
 
     const res = await app.inject({
@@ -50,8 +63,8 @@ describe('food selection route authorization', () => {
       payload: { pollId: '00000000-0000-0000-0000-000000000000', durationMinutes: 10 },
     });
 
-    expect(res.statusCode).toBe(404);
-    expect(res.json()).toEqual({ error: 'Poll not found' });
+    expect(res.statusCode).toBe(401);
+    expect(res.json()).toEqual({ error: 'Authentication required' });
     await app.close();
   });
 
@@ -231,6 +244,7 @@ describe('food selection route authorization', () => {
 
   it('rejects abort food selection for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',
@@ -308,6 +322,7 @@ describe('food selection route authorization', () => {
 
   it('rejects remind-missing for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',
@@ -328,6 +343,7 @@ describe('food selection route authorization', () => {
 
   it('rejects fallback-orders for non-admin users', async () => {
     const app = await buildApp();
+    await createApprovedNonAdmin('user@company.com');
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',

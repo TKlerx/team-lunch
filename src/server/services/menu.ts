@@ -98,6 +98,79 @@ function validateMenuName(name: string): string {
   return trimmedName;
 }
 
+function isSqliteProvider(): boolean {
+  if ((process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql') === 'sqlite') {
+    return true;
+  }
+
+  return false;
+}
+
+function menuNameEqualsFilter(name: string): { equals: string; mode?: 'insensitive' } {
+  if (isSqliteProvider()) {
+    return { equals: name };
+  }
+
+  return { equals: name, mode: 'insensitive' };
+}
+
+function itemNameEqualsFilter(name: string): { equals: string; mode?: 'insensitive' } {
+  return menuNameEqualsFilter(name);
+}
+
+function namesEqualCaseInsensitive(left: string, right: string): boolean {
+  return left.toLocaleLowerCase() === right.toLocaleLowerCase();
+}
+
+async function findMenuByName(
+  delegate: Pick<Prisma.TransactionClient['menu'], 'findFirst' | 'findMany'>,
+  officeLocationId: string,
+  name: string,
+  excludedId?: string,
+) {
+  if (!isSqliteProvider()) {
+    return delegate.findFirst({
+      where: {
+        officeLocationId,
+        name: menuNameEqualsFilter(name),
+        ...(excludedId ? { id: { not: excludedId } } : {}),
+      },
+    });
+  }
+
+  const candidates = await delegate.findMany({
+    where: {
+      officeLocationId,
+      ...(excludedId ? { id: { not: excludedId } } : {}),
+    },
+  });
+  return candidates.find((candidate) => namesEqualCaseInsensitive(candidate.name, name)) ?? null;
+}
+
+async function findMenuItemByName(
+  menuId: string,
+  name: string,
+  excludedId?: string,
+) {
+  if (!isSqliteProvider()) {
+    return prisma.menuItem.findFirst({
+      where: {
+        menuId,
+        name: itemNameEqualsFilter(name),
+        ...(excludedId ? { id: { not: excludedId } } : {}),
+      },
+    });
+  }
+
+  const candidates = await prisma.menuItem.findMany({
+    where: {
+      menuId,
+      ...(excludedId ? { id: { not: excludedId } } : {}),
+    },
+  });
+  return candidates.find((candidate) => namesEqualCaseInsensitive(candidate.name, name)) ?? null;
+}
+
 function validateMenuLocation(location?: string | null): string | null {
   if (location === undefined || location === null) {
     return null;
@@ -517,28 +590,28 @@ async function previewImport(
     });
   }
 
-  const existingMenu = await prisma.menu.findFirst({
-    where: {
-      officeLocationId,
-      name: { equals: parsed.name, mode: 'insensitive' },
-    },
-    include: {
-      items: {
-        select: {
-          itemNumber: true,
-          name: true,
-          description: true,
-          price: true,
+  const existingMenu = await findMenuByName(prisma.menu, officeLocationId, parsed.name);
+  const existingMenuWithItems = existingMenu
+    ? await prisma.menu.findUnique({
+        where: { id: existingMenu.id },
+        include: {
+          items: {
+            select: {
+              itemNumber: true,
+              name: true,
+              description: true,
+              price: true,
+            },
+          },
         },
-      },
-    },
-  });
+      })
+    : null;
 
-  const itemSummary = computeItemSummary(parsed.items, existingMenu?.items ?? []);
+  const itemSummary = computeItemSummary(parsed.items, existingMenuWithItems?.items ?? []);
 
   return {
     parsed,
-    existingMenu: existingMenu ? { id: existingMenu.id, items: existingMenu.items } : null,
+    existingMenu: existingMenuWithItems ? { id: existingMenuWithItems.id, items: existingMenuWithItems.items } : null,
     itemSummary,
   };
 }
@@ -560,12 +633,7 @@ export async function createMenu(name: string, officeLocationId?: string): Promi
   const trimmed = validateMenuName(name);
 
   // Case-insensitive uniqueness check
-  const existing = await prisma.menu.findFirst({
-    where: {
-      officeLocationId: resolvedOfficeLocationId,
-      name: { equals: trimmed, mode: 'insensitive' },
-    },
-  });
+  const existing = await findMenuByName(prisma.menu, resolvedOfficeLocationId, trimmed);
   if (existing) {
     throw Object.assign(new Error(`A menu named "${existing.name}" already exists`), { statusCode: 409 });
   }
@@ -604,13 +672,7 @@ export async function updateMenu(
   }
 
   // Case-insensitive uniqueness — allow keeping same name (case change)
-  const existing = await prisma.menu.findFirst({
-    where: {
-      name: { equals: trimmed, mode: 'insensitive' },
-      officeLocationId: resolvedOfficeLocationId,
-      id: { not: id },
-    },
-  });
+  const existing = await findMenuByName(prisma.menu, resolvedOfficeLocationId, trimmed, id);
   if (existing) {
     throw Object.assign(new Error(`A menu named "${existing.name}" already exists`), { statusCode: 409 });
   }
@@ -695,12 +757,7 @@ export async function createItem(
   }
 
   // Case-insensitive uniqueness within menu
-  const existing = await prisma.menuItem.findFirst({
-    where: {
-      menuId,
-      name: { equals: trimmedName, mode: 'insensitive' },
-    },
-  });
+  const existing = await findMenuItemByName(menuId, trimmedName);
   if (existing) {
     throw Object.assign(new Error(`An item named "${existing.name}" already exists in this menu`), {
       statusCode: 409,
@@ -744,13 +801,7 @@ export async function updateItem(
   }
 
   // Case-insensitive uniqueness within same menu (excluding self)
-  const existing = await prisma.menuItem.findFirst({
-    where: {
-      menuId: current.menuId,
-      name: { equals: trimmedName, mode: 'insensitive' },
-      id: { not: id },
-    },
-  });
+  const existing = await findMenuItemByName(current.menuId, trimmedName, id);
   if (existing) {
     throw Object.assign(new Error(`An item named "${existing.name}" already exists in this menu`), {
       statusCode: 409,
@@ -794,12 +845,7 @@ export async function importMenuFromJson(
   const { parsed } = await previewImport(payload, resolvedOfficeLocationId);
 
   const { menu, created } = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-    const existing = await tx.menu.findFirst({
-      where: {
-        officeLocationId: resolvedOfficeLocationId,
-        name: { equals: parsed.name, mode: 'insensitive' },
-      },
-    });
+    const existing = await findMenuByName(tx.menu, resolvedOfficeLocationId, parsed.name);
 
     if (existing) {
       await tx.menu.update({

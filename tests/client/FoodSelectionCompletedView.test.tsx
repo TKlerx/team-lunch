@@ -38,7 +38,9 @@ function renderView() {
 describe('FoodSelectionCompletedView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    window.localStorage.setItem('team_lunch_nickname', 'Alice');
+    window.localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    window.localStorage.setItem('team_lunch_display_name', 'Alice');
+    window.localStorage.setItem('team_lunch_auth_method', 'local');
     mockRateOrder.mockResolvedValue(makeFoodOrder({ rating: 4, feedbackComment: 'Food was still hot' }));
     if (!navigator.clipboard) {
       Object.defineProperty(window.navigator, 'clipboard', {

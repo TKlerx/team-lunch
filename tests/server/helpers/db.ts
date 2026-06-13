@@ -102,6 +102,7 @@ export async function cleanDatabase(): Promise<void> {
       await prisma.officeLocation.deleteMany();
       await prisma.localAuthUser.deleteMany();
       await prisma.userPreference.deleteMany();
+      await prisma.authAuditLog.deleteMany();
       await prisma.auditLog.deleteMany();
       return;
     } catch (error) {

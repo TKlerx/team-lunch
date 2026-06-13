@@ -13,9 +13,12 @@ entraOidc,localAuth,localLoginProtection}.ts`, `src/client/auth.ts`,
 `local-auth.test.ts`, `local-user-management-authz.test.ts`. Original prose:
 `specs/old/auth-hardening.md` (+ `specs/old/identity.md` for nickname).
 
-> Migrated spec. Auth is **optional** — when no auth env is configured the app
-> runs open with nickname-only identity. Nickname identity itself is a separate
-> client-only concern (see `specs/old/identity.md`).
+> Migrated spec, updated June 2026. Auth is required for lunch workflow access:
+> when no auth method is configured the app shows an authentication setup error
+> instead of running open. User-attributed actions resolve identity from the
+> signed session. Optional display names are persisted on auth access records;
+> lunch votes and orders store stable actor keys plus immutable display
+> snapshots for historical rows.
 
 ## User Scenarios & Testing
 
@@ -27,7 +30,8 @@ accounts; a signed HttpOnly session cookie is issued.
 **Why this priority**: Primary gate when local auth is enabled.
 
 **Independent Test**: Seed a local user, `POST /api/auth/local/login`, confirm a
-signed HttpOnly cookie and that protected routes accept it.
+   signed HttpOnly cookie and that protected routes accept it while the cookie
+   session version matches `auth_access_users.session_version`.
 
 **Acceptance Scenarios**:
 
@@ -37,8 +41,9 @@ signed HttpOnly cookie and that protected routes accept it.
 2. **Given** repeated failed logins, **When** they exceed the abuse threshold,
    **Then** per-IP (and/or per-username) rate-limit/backoff rejects or delays
    further attempts predictably; a successful login clears the penalty window.
-3. **Given** no local-auth env configured, **Then** local login routes are
-   inactive and the app runs open.
+3. **Given** no local-auth users and no Entra configuration, **Then** the app
+   reports authentication setup is required and does not render the lunch
+   workflow.
 
 ### User Story 2 - Microsoft Entra SSO (Priority: P1)
 
@@ -53,7 +58,14 @@ the id_token before issuing a session.
    `ENTRA_TENANT_ID` before creating a session.
 2. **Given** any validation step fails, **Then** no session cookie is issued.
 3. **Given** a valid Entra login, **Then** the account username is used as the
-   user's action label and rename is disabled for that session.
+   stable actor key and the ID-token `name` claim is cached as the managed
+   display name.
+4. **Given** Microsoft Graph app permissions are available, **When** the signed-in
+   Entra user has a profile photo, **Then** the backend serves the image bytes
+   through an app endpoint without exposing Graph URLs or tokens to the client.
+5. **Given** no photo, missing Graph configuration, Graph/auth errors, or a local
+   account, **Then** avatar display falls back to initials/generic UI and no
+   avatar bytes are persisted.
 
 ### User Story 3 - Approval gate (Priority: P1)
 
@@ -83,8 +95,10 @@ An admin generates local credentials and promotes/demotes users.
 ### Edge Cases
 
 - **Dual auth**: local + Entra can both be enabled; user may use either.
-- **Logout**: clears the session cookie; does not invalidate prior id_tokens or
-  other sessions (no server session store).
+- **Logout**: clears the session cookie. Admin local-account email edits and
+  deletions also revoke matching local browser state over SSE when connected and
+  make old local-session cookies fail because the original local account no
+  longer exists.
 - **Blocked user**: re-checked from DB; blocked state denies protected flows even
   with a valid cookie.
 
@@ -106,16 +120,27 @@ An admin generates local credentials and promotes/demotes users.
   on protected requests, not trusted from the cookie alone.
 - **FR-007**: Admins MUST be able to generate local users and promote/demote;
   the bootstrap admin MUST be undeletable and demotion-protected.
-- **FR-008**: Auth MUST be optional — unconfigured auth env ⇒ open app.
+- **FR-008**: Auth MUST be mandatory for the lunch workflow; unconfigured auth
+  MUST show a setup/configuration error instead of falling back to open access.
 - **FR-009**: Cookie protections (signed, HttpOnly) MUST NOT be weakened.
+- **FR-010**: Session cookies MUST carry the current `auth_access_users.session_version`; protected requests MUST return `401 Session expired` when the cookie version no longer matches the database version.
+- **FR-011**: Entra profile photos MUST be fetched server-side from Microsoft Graph only when Entra app credentials are configured and Graph permissions allow it.
+- **FR-012**: Avatar bytes MUST NOT be persisted in the database or filesystem; successful photos, no-photo responses, and Graph/auth errors MAY be cached only in bounded per-process memory with TTLs.
+- **FR-013**: The client MUST consume only the app backend avatar endpoint and MUST gracefully fall back to initials/generic avatar when the endpoint returns no image.
 
 ### Key Entities
 
 - **AuthAccessUser** (`auth_access_users`): email, is_admin, approval/blocked
-  state, office access.
+  state, office access, and `session_version` for authoritative session
+  invalidation.
 - **LocalAuthUser** (`local_auth_users`): email, password hash, admin-managed.
-- **Session cookie**: signed HttpOnly — username, auth method, issued-at.
-- **AuditLog**: sign-in / admin actions (follow-up candidate, partial today).
+- **Session cookie**: signed HttpOnly — username, auth method, issued-at, and
+  auth-access session version.
+- **AuthAuditLog** (`auth_audit_logs`): DB-only profile/access/login history
+  with actor email, target email, field, old/new values, metadata, and timestamp.
+- **Avatar memory cache**: bounded per-instance process cache for Entra Graph
+  photo bytes and fallback states; cleared on app restart and not shared between
+  containers.
 
 ### Realtime / SSE Events
 
@@ -150,7 +175,12 @@ An admin generates local credentials and promotes/demotes users.
 
 - Custom Fastify auth is retained deliberately — no Auth.js/Next migration.
 - No external/shared session store (in-process; single-instance).
-- Nickname identity is legacy/open-mode only. Authenticated deployments use the
-  signed session username as the authoritative actor label for votes, orders,
-  preferences, and delivery actions.
-- Audit logging for auth attempts is a known follow-up, not fully present.
+- Nickname identity is retired. Authenticated deployments use the signed session
+  username as the authoritative actor key for votes, orders, preferences,
+  shopping-list actions, and delivery actions. Display names are presentation
+  snapshots, never ownership keys.
+- Auth/profile audit history is persisted for backend inspection; no admin UI is
+  part of this feature slice.
+- Entra avatars use per-instance memory cache only. Multi-container deployments
+  may fetch the same photo once per instance; app restart clears the cache; first
+  loads may wait on Graph; photo freshness can lag until the relevant TTL expires.

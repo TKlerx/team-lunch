@@ -2094,3 +2094,197 @@
 - [x] **87.3 Remove unnecessary page-level panels** *(done)*
   - Removed the outer card/panel wrappers from Settings, Shopping List, and Administration so these pages follow the uncluttered Manage Menus layout pattern
   - Kept functional inner panels for repeated or status-specific content while letting page sections sit directly on the app surface
+
+---
+
+## Priority 88 - Display Name Identity (Jun 2026)
+
+> Product decision: legacy nickname/open mode is replaced by account-based identity
+> plus optional display names. Anonymous lunch guests are no longer supported;
+> manually created local guest accounts remain supported.
+
+### Completed
+
+- [x] **88.1 Make authentication mandatory and remove legacy nickname mode** *(done)*
+  - Removed anonymous/open-app access when no auth method is configured; the app now shows a clear setup/configuration error instead.
+  - Removed `NicknameModal`, `useNickname`, `team_lunch_nickname`, and `NICKNAME_PROMPT` from the authenticated app identity flow.
+  - Retired request-body nickname fallback from authenticated routes; user-attributed actions now resolve the actor from the signed session and ignore nickname compatibility fields.
+  - Kept DB-managed local accounts available for external lunch guests.
+  - Updated specs and AGENTS discoveries to reflect that nickname-only identity is retired.
+  - Tests covered unauthenticated vote/order/preference rejection, the no-auth-method setup error, local-login guest access, and signed-actor route setup.
+
+- [x] **88.2 Add persisted display-name model**
+  - Added nullable `display_name` and `display_name_source` to `auth_access_users`.
+  - Used `display_name_source` values: `local`, `entra`, or `null`.
+  - Allowed local/manual accounts to store admin/user-edited display names.
+  - Synced Entra account display names from the ID-token `name` claim on successful login.
+  - Kept display names non-unique.
+  - Tests covered mocked/unit Entra display-name sync, local display-name persistence, and duplicate display names. Live Entra ID testing remains unavailable without tenant/app permissions.
+
+- [x] **88.3 Validate display names consistently** *(done)*
+  - Trimmed leading/trailing whitespace before validation and storage.
+  - Limited names to 64 user-visible grapheme clusters.
+  - Allowed Unicode letters/numbers, normal spaces, safe punctuation (`.`, `_`, `-`, `'`, `@`, `(`, `)`), and emojis.
+  - Rejected control characters, bidi override characters, invisible spoofing characters, and HTML-sensitive characters such as `<` and `>`.
+  - Kept backend-owned validation, with UI field-level indicators/errors mirroring the same rules.
+  - Tests covered supported punctuation/emoji, max-length boundaries, and control/bidi/invisible/HTML-sensitive rejection.
+
+- [x] **88.4 Split stable actor identity from display snapshots**
+  - Added stable `actor_key` / `actor_email` fields to poll votes and food orders.
+  - Added immutable `display_name_snapshot` fields to poll votes and food orders.
+  - Made new writes use session username/email as actor key and `displayName || email` as display snapshot.
+  - Migrated old `nickname` values into display snapshots and actor fallbacks so historical rows kept their original shown names.
+  - Corrected poll vote uniqueness to use stable actor keys rather than display snapshots, with a follow-up migration for environments that had already applied the first Display Name Identity migration.
+  - Made ownership/withdrawal/rating checks use actor key, not display name.
+  - Updated UI lunch boards to show display snapshots, with email only as fallback when no display name exists.
+  - Tests covered duplicate display-name users, signed-actor withdrawal ownership, historical snapshot preservation, and authenticated actor-key route setup.
+
+- [x] **88.5 Extend auth/config and profile APIs** *(done)*
+  - Extended `GET /api/auth/config` and local login so `auth.user` includes `username`, `method`, `displayName`, and `displayNameSource`.
+  - Added `PUT /api/auth/me/display-name` for signed-in local users; empty value clears display name.
+  - Rejected edits for Entra-managed display names with a clear error.
+  - Added `PUT /api/auth/users/display-name` admin support for local/manual accounts.
+  - Tests covered local user self-update, Entra edit rejection, admin local display-name update, and blocked/pending profile rejection.
+
+- [x] **88.6 Update Settings account/profile UX** *(done)*
+  - Showed account/email prominently as read-only.
+  - Showed authentication method:
+    - `Authentication: Microsoft Entra`
+    - `Authentication: Local account`
+  - Showed the display-name field below account identity.
+  - Made local account display names editable, with copy explaining this name appears in lunch votes and orders.
+  - Made Entra display names read-only, with copy explaining the name is managed by Microsoft Entra/Microsoft profile.
+  - Showed fallback messaging when account email is displayed because no display name exists.
+  - Wired local display-name saves to `PUT /api/auth/me/display-name`.
+  - Tests covered account identity, auth method, local display-name editing, read-only Entra display names, validation errors, and email fallback messaging.
+
+- [x] **88.7 Update Administration user management** *(done)*
+  - Showed account/email plus display name for every user.
+  - Marked local, external, and bootstrap accounts in the admin UI.
+  - Allowed admins to edit display names for local/manual accounts.
+  - Allowed admins to edit account/email for manually created local accounts only.
+  - Allowed admins to delete manually created local accounts.
+  - Kept Entra account email/display name read-only in local admin UI and rejected Entra-managed display-name edits server-side.
+  - Blocked local deletion of Entra-backed users and protected bootstrap admin accounts.
+  - Preserved existing vote/order display snapshots after local account deletion and email edits.
+  - Broadcast `auth_session_revoked` over SSE after local account email edits/deletes; old local-session cookies expire because the original `local_auth_users` row no longer exists.
+  - Tests covered admin local display-name edits, local email edits, local account deletion, Entra edit/delete rejection, bootstrap admin deletion rejection, historical snapshot preservation, and affected local-user re-login.
+
+- [x] **88.8 Remove frontend nickname dependencies** *(done)*
+  - Replaced `useNickname` usage with current authenticated user/profile data.
+  - Removed nickname props from app shell where possible.
+  - Updated Header, phase derivation, voting, ordering, preferences, shopping list, and notifications to use authenticated profile identity.
+  - Kept the UI display rule consistent: display name first, email fallback.
+  - Tests covered authenticated-profile main flow without localStorage nickname and verified lunch interactions no longer send user-selected nicknames.
+
+- [x] **88.9 Harden session invalidation with versions** *(done)*
+  - Add `session_version` to `auth_access_users` so one authoritative invalidation path covers both local and Entra sessions.
+  - Include `sessionVersion` in the signed auth-session cookie on login.
+  - Reject protected requests with `401 Session expired` when the cookie version differs from the current DB version.
+  - Increment the version for sensitive identity/access changes: local email edits, local account deletion, block/unblock, approval changes, admin promote/demote, and local credential regeneration/reset if applicable.
+  - Do not increment the version for display-name edits; display names continue to update live without forcing logout.
+  - Keep `auth_session_revoked` SSE as the user-friendly immediate signal, but make backend version checks authoritative for missed SSE/offline tabs.
+  - Tests: stale session cookies are rejected after version increments, fresh login receives the new version, display-name edits do not invalidate sessions, and local/Entra version checks use the same `auth_access_users` source.
+  - Added migration `20260612103000_add_auth_access_session_version` and updated PostgreSQL + SQLite schemas.
+  - Centralized version checks through auth route helpers, authenticated actor resolution, and office context.
+  - Replaced SQLite-incompatible `createMany(... skipDuplicates)` in auth office membership sync with per-office upsert.
+
+- [x] **88.10 Add profile audit/history** *(done)*
+  - Add DB-only profile/access audit history; no admin UI is required in this task.
+  - Track user profile creation, editing, and deletion with actor, target, timestamp, field, old value, and new value where applicable.
+  - Track successful logins and failed login attempts for local auth and Entra auth where the backend can determine the target email/error.
+  - Store enough structured metadata to support a future admin-facing history view without changing the core event model.
+  - Tests: audit rows are written for create/edit/delete, successful local/Entra logins, failed local login, and failed Entra callback/login cases with known reasons.
+  - Added `auth_audit_logs` to PostgreSQL + SQLite schemas with event, actor/target email, target type, field, old/new values, metadata, and timestamp.
+  - Added `src/server/services/authAudit.ts` and wired auth access/profile services plus local/Entra login routes.
+  - Added `tests/server/auth-audit.test.ts`; expanded cleanup for the new model.
+
+- [x] **88.11 Add Entra/Graph avatar support** *(done)*
+  - Fetch Microsoft profile photo via Graph in the backend when permissions are configured; do not expose Graph URLs or tokens to the client.
+  - Cache avatar bytes only in bounded backend memory with TTLs for success, no-photo, and Graph/auth errors; do not persist avatars in the database or filesystem.
+  - Return cached avatar image responses from an app backend endpoint with appropriate private cache headers.
+  - Fall back to initials/generic avatar when no photo exists, Graph is unavailable, permissions are missing, or cache fetch fails.
+  - Document expected operational behavior: per-instance cache in multi-container deployments, refetch after app restart, possible first-load latency, and TTL-delayed freshness.
+  - Tests: Graph success returns image bytes, no-photo/errors fall back cleanly, cache avoids repeated Graph calls within TTL, and local/manual accounts skip Graph.
+  - Added `GET /api/auth/me/avatar`, backed by `src/server/services/authAvatar.ts`.
+  - Header now renders the backend avatar image and falls back to initials if no image loads.
+  - Discovery: avatar support reuses the Entra app's client-credentials Graph token flow; Graph photo-readable app permissions are deployment prerequisites, otherwise the endpoint returns fallback `204`.
+
+- [x] **88.12 Add local guest avatar customization** *(done)*
+  - Use a generic avatar for manually created local accounts using their derived initials.
+  - Do not add local avatar upload, admin-selected avatars, or backend persistence in this task.
+  - Tests: local/manual users render the generic avatar and do not trigger Graph avatar fetches.
+  - Header now receives the authenticated method and only requests `/api/auth/me/avatar` for Entra users.
+  - Local/manual accounts render derived initials directly, avoiding unnecessary backend/Graph avatar lookups.
+  - Validation:
+    - `pnpm exec vitest run --project client tests/client/Header.test.tsx`
+    - `pnpm exec vitest run --project server tests/server/auth-avatar.test.ts`
+    - `./validate.ps1`
+
+### In Progress
+- [ ] **88.13 Test Entra ID account handling manually**
+  - Purpose: cover live Microsoft Entra account behavior that unit/mocked tests cannot verify without tenant/app permissions.
+  - Preconditions:
+    - Tester has access to a real Entra tenant and app registration used by the deployment.
+    - App registration has correct redirect URI: `${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`.
+    - Deployment has `APP_PUBLIC_URL`, `BASE_PATH`, `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, and `AUTH_SESSION_SECRET` configured.
+    - For avatar tests, app registration has Graph profile-photo read permissions and admin consent, or tester records the expected fallback when permissions are absent.
+    - Tester has at least two Entra users: one regular user and one admin/bootstrap user from `AUTH_ADMIN_EMAIL`.
+    - Tester has one local/manual guest account for comparison.
+  - Login and tenant validation:
+    - Sign in with a valid Entra user from the configured tenant; verify login succeeds and the app renders the lunch workflow.
+    - Sign in with a user from an unapproved/different tenant if available; verify callback fails and no app session is created.
+    - Start Entra login, tamper/reuse the callback `state`, or retry an old callback URL; verify no session is issued.
+    - Verify `GET /api/auth/config` after login reports `authenticated: true`, `user.method: "entra"`, the Entra email/username, and the expected role/approval state.
+    - Verify logout clears the session and protected API calls return unauthorized afterward.
+  - Display-name handling:
+    - Sign in as an Entra user with a Microsoft profile display name; verify Settings shows `Authentication: Microsoft Entra`.
+    - Verify the display name shown in Header/Settings matches the Entra ID-token `name` claim when present.
+    - Verify the display-name field is read-only and explains it is managed by Microsoft Entra/Microsoft profile.
+    - Attempt `PUT /api/auth/me/display-name` as the Entra user; verify it is rejected with the Entra-managed display-name error.
+    - Remove or omit the Entra `name` claim in a test user/app claim setup if possible; verify UI falls back to account email.
+    - Sign in with two Entra accounts that share the same display name; verify votes/orders remain isolated by account email/actor key.
+  - Lunch identity behavior:
+    - Create/cast/withdraw poll votes as Entra user A; verify rows use stable `actor_key` / `actor_email` and display `display_name_snapshot`.
+    - Change the user's Microsoft profile display name, sign in again after token refresh, then create new votes/orders; verify new snapshots use the new name and historical snapshots stay unchanged.
+    - Place/withdraw food orders as Entra user A; verify user B with same display name cannot withdraw or edit A's orders.
+    - Verify shopping-list and preference actions attribute to the signed Entra account, not any legacy nickname/body value.
+  - Approval, roles, and admin management:
+    - With `AUTH_ADMIN_EMAIL` configured, sign in as a new non-admin Entra user; verify waiting/approval screen appears.
+    - Approve the pending Entra user as admin; verify the user can access the workflow after refresh/re-login.
+    - Block the Entra user as admin; verify active/future protected requests are denied.
+    - Promote and demote an Entra user where allowed; verify role changes appear in `/api/auth/config` and UI navigation.
+    - Verify Entra account email/display name are read-only in Administration.
+    - Attempt local-account email edit/delete flows against an Entra-backed user; verify server rejects them.
+    - Verify bootstrap admin cannot be demoted/deleted when it is an Entra account.
+  - Session invalidation:
+    - Keep an Entra user logged in in two browser sessions; block/unblock or change approval/role in admin; verify old session behavior matches expected `session_version` invalidation.
+    - Verify stale protected API calls return `401 Session expired` after version increment.
+    - Verify display-name sync/update does not force logout by itself.
+    - Verify missed SSE/offline tabs are still rejected by backend session-version checks after sensitive account changes.
+  - Avatar behavior:
+    - For an Entra user with a Microsoft profile photo, verify Header requests `/api/auth/me/avatar` and renders the image.
+    - Verify browser/devtools never expose Microsoft Graph photo URLs or Graph access tokens.
+    - Verify avatar response has a private cache header and image content type.
+    - Reload within the success TTL; verify repeated page loads do not repeatedly fetch Graph server-side if logs/telemetry are available.
+    - For an Entra user without a photo, verify the app falls back to initials/generic avatar.
+    - Remove/deny Graph photo permission or use a deployment without Graph permissions; verify avatar endpoint returns fallback behavior without breaking login.
+    - Restart the app instance; verify the first avatar request refetches because cache is in-memory only.
+    - In multi-instance deployment if available, verify each instance can cache independently and fallback still works.
+    - Verify local/manual guest account renders initials and does not request `/api/auth/me/avatar` from the client.
+  - Audit/history verification:
+    - Verify successful Entra logins create `auth_audit_logs` entries with expected actor/target email and metadata.
+    - Verify failed Entra callback/login attempts create audit entries with known error reasons where the backend can determine them.
+    - Verify profile creation/sync on first Entra login creates expected audit/profile state without duplicate users on repeated login.
+    - Verify admin approval/block/promote/demote changes for Entra accounts create audit rows with actor and target.
+  - Multi-office behavior if enabled:
+    - Assign an Entra user to one office; verify menus, polls, food selections, shopping list, and history are scoped to that office.
+    - Give admin/global access to multiple offices; verify office switcher appears and switching scopes data correctly.
+    - Verify regular Entra users cannot access another office's protected data by changing request parameters.
+  - Evidence testers should capture:
+    - Deployment/environment configuration keys used, excluding secret values.
+    - Tenant/app registration redirect URI and Graph permission/admin-consent status.
+    - Test account matrix: Entra admin, Entra regular, Entra pending/blocked, local/manual guest.
+    - Screenshots or API responses for Settings, Administration, avatar rendering/fallback, approval gate, and session-expired behavior.
+    - Relevant `auth_access_users` and `auth_audit_logs` rows with sensitive values redacted.
+    - Any deviations caused by tenant policy, Conditional Access, missing Graph permission, or app registration limits.

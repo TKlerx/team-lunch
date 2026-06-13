@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import type { AppPhase, FoodSelection, Poll } from '../../lib/types.js';
 
 const phaseLabels: Record<AppPhase, string> = {
-  NICKNAME_PROMPT: 'Nickname setup',
   NO_MENUS: 'No menus available',
   POLL_IDLE: 'Poll ready',
   POLL_ACTIVE: 'Phase 1/3 · Poll active',

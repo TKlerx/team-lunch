@@ -93,6 +93,9 @@ function formatFoodOrderRecord(order: {
   id: string;
   selectionId: string;
   nickname: string;
+  actorKey?: string | null;
+  actorEmail?: string | null;
+  displayNameSnapshot?: string | null;
   itemId: string | null;
   itemName: string;
   notes: string | null;
@@ -108,7 +111,10 @@ function formatFoodOrderRecord(order: {
   return {
     id: order.id,
     selectionId: order.selectionId,
-    nickname: order.nickname,
+    nickname: order.displayNameSnapshot ?? order.nickname,
+    actorKey: order.actorKey ?? null,
+    actorEmail: order.actorEmail ?? null,
+    displayNameSnapshot: order.displayNameSnapshot ?? order.nickname,
     itemId: order.itemId,
     itemName: order.itemName,
     notes: order.notes,
@@ -278,10 +284,27 @@ function validateRemainingMinutes(remainingMinutes: number): number {
 
 function validateNickname(nickname: string): string {
   const trimmed = nickname.trim();
-  if (!trimmed || trimmed.length > 30) {
-    throw Object.assign(new Error('Nickname must be 1–30 characters'), { statusCode: 400 });
+  if (!trimmed || trimmed.length > 255) {
+    throw Object.assign(new Error('Actor label must be 1-255 characters'), { statusCode: 400 });
   }
   return trimmed;
+}
+
+type OrderActor = {
+  actorKey?: string | null;
+  actorEmail?: string | null;
+  displayNameSnapshot?: string | null;
+};
+
+function resolveOrderIdentity(label: string, actor?: OrderActor): {
+  actorKey: string;
+  actorEmail: string | null;
+  displayNameSnapshot: string;
+} {
+  const displayNameSnapshot = validateNickname(actor?.displayNameSnapshot ?? label);
+  const actorKey = validateNickname(actor?.actorKey ?? label).toLowerCase();
+  const actorEmail = actor?.actorEmail?.trim().toLowerCase() || null;
+  return { actorKey, actorEmail, displayNameSnapshot };
 }
 
 function validateOrderPlacedBy(value: string): string {
@@ -523,8 +546,9 @@ export async function placeOrder(
   itemId: string,
   notes?: string,
   officeLocationId?: string,
+  actor?: OrderActor,
 ): Promise<FoodOrder> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveOrderIdentity(nickname, actor);
 
   if (notes !== undefined && notes !== null && notes.length > 200) {
     throw Object.assign(new Error('Notes must be 200 characters or fewer'), { statusCode: 400 });
@@ -564,7 +588,10 @@ export async function placeOrder(
   const order = await prisma.foodOrder.create({
     data: {
       selectionId,
-      nickname: trimmedNick,
+      nickname: identity.displayNameSnapshot,
+      actorKey: identity.actorKey,
+      actorEmail: identity.actorEmail,
+      displayNameSnapshot: identity.displayNameSnapshot,
       itemId,
       itemName: item.name,
       notes: notes ?? null,
@@ -586,8 +613,9 @@ export async function withdrawOrder(
   nickname: string,
   orderId?: string,
   officeLocationId?: string,
+  actor?: OrderActor,
 ): Promise<void> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveOrderIdentity(nickname, actor);
 
   const selection = await prisma.foodSelection.findUnique({
     where: { id: selectionId },
@@ -610,25 +638,33 @@ export async function withdrawOrder(
 
   if (orderId) {
     const order = await prisma.foodOrder.findFirst({
-      where: { id: orderId, selectionId, nickname: trimmedNick },
+      where: { id: orderId, selectionId, actorKey: identity.actorKey },
     });
     if (!order) {
       throw Object.assign(new Error('Order not found'), { statusCode: 404 });
     }
 
     await prisma.foodOrder.delete({ where: { id: order.id } });
-    broadcast('order_withdrawn', { nickname: trimmedNick, selectionId, orderId }, selection.officeLocationId);
+    broadcast(
+      'order_withdrawn',
+      { nickname: identity.displayNameSnapshot, actorKey: identity.actorKey, selectionId, orderId },
+      selection.officeLocationId,
+    );
     return;
   }
 
   const deleted = await prisma.foodOrder.deleteMany({
-    where: { selectionId, nickname: trimmedNick },
+    where: { selectionId, actorKey: identity.actorKey },
   });
   if (deleted.count === 0) {
     throw Object.assign(new Error('Order not found'), { statusCode: 404 });
   }
 
-  broadcast('order_withdrawn', { nickname: trimmedNick, selectionId }, selection.officeLocationId);
+  broadcast(
+    'order_withdrawn',
+    { nickname: identity.displayNameSnapshot, actorKey: identity.actorKey, selectionId },
+    selection.officeLocationId,
+  );
 }
 
 export async function expireFoodSelection(
@@ -748,8 +784,9 @@ export async function rateOrder(
   rating: number,
   feedbackComment?: string | null,
   officeLocationId?: string,
+  actor?: OrderActor,
 ): Promise<FoodOrder> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveOrderIdentity(nickname, actor);
   const validatedRating = validateRating(rating);
   const normalizedFeedbackComment = normalizeFeedbackComment(feedbackComment);
 
@@ -771,7 +808,7 @@ export async function rateOrder(
   if (!existingOrder || existingOrder.selectionId !== selectionId) {
     throw Object.assign(new Error('Order not found'), { statusCode: 404 });
   }
-  if (existingOrder.nickname !== trimmedNick) {
+  if ((existingOrder.actorKey ?? existingOrder.nickname).toLowerCase() !== identity.actorKey) {
     throw Object.assign(new Error('You can only rate your own meal'), { statusCode: 403 });
   }
 
@@ -1097,11 +1134,11 @@ export async function setOrderDelivered(
   return formatted;
 }
 
-export async function exportOrdersForUserXlsx(nickname: string): Promise<Buffer> {
-  const trimmedNick = validateNickname(nickname);
+export async function exportOrdersForUserXlsx(nickname: string, actor?: OrderActor): Promise<Buffer> {
+  const identity = resolveOrderIdentity(nickname, actor);
 
   const orders = await prisma.foodOrder.findMany({
-    where: { nickname: trimmedNick },
+    where: { actorKey: identity.actorKey },
     include: {
       selection: true,
       item: true,

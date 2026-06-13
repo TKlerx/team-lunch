@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as api from '../api.js';
-import { isAdminAuthenticatedUser } from '../auth.js';
+import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
 import FoodSelectionOrderBoard from './FoodSelectionOrderBoard.js';
 import MinutesActionDropdown from './MinutesActionDropdown.js';
@@ -18,7 +17,7 @@ const ETA_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60] as const;
 
 export default function FoodSelectionOrderingView() {
   const { activeFoodSelection, menus } = useAppState();
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [etaMinutes, setEtaMinutes] = useState<number>(30);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -36,7 +35,7 @@ export default function FoodSelectionOrderingView() {
   if (!activeFoodSelection || activeFoodSelection.status !== 'ordering') return null;
 
   const selection = activeFoodSelection;
-  const normalizedNickname = nickname?.trim().toLowerCase() ?? null;
+  const normalizedNickname = actorLabel?.trim().toLowerCase() ?? null;
   const orderingOwner = selection.orderPlacedBy?.trim() ?? '';
   const isClaimed = orderingOwner.length > 0;
   const isClaimedByMe = !!normalizedNickname && orderingOwner.toLowerCase() === normalizedNickname;
@@ -97,7 +96,7 @@ export default function FoodSelectionOrderingView() {
     setSubmitting(true);
     setError('');
     try {
-      await api.placeDeliveryOrder(selection.id, value, nickname ?? undefined);
+      await api.placeDeliveryOrder(selection.id, value, actorLabel ?? undefined);
       setEtaMinutes(value);
       return true;
     } catch (requestError) {
@@ -119,7 +118,7 @@ export default function FoodSelectionOrderingView() {
     setClaimingOrder(true);
     setError('');
     try {
-      await api.claimOrderingResponsibility(selection.id, nickname ?? undefined);
+      await api.claimOrderingResponsibility(selection.id, actorLabel ?? undefined);
     } catch (requestError) {
       setError((requestError as Error).message);
     } finally {
@@ -142,7 +141,7 @@ export default function FoodSelectionOrderingView() {
   const handleToggleProcessed = async (orderId: string, processed: boolean) => {
     setProcessingOrderIds((previous) => new Set(previous).add(orderId));
     try {
-      await api.setOrderProcessed(selection.id, orderId, processed, nickname ?? undefined);
+      await api.setOrderProcessed(selection.id, orderId, processed, actorLabel ?? undefined);
     } catch (requestError) {
       setError((requestError as Error).message);
     } finally {
@@ -181,7 +180,7 @@ export default function FoodSelectionOrderingView() {
     try {
       await api.placeFallbackOrder(selection.id, {
         nickname: candidate.nickname,
-        actingNickname: nickname ?? undefined,
+        actingNickname: actorLabel ?? undefined,
       });
       setFallbackCandidates((previous) =>
         previous.filter((entry) => entry.nickname !== candidate.nickname),
@@ -205,7 +204,7 @@ export default function FoodSelectionOrderingView() {
     try {
       await api.pingFallbackCandidate(selection.id, {
         nickname: candidate.nickname,
-        actingNickname: nickname ?? undefined,
+        actingNickname: actorLabel ?? undefined,
       });
       setFallbackSuccess(`Pinged ${candidate.nickname}. Browser notification and email were triggered best-effort.`);
     } catch (requestError) {

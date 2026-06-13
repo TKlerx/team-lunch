@@ -4,13 +4,10 @@ import type { AppPhase } from '../../lib/types.js';
 
 /**
  * Pure derivation function — exported for direct testing.
- * Determines the current application phase from SSE state + nickname.
+ * Determines the current application phase from SSE state.
  */
-export function deriveAppPhase(state: AppState, nickname: string | null): AppPhase {
-  // 1. No nickname → must prompt
-  if (!nickname) return 'NICKNAME_PROMPT';
-
-  // 2. Not yet initialized (SSE hasn't connected) — treat as idle; will update fast
+export function deriveAppPhase(state: AppState, _identityLabel?: string | null): AppPhase {
+  // 1. Not yet initialized (SSE hasn't connected) — treat as idle; will update fast
   if (!state.initialized) return 'POLL_IDLE';
 
   // 3. Active food selection takes highest priority
@@ -60,7 +57,7 @@ export function deriveAppPhase(state: AppState, nickname: string | null): AppPha
 /**
  * Hook version — reads from AppContext automatically.
  */
-export function useAppPhase(nickname: string | null): AppPhase {
+export function useAppPhase(): AppPhase {
   const state = useAppState();
-  return deriveAppPhase(state, nickname);
+  return deriveAppPhase(state);
 }

@@ -272,6 +272,36 @@ describe('useSSE', () => {
     expect(result.current.menus[0].name).toBe('Pizza Place');
   });
 
+  it('ignores failed history bootstrap responses without corrupting history state', async () => {
+    globalThis.fetch = vi.fn((input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url === '/api/health') {
+        return Promise.resolve({
+          json: () => Promise.resolve({ status: 'ok', db: { connected: true, attemptCount: 0 } }),
+        } as Response);
+      }
+
+      if (url === '/api/food-selections/history') {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'The column `food_orders.actor_key` does not exist' }),
+        } as Response);
+      }
+
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([]),
+      } as Response);
+    }) as unknown as typeof fetch;
+
+    const { result } = renderSSE();
+    await act(() => Promise.resolve());
+
+    expect(result.current.completedFoodSelectionsHistory).toEqual([]);
+  });
+
   it('handles menu_created event', async () => {
     const { result } = renderSSE();
     await act(() => Promise.resolve());
@@ -508,7 +538,7 @@ describe('useSSE', () => {
       }
     }
 
-    localStorage.setItem('team_lunch_nickname', 'dana@example.com');
+    localStorage.setItem('team_lunch_actor_key', 'dana@example.com');
     localStorage.setItem('team_lunch_phase_notifications_enabled', 'true');
     vi.stubGlobal('Notification', MockNotification);
 

@@ -1,7 +1,6 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from './components/Header.js';
-import NicknameModal from './components/NicknameModal.js';
 import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
 import OrdersRail from './components/OrdersRail.js';
 import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.js';
@@ -16,14 +15,24 @@ import { useSSE } from './hooks/useSSE.js';
 import { useAppPhase } from './hooks/useAppPhase.js';
 import { usePhaseNotifications } from './hooks/usePhaseNotifications.js';
 import { useNotificationPreference } from './hooks/useNotificationPreference.js';
-import { useNickname } from './hooks/useNickname.js';
-import { isExternalAuthEnabled } from './auth.js';
+import {
+  ACTOR_KEY_STORAGE_KEY,
+  AUTH_METHOD_STORAGE_KEY,
+  AUTH_PROFILE_UPDATED_EVENT,
+  AUTH_ROLE_STORAGE_KEY,
+  DISPLAY_NAME_STORAGE_KEY,
+  getAuthenticatedDisplayLabel,
+  getAuthenticatedAuthMethod,
+  isExternalAuthEnabled,
+} from './auth.js';
 import { withBasePath } from './config.js';
 import cuisineAroundTheWorldImage from '../../assets/cuisine-around-the-world.png';
 import exampleCompanyLogoImage from '../../assets/example-company-logo.png';
 
 export default function App() {
-  const { nickname, updateNickname } = useNickname();
+  const [, setAuthProfileVersion] = useState(0);
+  const nickname = getAuthenticatedDisplayLabel();
+  const authMethod = getAuthenticatedAuthMethod();
   const externalAuthEnabled = isExternalAuthEnabled();
   const { notificationsEnabled, toggleNotificationsEnabled } = useNotificationPreference();
   const navigate = useNavigate();
@@ -49,7 +58,7 @@ export default function App() {
     dbConnected,
     dbReconnectAttempts,
   } = useAppState();
-  const phase = useAppPhase(nickname);
+  const phase = useAppPhase();
   usePhaseNotifications(phase, notificationsEnabled, activePoll, activeFoodSelection, nickname);
   const [selectedHistorySelectionId, setSelectedHistorySelectionId] = useState<string | null>(null);
 
@@ -59,6 +68,16 @@ export default function App() {
   useEffect(() => {
     setSelectedHistorySelectionId(null);
   }, [selectedOfficeLocationId]);
+
+  useEffect(() => {
+    const handleAuthProfileUpdated = () => {
+      setAuthProfileVersion((version) => version + 1);
+    };
+    window.addEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    return () => {
+      window.removeEventListener(AUTH_PROFILE_UPDATED_EVENT, handleAuthProfileUpdated);
+    };
+  }, []);
 
   const selectedHistorySelection = useMemo(
     () =>
@@ -135,9 +154,10 @@ export default function App() {
       } catch {
         // Ignore network errors and still clear local auth hints.
       } finally {
-        localStorage.removeItem('team_lunch_auth_method');
-        localStorage.removeItem('team_lunch_auth_role');
-        localStorage.removeItem('team_lunch_nickname');
+        localStorage.removeItem(AUTH_METHOD_STORAGE_KEY);
+        localStorage.removeItem(AUTH_ROLE_STORAGE_KEY);
+        localStorage.removeItem(ACTOR_KEY_STORAGE_KEY);
+        localStorage.removeItem(DISPLAY_NAME_STORAGE_KEY);
         window.location.reload();
       }
     })();
@@ -148,18 +168,12 @@ export default function App() {
       <div className="relative z-0 flex h-full min-h-0 flex-col">
         <Header
           nickname={nickname}
+          authMethod={authMethod}
           notificationsEnabled={notificationsEnabled}
           onToggleNotifications={toggleNotificationsEnabled}
           onLogout={externalAuthEnabled ? handleLogout : undefined}
           isAdmin={isAdmin}
           pendingApprovalCount={pendingApprovalCount}
-        />
-
-        {/* Full-screen modal on first visit (no nickname yet) */}
-        <NicknameModal
-          open={!externalAuthEnabled && phase === 'NICKNAME_PROMPT'}
-          title="Welcome! Choose a nickname"
-          onSubmit={updateNickname}
         />
 
         <DatabaseConnectionModal open={!dbConnected} attemptCount={dbReconnectAttempts} />
@@ -231,13 +245,7 @@ export default function App() {
                 <Route path="/shopping" element={<ShoppingList />} />
                 <Route
                   path="/settings"
-                  element={
-                    <Settings
-                      nickname={nickname}
-                      onRename={updateNickname}
-                      allowRename={!externalAuthEnabled}
-                    />
-                  }
+                  element={<Settings />}
                 />
                 <Route path="/admin" element={<Administration />} />
               </Routes>

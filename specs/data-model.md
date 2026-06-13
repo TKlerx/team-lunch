@@ -55,7 +55,10 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 ### food_orders
 - line-item model (`id` per line)
 - `selection_id` FK -> food_selections
-- `nickname`
+- `nickname` legacy display snapshot/backfill field
+- `actor_key` stable signed-session actor key nullable for historical rows
+- `actor_email` signed-session email nullable for historical rows
+- `display_name_snapshot` immutable display label shown in lunch history
 - `item_id` FK -> menu_items nullable
 - `item_name` snapshot
 - `notes` VARCHAR(200) nullable
@@ -81,6 +84,23 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 - `bought_at` TIMESTAMPTZ nullable
 - `created_at` TIMESTAMPTZ default now
 
+### auth_access_users
+- `email` VARCHAR(255) unique
+- `display_name` VARCHAR(255) nullable
+- `display_name_source` VARCHAR(20) nullable (`local`, `entra`)
+- `session_version` INT default 0; increments for sensitive access/identity changes and is embedded in signed auth cookies
+- approval/admin/blocking flags and office assignment fields
+
+### auth_audit_logs
+- `event` VARCHAR(80)
+- `actor_email` VARCHAR(255) nullable
+- `target_email` VARCHAR(255) nullable
+- `target_type` VARCHAR(40) default `auth_user`
+- `field` VARCHAR(80) nullable
+- `old_value` / `new_value` text snapshots nullable
+- `metadata` JSON nullable
+- `created_at` timestamp default now
+
 ## Lifecycle timestamps
 
 - Real order placement: `order_placed_at`
@@ -97,6 +117,12 @@ These fields allow early/late comparison (`completed_at` vs `delivery_due_at`).
 ## Notes
 
 - Snapshot fields (`menu_name`, `item_name`, winner names) preserve history if source rows change/deleted.
+- User-attributed poll votes and food orders use `actor_key` / `actor_email` for ownership and store `display_name_snapshot` for presentation; display names are optional and non-unique.
 - Default-meal preferences are user preferences, not order history; they are deleted if the referenced menu or menu item is deleted.
 - `auth_access_users.office_location_id` assigns regular users to a single office in the phase-1 multi-office model; configured/global admins may remain unassigned.
+- `auth_access_users.session_version` is the authoritative invalidation source for both local and Entra sessions; display-name edits do not increment it.
+- `auth_audit_logs` is DB-only history for profile/access/login events; it intentionally has no UI in Priority 88.10.
+- Entra/Graph avatars are intentionally not part of the persistent data model.
+  Avatar image bytes and fallback states live only in bounded backend memory with
+  TTLs, so multi-container instances cache independently and restart refetches.
 - Menus, shopping-list items, polls, and food selections are office-scoped as of phases 74.3 and 74.4.

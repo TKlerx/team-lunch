@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../../src/client/components/Header.js';
+import type { AuthMethod } from '../../src/lib/types.js';
 
 function renderHeader(
   nickname: string | null = 'Alice',
@@ -11,11 +12,13 @@ function renderHeader(
   onLogout?: () => void,
   isAdmin = false,
   pendingApprovalCount = 0,
+  authMethod: AuthMethod | null = 'local',
 ) {
   return render(
     <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Header
         nickname={nickname}
+        authMethod={authMethod}
         notificationsEnabled={notificationsEnabled}
         onToggleNotifications={onToggleNotifications}
         onLogout={onLogout}
@@ -71,6 +74,20 @@ describe('Header', () => {
   it('shows nickname button when nickname is set', () => {
     renderHeader('Alice');
     expect(screen.getByRole('button', { name: /alice/i })).toBeInTheDocument();
+  });
+
+  it('renders generic initials for local/manual account avatars', () => {
+    const { container } = renderHeader('Guest User', true, vi.fn(), undefined, false, 0, 'local');
+
+    expect(container.querySelector('img[src$="/api/auth/me/avatar"]')).not.toBeInTheDocument();
+    expect(screen.getByText('GU')).toBeInTheDocument();
+  });
+
+  it('loads the backend avatar endpoint for Entra account avatars', () => {
+    const { container } = renderHeader('Alice Example', true, vi.fn(), undefined, false, 0, 'entra');
+
+    const avatar = container.querySelector('img[src$="/api/auth/me/avatar"]');
+    expect(avatar).toBeInTheDocument();
   });
 
   it('does not show nickname button when nickname is null', () => {

@@ -53,6 +53,16 @@ describe('poll route authorization', () => {
 
   it('rejects poll abort for non-admin users', async () => {
     const app = await buildApp();
+    const defaultOffice = await ensureDefaultOfficeLocation();
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'user@company.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: defaultOffice.id,
+      },
+    });
     const session = createSessionCookieValue({
       username: 'user@company.com',
       method: 'entra',

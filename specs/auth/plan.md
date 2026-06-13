@@ -6,11 +6,19 @@
 
 ## Summary
 
-Optional, custom Fastify auth: DB-managed local username/password and Microsoft
-Entra SSO (authorization-code, fully validated id_token), behind a signed
-HttpOnly session cookie. Approval gate + admin role + office access are resolved
-from application data on each protected request. Local login has in-process abuse
-protection. When no auth env is set, the app runs open with nickname-only identity.
+Custom Fastify auth is mandatory for lunch workflow access: DB-managed local
+username/password and/or Microsoft Entra SSO (authorization-code, fully
+validated id_token), behind a signed HttpOnly session cookie. Approval gate +
+admin role + office access are resolved from application data on each protected
+request. The cookie carries `sessionVersion`, checked against
+`auth_access_users.session_version` so sensitive account/access changes
+invalidate missed-SSE/offline sessions. Local login has in-process abuse protection. When no auth method is
+available, the client shows an authentication setup error instead of running
+open with nickname-only identity. Auth profile/access/login events are recorded
+to `auth_audit_logs` for future admin-facing history without adding UI now.
+Entra profile photos are fetched through a backend Graph avatar endpoint when
+app permissions are configured, with bounded per-process memory TTL caching and
+client-side initials/generic fallback.
 
 ## Technical Context
 
@@ -24,7 +32,7 @@ protection. When no auth env is set, the app runs open with nickname-only identi
 
 **Project Type**: Single-package full-stack web app
 
-**Constraints**: Cookie signed + HttpOnly; DB re-check of approval/blocked/admin on protected flows; bootstrap admin (`AUTH_ADMIN_EMAIL`) undeletable/demotion-protected; auth fully optional.
+**Constraints**: Cookie signed + HttpOnly; DB re-check of approval/blocked/admin on protected flows; bootstrap admin (`AUTH_ADMIN_EMAIL`) undeletable/demotion-protected; auth required for user-attributed flows; display names are optional and non-unique.
 
 **Scale/Scope**: 5 server services + 1 route module; client `AuthGate.tsx` + `auth.ts`.
 
@@ -44,10 +52,11 @@ src/server/routes/auth.ts                       # /api/auth/* handlers (thin)
 src/server/services/authSession.ts              # cookie issue/verify, session shape
 src/server/services/authAccess.ts               # approval/blocked/admin/office resolution
 src/server/services/entraOidc.ts                # Entra code flow + id_token validation
+src/server/services/authAvatar.ts               # Graph photo fetch + bounded memory cache
 src/server/services/localAuth.ts                # local credential verify + admin mgmt
 src/server/services/localLoginProtection.ts     # per-IP/username rate limit + lockout
 src/client/auth.ts, src/client/components/AuthGate.tsx
-prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser, LocalAuthUser
+prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser display names/session version, LocalAuthUser, AuthAuditLog
 tests/server/auth-*.test.ts, local-auth.test.ts, local-user-management-authz.test.ts
 ```
 
@@ -64,3 +73,4 @@ local / abuse), routes orchestrate. Entra config is backend env-driven
 | In-process login lockout | Operationally cheap for single-app | Not shared across instances |
 | DB re-check of authz state each request | Cookie must not be sole source of truth | Slightly more queries, safer |
 | Stateless session (no server store) | Simplicity | Logout can't invalidate other sessions/id_tokens |
+| In-process avatar cache | Avoid DB/filesystem avatar persistence | Not shared across instances; restart refetches |

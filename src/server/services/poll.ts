@@ -87,12 +87,29 @@ function validateRemainingMinutes(remainingMinutes: number): void {
   }
 }
 
-function validateNickname(nickname: string): string {
+function validateActorLabel(nickname: string): string {
   const trimmed = nickname.trim();
-  if (!trimmed || trimmed.length > 30) {
-    throw Object.assign(new Error('Nickname must be 1–30 characters'), { statusCode: 400 });
+  if (!trimmed || trimmed.length > 255) {
+    throw Object.assign(new Error('Actor label must be 1-255 characters'), { statusCode: 400 });
   }
   return trimmed;
+}
+
+type VoteActor = {
+  actorKey?: string | null;
+  actorEmail?: string | null;
+  displayNameSnapshot?: string | null;
+};
+
+function resolveVoteIdentity(label: string, actor?: VoteActor): {
+  actorKey: string;
+  actorEmail: string | null;
+  displayNameSnapshot: string;
+} {
+  const displayNameSnapshot = validateActorLabel(actor?.displayNameSnapshot ?? label);
+  const actorKey = validateActorLabel(actor?.actorKey ?? label).toLowerCase();
+  const actorEmail = actor?.actorEmail?.trim().toLowerCase() || null;
+  return { actorKey, actorEmail, displayNameSnapshot };
 }
 
 function normalizeCreatorKey(createdBy?: string | null): string | null {
@@ -410,8 +427,9 @@ export async function castVote(
   menuId: string,
   nickname: string,
   officeLocationId?: string,
+  actor?: VoteActor,
 ): Promise<Poll> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveVoteIdentity(nickname, actor);
 
   const poll = await fetchPollOrThrow(pollId, officeLocationId);
   requireActive(poll);
@@ -435,7 +453,7 @@ export async function castVote(
   // Check for existing vote (unique constraint: pollId + menuId + nickname)
   const existingVote = await prisma.pollVote.findUnique({
     where: {
-      pollId_menuId_nickname: { pollId, menuId, nickname: trimmedNick },
+      pollId_menuId_actorKey: { pollId, menuId, actorKey: identity.actorKey },
     },
   });
   if (existingVote) {
@@ -447,7 +465,10 @@ export async function castVote(
       pollId,
       menuId,
       menuName: menu.name,
-      nickname: trimmedNick,
+      nickname: identity.displayNameSnapshot,
+      actorKey: identity.actorKey,
+      actorEmail: identity.actorEmail,
+      displayNameSnapshot: identity.displayNameSnapshot,
     },
   });
 
@@ -468,8 +489,9 @@ export async function withdrawVote(
   menuId: string,
   nickname: string,
   officeLocationId?: string,
+  actor?: VoteActor,
 ): Promise<Poll> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveVoteIdentity(nickname, actor);
 
   const poll = await fetchPollOrThrow(pollId, officeLocationId);
   requireActive(poll);
@@ -477,7 +499,7 @@ export async function withdrawVote(
   // Find the vote
   const vote = await prisma.pollVote.findUnique({
     where: {
-      pollId_menuId_nickname: { pollId, menuId, nickname: trimmedNick },
+      pollId_menuId_actorKey: { pollId, menuId, actorKey: identity.actorKey },
     },
   });
   if (!vote) {
@@ -502,14 +524,15 @@ export async function withdrawAllVotes(
   pollId: string,
   nickname: string,
   officeLocationId?: string,
+  actor?: VoteActor,
 ): Promise<Poll> {
-  const trimmedNick = validateNickname(nickname);
+  const identity = resolveVoteIdentity(nickname, actor);
 
   const poll = await fetchPollOrThrow(pollId, officeLocationId);
   requireActive(poll);
 
   const deleted = await prisma.pollVote.deleteMany({
-    where: { pollId, nickname: trimmedNick },
+    where: { pollId, actorKey: identity.actorKey },
   });
   if (deleted.count === 0) {
     throw Object.assign(new Error('No votes found for this user'), { statusCode: 404 });

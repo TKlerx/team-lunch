@@ -111,12 +111,14 @@ describe('Food selection routes (integration)', () => {
   }
 
   async function createFinishedPoll() {
+    const headers = await approvedAuthHeaders('alice@example.com');
     const menu = await createMenu('Thai Food');
     const item = await createMenuItem(menu.id, 'Pad Thai', 'Noodles');
 
     // Start poll
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(headers)
       .send({ description: 'Lunch poll', durationMinutes: 60 })
       .expect(201);
     const poll = pollRes.body;
@@ -124,6 +126,7 @@ describe('Food selection routes (integration)', () => {
     // Cast a vote
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(headers)
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
 
@@ -135,6 +138,7 @@ describe('Food selection routes (integration)', () => {
     // End the poll
     const endRes = await supertest(app.server)
       .post(`/api/polls/${poll.id}/end`)
+      .set(headers)
       .expect(200);
 
     return { menu, item, poll: endRes.body };
@@ -143,26 +147,31 @@ describe('Food selection routes (integration)', () => {
   async function startFoodSelection(pollId: string, durationMinutes = 10) {
     const res = await supertest(app.server)
       .post('/api/food-selections')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ pollId, durationMinutes })
       .expect(201);
     return res.body;
   }
 
-  async function approvedAuthHeaders(email = 'approved-user@company.com') {
+  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string, isAdmin = false) {
     const defaultOffice = await ensureDefaultOfficeLocation();
     await prisma.authAccessUser.upsert({
       where: { email },
       update: {
         approved: true,
         blocked: false,
-        isAdmin: false,
+        isAdmin,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
       create: {
         email,
         approved: true,
         blocked: false,
-        isAdmin: false,
+        isAdmin,
+        displayName: displayName ?? null,
+        displayNameSource: displayName ? 'local' : null,
         officeLocationId: defaultOffice.id,
       },
     });
@@ -176,6 +185,10 @@ describe('Food selection routes (integration)', () => {
     return {
       cookie: `team_lunch_auth_session=${session}`,
     };
+  }
+
+  async function adminAuthHeaders(email = 'admin@example.com') {
+    return approvedAuthHeaders(email, undefined, true);
   }
 
   async function completeFoodSelectionAsApproved(selectionId: string, email?: string) {
@@ -202,26 +215,68 @@ describe('Food selection routes (integration)', () => {
     expect(selection.id).toBeDefined();
   });
 
+  it('rejects unauthenticated food-selection lifecycle mutations', async () => {
+    const { poll } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+
+    await supertest(app.server)
+      .post('/api/food-selections')
+      .send({ pollId: poll.id, durationMinutes: 10 })
+      .expect(401);
+    await supertest(app.server)
+      .post('/api/food-selections/quick-start')
+      .send({ durationMinutes: 10 })
+      .expect(401);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(401);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/timer`)
+      .send({ remainingMinutes: 20 })
+      .expect(401);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/extend`)
+      .send({ extensionMinutes: 10 })
+      .expect(401);
+    await supertest(app.server)
+      .patch(`/api/food-selections/${selection.id}/orders/00000000-0000-0000-0000-000000000000/processed`)
+      .send({ processed: true })
+      .expect(401);
+    await supertest(app.server)
+      .patch(`/api/food-selections/${selection.id}/orders/00000000-0000-0000-0000-000000000000/delivered`)
+      .send({ delivered: true })
+      .expect(401);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/eta`)
+      .send({ etaMinutes: 25 })
+      .expect(401);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/confirm-arrival`).expect(401);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/abort`).expect(401);
+  });
+
   it('rejects with 400 if poll is not finished', async () => {
     await createMenu('Test Menu');
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ description: 'Test', durationMinutes: 60 })
       .expect(201);
 
     const res = await supertest(app.server)
       .post('/api/food-selections')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ pollId: pollRes.body.id, durationMinutes: 10 })
       .expect(400);
     expect(res.body.error).toContain('Poll must be finished');
 
     // Clean up poll
-    await supertest(app.server).post(`/api/polls/${pollRes.body.id}/end`);
+    await supertest(app.server)
+      .post(`/api/polls/${pollRes.body.id}/end`)
+      .set(await approvedAuthHeaders('creator@example.com'));
   });
 
   it('rejects with 404 if poll does not exist', async () => {
     const res = await supertest(app.server)
       .post('/api/food-selections')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ pollId: '00000000-0000-0000-0000-000000000000', durationMinutes: 10 })
       .expect(404);
     expect(res.body.error).toContain('Poll not found');
@@ -231,6 +286,7 @@ describe('Food selection routes (integration)', () => {
     const { poll } = await createFinishedPoll();
     const res = await supertest(app.server)
       .post('/api/food-selections')
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ pollId: poll.id, durationMinutes: 45 })
       .expect(400);
     expect(res.body.error).toContain('Duration must be 1 minute or a multiple of 5 between 5 and 30 minutes');
@@ -241,9 +297,11 @@ describe('Food selection routes (integration)', () => {
   it('places an order successfully', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('bob@example.com', 'Bob');
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Bob', itemId: item.id, notes: 'Extra spicy' })
       .expect(201);
 
@@ -268,14 +326,17 @@ describe('Food selection routes (integration)', () => {
   it('rejects order after timer expiry (overtime)', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('late@example.com', 'Late');
 
     // Expire the selection
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Late', itemId: item.id })
       .expect(400);
     expect(res.body.error).toContain('Food selection is not active');
@@ -284,10 +345,12 @@ describe('Food selection routes (integration)', () => {
   it('order place/update/withdraw round-trip works', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('charlie@example.com', 'Charlie');
 
     // Place order
     const placeRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: item.id, notes: 'Original' })
       .expect(201);
     expect(placeRes.body.notes).toBe('Original');
@@ -295,6 +358,7 @@ describe('Food selection routes (integration)', () => {
     // Update order (same nickname + same item updates)
     const updateRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: item.id, notes: 'Updated' })
       .expect(201);
     expect(updateRes.body.notes).toBe('Updated');
@@ -303,6 +367,7 @@ describe('Food selection routes (integration)', () => {
     // Withdraw order
     await supertest(app.server)
       .delete(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie' })
       .expect(204);
 
@@ -317,14 +382,17 @@ describe('Food selection routes (integration)', () => {
     const { poll, item, menu } = await createFinishedPoll();
     const extraItem = await createMenuItem(menu.id, 'Green Curry', 'Spicy curry');
     const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('charlie@example.com', 'Charlie');
 
     const first = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: item.id })
       .expect(201);
 
     const second = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: extraItem.id })
       .expect(201);
 
@@ -340,19 +408,23 @@ describe('Food selection routes (integration)', () => {
     const { poll, item, menu } = await createFinishedPoll();
     const extraItem = await createMenuItem(menu.id, 'Green Curry', 'Spicy curry');
     const selection = await startFoodSelection(poll.id);
+    const headers = await approvedAuthHeaders('charlie@example.com', 'Charlie');
 
     const firstOrder = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: item.id })
       .expect(201);
 
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', itemId: extraItem.id })
       .expect(201);
 
     await supertest(app.server)
       .delete(`/api/food-selections/${selection.id}/orders`)
+      .set(headers)
       .send({ nickname: 'Charlie', orderId: firstOrder.body.id })
       .expect(204);
 
@@ -384,6 +456,39 @@ describe('Food selection routes (integration)', () => {
       where: { selectionId: selection.id },
     });
     expect(orders).toHaveLength(0);
+  });
+
+  it('keeps same-display-name food orders isolated by actor', async () => {
+    const { item, poll } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com', 'Sam');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com', 'Sam');
+
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(aliceHeaders)
+      .send({ itemId: item.id })
+      .expect(201);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/orders`)
+      .set(bobHeaders)
+      .send({ itemId: item.id })
+      .expect(201);
+
+    const orders = await prisma.foodOrder.findMany({ orderBy: { actorKey: 'asc' } });
+    expect(orders.map((order) => order.nickname)).toEqual(['Sam', 'Sam']);
+    expect(orders.map((order) => order.actorKey)).toEqual(['alice@example.com', 'bob@example.com']);
+
+    await supertest(app.server)
+      .delete(`/api/food-selections/${selection.id}/orders`)
+      .set(aliceHeaders)
+      .send({})
+      .expect(204);
+
+    const remainingOrders = await prisma.foodOrder.findMany();
+    expect(remainingOrders).toHaveLength(1);
+    expect(remainingOrders[0].actorKey).toBe('bob@example.com');
+    expect(remainingOrders[0].nickname).toBe('Sam');
   });
 
   // ─── GET /api/food-selections/active ─────────────────────
@@ -471,6 +576,7 @@ describe('Food selection routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/timer`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ remainingMinutes: 25 })
       .expect(200);
 
@@ -481,10 +587,14 @@ describe('Food selection routes (integration)', () => {
   it('rejects timer update when selection is not active', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id, 10);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/timer`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ remainingMinutes: 20 })
       .expect(400);
 
@@ -495,33 +605,45 @@ describe('Food selection routes (integration)', () => {
 
   it('returns completed food selection history (most recent first)', async () => {
     const { poll } = await createFinishedPoll();
+    const organizerHeaders = await adminAuthHeaders();
     const first = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${first.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${first.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(first.id);
-    await supertest(app.server).post(`/api/food-selections/${first.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
-    await supertest(app.server).post(`/api/food-selections/${first.id}/confirm-arrival`).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${first.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${first.id}/confirm-arrival`).set(organizerHeaders).expect(200);
 
     const secondMenu = await createMenu('History Menu');
     await createMenuItem(secondMenu.id, 'History Item');
     const secondPollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'History Poll', durationMinutes: 60 })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${secondPollRes.body.id}/votes`)
+      .set(await approvedAuthHeaders('eve@example.com', 'Eve'))
       .send({ menuId: secondMenu.id, nickname: 'Eve' })
       .expect(201);
     await prisma.poll.update({
       where: { id: secondPollRes.body.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${secondPollRes.body.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${secondPollRes.body.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
 
     const second = await startFoodSelection(secondPollRes.body.id);
-    await supertest(app.server).post(`/api/food-selections/${second.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${second.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(second.id);
-    await supertest(app.server).post(`/api/food-selections/${second.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
-    await supertest(app.server).post(`/api/food-selections/${second.id}/confirm-arrival`).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${second.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${second.id}/confirm-arrival`).set(organizerHeaders).expect(200);
 
     const res = await supertest(app.server).get('/api/food-selections/history').expect(200);
     expect(res.body).toHaveLength(2);
@@ -537,6 +659,7 @@ describe('Food selection routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .expect(200);
 
     expect(res.body.status).toBe('overtime');
@@ -550,10 +673,12 @@ describe('Food selection routes (integration)', () => {
 
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/extend`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ extensionMinutes: 10 })
       .expect(200);
 
@@ -566,6 +691,7 @@ describe('Food selection routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/extend`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .send({ extensionMinutes: 10 })
       .expect(400);
     expect(res.body.error).toContain('Only overtime food selections can be extended');
@@ -579,6 +705,7 @@ describe('Food selection routes (integration)', () => {
 
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
       .expect(200);
 
     const res = await completeFoodSelectionAsApproved(selection.id);
@@ -611,31 +738,39 @@ describe('Food selection routes (integration)', () => {
     const item = await createMenuItem(menu.id, 'Reminder Item', 'Tasty');
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Reminder poll', durationMinutes: 60 })
       .expect(201);
     const poll = pollRes.body;
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('bob@example.com'))
       .send({ menuId: menu.id, nickname: 'bob@example.com' })
       .expect(201);
     await prisma.poll.update({
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
 
     const selection = await startFoodSelection(poll.id);
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ nickname: 'Alice', itemId: item.id })
       .expect(201);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/remind-missing`)
+      .set(await adminAuthHeaders('organizer@example.com'))
       .send({})
       .expect(200);
 
@@ -647,22 +782,28 @@ describe('Food selection routes (integration)', () => {
     const item = await createMenuItem(menu.id, 'Fallback Item', 'Tasty');
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Fallback poll', durationMinutes: 60 })
       .expect(201);
     const poll = pollRes.body;
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ menuId: menu.id, nickname: 'Alice' })
       .expect(201);
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('dana@example.com'))
       .send({ menuId: menu.id, nickname: 'dana@example.com' })
       .expect(201);
     await prisma.poll.update({
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
     const selection = await startFoodSelection(poll.id);
     await userMenuDefaultsService.upsertUserMenuDefaultPreference(
       'dana@example.com',
@@ -671,7 +812,10 @@ describe('Food selection routes (integration)', () => {
       null,
       true,
     );
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
@@ -692,18 +836,23 @@ describe('Food selection routes (integration)', () => {
     const item = await createMenuItem(menu.id, 'Fallback Item', 'Tasty');
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Fallback poll', durationMinutes: 60 })
       .expect(201);
     const poll = pollRes.body;
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('dana@example.com'))
       .send({ menuId: menu.id, nickname: 'dana@example.com' })
       .expect(201);
     await prisma.poll.update({
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
     const selection = await startFoodSelection(poll.id);
     await userMenuDefaultsService.upsertUserMenuDefaultPreference(
       'dana@example.com',
@@ -712,11 +861,15 @@ describe('Food selection routes (integration)', () => {
       'No onions',
       true,
     );
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/fallback-orders`)
+      .set(await adminAuthHeaders('organizer@example.com'))
       .send({ nickname: 'dana@example.com', actingNickname: 'organizer@example.com' })
       .expect(201);
 
@@ -731,18 +884,23 @@ describe('Food selection routes (integration)', () => {
     const item = await createMenuItem(menu.id, 'Fallback Item', 'Tasty');
     const pollRes = await supertest(app.server)
       .post('/api/polls')
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
       .send({ description: 'Fallback poll', durationMinutes: 60 })
       .expect(201);
     const poll = pollRes.body;
     await supertest(app.server)
       .post(`/api/polls/${poll.id}/votes`)
+      .set(await approvedAuthHeaders('dana@example.com'))
       .send({ menuId: menu.id, nickname: 'dana@example.com' })
       .expect(201);
     await prisma.poll.update({
       where: { id: poll.id },
       data: { endsAt: new Date(Date.now() - 1000) },
     });
-    await supertest(app.server).post(`/api/polls/${poll.id}/end`).expect(200);
+    await supertest(app.server)
+      .post(`/api/polls/${poll.id}/end`)
+      .set(await approvedAuthHeaders('poll-creator@example.com'))
+      .expect(200);
     const selection = await startFoodSelection(poll.id);
     await userMenuDefaultsService.upsertUserMenuDefaultPreference(
       'dana@example.com',
@@ -751,11 +909,15 @@ describe('Food selection routes (integration)', () => {
       null,
       true,
     );
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/fallback-reminders`)
+      .set(await adminAuthHeaders('organizer@example.com'))
       .send({ nickname: 'dana@example.com', actingNickname: 'organizer@example.com' })
       .expect(200);
 
@@ -765,15 +927,21 @@ describe('Food selection routes (integration)', () => {
   it('marks an order as processed during ordering phase', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
+    const eaterHeaders = await approvedAuthHeaders('alice@example.com', 'Alice');
     const orderRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(eaterHeaders)
       .send({ nickname: 'Alice', itemId: item.id })
       .expect(201);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
       .patch(`/api/food-selections/${selection.id}/orders/${orderRes.body.id}/processed`)
+      .set(await approvedAuthHeaders('organizer@example.com'))
       .send({ processed: true, nickname: 'admin@example.com' })
       .expect(200);
 
@@ -787,11 +955,13 @@ describe('Food selection routes (integration)', () => {
     const selection = await startFoodSelection(poll.id);
     const orderRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ nickname: 'Alice', itemId: item.id })
       .expect(201);
 
     const res = await supertest(app.server)
       .patch(`/api/food-selections/${selection.id}/orders/${orderRes.body.id}/processed`)
+      .set(await approvedAuthHeaders('organizer@example.com'))
       .send({ processed: true })
       .expect(400);
 
@@ -804,11 +974,13 @@ describe('Food selection routes (integration)', () => {
 
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ nickname: 'Alice', itemId: (await prisma.menuItem.findFirstOrThrow()).id })
       .expect(201);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/abort`)
+      .set(await adminAuthHeaders())
       .expect(200);
 
     expect(res.body.status).toBe('aborted');
@@ -825,12 +997,17 @@ describe('Food selection routes (integration)', () => {
   it('aborts a delivering food selection', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const organizerHeaders = await adminAuthHeaders();
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/abort`)
+      .set(await adminAuthHeaders())
       .expect(200);
 
     expect(res.body.status).toBe('aborted');
@@ -841,12 +1018,17 @@ describe('Food selection routes (integration)', () => {
   it('updates ETA for an ongoing delivery selection', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const organizerHeaders = await adminAuthHeaders();
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/eta`)
+      .set(organizerHeaders)
       .send({ etaMinutes: 25, nickname: 'admin@example.com' })
       .expect(200);
 
@@ -860,6 +1042,7 @@ describe('Food selection routes (integration)', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/eta`)
+      .set(await approvedAuthHeaders('organizer@example.com'))
       .send({ etaMinutes: 25, nickname: 'admin@example.com' })
       .expect(400);
 
@@ -869,12 +1052,17 @@ describe('Food selection routes (integration)', () => {
   it('rejects invalid ETA minutes', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const organizerHeaders = await adminAuthHeaders();
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/eta`)
+      .set(organizerHeaders)
       .send({ etaMinutes: 0, nickname: 'admin@example.com' })
       .expect(400);
 
@@ -884,12 +1072,17 @@ describe('Food selection routes (integration)', () => {
   it('confirms lunch arrival and finalizes selection', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const organizerHeaders = await adminAuthHeaders();
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
+    await supertest(app.server).post(`/api/food-selections/${selection.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/confirm-arrival`)
+      .set(organizerHeaders)
       .expect(200);
 
     expect(res.body.status).toBe('completed');
@@ -899,11 +1092,16 @@ describe('Food selection routes (integration)', () => {
   it('places delivery order from ordering phase', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const organizerHeaders = await adminAuthHeaders();
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/place-order`)
+      .set(organizerHeaders)
       .send({ etaMinutes: 35, nickname: 'admin@example.com' })
       .expect(200);
 
@@ -915,11 +1113,16 @@ describe('Food selection routes (integration)', () => {
   it('claims ordering responsibility before the order is placed', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com');
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/claim-ordering`)
+      .set(aliceHeaders)
       .send({ nickname: 'alice@example.com' })
       .expect(200);
 
@@ -931,15 +1134,22 @@ describe('Food selection routes (integration)', () => {
   it('rejects placing the order when another user already claimed ordering responsibility', async () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com');
+    const bobHeaders = await approvedAuthHeaders('bob@example.com');
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/claim-ordering`)
+      .set(aliceHeaders)
       .send({ nickname: 'alice@example.com' })
       .expect(200);
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/place-order`)
+      .set(bobHeaders)
       .send({ etaMinutes: 35, nickname: 'bob@example.com' })
       .expect(409);
 
@@ -948,19 +1158,27 @@ describe('Food selection routes (integration)', () => {
   it('marks an order as delivered during delivery phase', async () => {
     const { poll, item } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
+    const aliceHeaders = await approvedAuthHeaders('alice@example.com', 'Alice');
+    const organizerHeaders = await adminAuthHeaders();
     const orderRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(aliceHeaders)
       .send({ nickname: 'Alice', itemId: item.id })
       .expect(201);
-    await supertest(app.server).post(`/api/food-selections/${selection.id}/expire`).expect(200);
+    await supertest(app.server)
+      .post(`/api/food-selections/${selection.id}/expire`)
+      .set(await approvedAuthHeaders('creator@example.com'))
+      .expect(200);
     await completeFoodSelectionAsApproved(selection.id);
     await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/place-order`)
+      .set(organizerHeaders)
       .send({ etaMinutes: 20, nickname: 'admin@example.com' })
       .expect(200);
 
     const res = await supertest(app.server)
       .patch(`/api/food-selections/${selection.id}/orders/${orderRes.body.id}/delivered`)
+      .set(organizerHeaders)
       .send({ delivered: true, nickname: 'admin@example.com' })
       .expect(200);
 
@@ -974,11 +1192,13 @@ describe('Food selection routes (integration)', () => {
     const selection = await startFoodSelection(poll.id);
     const orderRes = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders`)
+      .set(await approvedAuthHeaders('alice@example.com', 'Alice'))
       .send({ nickname: 'Alice', itemId: item.id })
       .expect(201);
 
     const res = await supertest(app.server)
       .patch(`/api/food-selections/${selection.id}/orders/${orderRes.body.id}/delivered`)
+      .set(await approvedAuthHeaders('organizer@example.com'))
       .send({ delivered: true })
       .expect(400);
 
@@ -994,6 +1214,7 @@ describe('Food selection routes (integration)', () => {
 
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 10 })
         .expect(201);
 
@@ -1010,6 +1231,7 @@ describe('Food selection routes (integration)', () => {
     it('rejects with 400 when no menus with items exist', async () => {
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 10 })
         .expect(400);
 
@@ -1024,6 +1246,7 @@ describe('Food selection routes (integration)', () => {
 
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 10 })
         .expect(400);
 
@@ -1037,6 +1260,7 @@ describe('Food selection routes (integration)', () => {
 
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 15 })
         .expect(201);
 
@@ -1049,6 +1273,7 @@ describe('Food selection routes (integration)', () => {
 
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 7 })
         .expect(400);
 
@@ -1062,11 +1287,13 @@ describe('Food selection routes (integration)', () => {
       // Start a regular poll first
       await supertest(app.server)
         .post('/api/polls')
+        .set(await approvedAuthHeaders('poll-creator@example.com'))
         .send({ description: 'Existing poll', durationMinutes: 5 })
         .expect(201);
 
       const res = await supertest(app.server)
         .post('/api/food-selections/quick-start')
+        .set(await approvedAuthHeaders('creator@example.com'))
         .send({ durationMinutes: 10 })
         .expect(409);
 

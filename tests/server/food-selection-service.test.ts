@@ -380,7 +380,7 @@ describe('Food selection service', () => {
 
       await expect(
         foodSelectionService.placeOrder(selection.id, '', items[0].id),
-      ).rejects.toThrow('Nickname must be 1–30 characters');
+      ).rejects.toThrow('Actor label must be 1-255 characters');
     });
 
     it('rejects notes over 200 characters', async () => {
@@ -437,6 +437,7 @@ describe('Food selection service', () => {
 
       expect(broadcast).toHaveBeenCalledWith('order_withdrawn', {
         nickname: 'Alice',
+        actorKey: 'alice',
         selectionId: selection.id,
         orderId: order.id,
       }, expect.any(String));
@@ -452,6 +453,7 @@ describe('Food selection service', () => {
 
       expect(broadcast).toHaveBeenCalledWith('order_withdrawn', {
         nickname: 'Alice',
+        actorKey: 'alice',
         selectionId: selection.id,
       }, expect.any(String));
     });

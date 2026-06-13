@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
+import { getAuthenticatedDisplayLabel } from '../auth.js';
 import { Input } from '../components/ui/Input.js';
 import { Button } from '../components/ui/Button.js';
 
@@ -21,7 +21,7 @@ function formatBoughtDateLabel(value: string | null): string {
 
 export default function ShoppingList() {
   const { shoppingListItems } = useAppState();
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -48,7 +48,7 @@ export default function ShoppingList() {
     setSaving(true);
     setError('');
     try {
-      await api.createShoppingListItem(name, nickname ?? undefined);
+      await api.createShoppingListItem(name, actorLabel ?? undefined);
       setName('');
     } catch (requestError) {
       setError((requestError as Error).message);
@@ -61,7 +61,7 @@ export default function ShoppingList() {
     setSaving(true);
     setError('');
     try {
-      await api.markShoppingListItemBought(itemId, nickname ?? undefined);
+      await api.markShoppingListItemBought(itemId, actorLabel ?? undefined);
     } catch (requestError) {
       setError((requestError as Error).message);
     } finally {
@@ -78,7 +78,7 @@ export default function ShoppingList() {
     setError('');
     try {
       await Promise.all(
-        openItems.map((item) => api.markShoppingListItemBought(item.id, nickname ?? undefined)),
+        openItems.map((item) => api.markShoppingListItemBought(item.id, actorLabel ?? undefined)),
       );
     } catch (requestError) {
       setError((requestError as Error).message);

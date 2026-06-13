@@ -6,9 +6,12 @@ import { IconButton } from './ui/IconButton.js';
 import { MenuItem, MenuList } from './ui/Menu.js';
 import pizzaLogo from '../../../assets/pizza-logo.png';
 import exampleCompanyLogoSmall from '../../../assets/example-company-logo-small.png';
+import { withBasePath } from '../config.js';
+import type { AuthMethod } from '../../lib/types.js';
 
 interface HeaderProps {
   nickname: string | null;
+  authMethod?: AuthMethod | null;
   notificationsEnabled: boolean;
   onToggleNotifications: () => void;
   onLogout?: () => void;
@@ -70,12 +73,34 @@ function BellOffIcon() {
   );
 }
 
-function UserIcon() {
+function AccountAvatar({ label, authMethod }: { label: string; authMethod?: AuthMethod | null }) {
+  const [imageUnavailable, setImageUnavailable] = useState(false);
+  const initials = label
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('') || label.slice(0, 1).toUpperCase();
+
+  if (authMethod !== 'entra' || imageUnavailable) {
+    return (
+      <span
+        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-[0.65rem] font-semibold text-white"
+        aria-hidden="true"
+      >
+        {initials}
+      </span>
+    );
+  }
+
   return (
-    <svg {...iconBaseProps} className="h-4 w-4">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
+    <img
+      src={withBasePath('/api/auth/me/avatar')}
+      alt=""
+      className="h-6 w-6 shrink-0 rounded-full bg-accent-soft object-cover"
+      onError={() => setImageUnavailable(true)}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -116,6 +141,7 @@ function LogoutIcon() {
 
 export default function Header({
   nickname,
+  authMethod = null,
   notificationsEnabled,
   onToggleNotifications,
   onLogout,
@@ -238,7 +264,7 @@ export default function Header({
               aria-expanded={menuOpen}
             >
               <span className="relative inline-flex">
-                <UserIcon />
+                <AccountAvatar label={nickname} authMethod={authMethod} />
                 {hasPendingApprovals && (
                   <span className="absolute -right-1.5 -top-1.5 inline-flex h-3 w-3 rounded-full bg-red-500" />
                 )}

@@ -31,7 +31,9 @@ function notificationsEnabledInStorage(): boolean {
 
 function currentNicknameFromStorage(): string | null {
   try {
-    const value = localStorage.getItem('team_lunch_nickname')?.trim() ?? '';
+    const value =
+      localStorage.getItem('team_lunch_actor_key')?.trim() ??
+      '';
     return value.length > 0 ? value : null;
   } catch {
     return null;
@@ -45,6 +47,20 @@ function isHealthResponse(value: unknown): value is HealthResponse {
   if (!candidate.db || typeof candidate.db !== 'object') return false;
   const db = candidate.db as Record<string, unknown>;
   return typeof db.connected === 'boolean' && typeof db.attemptCount === 'number';
+}
+
+async function fetchJsonArray<T>(url: string): Promise<T[]> {
+  const response = await fetch(url);
+  if (response.ok === false) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  const payload = (await response.json()) as unknown;
+  if (!Array.isArray(payload)) {
+    throw new Error('Expected array response');
+  }
+
+  return payload as T[];
 }
 
 /**
@@ -103,22 +119,21 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     }, 2000);
 
     // Fetch menus list (not included in SSE initial_state)
-    fetch(withOfficeLocationContext('/api/menus', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<Menu[]>)
+    fetchJsonArray<Menu>(withOfficeLocationContext('/api/menus', selectedOfficeLocationId))
       .then((menus) => dispatchRef.current({ type: 'SET_MENUS', payload: menus }))
       .catch(() => {
         /* menu fetch failure is non-fatal — SSE events will provide updates */
       });
 
-    fetch(withOfficeLocationContext('/api/food-selections/history', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<FoodSelection[]>)
+    fetchJsonArray<FoodSelection>(
+      withOfficeLocationContext('/api/food-selections/history', selectedOfficeLocationId),
+    )
       .then((history) => dispatchRef.current({ type: 'SET_COMPLETED_HISTORY', payload: history }))
       .catch(() => {
         /* history fetch failure is non-fatal — initial_state or later events will sync */
       });
 
-    fetch(withOfficeLocationContext('/api/shopping-list', selectedOfficeLocationId))
-      .then((r) => r.json() as Promise<ShoppingListItem[]>)
+    fetchJsonArray<ShoppingListItem>(withOfficeLocationContext('/api/shopping-list', selectedOfficeLocationId))
       .then((items) => dispatchRef.current({ type: 'SET_SHOPPING_LIST', payload: items }))
       .catch(() => {
         /* shopping-list fetch failure is non-fatal — later SSE events will sync */
@@ -225,7 +240,12 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     });
 
     es.addEventListener('order_withdrawn', (e: MessageEvent) => {
-      const payload = JSON.parse(e.data) as { nickname: string; selectionId: string; orderId?: string };
+      const payload = JSON.parse(e.data) as {
+        nickname: string;
+        actorKey?: string | null;
+        selectionId: string;
+        orderId?: string;
+      };
       dispatchRef.current({ type: 'ORDER_WITHDRAWN', payload });
     });
 
@@ -305,6 +325,22 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
         deliveryDueAt: string;
       };
       dispatchRef.current({ type: 'FOOD_SELECTION_ETA_UPDATED', payload });
+    });
+
+    es.addEventListener('auth_session_revoked', (e: MessageEvent) => {
+      const payload = JSON.parse(e.data) as {
+        actorKey: string;
+        reason: 'account_updated' | 'account_deleted';
+      };
+      const currentActorKey = currentNicknameFromStorage();
+      if (!currentActorKey || currentActorKey.trim().toLowerCase() !== payload.actorKey.trim().toLowerCase()) {
+        return;
+      }
+      localStorage.removeItem('team_lunch_auth_method');
+      localStorage.removeItem('team_lunch_auth_role');
+      localStorage.removeItem('team_lunch_actor_key');
+      localStorage.removeItem('team_lunch_display_name');
+      window.location.reload();
     });
 
     // ── Connection status ──────────────────────────────

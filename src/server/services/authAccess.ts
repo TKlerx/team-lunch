@@ -1,15 +1,20 @@
 import { createHash } from 'node:crypto';
 import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
-import { normalizeEmail } from './localAuth.js';
+import { localAuthUserExists, normalizeEmail } from './localAuth.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
 import { validateOfficeLocationId } from './officeLocation.js';
+import { normalizeDisplayName, resolveDisplayNameSnapshot, type DisplayNameSource } from './displayName.js';
+import { recordAuthAuditLog } from './authAudit.js';
 
 const DB_PROBE_TIMEOUT_MS = 500;
 
 type AuthAccessEntry = {
   id: string;
   email: string;
+  displayName: string | null;
+  displayNameSource: string | null;
+  sessionVersion?: number;
   approved: boolean;
   isAdmin: boolean;
   blocked: boolean;
@@ -40,6 +45,9 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
     select?: {
       id?: true;
       email?: true;
+      displayName?: true;
+      displayNameSource?: true;
+      sessionVersion?: true;
       approved?: true;
       isAdmin?: true;
       blocked?: true;
@@ -74,6 +82,9 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       AuthAccessEntry,
       | 'id'
       | 'email'
+      | 'displayName'
+      | 'displayNameSource'
+      | 'sessionVersion'
       | 'approved'
       | 'isAdmin'
       | 'blocked'
@@ -102,6 +113,9 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       approved?: boolean;
       isAdmin?: boolean;
       blocked?: boolean;
+      displayName?: string | null;
+      displayNameSource?: DisplayNameSource | null;
+      sessionVersion?: { increment: number };
       officeLocationId?: string | null;
       approvedAt?: Date;
       blockedAt?: Date | null;
@@ -114,6 +128,9 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
       approved?: boolean;
       isAdmin?: boolean;
       blocked?: boolean;
+      displayName?: string | null;
+      displayNameSource?: DisplayNameSource | null;
+      sessionVersion?: { increment: number };
       officeLocationId?: string | null;
       approvedAt?: Date | null;
       blockedAt?: Date | null;
@@ -126,6 +143,9 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
     select: {
       id: true;
       email: true;
+      displayName?: true;
+      displayNameSource?: true;
+      sessionVersion?: true;
       approved: true;
       isAdmin: true;
       blocked: true;
@@ -160,6 +180,304 @@ const authAccessUserModel = (prisma as any).authAccessUser as {
 };
 
 const BLOCKED_USER_MESSAGE = 'Your account has been blocked by an administrator';
+
+export type AuthDisplayProfile = {
+  email: string;
+  displayName: string | null;
+  displayNameSource: DisplayNameSource | null;
+  displayNameSnapshot: string;
+};
+
+async function readAuthDisplayProfile(email: string): Promise<AuthDisplayProfile> {
+  const normalized = normalizeEmail(email);
+  const entry = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayName: true, displayNameSource: true },
+  }).catch(() => null) as {
+    email: string;
+    displayName: string | null;
+    displayNameSource: DisplayNameSource | null;
+  } | null;
+
+  const displayName = normalizeDisplayName(entry?.displayName ?? null);
+  const displayNameSource =
+    entry?.displayNameSource === 'local' || entry?.displayNameSource === 'entra'
+      ? entry.displayNameSource
+      : null;
+  return {
+    email: normalized,
+    displayName,
+    displayNameSource,
+    displayNameSnapshot: resolveDisplayNameSnapshot(displayName, normalized),
+  };
+}
+
+export async function getAuthDisplayProfile(email: string): Promise<AuthDisplayProfile> {
+  return readAuthDisplayProfile(email);
+}
+
+export async function syncEntraDisplayName(email: string, rawDisplayName: string | null | undefined): Promise<AuthDisplayProfile> {
+  const normalized = normalizeEmail(email);
+  const existing = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { displayName: true, displayNameSource: true },
+  }).catch(() => null) as { displayName: string | null; displayNameSource: string | null } | null;
+  const displayName = normalizeDisplayName(rawDisplayName);
+  await (prisma as any).authAccessUser.upsert({
+    where: { email: normalized },
+    create: {
+      email: normalized,
+      displayName,
+      displayNameSource: 'entra',
+      approved: isAdminUser(normalized) || !isApprovalWorkflowEnabled(),
+      isAdmin: isAdminUser(normalized),
+      blocked: false,
+      approvedAt: isAdminUser(normalized) || !isApprovalWorkflowEnabled() ? new Date() : null,
+    },
+    update: {
+      displayName,
+      displayNameSource: 'entra',
+      updatedAt: new Date(),
+    },
+  });
+  if (!existing) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_created',
+      actorEmail: normalized,
+      targetEmail: normalized,
+      metadata: { source: 'entra' },
+    });
+  } else if (normalizeDisplayName(existing.displayName) !== displayName || existing.displayNameSource !== 'entra') {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail: normalized,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: normalizeDisplayName(existing.displayName),
+      newValue: displayName,
+      metadata: { source: 'entra' },
+    });
+  }
+  return readAuthDisplayProfile(normalized);
+}
+
+export async function updateLocalDisplayName(
+  email: string,
+  rawDisplayName: string | null | undefined,
+  actorEmail?: string | null,
+): Promise<AuthDisplayProfile> {
+  const normalized = validateManagedEmail(email);
+  let existing = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayName: true, displayNameSource: true },
+  }) as { email: string; displayName: string | null; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    if (!(await localAuthUserExists(normalized))) {
+      throw serviceError('User not found', 404);
+    }
+    if (isAdminUser(normalized)) {
+      await ensureBootstrapAdminAccessUser(normalized);
+    } else if (!isApprovalWorkflowEnabled()) {
+      await (prisma as any).authAccessUser.create({
+        data: {
+          email: normalized,
+          approved: true,
+          isAdmin: false,
+          blocked: false,
+          approvedAt: new Date(),
+        },
+      });
+    } else {
+      throw serviceError('User not found', 404);
+    }
+    existing = { email: normalized, displayName: null, displayNameSource: null };
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Display name is managed by Microsoft Entra', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can edit display names', 400);
+  }
+  const displayName = normalizeDisplayName(rawDisplayName);
+  const previousDisplayName = normalizeDisplayName((existing as { displayName?: string | null }).displayName ?? null);
+  await (prisma as any).authAccessUser.update({
+    where: { email: normalized },
+    data: {
+      displayName,
+      displayNameSource: displayName ? 'local' : null,
+      updatedAt: new Date(),
+    },
+  });
+  if (previousDisplayName !== displayName) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail: actorEmail ?? normalized,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: previousDisplayName,
+      newValue: displayName,
+      metadata: { source: 'local' },
+    });
+  }
+  return readAuthDisplayProfile(normalized);
+}
+
+export async function updateUserDisplayNameByAdmin(
+  email: string,
+  rawDisplayName: string | null | undefined,
+  actorEmail?: string | null,
+): Promise<AuthDisplayProfile> {
+  const normalized = validateManagedEmail(email);
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayName: true, displayNameSource: true },
+  }) as { email: string; displayName: string | null; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Display name is managed by Microsoft Entra', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can edit display names', 400);
+  }
+  const displayName = normalizeDisplayName(rawDisplayName);
+  const previousDisplayName = normalizeDisplayName((existing as { displayName?: string | null }).displayName ?? null);
+  await authAccessUserModel.update({
+    where: { email: normalized },
+    data: {
+      displayName,
+      displayNameSource: displayName ? 'local' : null,
+      updatedAt: new Date(),
+    },
+  });
+  if (previousDisplayName !== displayName) {
+    await recordAuthAuditLog({
+      event: 'auth_profile_field_updated',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'displayName',
+      oldValue: previousDisplayName,
+      newValue: displayName,
+      metadata: { source: 'admin' },
+    });
+  }
+  return readAuthDisplayProfile(normalized);
+}
+
+export async function updateLocalUserEmailByAdmin(email: string, newEmail: string, actorEmail?: string | null): Promise<{
+  email: string;
+  previousEmail: string;
+}> {
+  const normalized = validateManagedEmail(email);
+  const normalizedNewEmail = validateManagedEmail(newEmail);
+  if (isAdminUser(normalized)) {
+    throw serviceError('Configured admin email cannot be edited', 400);
+  }
+
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Microsoft Entra accounts cannot be edited locally', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can be edited', 400);
+  }
+  if (normalized === normalizedNewEmail) {
+    return { email: normalized, previousEmail: normalized };
+  }
+  if (await localAuthUserExists(normalizedNewEmail)) {
+    throw serviceError('Email is already in use', 409);
+  }
+  const accessConflict = await authAccessUserModel.findUnique({
+    where: { email: normalizedNewEmail },
+    select: { email: true },
+  });
+  if (accessConflict) {
+    throw serviceError('Email is already in use', 409);
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.localAuthUser.update({
+        where: { email: normalized },
+        data: { email: normalizedNewEmail },
+      }),
+      prisma.authAccessUser.update({
+        where: { email: normalized },
+        data: {
+          email: normalizedNewEmail,
+          sessionVersion: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      }),
+    ]);
+  } catch {
+    throw serviceError('Failed to update local account email', 500);
+  }
+  await recordAuthAuditLog({
+    event: 'auth_profile_field_updated',
+    actorEmail,
+    targetEmail: normalizedNewEmail,
+    field: 'email',
+    oldValue: normalized,
+    newValue: normalizedNewEmail,
+    metadata: { previousEmail: normalized },
+  });
+  return { email: normalizedNewEmail, previousEmail: normalized };
+}
+
+export async function deleteLocalUserByAdmin(email: string, actorEmail?: string): Promise<{ email: string }> {
+  const normalized = validateManagedEmail(email);
+  if (isAdminUser(normalized)) {
+    throw serviceError('Configured admin cannot be deleted', 400);
+  }
+  if (actorEmail && normalizeEmail(actorEmail) === normalized) {
+    throw serviceError('You cannot delete your own account', 400);
+  }
+
+  const existing = await authAccessUserModel.findUnique({
+    where: { email: normalized },
+    select: { email: true, displayNameSource: true },
+  }) as { email: string; displayNameSource: DisplayNameSource | null } | null;
+  if (!existing) {
+    throw serviceError('User not found', 404);
+  }
+  if (existing.displayNameSource === 'entra') {
+    throw serviceError('Microsoft Entra accounts cannot be deleted locally', 400);
+  }
+  if (!(await localAuthUserExists(normalized))) {
+    throw serviceError('Only local accounts can be deleted', 400);
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.authAccessUser.update({
+        where: { email: normalized },
+        data: {
+          sessionVersion: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      }),
+      prisma.localAuthUser.delete({ where: { email: normalized } }),
+      prisma.authAccessUser.delete({ where: { email: normalized } }),
+    ]);
+  } catch {
+    throw serviceError('Failed to delete local account', 500);
+  }
+  await recordAuthAuditLog({
+    event: 'auth_profile_deleted',
+    actorEmail,
+    targetEmail: normalized,
+    metadata: { localAccount: true },
+  });
+  return { email: normalized };
+}
 
 function getAuditLogDelegate():
   | { create: (args: { data: { event: string; actorEmail: string | null; targetType: string; targetId: string } }) => Promise<unknown> }
@@ -237,6 +555,8 @@ async function listAdminReminderRecipients(): Promise<string[]> {
         select: {
           id: true,
           email: true,
+          displayName: true,
+          displayNameSource: true,
           approved: true,
           isAdmin: true,
           blocked: true,
@@ -315,6 +635,70 @@ function validateManagedEmail(email: string): string {
   return normalized;
 }
 
+async function readSessionVersion(email: string): Promise<number | null> {
+  const normalized = normalizeEmail(email);
+  const entry = await (prisma as any).authAccessUser.findUnique({
+    where: { email: normalized },
+    select: { sessionVersion: true },
+  }).catch(() => null) as { sessionVersion: number } | null;
+  return typeof entry?.sessionVersion === 'number' ? entry.sessionVersion : null;
+}
+
+export async function getAuthAccessSessionVersion(email: string): Promise<number> {
+  const version = await readSessionVersion(email);
+  if (version === null) {
+    throw serviceError('Session expired', 401);
+  }
+  return version;
+}
+
+export async function ensureAuthAccessUserForLogin(email: string): Promise<number> {
+  const normalized = validateManagedEmail(email);
+  const existingVersion = await readSessionVersion(normalized);
+  if (existingVersion !== null) {
+    return existingVersion;
+  }
+
+  if (isAdminUser(normalized)) {
+    await ensureBootstrapAdminAccessUser(normalized);
+  } else if (!isApprovalWorkflowEnabled()) {
+    await (prisma as any).authAccessUser.create({
+      data: {
+        email: normalized,
+        approved: true,
+        isAdmin: false,
+        blocked: false,
+        approvedAt: new Date(),
+      },
+    });
+  } else {
+    await ensurePendingAccessRequest(normalized);
+  }
+
+  return getAuthAccessSessionVersion(normalized);
+}
+
+export async function assertAuthSessionVersion(
+  email: string,
+  sessionVersion: number,
+): Promise<void> {
+  const currentVersion = await getAuthAccessSessionVersion(email);
+  if (currentVersion !== sessionVersion) {
+    throw serviceError('Session expired', 401);
+  }
+}
+
+async function incrementAuthAccessSessionVersion(email: string): Promise<void> {
+  const normalized = validateManagedEmail(email);
+  await (prisma as any).authAccessUser.update({
+    where: { email: normalized },
+    data: {
+      sessionVersion: { increment: 1 },
+      updatedAt: new Date(),
+    },
+  });
+}
+
 function dedupeOfficeLocations(
   locations: Array<{ id: string; key: string; name: string; isActive: boolean }>,
 ): Array<{ id: string; key: string; name: string; isActive: boolean }> {
@@ -358,13 +742,21 @@ async function syncUserOfficeMemberships(
     return;
   }
 
-  await prisma.authAccessUserOffice.createMany({
-    data: officeLocationIds.map((officeLocationId) => ({
-      authAccessUserId,
-      officeLocationId,
-    })),
-    skipDuplicates: true,
-  });
+  for (const officeLocationId of officeLocationIds) {
+    await prisma.authAccessUserOffice.upsert({
+      where: {
+        authAccessUserId_officeLocationId: {
+          authAccessUserId,
+          officeLocationId,
+        },
+      },
+      create: {
+        authAccessUserId,
+        officeLocationId,
+      },
+      update: {},
+    });
+  }
 }
 
 async function validateOfficeLocationIds(officeLocationIds: string[]): Promise<string[]> {
@@ -539,7 +931,7 @@ export async function isApprovedUser(email: string): Promise<boolean> {
   }
 }
 
-export async function approveUserByAdmin(email: string, officeLocationId: string): Promise<void> {
+export async function approveUserByAdmin(email: string, officeLocationId: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   const officeLocation = await validateOfficeLocationId(officeLocationId);
 
@@ -566,6 +958,7 @@ export async function approveUserByAdmin(email: string, officeLocationId: string
         approvedAt: new Date(),
         blocked: false,
         blockedAt: null,
+        sessionVersion: { increment: 1 },
         updatedAt: new Date(),
       },
     });
@@ -577,12 +970,21 @@ export async function approveUserByAdmin(email: string, officeLocationId: string
       throw serviceError('Failed to approve user', 500);
     }
     await syncUserOfficeMemberships(approvedUser.id, [officeLocation.id]);
+    await recordAuthAuditLog({
+      event: 'auth_access_approved',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'approved',
+      oldValue: false,
+      newValue: true,
+      metadata: { officeLocationId: officeLocation.id },
+    });
   } catch {
     throw serviceError('Failed to approve user', 500);
   }
 }
 
-export async function promoteUserByAdmin(email: string): Promise<void> {
+export async function promoteUserByAdmin(email: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   await authAccessUserModel.upsert({
     where: { email: normalized },
@@ -601,12 +1003,21 @@ export async function promoteUserByAdmin(email: string): Promise<void> {
       blocked: false,
       approvedAt: new Date(),
       blockedAt: null,
+      sessionVersion: { increment: 1 },
       updatedAt: new Date(),
     },
   });
+  await recordAuthAuditLog({
+    event: 'auth_access_promoted',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'isAdmin',
+    oldValue: false,
+    newValue: true,
+  });
 }
 
-export async function demoteUserByAdmin(email: string, officeLocationId?: string): Promise<void> {
+export async function demoteUserByAdmin(email: string, officeLocationId?: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
   if (isAdminUser(normalized)) {
     throw serviceError('Configured admin cannot be demoted', 400);
@@ -670,10 +1081,20 @@ export async function demoteUserByAdmin(email: string, officeLocationId?: string
       data: {
         isAdmin: false,
         officeLocationId: resolvedOfficeLocationId,
+        sessionVersion: { increment: 1 },
         updatedAt: new Date(),
       },
     });
     await syncUserOfficeMemberships(existing.id, assignedOfficeLocationIds);
+    await recordAuthAuditLog({
+      event: 'auth_access_demoted',
+      actorEmail,
+      targetEmail: normalized,
+      field: 'isAdmin',
+      oldValue: true,
+      newValue: false,
+      metadata: { officeLocationId: resolvedOfficeLocationId },
+    });
   } catch {
     throw serviceError('User not found', 404);
   }
@@ -701,6 +1122,7 @@ export async function blockUserByAdmin(email: string, actorEmail?: string): Prom
     update: {
       blocked: true,
       blockedAt: new Date(),
+      sessionVersion: { increment: 1 },
       updatedAt: new Date(),
     },
   });
@@ -710,6 +1132,14 @@ export async function blockUserByAdmin(email: string, actorEmail?: string): Prom
     actorEmail ? normalizeEmail(actorEmail) : null,
     normalized,
   );
+  await recordAuthAuditLog({
+    event: 'auth_access_blocked',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'blocked',
+    oldValue: false,
+    newValue: true,
+  });
 }
 
 export async function unblockUserByAdmin(email: string, actorEmail?: string): Promise<void> {
@@ -718,7 +1148,12 @@ export async function unblockUserByAdmin(email: string, actorEmail?: string): Pr
   try {
     await authAccessUserModel.update({
       where: { email: normalized },
-      data: { blocked: false, blockedAt: null, updatedAt: new Date() },
+      data: {
+        blocked: false,
+        blockedAt: null,
+        sessionVersion: { increment: 1 },
+        updatedAt: new Date(),
+      },
     });
   } catch {
     throw serviceError('User not found', 404);
@@ -729,14 +1164,28 @@ export async function unblockUserByAdmin(email: string, actorEmail?: string): Pr
     actorEmail ? normalizeEmail(actorEmail) : null,
     normalized,
   );
+  await recordAuthAuditLog({
+    event: 'auth_access_unblocked',
+    actorEmail,
+    targetEmail: normalized,
+    field: 'blocked',
+    oldValue: true,
+    newValue: false,
+  });
 }
 
-export async function declineUserByAdmin(email: string): Promise<void> {
+export async function declineUserByAdmin(email: string, actorEmail?: string | null): Promise<void> {
   const normalized = validateManagedEmail(email);
 
   try {
     await authAccessUserModel.delete({
       where: { email: normalized },
+    });
+    await recordAuthAuditLog({
+      event: 'auth_access_declined',
+      actorEmail,
+      targetEmail: normalized,
+      metadata: { deletedPendingRequest: true },
     });
   } catch {
     // If there is no pending record, treat it as an idempotent no-op.
@@ -795,6 +1244,10 @@ export async function listPendingAccessRequests(): Promise<Array<{ email: string
 export async function listAccessUsers(): Promise<
   Array<{
     email: string;
+    displayName: string | null;
+    displayNameSource: DisplayNameSource | null;
+    localAccount: boolean;
+    protectedBootstrapAdmin: boolean;
     approved: boolean;
     isAdmin: boolean;
     blocked: boolean;
@@ -810,12 +1263,16 @@ export async function listAccessUsers(): Promise<
   }>
 > {
   try {
+    const localRows = await prisma.localAuthUser.findMany({ select: { email: true } }).catch(() => []);
+    const localEmails = new Set(localRows.map((row) => normalizeEmail(row.email)));
     const rows = await Promise.race([
       authAccessUserModel.findMany({
         orderBy: { requestedAt: 'asc' },
         select: {
           id: true,
           email: true,
+          displayName: true,
+          displayNameSource: true,
           approved: true,
           isAdmin: true,
           blocked: true,
@@ -866,6 +1323,8 @@ export async function listAccessUsers(): Promise<
           {
             id: 'bootstrap-admin',
             email: configuredAdmin,
+            displayName: null,
+            displayNameSource: null,
             approved: true,
             isAdmin: true,
             blocked: false,
@@ -885,6 +1344,14 @@ export async function listAccessUsers(): Promise<
       const assignedOfficeLocations = getAssignedOfficeLocations(row);
       return {
         email: row.email,
+        displayName: normalizeDisplayName((row as AuthAccessEntry & { displayName?: string | null }).displayName ?? null),
+        displayNameSource:
+          (row as AuthAccessEntry & { displayNameSource?: string | null }).displayNameSource === 'local' ||
+          (row as AuthAccessEntry & { displayNameSource?: string | null }).displayNameSource === 'entra'
+            ? ((row as AuthAccessEntry & { displayNameSource?: DisplayNameSource }).displayNameSource ?? null)
+            : null,
+        localAccount: localEmails.has(normalizeEmail(row.email)),
+        protectedBootstrapAdmin: isAdminUser(row.email),
         approved: row.approved,
         isAdmin: row.isAdmin || isAdminUser(row.email),
         blocked: row.blocked,

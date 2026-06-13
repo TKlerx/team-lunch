@@ -18,14 +18,6 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
   };
 });
 
-vi.mock('../../src/client/hooks/useNickname.js', () => ({
-  useNickname: () => ({
-    nickname: 'alice@example.com',
-    updateNickname: vi.fn(),
-    clearNickname: vi.fn(),
-  }),
-}));
-
 const mockCreateMenu = vi.fn();
 const mockUpdateMenu = vi.fn();
 const mockDeleteMenu = vi.fn();
@@ -64,6 +56,8 @@ function renderPage() {
 describe('ManageMenus', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.setItem('team_lunch_actor_key', 'alice@example.com');
+    localStorage.setItem('team_lunch_auth_method', 'local');
     mockGetUserMenuDefaultPreferences.mockResolvedValue([]);
     mockUpdateUserMenuDefaultPreference.mockResolvedValue({
       userKey: 'alice@example.com',

@@ -549,19 +549,18 @@ describe('SSE end-to-end integration', () => {
 
       // Place order
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/orders`, {
-        nickname: 'Bob',
         itemId: item.id,
         notes: 'Extra salsa',
-      });
+      }, headers);
       await waitForEvents(sse.events, eventCountBefore + 2);
 
       expect(sse.events[eventCountBefore + 1].event).toBe('order_placed');
       const orderPayload = sse.events[eventCountBefore + 1].data as { order: { nickname: string; itemName: string } };
-      expect(orderPayload.order.nickname).toBe('Bob');
+      expect(orderPayload.order.nickname).toBe('approved-sse@company.com');
       expect(orderPayload.order.itemName).toBe('Tacos');
 
       // Expire food selection
-      await httpRequest('POST', port, `/api/food-selections/${fs.id}/expire`);
+      await httpRequest('POST', port, `/api/food-selections/${fs.id}/expire`, undefined, headers);
       await waitForEvents(sse.events, eventCountBefore + 3);
 
       expect(sse.events[eventCountBefore + 2].event).toBe('food_selection_overtime');
@@ -580,20 +579,19 @@ describe('SSE end-to-end integration', () => {
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/place-order`, {
         etaMinutes: 20,
-        nickname: 'admin@example.com',
-      });
+      }, headers);
       await waitForEvents(sse.events, eventCountBefore + 5);
 
       expect(sse.events[eventCountBefore + 4].event).toBe('food_selection_delivery_started');
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/eta`, {
         etaMinutes: 30,
-      });
+      }, headers);
       await waitForEvents(sse.events, eventCountBefore + 6);
 
       expect(sse.events[eventCountBefore + 5].event).toBe('food_selection_eta_updated');
 
-      await httpRequest('POST', port, `/api/food-selections/${fs.id}/confirm-arrival`);
+      await httpRequest('POST', port, `/api/food-selections/${fs.id}/confirm-arrival`, undefined, headers);
       await waitForEvents(sse.events, eventCountBefore + 7);
 
       expect(sse.events[eventCountBefore + 6].event).toBe('food_selection_completed');
@@ -603,14 +601,14 @@ describe('SSE end-to-end integration', () => {
   });
 
   it('delivers events to multiple connected clients', async () => {
-    const sse1 = await connectSSE(port);
-    const sse2 = await connectSSE(port);
+    const sse1 = await connectSSE(port, defaultHeaders);
+    const sse2 = await connectSSE(port, defaultHeaders);
     try {
       await waitForEvents(sse1.events, 1);
       await waitForEvents(sse2.events, 1);
 
       // Create a menu — both clients should receive it
-      await httpRequest('POST', port, '/api/menus', { name: 'Korean' });
+      await httpRequest('POST', port, '/api/menus', { name: 'Korean' }, defaultHeaders);
 
       await waitForEvents(sse1.events, 2);
       await waitForEvents(sse2.events, 2);
@@ -631,8 +629,8 @@ describe('SSE end-to-end integration', () => {
   });
 
   it('disconnected client is cleaned up and does not block broadcasts', async () => {
-    const sse1 = await connectSSE(port);
-    const sse2 = await connectSSE(port);
+    const sse1 = await connectSSE(port, defaultHeaders);
+    const sse2 = await connectSSE(port, defaultHeaders);
     try {
       await waitForEvents(sse1.events, 1);
       await waitForEvents(sse2.events, 1);
@@ -642,7 +640,7 @@ describe('SSE end-to-end integration', () => {
       await new Promise((r) => setTimeout(r, 100));
 
       // Create a menu — should not throw, and client 2 should receive it
-      await httpRequest('POST', port, '/api/menus', { name: 'Greek' });
+      await httpRequest('POST', port, '/api/menus', { name: 'Greek' }, defaultHeaders);
       await waitForEvents(sse2.events, 2);
 
       expect(sse2.events[1].event).toBe('menu_created');

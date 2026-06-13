@@ -111,11 +111,14 @@ model PollVote {
   menuId   String   @map("menu_id")
   menuName String   @map("menu_name")
   nickname String
+  actorKey String?  @map("actor_key")
+  actorEmail String? @map("actor_email")
+  displayNameSnapshot String? @map("display_name_snapshot")
   castAt   DateTime @default(now()) @map("cast_at")
   poll     Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu     Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
-  @@unique([pollId, menuId, nickname])
+  @@unique([pollId, menuId, actorKey])
   @@map("poll_votes")
 }
 
@@ -149,6 +152,9 @@ model FoodOrder {
   id              String        @id @default(uuid())
   selectionId     String        @map("selection_id")
   nickname        String
+  actorKey        String?       @map("actor_key")
+  actorEmail      String?       @map("actor_email")
+  displayNameSnapshot String?   @map("display_name_snapshot")
   itemId          String?       @map("item_id")
   itemName        String        @map("item_name")
   notes           String?
@@ -179,6 +185,9 @@ model LocalAuthUser {
 model AuthAccessUser {
   id               String          @id @default(uuid())
   email            String          @unique
+  displayName      String?         @map("display_name")
+  displayNameSource String?        @map("display_name_source")
+  sessionVersion   Int             @default(0) @map("session_version")
   approved         Boolean         @default(false)
   isAdmin          Boolean         @default(false) @map("is_admin")
   blocked          Boolean         @default(false)
@@ -219,6 +228,23 @@ model AuditLog {
 
   @@index([targetType, targetId], map: "audit_logs_target_idx")
   @@map("audit_logs")
+}
+
+model AuthAuditLog {
+  id          String   @id @default(uuid())
+  event       String
+  actorEmail  String?  @map("actor_email")
+  targetEmail String?  @map("target_email")
+  targetType  String   @default("auth_user") @map("target_type")
+  field       String?
+  oldValue    String?  @map("old_value")
+  newValue    String?  @map("new_value")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([targetEmail, createdAt], map: "auth_audit_logs_target_email_idx")
+  @@index([event, createdAt], map: "auth_audit_logs_event_idx")
+  @@map("auth_audit_logs")
 }
 
 model UserPreference {

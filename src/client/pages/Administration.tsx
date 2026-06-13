@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { withBasePath } from '../config.js';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
 import {
   LOCAL_PASSWORD_MIN_LENGTH,
   LOCAL_PASSWORD_MAX_LENGTH,
@@ -60,10 +61,6 @@ function orderWeekdays(weekdays: OfficeWeekday[]): OfficeWeekday[] {
   return OFFICE_WEEKDAY_OPTIONS.map((o) => o.value).filter((w) => weekdays.includes(w));
 }
 
-function getOfficeNameDrafts(officeLocations: OfficeLocation[]): Record<string, string> {
-  return Object.fromEntries(officeLocations.map((l) => [l.id, l.name]));
-}
-
 function getOfficeSettingsDrafts(
   officeLocations: OfficeLocation[],
   current: Record<string, OfficeSettingsDraft>,
@@ -90,6 +87,15 @@ function getSelectedUserOfficeMemberships(
   );
 }
 
+function getEmailDrafts(
+  users: AuthConfigResponse['auth']['users'],
+  current: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    users.map((u) => [u.email, current[u.email] || u.email]),
+  );
+}
+
 export default function Administration() {
   const { setPendingApprovalCount } = useAdminOfficeContext();
   const [loading, setLoading] = useState(true);
@@ -108,6 +114,8 @@ export default function Administration() {
   const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] = useState<
     Record<string, string[]>
   >({});
+  const [displayNameDrafts, setDisplayNameDrafts] = useState<Record<string, string>>({});
+  const [emailDrafts, setEmailDrafts] = useState<Record<string, string>>({});
   const [officeNameDrafts, setOfficeNameDrafts] = useState<Record<string, string>>({});
   const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<Record<string, OfficeSettingsDraft>>({});
   const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
@@ -158,6 +166,15 @@ export default function Administration() {
     setSelectedUserOfficeMemberships((current) =>
       getSelectedUserOfficeMemberships(auth.users, current),
     );
+    setDisplayNameDrafts((current) =>
+      Object.fromEntries(
+        auth.users.map((entry) => [
+          entry.email,
+          entry.email in current ? current[entry.email] : (entry.displayName ?? ''),
+        ]),
+      ),
+    );
+    setEmailDrafts((current) => getEmailDrafts(auth.users, current));
     setOfficeNameDrafts((current) =>
       Object.fromEntries(
         auth.officeLocations.map((l) => [l.id, l.id in current ? current[l.id] : l.name]),
@@ -383,6 +400,81 @@ export default function Administration() {
       await refreshConfig();
     } catch (assignError) {
       setError(assignError instanceof Error ? assignError.message : 'Office assignment failed');
+    } finally {
+      setUpdatingUserRoleEmail(null);
+    }
+  };
+
+  const handleSaveDisplayName = async (email: string) => {
+    setUpdatingUserRoleEmail(email);
+    setError('');
+    try {
+      const response = await fetch(withBasePath('/api/auth/users/display-name'), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, displayName: displayNameDrafts[email]?.trim() || null }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || 'Failed to update display name');
+      }
+      const payload = (await response.json().catch(() => null)) as {
+        displayName?: string | null;
+      } | null;
+      if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
+        setAuthenticatedDisplayName(payload?.displayName ?? null);
+      }
+      await refreshConfig();
+    } catch (displayNameError) {
+      setError(displayNameError instanceof Error ? displayNameError.message : 'Display name update failed');
+    } finally {
+      setUpdatingUserRoleEmail(null);
+    }
+  };
+
+  const handleSaveEmail = async (email: string) => {
+    setUpdatingUserRoleEmail(email);
+    setError('');
+    try {
+      const response = await fetch(withBasePath('/api/auth/users/email'), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, newEmail: emailDrafts[email]?.trim() ?? '' }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || 'Failed to update email');
+      }
+      await refreshConfig();
+    } catch (emailError) {
+      setError(emailError instanceof Error ? emailError.message : 'Email update failed');
+    } finally {
+      setUpdatingUserRoleEmail(null);
+    }
+  };
+
+  const handleDeleteUser = async (email: string) => {
+    if (!window.confirm(`Delete local account ${email}? Historical votes and orders stay unchanged.`)) {
+      return;
+    }
+    setUpdatingUserRoleEmail(email);
+    setError('');
+    try {
+      const response = await fetch(withBasePath('/api/auth/users'), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || 'Failed to delete user');
+      }
+      await refreshConfig();
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'User deletion failed');
     } finally {
       setUpdatingUserRoleEmail(null);
     }
@@ -859,6 +951,11 @@ export default function Administration() {
               <ul className="space-y-2">
                 {config.users.map((entry) => {
                   const isCurrentUser = config.user?.username === entry.email;
+                  const canManageLocalAccount =
+                    entry.localAccount &&
+                    !entry.protectedBootstrapAdmin &&
+                    entry.displayNameSource !== 'entra';
+                  const canEditDisplayName = entry.localAccount && entry.displayNameSource !== 'entra';
                   return (
                     <li key={entry.email} className="rounded border border-border bg-surface px-3 py-2 text-sm">
                       <div className="flex items-center justify-between gap-3">
@@ -877,8 +974,72 @@ export default function Administration() {
                               ? entry.assignedOfficeLocations.map((l) => l.name).join(', ')
                               : 'None'}
                           </p>
+                          <p className="text-xs text-fg-muted">
+                            Display name: {entry.displayName || 'Email fallback'}
+                          </p>
                         </div>
                         <div className="flex max-w-xl flex-col gap-2">
+                          <div className="flex flex-col gap-1 sm:flex-row">
+                            <input
+                              type="email"
+                              aria-label={`Account email for ${entry.email}`}
+                              value={emailDrafts[entry.email] ?? entry.email}
+                              disabled={!canManageLocalAccount || updatingUserRoleEmail === entry.email}
+                              onChange={(event) =>
+                                setEmailDrafts((current) => ({
+                                  ...current,
+                                  [entry.email]: event.target.value,
+                                }))
+                              }
+                              className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
+                            />
+                            <button
+                              type="button"
+                              disabled={
+                                !canManageLocalAccount ||
+                                updatingUserRoleEmail === entry.email ||
+                                (emailDrafts[entry.email] ?? entry.email).trim().toLowerCase() === entry.email.toLowerCase()
+                              }
+                              onClick={() => void handleSaveEmail(entry.email)}
+                              className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+                            >
+                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save email'}
+                            </button>
+                          </div>
+                          {!entry.localAccount ? (
+                            <p className="text-xs text-fg-muted">External account email is read-only</p>
+                          ) : null}
+                          <div className="flex flex-col gap-1 sm:flex-row">
+                            <input
+                              type="text"
+                              aria-label={`Display name for ${entry.email}`}
+                              value={displayNameDrafts[entry.email] ?? ''}
+                              disabled={!canEditDisplayName || updatingUserRoleEmail === entry.email}
+                              onChange={(event) =>
+                                setDisplayNameDrafts((current) => ({
+                                  ...current,
+                                  [entry.email]: event.target.value,
+                                }))
+                              }
+                              className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
+                              placeholder="Display name"
+                            />
+                            <button
+                              type="button"
+                              disabled={
+                                !canEditDisplayName ||
+                                updatingUserRoleEmail === entry.email ||
+                                (displayNameDrafts[entry.email] ?? '').trim() === (entry.displayName ?? '')
+                              }
+                              onClick={() => void handleSaveDisplayName(entry.email)}
+                              className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+                            >
+                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save name'}
+                            </button>
+                          </div>
+                          {entry.displayNameSource === 'entra' ? (
+                            <p className="text-xs text-fg-muted">Managed by Microsoft Entra</p>
+                          ) : null}
                           <div className="flex flex-wrap gap-2">
                             {config.officeLocations
                               .filter((l) => l.isActive)
@@ -995,6 +1156,14 @@ export default function Administration() {
                               {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Block'}
                             </button>
                           )}
+                          <button
+                            type="button"
+                            disabled={!canManageLocalAccount || updatingUserRoleEmail === entry.email || isCurrentUser}
+                            onClick={() => void handleDeleteUser(entry.email)}
+                            className="rounded border border-danger bg-danger-soft px-3 py-1 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+                          >
+                            {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Delete local account'}
+                          </button>
                         </div>
                       </div>
                     </li>

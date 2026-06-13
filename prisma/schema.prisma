@@ -99,13 +99,16 @@ model PollVote {
   pollId   String   @map("poll_id") @db.Uuid
   menuId   String   @map("menu_id") @db.Uuid
   menuName String   @map("menu_name") @db.VarChar(60)
-  nickname String   @db.VarChar(30)
+  nickname String   @db.VarChar(255)
+  actorKey String?  @map("actor_key") @db.VarChar(255)
+  actorEmail String? @map("actor_email") @db.VarChar(255)
+  displayNameSnapshot String? @map("display_name_snapshot") @db.VarChar(255)
   castAt   DateTime @default(now()) @map("cast_at") @db.Timestamptz()
 
   poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu Menu @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
-  @@unique([pollId, menuId, nickname])
+  @@unique([pollId, menuId, actorKey])
   @@map("poll_votes")
 }
 
@@ -139,7 +142,10 @@ model FoodSelection {
 model FoodOrder {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   selectionId     String    @map("selection_id") @db.Uuid
-  nickname        String    @db.VarChar(30)
+  nickname        String    @db.VarChar(255)
+  actorKey        String?   @map("actor_key") @db.VarChar(255)
+  actorEmail      String?   @map("actor_email") @db.VarChar(255)
+  displayNameSnapshot String? @map("display_name_snapshot") @db.VarChar(255)
   itemId          String?   @map("item_id") @db.Uuid
   itemName        String    @map("item_name") @db.VarChar(80)
   notes           String?   @db.VarChar(200)
@@ -186,6 +192,9 @@ model LocalAuthUser {
 model AuthAccessUser {
   id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email            String          @unique @db.VarChar(255)
+  displayName      String?         @map("display_name") @db.VarChar(255)
+  displayNameSource String?        @map("display_name_source") @db.VarChar(20)
+  sessionVersion   Int             @default(0) @map("session_version")
   approved         Boolean         @default(false)
   isAdmin          Boolean         @default(false) @map("is_admin")
   blocked          Boolean         @default(false)
@@ -226,6 +235,23 @@ model AuditLog {
 
   @@index([targetType, targetId], map: "audit_logs_target_idx")
   @@map("audit_logs")
+}
+
+model AuthAuditLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event       String   @db.VarChar(80)
+  actorEmail  String?  @map("actor_email") @db.VarChar(255)
+  targetEmail String?  @map("target_email") @db.VarChar(255)
+  targetType  String   @default("auth_user") @map("target_type") @db.VarChar(40)
+  field       String?  @db.VarChar(80)
+  oldValue    String?  @map("old_value") @db.Text
+  newValue    String?  @map("new_value") @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@index([targetEmail, createdAt], map: "auth_audit_logs_target_email_idx")
+  @@index([event, createdAt], map: "auth_audit_logs_event_idx")
+  @@map("auth_audit_logs")
 }
 
 model UserPreference {

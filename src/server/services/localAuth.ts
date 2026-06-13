@@ -9,10 +9,15 @@ const DB_PROBE_TIMEOUT_MS = 500;
 const localAuthUserModel = (prisma as any).localAuthUser as {
   count: () => Promise<number>;
   findUnique: (args: { where: { email: string } }) => Promise<{ email: string; passwordHash: string } | null>;
+  delete: (args: { where: { email: string } }) => Promise<unknown>;
   upsert: (args: {
     where: { email: string };
     update: { passwordHash: string };
     create: { email: string; passwordHash: string };
+  }) => Promise<unknown>;
+  update: (args: {
+    where: { email: string };
+    data: { email: string };
   }) => Promise<unknown>;
 };
 
@@ -98,6 +103,15 @@ export async function authenticateLocalUser(
   return isValid ? dbUser.email : null;
 }
 
+export async function localAuthUserExists(email: string): Promise<boolean> {
+  const normalized = normalizeEmail(email);
+  try {
+    return !!(await localAuthUserModel.findUnique({ where: { email: normalized } }));
+  } catch {
+    return false;
+  }
+}
+
 export async function upsertLocalAuthUser(
   email: string,
   providedPassword: string | undefined,
@@ -117,4 +131,21 @@ export async function upsertLocalAuthUser(
   });
 
   return { email: normalizedEmail, password, generated };
+}
+
+export async function updateLocalAuthUserEmail(email: string, newEmail: string): Promise<void> {
+  const normalizedEmail = validateEmailOrThrow(email);
+  const normalizedNewEmail = validateEmailOrThrow(newEmail);
+  if (normalizedEmail === normalizedNewEmail) {
+    return;
+  }
+  await localAuthUserModel.update({
+    where: { email: normalizedEmail },
+    data: { email: normalizedNewEmail },
+  });
+}
+
+export async function deleteLocalAuthUser(email: string): Promise<void> {
+  const normalizedEmail = validateEmailOrThrow(email);
+  await localAuthUserModel.delete({ where: { email: normalizedEmail } });
 }

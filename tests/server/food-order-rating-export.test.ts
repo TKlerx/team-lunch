@@ -6,7 +6,23 @@ import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
 import * as pollService from '../../src/server/services/poll.js';
 import * as foodSelectionService from '../../src/server/services/foodSelection.js';
+import { createSessionCookieValue } from '../../src/server/services/authSession.js';
+import { ensureDefaultOfficeLocation } from '../../src/server/services/officeLocation.js';
 import prisma from '../../src/server/db.js';
+
+async function authCookie(email: string): Promise<string> {
+  const office = await ensureDefaultOfficeLocation();
+  await prisma.authAccessUser.upsert({
+    where: { email },
+    update: { approved: true, blocked: false, isAdmin: false, officeLocationId: office.id },
+    create: { email, approved: true, blocked: false, isAdmin: false, officeLocationId: office.id },
+  });
+  return `team_lunch_auth_session=${createSessionCookieValue({
+    username: email,
+    method: 'entra',
+    iat: Math.floor(Date.now() / 1000),
+  })}`;
+}
 
 async function createCompletedSelectionWithOrder(nickname: string) {
   const menu = await menuService.createMenu('Thai House');
@@ -48,7 +64,8 @@ describe('food order rating and export routes', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selectionId}/orders/${orderId}/rating`)
-      .send({ nickname: 'alice@example.com', rating: 4, feedbackComment: 'Fast delivery and hot food' })
+      .set('Cookie', await authCookie('alice@example.com'))
+      .send({ rating: 4, feedbackComment: 'Fast delivery and hot food' })
       .expect(200);
 
     expect(res.body.rating).toBe(4);
@@ -72,7 +89,8 @@ describe('food order rating and export routes', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selection.id}/orders/${order.id}/rating`)
-      .send({ nickname: 'alice@example.com', rating: 3 })
+      .set('Cookie', await authCookie('alice@example.com'))
+      .send({ rating: 3 })
       .expect(400);
 
     expect(res.body).toEqual({ error: 'Meals can be rated only after delivery confirmation' });
@@ -88,7 +106,7 @@ describe('food order rating and export routes', () => {
 
     const res = await supertest(app.server)
       .get('/api/food-selections/export/mine')
-      .query({ nickname: 'alice@example.com' })
+      .set('Cookie', await authCookie('alice@example.com'))
       .buffer(true)
       .parse((stream, callback) => {
         const chunks: Buffer[] = [];
@@ -122,7 +140,8 @@ describe('food order rating and export routes', () => {
 
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selectionId}/orders/${orderId}/rating`)
-      .send({ nickname: 'alice@example.com', rating: 4, feedbackComment: 'x'.repeat(301) })
+      .set('Cookie', await authCookie('alice@example.com'))
+      .send({ rating: 4, feedbackComment: 'x'.repeat(301) })
       .expect(400);
 
     expect(res.body).toEqual({ error: 'Feedback comment must be 300 characters or fewer' });

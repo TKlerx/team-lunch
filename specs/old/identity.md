@@ -3,9 +3,9 @@
 ## Topic of Concern
 The identity system handles how a user is recognized across the app without any formal user accounts or authentication.
 
-> Legacy/open-mode note: authenticated deployments now use the signed session
-> username as the authoritative action identity. This nickname flow applies only
-> when auth is not configured and the app runs open.
+> Retired June 2026: nickname/open mode is no longer supported. Authenticated
+> deployments use the signed session username as the authoritative action
+> identity, with optional display-name snapshots for presentation/history.
 
 ## Requirements
 
@@ -33,8 +33,9 @@ The identity system handles how a user is recognized across the app without any 
 
 ### No Backend Involvement
 - Nicknames are client-side only (localStorage).
-- The nickname is sent as a plain string in API request bodies whenever the backend needs to attribute an action to a user (e.g. casting a vote, placing a food order).
-- The backend never stores a "user" entity; it stores only the nickname string alongside the relevant domain record.
+- Historical records may still contain nickname fields for compatibility, but
+  new user-attributed writes ignore request-body nickname values and resolve
+  identity from the signed session.
 
 ## Out of Scope
 - Authentication, passwords, sessions, or tokens.

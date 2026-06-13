@@ -21,8 +21,6 @@ export default function MainView({
   onOpenHistorySelection?: (selectionId: string) => void;
 }) {
   switch (phase) {
-    case 'NICKNAME_PROMPT':
-      return null;
     case 'NO_MENUS':
       return <NoMenusView />;
     case 'POLL_IDLE':

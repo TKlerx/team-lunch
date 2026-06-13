@@ -324,7 +324,7 @@ if ($Phase -eq "full") {
     Invoke-TrivyImageScan
 }
 
-if ($Phase -in "continuity") {
+if ($Phase -eq "continuity") {
     Invoke-ContinuityValidation
 }
 

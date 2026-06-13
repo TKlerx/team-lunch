@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { buildApp } from '../../src/server/index.js';
+import { cleanDatabase } from './helpers/db.js';
 
 describe('auth routes config', () => {
   const originalEnv = {
@@ -19,7 +20,8 @@ describe('auth routes config', () => {
     delete process.env.ENTRA_REDIRECT_URI;
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await cleanDatabase();
     for (const [key, value] of Object.entries(originalEnv)) {
       if (value === undefined) {
         delete process.env[key];
@@ -64,7 +66,8 @@ describe('auth routes config', () => {
     await app.close();
   });
 
-  it('keeps local login available when Entra auth is not configured', async () => {
+  it('reports setup required when no auth method is configured', async () => {
+    await cleanDatabase();
     delete process.env.ENTRA_CLIENT_ID;
     delete process.env.ENTRA_CLIENT_SECRET;
     delete process.env.ENTRA_TENANT_ID;
@@ -77,9 +80,11 @@ describe('auth routes config', () => {
     expect(configRes.json()).toMatchObject({
       auth: {
         entraEnabled: false,
-        localEnabled: true,
+        localEnabled: false,
+        authenticated: false,
       },
     });
+    expect(configRes.json().auth.warning).toMatch(/Authentication is required/i);
 
     const loginRes = await app.inject({
       method: 'POST',
@@ -87,7 +92,6 @@ describe('auth routes config', () => {
       payload: { username: 'missing@example.com', password: 'bad-password' },
     });
     expect(loginRes.statusCode).toBe(401);
-    expect(loginRes.json()).toEqual({ error: 'Invalid username or password' });
 
     await app.close();
   });

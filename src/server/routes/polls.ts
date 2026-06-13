@@ -3,15 +3,12 @@ import * as pollService from '../services/poll.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
-import {
-  getBlockedUserMessage,
-  isApprovalWorkflowEnabled,
-  resolveUserApproval,
-} from '../services/authAccess.js';
+import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
 import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
 } from '../services/officeContext.js';
+import { requireAuthenticatedActor } from './authIdentity.js';
 import type {
   StartPollRequest,
   CastVoteRequest,
@@ -21,24 +18,12 @@ import type {
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    return;
-  }
-
+  const actor = await requireAuthenticatedActor(cookieHeader);
   if (!isApprovalWorkflowEnabled()) {
     return;
   }
 
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin) {
+  if (!actor.isAdmin) {
     throw serviceError('Admin role required', 403);
   }
 }
@@ -47,78 +32,20 @@ async function requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader: strin
   actorKey: string | null;
   isAdmin: boolean;
 }> {
-  if (!isApprovalWorkflowEnabled()) {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return {
-      actorKey: session?.username?.trim().toLowerCase() ?? null,
-      isAdmin: false,
-    };
-  }
-
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    throw serviceError('Authentication required', 401);
-  }
-
-  const approval = await resolveUserApproval(session.username);
-  if (approval.blocked) {
-    throw serviceError(getBlockedUserMessage(), 403);
-  }
-  if (!approval.isAdmin && !approval.approved) {
-    throw serviceError('User is awaiting approval', 403);
-  }
-
-  return {
-    actorKey: session.username.trim().toLowerCase(),
-    isAdmin: approval.isAdmin,
-  };
+  const actor = await requireAuthenticatedActor(cookieHeader);
+  return { actorKey: actor.actorKey, isAdmin: actor.isAdmin };
 }
 
 async function resolveOptionalApprovedActor(
   cookieHeader: string | undefined,
 ): Promise<{ actorKey: string | null; isAdmin: boolean } | null> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (!session) {
-    return null;
-  }
   return requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
-}
-
-async function resolveVotingNickname(
-  cookieHeader: string | undefined,
-  providedNickname: string | undefined,
-): Promise<string> {
-  const session = getAuthSessionFromCookieHeader(cookieHeader);
-  if (session) {
-    const approval = await resolveUserApproval(session.username);
-    if (approval.blocked) {
-      throw serviceError(getBlockedUserMessage(), 403);
-    }
-    if (approval.approvalRequired && !approval.approved && !approval.isAdmin) {
-      throw serviceError('User is awaiting approval', 403);
-    }
-    return session.username;
-  }
-
-  const nickname = providedNickname?.trim();
-  if (!nickname) {
-    throw serviceError('Nickname is required', 400);
-  }
-  if (nickname.length > 30) {
-    throw serviceError('Nickname must be 1–30 characters', 400);
-  }
-  return nickname;
 }
 
 async function requireAdminOrPollCreator(
   cookieHeader: string | undefined,
   pollId: string,
 ): Promise<{ actorKey: string | null; isAdmin: boolean }> {
-  if (process.env.NODE_ENV === 'test' && process.env.AUTHZ_ENFORCE_ADMIN !== 'true') {
-    const session = getAuthSessionFromCookieHeader(cookieHeader);
-    return { actorKey: session?.username?.trim().toLowerCase() ?? null, isAdmin: true };
-  }
-
   const actor = await requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
   if (actor.isAdmin) {
     return actor;
@@ -175,7 +102,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -183,8 +110,9 @@ export default async function pollRoutes(app: FastifyInstance) {
         const poll = await pollService.castVote(
           req.params.id,
           req.body.menuId,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.status(201).send(poll);
       } catch (err) {
@@ -198,7 +126,7 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -206,8 +134,9 @@ export default async function pollRoutes(app: FastifyInstance) {
         const poll = await pollService.withdrawVote(
           req.params.id,
           req.body.menuId,
-          nickname,
+          actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.send(poll);
       } catch (err) {
@@ -221,12 +150,17 @@ export default async function pollRoutes(app: FastifyInstance) {
     '/api/polls/:id/votes/all',
     async (req, reply) => {
       try {
-        const nickname = await resolveVotingNickname(req.headers.cookie, req.body.nickname);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
-        const poll = await pollService.withdrawAllVotes(req.params.id, nickname, officeLocationId);
+        const poll = await pollService.withdrawAllVotes(
+          req.params.id,
+          actor.displayNameSnapshot,
+          officeLocationId,
+          actor,
+        );
         return reply.send(poll);
       } catch (err) {
         return sendServiceError(reply, err);
@@ -237,7 +171,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // POST /api/polls/:id/end — trigger timer expiry / end poll
   app.post<{ Params: { id: string } }>('/api/polls/:id/end', async (req, reply) => {
     try {
-      const session = getAuthSessionFromCookieHeader(req.headers.cookie);
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -245,7 +179,7 @@ export default async function pollRoutes(app: FastifyInstance) {
       return reply.send(
         await pollService.endPoll(req.params.id, {
           allowPremature: true,
-          actorEmail: session?.username,
+          actorEmail: actor.actorEmail,
         }, officeLocationId),
       );
     } catch (err) {
@@ -295,6 +229,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // POST /api/polls/:id/random-winner — pick random winner from tie
   app.post<{ Params: { id: string } }>('/api/polls/:id/random-winner', async (req, reply) => {
     try {
+      await requireAdminOrPollCreator(req.headers.cookie, req.params.id);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),

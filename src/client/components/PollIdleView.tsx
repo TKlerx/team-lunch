@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { FoodSelection, Poll } from '../../lib/types.js';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
-import { useNickname } from '../hooks/useNickname.js';
+import { getAuthenticatedDisplayLabel } from '../auth.js';
 import {
   getAverageMealRating,
   getLastWinnerLabel,
@@ -310,7 +310,7 @@ function SingleMenuQuickStart({
   menuName: string;
   defaultDuration: number;
 }) {
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [duration, setDuration] = useState<number>(defaultDuration);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -321,8 +321,8 @@ function SingleMenuQuickStart({
 
   const handleQuickStart = async (event: FormEvent) => {
     event.preventDefault();
-    if (!nickname) {
-      setError('Set a nickname first');
+    if (!actorLabel) {
+      setError('Sign in first');
       return;
     }
 
@@ -381,7 +381,7 @@ function PollStartForm({
 }: {
   menus: Array<{ id: string; name: string }>;
 }) {
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState(5);
   const [excludedReasons, setExcludedReasons] = useState<Record<string, string>>({});
@@ -400,8 +400,8 @@ function PollStartForm({
       setError('Description must be 120 characters or fewer');
       return;
     }
-    if (!nickname) {
-      setError('Set a nickname first');
+    if (!actorLabel) {
+      setError('Sign in first');
       return;
     }
 
@@ -541,7 +541,7 @@ export default function PollIdleView({
     menus,
     defaultFoodSelectionDurationMinutes,
   } = useAppState();
-  const { nickname } = useNickname();
+  const actorLabel = getAuthenticatedDisplayLabel();
   const menusWithItems = menus.filter((menu) => menu.items.length > 0);
 
   return (
@@ -571,7 +571,7 @@ export default function PollIdleView({
 
         <DashboardInsights
           history={completedFoodSelectionsHistory}
-          nickname={nickname}
+          nickname={actorLabel}
           latestCompletedPoll={latestCompletedPoll}
           latestCompletedFoodSelection={latestCompletedFoodSelection}
           onOpenHistorySelection={onOpenHistorySelection}
