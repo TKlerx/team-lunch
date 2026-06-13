@@ -3,7 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../src/client/App.js';
-import { makeFoodSelection, makeMenu } from './helpers.js';
+import { makeFoodSelection, makeMenu, makePoll } from './helpers.js';
 
 const mockDispatch = vi.fn();
 const mockUseAppState = vi.fn();
@@ -38,6 +38,18 @@ vi.mock('../../src/client/pages/ManageMenus.js', () => ({
   default: () => <div data-testid="manage-menus" />,
 }));
 
+vi.mock('../../src/client/pages/ShoppingList.js', () => ({
+  default: () => <div data-testid="shopping-list" />,
+}));
+
+vi.mock('../../src/client/pages/Settings.js', () => ({
+  default: () => <div data-testid="settings" />,
+}));
+
+vi.mock('../../src/client/pages/Administration.js', () => ({
+  default: () => <div data-testid="administration" />,
+}));
+
 vi.mock('../../src/client/components/FoodSelectionCompletedView.js', () => ({
   default: ({ isHistorical }: { isHistorical?: boolean }) => (
     <div data-testid={isHistorical ? 'historical-completed-view' : 'completed-view'} />
@@ -52,6 +64,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: null,
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [
         makeFoodSelection({
@@ -145,6 +159,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: { id: 'poll-1', status: 'active' },
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -166,6 +182,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: null,
       activeFoodSelection: makeFoodSelection({ status: 'active' }),
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -192,6 +210,8 @@ describe('App layout with Orders rail', () => {
         etaSetAt: new Date().toISOString(),
         deliveryDueAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
       }),
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -218,6 +238,8 @@ describe('App layout with Orders rail', () => {
         etaSetAt: new Date(Date.now() - 61 * 60 * 1000).toISOString(),
         deliveryDueAt: new Date(Date.now() - 1_000).toISOString(),
       }),
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -239,6 +261,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: { id: 'poll-1', status: 'active' },
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -267,6 +291,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: { id: 'poll-1', status: 'active' },
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [
         makeFoodSelection({
@@ -297,6 +323,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: null,
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -316,6 +344,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: null,
       activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: false,
@@ -338,6 +368,8 @@ describe('App layout with Orders rail', () => {
     mockUseAppState.mockReturnValue({
       activePoll: null,
       activeFoodSelection: null,
+      latestCompletedPoll: makePoll({ id: 'poll-1', status: 'finished' }),
+      latestCompletedFoodSelection: null,
       menus: [makeMenu()],
       completedFoodSelectionsHistory: [],
       dbConnected: true,
@@ -356,5 +388,163 @@ describe('App layout with Orders rail', () => {
 
     await user.click(inProgressButton);
     expect(mockDispatch).not.toHaveBeenCalledWith({ type: 'START_NEW_TEAM_LUNCH' });
+  });
+
+  it('renders the shopping list from its canonical URL', () => {
+    render(
+      <MemoryRouter
+        initialEntries={['/shopping-list']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('shopping-list')).toBeInTheDocument();
+  });
+
+  it('keeps old /shopping links working through the canonical shopping-list route', () => {
+    render(
+      <MemoryRouter
+        initialEntries={['/shopping']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('shopping-list')).toBeInTheDocument();
+  });
+
+  it('renders the live poll view for a matching poll URL', () => {
+    mockUseAppState.mockReturnValue({
+      activePoll: makePoll({ id: 'poll-42', status: 'active' }),
+      activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/polls/poll-42']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('main-view')).toBeInTheDocument();
+  });
+
+  it('shows an unavailable message for stale poll URLs', () => {
+    mockUseAppState.mockReturnValue({
+      activePoll: makePoll({ id: 'poll-current', status: 'active' }),
+      activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/polls/poll-stale']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { name: /poll unavailable/i })).toBeInTheDocument();
+  });
+
+  it('renders the live food-selection view for a matching food-selection URL', () => {
+    mockUseAppState.mockReturnValue({
+      activePoll: null,
+      activeFoodSelection: makeFoodSelection({ id: 'fs-live', status: 'active' }),
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/food-selections/fs-live']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('main-view')).toBeInTheDocument();
+  });
+
+  it('renders a completed food selection from a history URL', () => {
+    mockUseAppState.mockReturnValue({
+      activePoll: null,
+      activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [
+        makeFoodSelection({
+          id: 'fs-history',
+          status: 'completed',
+          menuName: 'Pizza Place',
+          completedAt: '2026-01-01T13:20:00Z',
+        }),
+      ],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/food-selections/fs-history']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('historical-completed-view')).toBeInTheDocument();
+  });
+
+  it('shows an unavailable message for stale food-selection URLs', () => {
+    mockUseAppState.mockReturnValue({
+      activePoll: null,
+      activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/food-selections/missing-selection']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { name: /food selection unavailable/i })).toBeInTheDocument();
   });
 });

@@ -2221,6 +2221,22 @@
     - `pnpm exec vitest run --project server tests/server/auth-avatar.test.ts`
     - `./validate.ps1`
 
+## Priority 89 — Canonical App URLs
+
+- [x] **89.1 Add canonical routes for app sections and lunch details** *(done)*
+  - Specified the feature in `specs/001-canonical-routes/spec.md` with completed quality checklist.
+  - Added canonical `/shopping-list` route and kept `/shopping` as a compatibility redirect.
+  - Added direct `/polls/:pollId` and `/food-selections/:foodSelectionId` routes backed by existing live/history state.
+  - Opening a completed lunch from the orders rail now navigates to `/food-selections/:id`.
+  - Ongoing poll/food-selection rail action now navigates to the matching detail URL when possible.
+  - Stale or inaccessible detail URLs show an unavailable state with a dashboard recovery link.
+  - Tests: client route tests cover canonical section URLs, compatibility redirect, live detail URLs, historical detail URLs, and stale detail states.
+  - E2E smoke now opens `/shopping-list` directly and verifies `/shopping` redirects.
+  - Validation:
+    - `pnpm exec vitest run --project client tests/client/App.test.tsx tests/client/Header.test.tsx`
+    - `pnpm run typecheck`
+    - `pnpm run lint`
+
 ### In Progress
 - [ ] **88.13 Test Entra ID account handling manually**
   - Purpose: cover live Microsoft Entra account behavior that unit/mocked tests cannot verify without tenant/app permissions.
