@@ -4,7 +4,7 @@
 
 **Created**: 2026-06-13
 
-**Status**: Draft
+**Status**: Done
 
 **Input**: User description: "Introduce real, shareable URLs for meal polls, food selection/order flows, shopping list, and existing app sections so users can refresh, bookmark, share, and e2e-test direct views without breaking the live phase-driven Team Lunch flow."
 
