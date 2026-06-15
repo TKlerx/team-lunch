@@ -1504,6 +1504,7 @@
   - Added focused server coverage for Graph token/mail requests and poll-start notification behavior, then reran server notification suites plus full validation
 
 - [ ] **64.3 Meal recommender foundation + feedback loop**
+  - Spec: `specs/002-ai-meal-recommendations/spec.md` (backlog `BACKLOG-001`)
   - Define persisted recommendation signals from historical orders/ratings/preferences
   - Add recommendation endpoint for current menu items per user
   - Add user feedback capture on recommendations (helpful / not helpful + optional reason like disliked ingredient)
