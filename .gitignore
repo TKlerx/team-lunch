@@ -19,7 +19,10 @@ src/server/generated/
 src/server/generated/sqlite-client/
 playwright-report/
 test-results/
-graphify-out/
+graphify-out/*
+!graphify-out/graph.json
+!graphify-out/manifest.json
+!graphify-out/.graphify_root
 .claude/settings.local.json
 backups/
 package-lock.json
