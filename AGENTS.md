@@ -31,7 +31,7 @@ pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold; QU
 pnpm architecture           # dependency-cruiser architecture check; currently guards against circular runtime dependencies
 pnpm complexity             # ESLint complexity ratchet; fails if complexity warning counts/worst metrics exceed complexity-baseline.json
 pnpm complexity:update      # intentionally lower/update complexity-baseline.json after refactors improve the baseline
-pnpm function-size          # hard non-test source function cap: 300 lines, with current oversized functions allowlisted at their existing size
+pnpm function-size          # hard non-test source function cap: 300 lines, no allowlist exceptions
 pnpm format:check           # Prettier check with repo/tooling ignores; not part of validate until the formatting baseline is clean
 pnpm semgrep                # Semgrep auto ruleset security scan
 pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
@@ -81,9 +81,9 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.
 - `npm run prisma:generate:sqlite` writes generated client code to `src/server/generated/sqlite-client`; do not commit this output and remove it before lint/duplication runs if it was generated locally.
 - If a new phase view reuses large markup from another view, `npm run duplication` can exceed the 5% jscpd threshold; extract shared UI components early to keep duplication below the gate.
-- `pnpm complexity` is now a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally.
-- `pnpm function-size` blocks any non-test source function above 300 lines unless it is in `function-size-allowlist.json`; allowlisted functions are capped at their current size and should be removed from the list once refactored below 300.
-- Complexity and duplication follow the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes threshold failures advisory, but lint correctness, tests, and security checks still block.
+- `pnpm complexity` is a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally. It has no threshold bypass.
+- `pnpm function-size` blocks any non-test source function above 300 lines with no allowlist exceptions.
+- Duplication follows the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes the duplication threshold advisory, but lint correctness, complexity, function-size, tests, and security checks still block.
 - `pnpm architecture` runs dependency-cruiser with `.dependency-cruiser.cjs`; keep circular runtime dependencies out of `src/`.
 - Prettier config and ignores are present, but `pnpm format:check` is intentionally not part of `validate.ps1` until the existing formatting baseline is cleaned up.
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
@@ -170,7 +170,7 @@ pnpm test:client       # vitest run --project client (component + hook tests)
 
 Full one-liner (same as CI):
 ```bash
-pnpm validate          # runs ./validate.ps1 all (typecheck + lint + complexity + duplication + semgrep + test + audit)
+pnpm validate          # runs ./validate.ps1 all (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test + audit)
 ```
 
 ## Test Database (dedicated Postgres)

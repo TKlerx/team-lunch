@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-16T15:19:47.081Z",
+  "updatedAt": "2026-06-16T17:58:35.602Z",
   "note": "Complexity ratchet. Validation fails when totals, per-rule counts, or worst observed metrics exceed this baseline. Lower this file after refactors improve the counts.",
   "rules": [
     "complexity",
@@ -9,18 +9,18 @@
     "max-params",
     "sonarjs/cognitive-complexity"
   ],
-  "total": 217,
+  "total": 211,
   "byRule": {
-    "complexity": 49,
+    "complexity": 44,
     "max-depth": 4,
     "max-lines-per-function": 137,
     "max-params": 6,
-    "sonarjs/cognitive-complexity": 21
+    "sonarjs/cognitive-complexity": 20
   },
   "maxMetricByRule": {
     "complexity": 60,
     "max-depth": 5,
-    "max-lines-per-function": 1044,
+    "max-lines-per-function": 1025,
     "max-params": 7,
     "sonarjs/cognitive-complexity": 106
   },
@@ -28,10 +28,6 @@
     {
       "file": "src/server/services/authAccess.ts",
       "count": 13
-    },
-    {
-      "file": "src/client/pages/Administration.tsx",
-      "count": 10
     },
     {
       "file": "src/client/pages/ManageMenus.tsx",
@@ -74,6 +70,10 @@
       "count": 4
     },
     {
+      "file": "src/client/pages/Administration.tsx",
+      "count": 4
+    },
+    {
       "file": "src/client/pages/Settings.tsx",
       "count": 4
     },
@@ -87,14 +87,6 @@
     }
   ],
   "worstMessages": [
-    {
-      "file": "src/client/pages/Administration.tsx",
-      "line": 99,
-      "column": 16,
-      "ruleId": "max-lines-per-function",
-      "metric": 1044,
-      "message": "Function 'Administration' has too many lines (1044). Maximum allowed is 60."
-    },
     {
       "file": "tests/server/food-selection-routes.test.ts",
       "line": 78,
@@ -206,6 +198,14 @@
       "ruleId": "max-lines-per-function",
       "metric": 388,
       "message": "Arrow function has too many lines (388). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/food-selection-authz.test.ts",
+      "line": 11,
+      "column": 48,
+      "ruleId": "max-lines-per-function",
+      "metric": 317,
+      "message": "Arrow function has too many lines (317). Maximum allowed is 60."
     }
   ]
 }

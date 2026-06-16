@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type FormEvent,
+  type SetStateAction,
+} from 'react';
 import { Link } from 'react-router-dom';
+import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
 import { withBasePath } from '../config.js';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
-import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
 import {
-  LOCAL_PASSWORD_MIN_LENGTH,
   LOCAL_PASSWORD_MAX_LENGTH,
+  LOCAL_PASSWORD_MIN_LENGTH,
   type AuthConfigResponse,
   type OfficeLocation,
   type OfficeWeekday,
@@ -22,11 +29,31 @@ const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
 ];
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
 
+type AdminAuth = AuthConfigResponse['auth'];
+type AdminUser = AdminAuth['users'][number];
+
 type OfficeSettingsDraft = {
   autoStartPollEnabled: boolean;
   autoStartPollWeekdays: OfficeWeekday[];
   autoStartPollFinishTime: string;
   defaultFoodSelectionDurationMinutes: number;
+};
+
+type AdminDrafts = {
+  selectedApprovalOffices: Record<string, string>;
+  setSelectedApprovalOffices: Dispatch<SetStateAction<Record<string, string>>>;
+  selectedUserOffices: Record<string, string>;
+  setSelectedUserOffices: Dispatch<SetStateAction<Record<string, string>>>;
+  selectedUserOfficeMemberships: Record<string, string[]>;
+  setSelectedUserOfficeMemberships: Dispatch<SetStateAction<Record<string, string[]>>>;
+  displayNameDrafts: Record<string, string>;
+  setDisplayNameDrafts: Dispatch<SetStateAction<Record<string, string>>>;
+  emailDrafts: Record<string, string>;
+  setEmailDrafts: Dispatch<SetStateAction<Record<string, string>>>;
+  officeNameDrafts: Record<string, string>;
+  setOfficeNameDrafts: Dispatch<SetStateAction<Record<string, string>>>;
+  officeSettingsDrafts: Record<string, OfficeSettingsDraft>;
+  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
 };
 
 async function fetchAdminConfig(): Promise<AuthConfigResponse> {
@@ -37,101 +64,185 @@ async function fetchAdminConfig(): Promise<AuthConfigResponse> {
   return response.json() as Promise<AuthConfigResponse>;
 }
 
+async function requestAdmin(path: string, init: RequestInit, fallback: string): Promise<Response> {
+  const response = await fetch(withBasePath(path), {
+    credentials: 'include',
+    ...init,
+    headers: init.body ? { 'Content-Type': 'application/json', ...init.headers } : init.headers,
+  });
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(payload?.error || fallback);
+  }
+  return response;
+}
+
 function getPreferredOfficeLocationId(
   officeLocations: OfficeLocation[],
   current?: string | null,
 ): string {
-  if (current && officeLocations.some((l) => l.id === current && l.isActive)) {
+  if (current && officeLocations.some((location) => location.id === current && location.isActive)) {
     return current;
   }
-  return officeLocations.find((l) => l.isActive)?.id ?? '';
+  return officeLocations.find((location) => location.isActive)?.id ?? '';
 }
 
 function getSelectedUserOfficeLocationId(
   officeLocations: OfficeLocation[],
   current?: string | null,
 ): string {
-  if (current && officeLocations.some((l) => l.id === current && l.isActive)) {
+  if (current && officeLocations.some((location) => location.id === current && location.isActive)) {
     return current;
   }
   return '';
 }
 
 function orderWeekdays(weekdays: OfficeWeekday[]): OfficeWeekday[] {
-  return OFFICE_WEEKDAY_OPTIONS.map((o) => o.value).filter((w) => weekdays.includes(w));
-}
-
-function getOfficeSettingsDrafts(
-  officeLocations: OfficeLocation[],
-  current: Record<string, OfficeSettingsDraft>,
-): Record<string, OfficeSettingsDraft> {
-  return Object.fromEntries(
-    officeLocations.map((l) => [
-      l.id,
-      current[l.id] || {
-        autoStartPollEnabled: l.autoStartPollEnabled,
-        autoStartPollWeekdays: orderWeekdays(l.autoStartPollWeekdays),
-        autoStartPollFinishTime: l.autoStartPollFinishTime ?? '',
-        defaultFoodSelectionDurationMinutes: l.defaultFoodSelectionDurationMinutes,
-      },
-    ]),
+  return OFFICE_WEEKDAY_OPTIONS.map((option) => option.value).filter((weekday) =>
+    weekdays.includes(weekday),
   );
 }
 
-function getSelectedUserOfficeMemberships(
-  users: AuthConfigResponse['auth']['users'],
-  current: Record<string, string[]>,
-): Record<string, string[]> {
-  return Object.fromEntries(
-    users.map((u) => [u.email, current[u.email] || u.assignedOfficeLocationIds || []]),
+function initialOfficeSettings(location: OfficeLocation): OfficeSettingsDraft {
+  return {
+    autoStartPollEnabled: location.autoStartPollEnabled,
+    autoStartPollWeekdays: orderWeekdays(location.autoStartPollWeekdays),
+    autoStartPollFinishTime: location.autoStartPollFinishTime ?? '',
+    defaultFoodSelectionDurationMinutes: location.defaultFoodSelectionDurationMinutes,
+  };
+}
+
+function settingsChanged(location: OfficeLocation, draft: OfficeSettingsDraft): boolean {
+  return (
+    draft.autoStartPollEnabled !== location.autoStartPollEnabled ||
+    draft.autoStartPollFinishTime !== (location.autoStartPollFinishTime ?? '') ||
+    draft.defaultFoodSelectionDurationMinutes !== location.defaultFoodSelectionDurationMinutes ||
+    draft.autoStartPollWeekdays.join('|') !== location.autoStartPollWeekdays.join('|')
   );
 }
 
-function getEmailDrafts(
-  users: AuthConfigResponse['auth']['users'],
-  current: Record<string, string>,
-): Record<string, string> {
-  return Object.fromEntries(
-    users.map((u) => [u.email, current[u.email] || u.email]),
-  );
-}
-
-export default function Administration() {
-  const { setPendingApprovalCount } = useAdminOfficeContext();
-  const [loading, setLoading] = useState(true);
-  const [config, setConfig] = useState<AuthConfigResponse['auth'] | null>(null);
-  const [error, setError] = useState('');
-  const [updatingApprovalEmail, setUpdatingApprovalEmail] = useState<string | null>(null);
-  const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<string | null>(null);
-  const [newLocalUserEmail, setNewLocalUserEmail] = useState('');
-  const [newLocalUserPassword, setNewLocalUserPassword] = useState('');
-  const [newLocalUserOfficeLocationId, setNewLocalUserOfficeLocationId] = useState('');
-  const [newOfficeName, setNewOfficeName] = useState('');
-  const [creatingLocalUser, setCreatingLocalUser] = useState(false);
-  const [creatingOffice, setCreatingOffice] = useState(false);
+function useAdminDrafts(): AdminDrafts {
   const [selectedApprovalOffices, setSelectedApprovalOffices] = useState<Record<string, string>>({});
   const [selectedUserOffices, setSelectedUserOffices] = useState<Record<string, string>>({});
-  const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] = useState<
-    Record<string, string[]>
-  >({});
+  const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] = useState<Record<string, string[]>>({});
   const [displayNameDrafts, setDisplayNameDrafts] = useState<Record<string, string>>({});
   const [emailDrafts, setEmailDrafts] = useState<Record<string, string>>({});
   const [officeNameDrafts, setOfficeNameDrafts] = useState<Record<string, string>>({});
   const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<Record<string, OfficeSettingsDraft>>({});
-  const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
-  const [createdLocalUser, setCreatedLocalUser] = useState<{
-    email: string;
-    password: string;
-    generated: boolean;
-  } | null>(null);
+
+  return useMemo(() => ({
+    selectedApprovalOffices,
+    setSelectedApprovalOffices,
+    selectedUserOffices,
+    setSelectedUserOffices,
+    selectedUserOfficeMemberships,
+    setSelectedUserOfficeMemberships,
+    displayNameDrafts,
+    setDisplayNameDrafts,
+    emailDrafts,
+    setEmailDrafts,
+    officeNameDrafts,
+    setOfficeNameDrafts,
+    officeSettingsDrafts,
+    setOfficeSettingsDrafts,
+  }), [
+    displayNameDrafts,
+    emailDrafts,
+    officeNameDrafts,
+    officeSettingsDrafts,
+    selectedApprovalOffices,
+    selectedUserOfficeMemberships,
+    selectedUserOffices,
+  ]);
+}
+
+function syncUserDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
+  drafts.setSelectedUserOffices((current) =>
+    Object.fromEntries(
+      auth.users.map((entry) => [
+        entry.email,
+        current[entry.email] ||
+          getSelectedUserOfficeLocationId(auth.officeLocations, entry.officeLocationId),
+      ]),
+    ),
+  );
+  drafts.setSelectedUserOfficeMemberships((current) =>
+    Object.fromEntries(
+      auth.users.map((entry) => [
+        entry.email,
+        current[entry.email] || entry.assignedOfficeLocationIds || [],
+      ]),
+    ),
+  );
+  drafts.setDisplayNameDrafts((current) =>
+    Object.fromEntries(
+      auth.users.map((entry) => [
+        entry.email,
+        entry.email in current ? current[entry.email] : (entry.displayName ?? ''),
+      ]),
+    ),
+  );
+  drafts.setEmailDrafts((current) =>
+    Object.fromEntries(auth.users.map((entry) => [entry.email, current[entry.email] || entry.email])),
+  );
+}
+
+function syncOfficeDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
+  drafts.setSelectedApprovalOffices((current) =>
+    Object.fromEntries(
+      auth.pendingApprovals.map((entry) => [
+        entry.email,
+        current[entry.email] || getPreferredOfficeLocationId(auth.officeLocations),
+      ]),
+    ),
+  );
+  drafts.setOfficeNameDrafts((current) =>
+    Object.fromEntries(
+      auth.officeLocations.map((location) => [
+        location.id,
+        location.id in current ? current[location.id] : location.name,
+      ]),
+    ),
+  );
+  drafts.setOfficeSettingsDrafts((current) =>
+    Object.fromEntries(
+      auth.officeLocations.map((location) => [
+        location.id,
+        current[location.id] || initialOfficeSettings(location),
+      ]),
+    ),
+  );
+}
+
+function useAdminConfig() {
+  const { setPendingApprovalCount } = useAdminOfficeContext();
+  const [loading, setLoading] = useState(true);
+  const [config, setConfig] = useState<AdminAuth | null>(null);
+  const [error, setError] = useState('');
+  const [newLocalUserOfficeLocationId, setNewLocalUserOfficeLocationId] = useState('');
+  const drafts = useAdminDrafts();
+
+  const applyConfig = (auth: AdminAuth) => {
+    setConfig(auth);
+    setPendingApprovalCount(auth.pendingApprovals.length);
+    setNewLocalUserOfficeLocationId((current) =>
+      getPreferredOfficeLocationId(auth.officeLocations, current),
+    );
+    syncOfficeDrafts(auth, drafts);
+    syncUserDrafts(auth, drafts);
+  };
+
+  const refreshConfig = async () => {
+    const payload = await fetchAdminConfig();
+    applyConfig(payload.auth);
+  };
 
   useEffect(() => {
     void (async () => {
       setLoading(true);
       setError('');
       try {
-        const payload = await fetchAdminConfig();
-        applyConfig(payload.auth);
+        await refreshConfig();
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Failed to load admin data');
       } finally {
@@ -140,59 +251,65 @@ export default function Administration() {
     })();
   }, []);
 
-  const applyConfig = (auth: AuthConfigResponse['auth']) => {
-    setConfig(auth);
-    setPendingApprovalCount(auth.pendingApprovals.length);
-    setNewLocalUserOfficeLocationId((current) =>
-      getPreferredOfficeLocationId(auth.officeLocations, current),
-    );
-    setSelectedApprovalOffices((current) =>
-      Object.fromEntries(
-        auth.pendingApprovals.map((entry) => [
-          entry.email,
-          current[entry.email] || getPreferredOfficeLocationId(auth.officeLocations),
-        ]),
-      ),
-    );
-    setSelectedUserOffices((current) =>
-      Object.fromEntries(
-        auth.users.map((entry) => [
-          entry.email,
-          current[entry.email] ||
-            getSelectedUserOfficeLocationId(auth.officeLocations, entry.officeLocationId),
-        ]),
-      ),
-    );
-    setSelectedUserOfficeMemberships((current) =>
-      getSelectedUserOfficeMemberships(auth.users, current),
-    );
-    setDisplayNameDrafts((current) =>
-      Object.fromEntries(
-        auth.users.map((entry) => [
-          entry.email,
-          entry.email in current ? current[entry.email] : (entry.displayName ?? ''),
-        ]),
-      ),
-    );
-    setEmailDrafts((current) => getEmailDrafts(auth.users, current));
-    setOfficeNameDrafts((current) =>
-      Object.fromEntries(
-        auth.officeLocations.map((l) => [l.id, l.id in current ? current[l.id] : l.name]),
-      ),
-    );
-    setOfficeSettingsDrafts((current) => getOfficeSettingsDrafts(auth.officeLocations, current));
+  return {
+    loading,
+    config,
+    error,
+    setError,
+    refreshConfig,
+    newLocalUserOfficeLocationId,
+    setNewLocalUserOfficeLocationId,
+    drafts,
   };
+}
 
-  const refreshConfig = async () => {
+function useApprovalActions(
+  selectedApprovalOffices: Record<string, string>,
+  refreshConfig: () => Promise<void>,
+  setError: (error: string) => void,
+) {
+  const [updatingApprovalEmail, setUpdatingApprovalEmail] = useState<string | null>(null);
+
+  const mutateApproval = async (email: string, action: 'approve' | 'decline') => {
+    setUpdatingApprovalEmail(email);
+    setError('');
     try {
-      const payload = await fetchAdminConfig();
-      applyConfig(payload.auth);
-    } catch {
-      // refresh failure is non-fatal; the mutation already succeeded
+      const officeLocationId = selectedApprovalOffices[email];
+      if (action === 'approve' && !officeLocationId) throw new Error('Office location is required');
+      await requestAdmin(`/api/auth/users/${action}`, {
+        method: 'POST',
+        body: JSON.stringify({ email, officeLocationId }),
+      }, `Failed to ${action} user`);
+      await refreshConfig();
+    } catch (approvalError) {
+      setError(approvalError instanceof Error ? approvalError.message : 'Approval update failed');
+    } finally {
+      setUpdatingApprovalEmail(null);
     }
   };
 
-  const localUserPasswordValidationError = useMemo(() => {
+  return {
+    updatingApprovalEmail,
+    approveUser: (email: string) => mutateApproval(email, 'approve'),
+    declineUser: (email: string) => mutateApproval(email, 'decline'),
+  };
+}
+
+function useLocalUserActions(
+  refreshConfig: () => Promise<void>,
+  setError: (error: string) => void,
+  officeLocationId: string,
+) {
+  const [newLocalUserEmail, setNewLocalUserEmail] = useState('');
+  const [newLocalUserPassword, setNewLocalUserPassword] = useState('');
+  const [creatingLocalUser, setCreatingLocalUser] = useState(false);
+  const [createdLocalUser, setCreatedLocalUser] = useState<{
+    email: string;
+    password: string;
+    generated: boolean;
+  } | null>(null);
+
+  const passwordValidationError = useMemo(() => {
     const trimmed = newLocalUserPassword.trim();
     if (!trimmed) return '';
     if (trimmed.length < LOCAL_PASSWORD_MIN_LENGTH) {
@@ -204,83 +321,28 @@ export default function Administration() {
     return '';
   }, [newLocalUserPassword]);
 
-  const handleApproveUser = async (email: string) => {
-    setUpdatingApprovalEmail(email);
-    setError('');
-    try {
-      const officeLocationId = selectedApprovalOffices[email];
-      if (!officeLocationId) throw new Error('Office location is required');
-      const response = await fetch(withBasePath('/api/auth/users/approve'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, officeLocationId }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to approve user');
-      }
-      await refreshConfig();
-    } catch (approveError) {
-      setError(approveError instanceof Error ? approveError.message : 'Approval failed');
-    } finally {
-      setUpdatingApprovalEmail(null);
-    }
-  };
-
-  const handleDeclineUser = async (email: string) => {
-    setUpdatingApprovalEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users/decline'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to decline user');
-      }
-      await refreshConfig();
-    } catch (declineError) {
-      setError(declineError instanceof Error ? declineError.message : 'Decline failed');
-    } finally {
-      setUpdatingApprovalEmail(null);
-    }
-  };
-
-  const handleCreateLocalUser = async (event: FormEvent) => {
+  const createLocalUser = async (event: FormEvent) => {
     event.preventDefault();
-    if (localUserPasswordValidationError) {
-      setError(localUserPasswordValidationError);
+    if (passwordValidationError) {
+      setError(passwordValidationError);
       return;
     }
     setCreatingLocalUser(true);
     setCreatedLocalUser(null);
     setError('');
     try {
-      const response = await fetch(withBasePath('/api/auth/local/users/generate'), {
+      const response = await requestAdmin('/api/auth/local/users/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
           email: newLocalUserEmail.trim(),
           password: newLocalUserPassword.trim() || undefined,
-          officeLocationId: newLocalUserOfficeLocationId || undefined,
+          officeLocationId: officeLocationId || undefined,
         }),
-      });
+      }, 'Failed to create local user');
       const payload = (await response.json().catch(() => null)) as
-        | { email?: string; password?: string; generated?: boolean; error?: string }
+        | { email?: string; password?: string; generated?: boolean }
         | null;
-      if (
-        !response.ok ||
-        !payload ||
-        typeof payload.email !== 'string' ||
-        typeof payload.password !== 'string'
-      ) {
-        throw new Error(payload?.error || 'Failed to create local user');
-      }
+      if (!payload?.email || !payload.password) throw new Error('Failed to create local user');
       setCreatedLocalUser({ email: payload.email, password: payload.password, generated: !!payload.generated });
       setNewLocalUserPassword('');
       setNewLocalUserEmail('');
@@ -292,209 +354,49 @@ export default function Administration() {
     }
   };
 
-  const handlePromoteUser = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
+  return {
+    newLocalUserEmail,
+    setNewLocalUserEmail,
+    newLocalUserPassword,
+    setNewLocalUserPassword,
+    creatingLocalUser,
+    createdLocalUser,
+    passwordValidationError,
+    createLocalUser,
+  };
+}
+
+function useOfficeActions(
+  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'officeSettingsDrafts'>,
+  refreshConfig: () => Promise<void>,
+  setError: (error: string) => void,
+) {
+  const [newOfficeName, setNewOfficeName] = useState('');
+  const [creatingOffice, setCreatingOffice] = useState(false);
+  const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
+
+  const runOfficeAction = async (officeId: string, action: () => Promise<void>, fallback: string) => {
+    setUpdatingOfficeId(officeId);
     setError('');
     try {
-      const response = await fetch(withBasePath('/api/auth/users/promote'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to promote user');
-      }
+      await action();
       await refreshConfig();
-    } catch (roleError) {
-      setError(roleError instanceof Error ? roleError.message : 'Role update failed');
+    } catch (officeError) {
+      setError(officeError instanceof Error ? officeError.message : fallback);
     } finally {
-      setUpdatingUserRoleEmail(null);
+      setUpdatingOfficeId(null);
     }
   };
 
-  const handleDemoteUser = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const selectedOfficeLocationId = selectedUserOffices[email];
-      const response = await fetch(withBasePath('/api/auth/users/demote'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, officeLocationId: selectedOfficeLocationId || undefined }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to demote user');
-      }
-      await refreshConfig();
-    } catch (roleError) {
-      setError(roleError instanceof Error ? roleError.message : 'Role update failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleBlockUser = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users/block'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to block user');
-      }
-      await refreshConfig();
-    } catch (statusError) {
-      setError(statusError instanceof Error ? statusError.message : 'User status update failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleUnblockUser = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users/unblock'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to unblock user');
-      }
-      await refreshConfig();
-    } catch (statusError) {
-      setError(statusError instanceof Error ? statusError.message : 'User status update failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleAssignOffice = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const officeLocationIds = selectedUserOfficeMemberships[email] ?? [];
-      const preferredOfficeLocationId = selectedUserOffices[email] || undefined;
-      const response = await fetch(withBasePath('/api/auth/users/assign-offices'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, officeLocationIds, preferredOfficeLocationId }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to assign offices');
-      }
-      await refreshConfig();
-    } catch (assignError) {
-      setError(assignError instanceof Error ? assignError.message : 'Office assignment failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleSaveDisplayName = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users/display-name'), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, displayName: displayNameDrafts[email]?.trim() || null }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to update display name');
-      }
-      const payload = (await response.json().catch(() => null)) as {
-        displayName?: string | null;
-      } | null;
-      if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
-        setAuthenticatedDisplayName(payload?.displayName ?? null);
-      }
-      await refreshConfig();
-    } catch (displayNameError) {
-      setError(displayNameError instanceof Error ? displayNameError.message : 'Display name update failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleSaveEmail = async (email: string) => {
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users/email'), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, newEmail: emailDrafts[email]?.trim() ?? '' }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to update email');
-      }
-      await refreshConfig();
-    } catch (emailError) {
-      setError(emailError instanceof Error ? emailError.message : 'Email update failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleDeleteUser = async (email: string) => {
-    if (!window.confirm(`Delete local account ${email}? Historical votes and orders stay unchanged.`)) {
-      return;
-    }
-    setUpdatingUserRoleEmail(email);
-    setError('');
-    try {
-      const response = await fetch(withBasePath('/api/auth/users'), {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to delete user');
-      }
-      await refreshConfig();
-    } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : 'User deletion failed');
-    } finally {
-      setUpdatingUserRoleEmail(null);
-    }
-  };
-
-  const handleCreateOffice = async (event: FormEvent) => {
+  const createOffice = async (event: FormEvent) => {
     event.preventDefault();
     setCreatingOffice(true);
     setError('');
     try {
-      const response = await fetch(withBasePath('/api/auth/offices'), {
+      await requestAdmin('/api/auth/offices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ name: newOfficeName.trim() }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to create office');
-      }
+      }, 'Failed to create office');
       setNewOfficeName('');
       await refreshConfig();
     } catch (createError) {
@@ -504,676 +406,1078 @@ export default function Administration() {
     }
   };
 
-  const handleRenameOffice = async (officeId: string) => {
-    setUpdatingOfficeId(officeId);
-    setError('');
-    try {
-      const response = await fetch(withBasePath(`/api/auth/offices/${officeId}/rename`), {
+  const renameOffice = (officeId: string) =>
+    runOfficeAction(officeId, () =>
+      requestAdmin(`/api/auth/offices/${officeId}/rename`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ name: officeNameDrafts[officeId]?.trim() ?? '' }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to rename office');
-      }
-      await refreshConfig();
-    } catch (renameError) {
-      setError(renameError instanceof Error ? renameError.message : 'Office rename failed');
-    } finally {
-      setUpdatingOfficeId(null);
-    }
-  };
+        body: JSON.stringify({ name: drafts.officeNameDrafts[officeId]?.trim() ?? '' }),
+      }, 'Failed to rename office').then(() => undefined),
+    'Office rename failed');
 
-  const handleDeactivateOffice = async (officeId: string) => {
-    setUpdatingOfficeId(officeId);
-    setError('');
-    try {
-      const response = await fetch(withBasePath(`/api/auth/offices/${officeId}/deactivate`), {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to deactivate office');
-      }
-      await refreshConfig();
-    } catch (deactivateError) {
-      setError(deactivateError instanceof Error ? deactivateError.message : 'Office deactivation failed');
-    } finally {
-      setUpdatingOfficeId(null);
-    }
-  };
+  const deactivateOffice = (officeId: string) =>
+    runOfficeAction(officeId, () =>
+      requestAdmin(`/api/auth/offices/${officeId}/deactivate`, { method: 'POST' }, 'Failed to deactivate office')
+        .then(() => undefined),
+    'Office deactivation failed');
 
-  const handleUpdateOfficeSettings = async (officeId: string) => {
-    setUpdatingOfficeId(officeId);
-    setError('');
-    try {
-      const draft = officeSettingsDrafts[officeId];
-      const response = await fetch(withBasePath(`/api/auth/offices/${officeId}/settings`), {
+  const updateOfficeSettings = (officeId: string) =>
+    runOfficeAction(officeId, () => {
+      const draft = drafts.officeSettingsDrafts[officeId];
+      return requestAdmin(`/api/auth/offices/${officeId}/settings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
           autoStartPollEnabled: draft?.autoStartPollEnabled ?? false,
           autoStartPollWeekdays: draft?.autoStartPollWeekdays ?? [],
           autoStartPollFinishTime: draft?.autoStartPollFinishTime?.trim() || null,
           defaultFoodSelectionDurationMinutes: draft?.defaultFoodSelectionDurationMinutes ?? 30,
         }),
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || 'Failed to update office settings');
-      }
+      }, 'Failed to update office settings').then(() => undefined);
+    }, 'Office settings update failed');
+
+  return {
+    newOfficeName,
+    setNewOfficeName,
+    creatingOffice,
+    updatingOfficeId,
+    createOffice,
+    renameOffice,
+    deactivateOffice,
+    updateOfficeSettings,
+  };
+}
+
+type UserActionRunner = (
+  email: string,
+  action: () => Promise<void>,
+  fallback: string,
+) => Promise<void>;
+
+type UserActionDrafts = Pick<
+  AdminDrafts,
+  'selectedUserOffices' | 'selectedUserOfficeMemberships' | 'displayNameDrafts' | 'emailDrafts'
+>;
+
+function simpleUserPost(runUserAction: UserActionRunner, email: string, action: 'promote' | 'block' | 'unblock') {
+  return runUserAction(email, () =>
+    requestAdmin(`/api/auth/users/${action}`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }, `Failed to ${action} user`).then(() => undefined),
+  action === 'promote' ? 'Role update failed' : 'User status update failed');
+}
+
+function demoteUser(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
+  return runUserAction(email, () =>
+    requestAdmin('/api/auth/users/demote', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        officeLocationId: drafts.selectedUserOffices[email] || undefined,
+      }),
+    }, 'Failed to demote user').then(() => undefined),
+  'Role update failed');
+}
+
+function assignOffice(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
+  return runUserAction(email, () =>
+    requestAdmin('/api/auth/users/assign-offices', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        officeLocationIds: drafts.selectedUserOfficeMemberships[email] ?? [],
+        preferredOfficeLocationId: drafts.selectedUserOffices[email] || undefined,
+      }),
+    }, 'Failed to assign offices').then(() => undefined),
+  'Office assignment failed');
+}
+
+function saveDisplayName(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
+  return runUserAction(email, async () => {
+    const response = await requestAdmin('/api/auth/users/display-name', {
+      method: 'PUT',
+      body: JSON.stringify({
+        email,
+        displayName: drafts.displayNameDrafts[email]?.trim() || null,
+      }),
+    }, 'Failed to update display name');
+    const payload = (await response.json().catch(() => null)) as { displayName?: string | null } | null;
+    if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
+      setAuthenticatedDisplayName(payload?.displayName ?? null);
+    }
+  }, 'Display name update failed');
+}
+
+function saveEmail(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
+  return runUserAction(email, () =>
+    requestAdmin('/api/auth/users/email', {
+      method: 'PUT',
+      body: JSON.stringify({ email, newEmail: drafts.emailDrafts[email]?.trim() ?? '' }),
+    }, 'Failed to update email').then(() => undefined),
+  'Email update failed');
+}
+
+function deleteUser(runUserAction: UserActionRunner, email: string) {
+  if (!window.confirm(`Delete local account ${email}? Historical votes and orders stay unchanged.`)) {
+    return Promise.resolve();
+  }
+  return runUserAction(email, () =>
+    requestAdmin('/api/auth/users', {
+      method: 'DELETE',
+      body: JSON.stringify({ email }),
+    }, 'Failed to delete user').then(() => undefined),
+  'User deletion failed');
+}
+
+function useUserActions(
+  drafts: UserActionDrafts,
+  refreshConfig: () => Promise<void>,
+  setError: (error: string) => void,
+) {
+  const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<string | null>(null);
+
+  const runUserAction: UserActionRunner = async (email, action, fallback) => {
+    setUpdatingUserRoleEmail(email);
+    setError('');
+    try {
+      await action();
       await refreshConfig();
-    } catch (settingsError) {
-      setError(settingsError instanceof Error ? settingsError.message : 'Office settings update failed');
+    } catch (userError) {
+      setError(userError instanceof Error ? userError.message : fallback);
     } finally {
-      setUpdatingOfficeId(null);
+      setUpdatingUserRoleEmail(null);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-sm text-fg-muted">
-        Loading...
-      </div>
-    );
-  }
+  return {
+    updatingUserRoleEmail,
+    promoteUser: (email: string) => simpleUserPost(runUserAction, email, 'promote'),
+    demoteUser: (email: string) => demoteUser(runUserAction, email, drafts),
+    blockUser: (email: string) => simpleUserPost(runUserAction, email, 'block'),
+    unblockUser: (email: string) => simpleUserPost(runUserAction, email, 'unblock'),
+    assignOffice: (email: string) => assignOffice(runUserAction, email, drafts),
+    saveDisplayName: (email: string) => saveDisplayName(runUserAction, email, drafts),
+    saveEmail: (email: string) => saveEmail(runUserAction, email, drafts),
+    deleteUser: (email: string) => deleteUser(runUserAction, email),
+  };
+}
 
-  if (error && !config) {
-    return (
-      <div className="w-full p-6">
-        <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">{error}</div>
-      </div>
-    );
-  }
+export default function Administration() {
+  const admin = useAdminConfig();
+  const approvalActions = useApprovalActions(
+    admin.drafts.selectedApprovalOffices,
+    admin.refreshConfig,
+    admin.setError,
+  );
+  const localUser = useLocalUserActions(
+    admin.refreshConfig,
+    admin.setError,
+    admin.newLocalUserOfficeLocationId,
+  );
+  const officeActions = useOfficeActions(admin.drafts, admin.refreshConfig, admin.setError);
+  const userActions = useUserActions(admin.drafts, admin.refreshConfig, admin.setError);
 
-  if (!config?.isAdmin) {
-    return (
-      <div className="w-full p-6">
-        <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
-          <p>Access denied.</p>
-          <Link to="/" className="mt-2 inline-block text-accent hover:underline">
-            ← Back to home
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (admin.loading) return <LoadingView />;
+  if (admin.error && !admin.config) return <ErrorView error={admin.error} />;
+  if (!admin.config?.isAdmin) return <AccessDeniedView />;
 
   return (
     <div className="w-full p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-fg">Administration</h1>
-        <p className="mt-2 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
-        {error && (
-          <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
-            {error}
-          </div>
-        )}
-      </div>
-
+      <AdminHeader error={admin.error} />
       <div className="space-y-4">
-          <div className="rounded border border-border bg-surface-muted p-4">
-            <h2 className="mb-3 text-sm font-semibold text-fg">Pending approvals</h2>
-            {config.pendingApprovals.length === 0 ? (
-              <p className="text-sm text-fg-muted">No pending users.</p>
-            ) : (
-              <ul className="space-y-2">
-                {config.pendingApprovals.map((entry) => (
-                  <li
-                    key={entry.email}
-                    className="rounded border border-border bg-surface px-3 py-2 text-sm"
-                  >
-                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                      <span className="text-fg">{entry.email}</span>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <select
-                          value={selectedApprovalOffices[entry.email] ?? ''}
-                          onChange={(event) =>
-                            setSelectedApprovalOffices((current) => ({
-                              ...current,
-                              [entry.email]: event.target.value,
-                            }))
-                          }
-                          className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
-                        >
-                          <option value="">Select office</option>
-                          {config.officeLocations.filter((l) => l.isActive).map((l) => (
-                            <option key={l.id} value={l.id}>{l.name}</option>
-                          ))}
-                        </select>
-                        <button
-                          type="button"
-                          disabled={updatingApprovalEmail === entry.email || !selectedApprovalOffices[entry.email]}
-                          onClick={() => void handleApproveUser(entry.email)}
-                          className="rounded bg-success-solid px-3 py-1 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-60"
-                        >
-                          {updatingApprovalEmail === entry.email ? 'Updating...' : 'Approve'}
-                        </button>
-                        <button
-                          type="button"
-                          disabled={updatingApprovalEmail === entry.email}
-                          onClick={() => void handleDeclineUser(entry.email)}
-                          className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
-                        >
-                          {updatingApprovalEmail === entry.email ? 'Updating...' : 'Decline'}
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="rounded border border-border bg-surface-muted p-4">
-            <h2 className="mb-3 text-sm font-semibold text-fg">Create local user</h2>
-            <form onSubmit={(event) => void handleCreateLocalUser(event)} className="space-y-3">
-              <input
-                type="email"
-                value={newLocalUserEmail}
-                onChange={(event) => setNewLocalUserEmail(event.target.value)}
-                placeholder="Email"
-                required
-                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-              />
-              <select
-                aria-label="Office location for new local user"
-                value={newLocalUserOfficeLocationId}
-                onChange={(event) => setNewLocalUserOfficeLocationId(event.target.value)}
-                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-              >
-                <option value="">Select office location</option>
-                {config.officeLocations.filter((l) => l.isActive).map((l) => (
-                  <option key={l.id} value={l.id}>{l.name}</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={newLocalUserPassword}
-                onChange={(event) => setNewLocalUserPassword(event.target.value)}
-                placeholder="Password (leave empty to auto-generate)"
-                aria-invalid={!!localUserPasswordValidationError}
-                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-              />
-              {localUserPasswordValidationError && (
-                <p className="text-xs text-danger-fg">{localUserPasswordValidationError}</p>
-              )}
-              <button
-                type="submit"
-                disabled={creatingLocalUser || !!localUserPasswordValidationError || !newLocalUserOfficeLocationId}
-                className="w-full rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
-              >
-                {creatingLocalUser ? 'Creating...' : 'Create local user'}
-              </button>
-            </form>
-            {createdLocalUser && (
-              <div className="mt-3 rounded border border-accent/40 bg-accent-soft/40 p-3 text-sm text-accent-fg">
-                <div className="font-medium">Credentials created for {createdLocalUser.email}</div>
-                <div className="mt-1 break-all">
-                  Temporary password: <code>{createdLocalUser.password}</code>
-                </div>
-                {createdLocalUser.generated && (
-                  <div className="mt-1 text-xs text-accent-fg">
-                    Password was auto-generated. Share it securely once.
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="rounded border border-border bg-surface-muted p-4">
-            <h2 className="mb-3 text-sm font-semibold text-fg">Office locations</h2>
-            <form onSubmit={(event) => void handleCreateOffice(event)} className="mb-3 flex gap-2">
-              <input
-                type="text"
-                value={newOfficeName}
-                onChange={(event) => setNewOfficeName(event.target.value)}
-                placeholder="New office location"
-                className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-              />
-              <button
-                type="submit"
-                disabled={creatingOffice || !newOfficeName.trim()}
-                className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
-              >
-                {creatingOffice ? 'Creating...' : 'Add office'}
-              </button>
-            </form>
-            <ul className="space-y-2">
-              {config.officeLocations.map((location) => {
-                const settingsDraft = officeSettingsDrafts[location.id] ?? {
-                  autoStartPollEnabled: location.autoStartPollEnabled,
-                  autoStartPollWeekdays: location.autoStartPollWeekdays,
-                  autoStartPollFinishTime: location.autoStartPollFinishTime ?? '',
-                  defaultFoodSelectionDurationMinutes: location.defaultFoodSelectionDurationMinutes,
-                };
-                const settingsChanged =
-                  settingsDraft.autoStartPollEnabled !== location.autoStartPollEnabled ||
-                  settingsDraft.autoStartPollFinishTime !== (location.autoStartPollFinishTime ?? '') ||
-                  settingsDraft.defaultFoodSelectionDurationMinutes !== location.defaultFoodSelectionDurationMinutes ||
-                  settingsDraft.autoStartPollWeekdays.join('|') !== location.autoStartPollWeekdays.join('|');
-
-                return (
-                  <li key={location.id} className="rounded border border-border bg-surface px-3 py-3 text-sm">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="font-medium text-fg">{location.name}</p>
-                          <p className="text-xs text-fg-muted">
-                            Key: {location.key} · {location.isActive ? 'Active' : 'Inactive'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 md:flex-row">
-                        <input
-                          type="text"
-                          aria-label={`Office name for ${location.key}`}
-                          value={officeNameDrafts[location.id] ?? ''}
-                          onChange={(event) =>
-                            setOfficeNameDrafts((current) => ({
-                              ...current,
-                              [location.id]: event.target.value,
-                            }))
-                          }
-                          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            aria-label={`Rename office ${location.key}`}
-                            disabled={
-                              updatingOfficeId === location.id ||
-                              !officeNameDrafts[location.id]?.trim() ||
-                              officeNameDrafts[location.id]?.trim() === location.name
-                            }
-                            onClick={() => void handleRenameOffice(location.id)}
-                            className="rounded border border-border bg-surface-muted px-3 py-2 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
-                          >
-                            {updatingOfficeId === location.id ? 'Updating...' : 'Rename'}
-                          </button>
-                          <button
-                            type="button"
-                            aria-label={`Deactivate office ${location.key}`}
-                            disabled={
-                              updatingOfficeId === location.id ||
-                              !location.isActive ||
-                              location.key === 'default'
-                            }
-                            onClick={() => void handleDeactivateOffice(location.id)}
-                            className="rounded border border-danger bg-danger-soft px-3 py-2 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
-                          >
-                            {updatingOfficeId === location.id ? 'Updating...' : 'Deactivate'}
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="rounded border border-border bg-surface-muted p-3">
-                        <div className="flex flex-col gap-3">
-                          <label className="flex items-center gap-2 text-sm font-medium text-fg">
-                            <input
-                              type="checkbox"
-                              aria-label={`Enable scheduled poll for ${location.key}`}
-                              checked={settingsDraft.autoStartPollEnabled}
-                              disabled={updatingOfficeId === location.id || !location.isActive}
-                              onChange={(event) =>
-                                setOfficeSettingsDrafts((current) => ({
-                                  ...current,
-                                  [location.id]: {
-                                    ...(current[location.id] ?? settingsDraft),
-                                    autoStartPollEnabled: event.target.checked,
-                                  },
-                                }))
-                              }
-                            />
-                            Auto-start lunch poll
-                          </label>
-
-                          <div className="grid gap-3 lg:grid-cols-2">
-                            <div>
-                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Weekdays</p>
-                              <div className="flex flex-wrap gap-2">
-                                {OFFICE_WEEKDAY_OPTIONS.map((weekday) => {
-                                  const checked = settingsDraft.autoStartPollWeekdays.includes(weekday.value);
-                                  return (
-                                    <label key={weekday.value} className="flex items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg">
-                                      <input
-                                        type="checkbox"
-                                        aria-label={`${weekday.label} auto poll for ${location.key}`}
-                                        checked={checked}
-                                        disabled={
-                                          updatingOfficeId === location.id ||
-                                          !location.isActive ||
-                                          !settingsDraft.autoStartPollEnabled
-                                        }
-                                        onChange={(event) =>
-                                          setOfficeSettingsDrafts((current) => {
-                                            const currentDraft = current[location.id] ?? settingsDraft;
-                                            const nextWeekdays = orderWeekdays(
-                                              event.target.checked
-                                                ? [...currentDraft.autoStartPollWeekdays, weekday.value]
-                                                : currentDraft.autoStartPollWeekdays.filter((v) => v !== weekday.value),
-                                            );
-                                            return {
-                                              ...current,
-                                              [location.id]: { ...currentDraft, autoStartPollWeekdays: nextWeekdays },
-                                            };
-                                          })
-                                        }
-                                      />
-                                      <span>{weekday.label}</span>
-                                    </label>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-                            <label className="text-sm text-fg">
-                              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                                Poll should finish by
-                              </span>
-                              <input
-                                type="time"
-                                aria-label={`Auto-start finish time for ${location.key}`}
-                                value={settingsDraft.autoStartPollFinishTime}
-                                disabled={
-                                  updatingOfficeId === location.id ||
-                                  !location.isActive ||
-                                  !settingsDraft.autoStartPollEnabled
-                                }
-                                onChange={(event) =>
-                                  setOfficeSettingsDrafts((current) => ({
-                                    ...current,
-                                    [location.id]: {
-                                      ...(current[location.id] ?? settingsDraft),
-                                      autoStartPollFinishTime: event.target.value,
-                                    },
-                                  }))
-                                }
-                                className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted"
-                              />
-                            </label>
-                          </div>
-
-                          <label className="text-sm text-fg">
-                            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                              Default food-selection duration
-                            </span>
-                            <select
-                              aria-label={`Default food selection duration for ${location.key}`}
-                              value={settingsDraft.defaultFoodSelectionDurationMinutes}
-                              disabled={updatingOfficeId === location.id}
-                              onChange={(event) =>
-                                setOfficeSettingsDrafts((current) => ({
-                                  ...current,
-                                  [location.id]: {
-                                    ...(current[location.id] ?? settingsDraft),
-                                    defaultFoodSelectionDurationMinutes: Number(event.target.value),
-                                  },
-                                }))
-                              }
-                              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-                            >
-                              {FOOD_DURATIONS.map((d) => (
-                                <option key={d} value={d}>{d} min</option>
-                              ))}
-                            </select>
-                          </label>
-
-                          <div className="flex justify-end">
-                            <button
-                              type="button"
-                              aria-label={`Save office settings for ${location.key}`}
-                              disabled={updatingOfficeId === location.id || !location.isActive || !settingsChanged}
-                              onClick={() => void handleUpdateOfficeSettings(location.id)}
-                              className="rounded border border-success bg-success-soft px-3 py-2 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
-                            >
-                              {updatingOfficeId === location.id ? 'Updating...' : 'Save settings'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="rounded border border-border bg-surface-muted p-4">
-            <h2 className="mb-3 text-sm font-semibold text-fg">Users</h2>
-            {config.users.length === 0 ? (
-              <p className="text-sm text-fg-muted">No users yet.</p>
-            ) : (
-              <ul className="space-y-2">
-                {config.users.map((entry) => {
-                  const isCurrentUser = config.user?.username === entry.email;
-                  const canManageLocalAccount =
-                    entry.localAccount &&
-                    !entry.protectedBootstrapAdmin &&
-                    entry.displayNameSource !== 'entra';
-                  const canEditDisplayName = entry.localAccount && entry.displayNameSource !== 'entra';
-                  return (
-                    <li key={entry.email} className="rounded border border-border bg-surface px-3 py-2 text-sm">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-medium text-fg">{entry.email}</p>
-                          <p className="text-xs text-fg-muted">
-                            {entry.blocked ? 'Blocked' : entry.approved ? 'Approved' : 'Pending'} ·{' '}
-                            {entry.isAdmin ? 'Admin' : 'User'}
-                          </p>
-                          <p className="text-xs text-fg-muted">
-                            Preferred office: {entry.officeLocationName ?? 'Unassigned'}
-                          </p>
-                          <p className="text-xs text-fg-muted">
-                            Assigned offices:{' '}
-                            {entry.assignedOfficeLocations.length > 0
-                              ? entry.assignedOfficeLocations.map((l) => l.name).join(', ')
-                              : 'None'}
-                          </p>
-                          <p className="text-xs text-fg-muted">
-                            Display name: {entry.displayName || 'Email fallback'}
-                          </p>
-                        </div>
-                        <div className="flex max-w-xl flex-col gap-2">
-                          <div className="flex flex-col gap-1 sm:flex-row">
-                            <input
-                              type="email"
-                              aria-label={`Account email for ${entry.email}`}
-                              value={emailDrafts[entry.email] ?? entry.email}
-                              disabled={!canManageLocalAccount || updatingUserRoleEmail === entry.email}
-                              onChange={(event) =>
-                                setEmailDrafts((current) => ({
-                                  ...current,
-                                  [entry.email]: event.target.value,
-                                }))
-                              }
-                              className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
-                            />
-                            <button
-                              type="button"
-                              disabled={
-                                !canManageLocalAccount ||
-                                updatingUserRoleEmail === entry.email ||
-                                (emailDrafts[entry.email] ?? entry.email).trim().toLowerCase() === entry.email.toLowerCase()
-                              }
-                              onClick={() => void handleSaveEmail(entry.email)}
-                              className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save email'}
-                            </button>
-                          </div>
-                          {!entry.localAccount ? (
-                            <p className="text-xs text-fg-muted">External account email is read-only</p>
-                          ) : null}
-                          <div className="flex flex-col gap-1 sm:flex-row">
-                            <input
-                              type="text"
-                              aria-label={`Display name for ${entry.email}`}
-                              value={displayNameDrafts[entry.email] ?? ''}
-                              disabled={!canEditDisplayName || updatingUserRoleEmail === entry.email}
-                              onChange={(event) =>
-                                setDisplayNameDrafts((current) => ({
-                                  ...current,
-                                  [entry.email]: event.target.value,
-                                }))
-                              }
-                              className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
-                              placeholder="Display name"
-                            />
-                            <button
-                              type="button"
-                              disabled={
-                                !canEditDisplayName ||
-                                updatingUserRoleEmail === entry.email ||
-                                (displayNameDrafts[entry.email] ?? '').trim() === (entry.displayName ?? '')
-                              }
-                              onClick={() => void handleSaveDisplayName(entry.email)}
-                              className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save name'}
-                            </button>
-                          </div>
-                          {entry.displayNameSource === 'entra' ? (
-                            <p className="text-xs text-fg-muted">Managed by Microsoft Entra</p>
-                          ) : null}
-                          <div className="flex flex-wrap gap-2">
-                            {config.officeLocations
-                              .filter((l) => l.isActive)
-                              .map((location) => {
-                                const selectedMemberships = selectedUserOfficeMemberships[entry.email] ?? [];
-                                const checked = selectedMemberships.includes(location.id);
-                                return (
-                                  <label key={location.id} className="flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-fg">
-                                    <input
-                                      type="checkbox"
-                                      aria-label={`${location.name} membership for ${entry.email}`}
-                                      checked={checked}
-                                      disabled={updatingUserRoleEmail === entry.email}
-                                      onChange={(event) =>
-                                        setSelectedUserOfficeMemberships((current) => {
-                                          const currentMemberships = current[entry.email] ?? [];
-                                          const nextMemberships = event.target.checked
-                                            ? [...currentMemberships, location.id]
-                                            : currentMemberships.filter((id) => id !== location.id);
-
-                                          setSelectedUserOffices((currentPreferred) => {
-                                            const currentOffice = currentPreferred[entry.email];
-                                            if (event.target.checked) {
-                                              return { ...currentPreferred, [entry.email]: currentOffice || location.id };
-                                            }
-                                            if (currentOffice === location.id) {
-                                              return { ...currentPreferred, [entry.email]: nextMemberships[0] ?? '' };
-                                            }
-                                            return currentPreferred;
-                                          });
-
-                                          return { ...current, [entry.email]: nextMemberships };
-                                        })
-                                      }
-                                    />
-                                    <span>{location.name}</span>
-                                  </label>
-                                );
-                              })}
-                          </div>
-                          <select
-                            aria-label={`Preferred office for ${entry.email}`}
-                            value={selectedUserOffices[entry.email] ?? ''}
-                            onChange={(event) =>
-                              setSelectedUserOffices((current) => ({
-                                ...current,
-                                [entry.email]: event.target.value,
-                              }))
-                            }
-                            disabled={
-                              updatingUserRoleEmail === entry.email ||
-                              (selectedUserOfficeMemberships[entry.email] ?? []).length === 0
-                            }
-                            className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
-                          >
-                            <option value="">Select preferred office</option>
-                            {config.officeLocations
-                              .filter((l) =>
-                                (selectedUserOfficeMemberships[entry.email] ?? []).includes(l.id),
-                              )
-                              .map((l) => (
-                                <option key={l.id} value={l.id}>{l.name}</option>
-                              ))}
-                          </select>
-                          <button
-                            type="button"
-                            disabled={
-                              updatingUserRoleEmail === entry.email ||
-                              ((selectedUserOfficeMemberships[entry.email] ?? []).length === 0 && !entry.isAdmin) ||
-                              (((selectedUserOfficeMemberships[entry.email] ?? []).join('|') ===
-                                entry.assignedOfficeLocationIds.join('|')) &&
-                                (selectedUserOffices[entry.email] ?? '') === (entry.officeLocationId ?? ''))
-                            }
-                            onClick={() => void handleAssignOffice(entry.email)}
-                            className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
-                          >
-                            {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Save offices'}
-                          </button>
-                          {entry.isAdmin ? (
-                            <button
-                              type="button"
-                              disabled={updatingUserRoleEmail === entry.email || isCurrentUser || entry.blocked}
-                              onClick={() => void handleDemoteUser(entry.email)}
-                              className="rounded border border-warning bg-warning-soft px-3 py-1 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Demote'}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              disabled={updatingUserRoleEmail === entry.email || entry.blocked}
-                              onClick={() => void handlePromoteUser(entry.email)}
-                              className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Promote'}
-                            </button>
-                          )}
-                          {entry.blocked ? (
-                            <button
-                              type="button"
-                              disabled={updatingUserRoleEmail === entry.email}
-                              onClick={() => void handleUnblockUser(entry.email)}
-                              className="rounded border border-success bg-success-soft px-3 py-1 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Unblock'}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              disabled={updatingUserRoleEmail === entry.email || isCurrentUser}
-                              onClick={() => void handleBlockUser(entry.email)}
-                              className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
-                            >
-                              {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Block'}
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            disabled={!canManageLocalAccount || updatingUserRoleEmail === entry.email || isCurrentUser}
-                            onClick={() => void handleDeleteUser(entry.email)}
-                            className="rounded border border-danger bg-danger-soft px-3 py-1 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
-                          >
-                            {updatingUserRoleEmail === entry.email ? 'Updating...' : 'Delete local account'}
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
+        <PendingApprovalsSection
+          config={admin.config}
+          drafts={admin.drafts}
+          actions={approvalActions}
+        />
+        <LocalUserSection
+          config={admin.config}
+          officeLocationId={admin.newLocalUserOfficeLocationId}
+          setOfficeLocationId={admin.setNewLocalUserOfficeLocationId}
+          localUser={localUser}
+        />
+        <OfficeLocationsSection
+          config={admin.config}
+          drafts={admin.drafts}
+          actions={officeActions}
+        />
+        <UsersSection
+          config={admin.config}
+          drafts={admin.drafts}
+          actions={userActions}
+        />
       </div>
     </div>
+  );
+}
+
+function LoadingView() {
+  return <div className="flex flex-1 items-center justify-center text-sm text-fg-muted">Loading...</div>;
+}
+
+function ErrorView({ error }: { error: string }) {
+  return (
+    <div className="w-full p-6">
+      <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">{error}</div>
+    </div>
+  );
+}
+
+function AccessDeniedView() {
+  return (
+    <div className="w-full p-6">
+      <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
+        <p>Access denied.</p>
+        <Link to="/" className="mt-2 inline-block text-accent hover:underline">
+          Back to home
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function AdminHeader({ error }: { error: string }) {
+  return (
+    <div className="mb-6">
+      <h1 className="text-2xl font-bold text-fg">Administration</h1>
+      <p className="mt-2 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
+      {error && (
+        <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PendingApprovalsSection({
+  config,
+  drafts,
+  actions,
+}: {
+  config: AdminAuth;
+  drafts: Pick<AdminDrafts, 'selectedApprovalOffices' | 'setSelectedApprovalOffices'>;
+  actions: ReturnType<typeof useApprovalActions>;
+}) {
+  return (
+    <div className="rounded border border-border bg-surface-muted p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">Pending approvals</h2>
+      {config.pendingApprovals.length === 0 ? (
+        <p className="text-sm text-fg-muted">No pending users.</p>
+      ) : (
+        <ul className="space-y-2">
+          {config.pendingApprovals.map((entry) => (
+            <li key={entry.email} className="rounded border border-border bg-surface px-3 py-2 text-sm">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <span className="text-fg">{entry.email}</span>
+                <ApprovalControls
+                  email={entry.email}
+                  officeLocations={config.officeLocations}
+                  selectedOfficeId={drafts.selectedApprovalOffices[entry.email] ?? ''}
+                  setSelectedApprovalOffices={drafts.setSelectedApprovalOffices}
+                  actions={actions}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function ApprovalControls({
+  email,
+  officeLocations,
+  selectedOfficeId,
+  setSelectedApprovalOffices,
+  actions,
+}: {
+  email: string;
+  officeLocations: OfficeLocation[];
+  selectedOfficeId: string;
+  setSelectedApprovalOffices: Dispatch<SetStateAction<Record<string, string>>>;
+  actions: ReturnType<typeof useApprovalActions>;
+}) {
+  const updating = actions.updatingApprovalEmail === email;
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <select
+        value={selectedOfficeId}
+        onChange={(event) =>
+          setSelectedApprovalOffices((current) => ({ ...current, [email]: event.target.value }))
+        }
+        className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
+      >
+        <option value="">Select office</option>
+        {officeLocations.filter((location) => location.isActive).map((location) => (
+          <option key={location.id} value={location.id}>{location.name}</option>
+        ))}
+      </select>
+      <button
+        type="button"
+        disabled={updating || !selectedOfficeId}
+        onClick={() => void actions.approveUser(email)}
+        className="rounded bg-success-solid px-3 py-1 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Approve'}
+      </button>
+      <button
+        type="button"
+        disabled={updating}
+        onClick={() => void actions.declineUser(email)}
+        className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Decline'}
+      </button>
+    </div>
+  );
+}
+
+function LocalUserSection({
+  config,
+  officeLocationId,
+  setOfficeLocationId,
+  localUser,
+}: {
+  config: AdminAuth;
+  officeLocationId: string;
+  setOfficeLocationId: (value: string) => void;
+  localUser: ReturnType<typeof useLocalUserActions>;
+}) {
+  return (
+    <div className="rounded border border-border bg-surface-muted p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">Create local user</h2>
+      <form onSubmit={(event) => void localUser.createLocalUser(event)} className="space-y-3">
+        <input
+          type="email"
+          value={localUser.newLocalUserEmail}
+          onChange={(event) => localUser.setNewLocalUserEmail(event.target.value)}
+          placeholder="Email"
+          required
+          className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+        />
+        <OfficeSelect
+          officeLocations={config.officeLocations}
+          value={officeLocationId}
+          onChange={setOfficeLocationId}
+          label="Office location for new local user"
+        />
+        <input
+          type="text"
+          value={localUser.newLocalUserPassword}
+          onChange={(event) => localUser.setNewLocalUserPassword(event.target.value)}
+          placeholder="Password (leave empty to auto-generate)"
+          aria-invalid={!!localUser.passwordValidationError}
+          className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+        />
+        {localUser.passwordValidationError && (
+          <p className="text-xs text-danger-fg">{localUser.passwordValidationError}</p>
+        )}
+        <button
+          type="submit"
+          disabled={
+            localUser.creatingLocalUser ||
+            !!localUser.passwordValidationError ||
+            !officeLocationId
+          }
+          className="w-full rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
+        >
+          {localUser.creatingLocalUser ? 'Creating...' : 'Create local user'}
+        </button>
+      </form>
+      {localUser.createdLocalUser && <CreatedLocalUserNotice user={localUser.createdLocalUser} />}
+    </div>
+  );
+}
+
+function CreatedLocalUserNotice({
+  user,
+}: {
+  user: { email: string; password: string; generated: boolean };
+}) {
+  return (
+    <div className="mt-3 rounded border border-accent/40 bg-accent-soft/40 p-3 text-sm text-accent-fg">
+      <div className="font-medium">Credentials created for {user.email}</div>
+      <div className="mt-1 break-all">
+        Temporary password: <code>{user.password}</code>
+      </div>
+      {user.generated && (
+        <div className="mt-1 text-xs text-accent-fg">
+          Password was auto-generated. Share it securely once.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OfficeSelect({
+  officeLocations,
+  value,
+  onChange,
+  label,
+  enabledOnly = true,
+}: {
+  officeLocations: OfficeLocation[];
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+  enabledOnly?: boolean;
+}) {
+  const locations = enabledOnly ? officeLocations.filter((location) => location.isActive) : officeLocations;
+  return (
+    <select
+      aria-label={label}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+    >
+      <option value="">Select office location</option>
+      {locations.map((location) => (
+        <option key={location.id} value={location.id}>{location.name}</option>
+      ))}
+    </select>
+  );
+}
+
+function OfficeLocationsSection({
+  config,
+  drafts,
+  actions,
+}: {
+  config: AdminAuth;
+  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'setOfficeNameDrafts' | 'officeSettingsDrafts' | 'setOfficeSettingsDrafts'>;
+  actions: ReturnType<typeof useOfficeActions>;
+}) {
+  return (
+    <div className="rounded border border-border bg-surface-muted p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">Office locations</h2>
+      <form onSubmit={(event) => void actions.createOffice(event)} className="mb-3 flex gap-2">
+        <input
+          type="text"
+          value={actions.newOfficeName}
+          onChange={(event) => actions.setNewOfficeName(event.target.value)}
+          placeholder="New office location"
+          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={actions.creatingOffice || !actions.newOfficeName.trim()}
+          className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
+        >
+          {actions.creatingOffice ? 'Creating...' : 'Add office'}
+        </button>
+      </form>
+      <ul className="space-y-2">
+        {config.officeLocations.map((location) => (
+          <OfficeLocationRow
+            key={location.id}
+            location={location}
+            drafts={drafts}
+            actions={actions}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function OfficeLocationRow({
+  location,
+  drafts,
+  actions,
+}: {
+  location: OfficeLocation;
+  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'setOfficeNameDrafts' | 'officeSettingsDrafts' | 'setOfficeSettingsDrafts'>;
+  actions: ReturnType<typeof useOfficeActions>;
+}) {
+  const settingsDraft = drafts.officeSettingsDrafts[location.id] ?? initialOfficeSettings(location);
+  const updating = actions.updatingOfficeId === location.id;
+  const changed = settingsChanged(location, settingsDraft);
+
+  return (
+    <li className="rounded border border-border bg-surface px-3 py-3 text-sm">
+      <div className="flex flex-col gap-4">
+        <div className="min-w-0">
+          <p className="font-medium text-fg">{location.name}</p>
+          <p className="text-xs text-fg-muted">
+            Key: {location.key} · {location.isActive ? 'Active' : 'Inactive'}
+          </p>
+        </div>
+        <div className="flex flex-col gap-2 md:flex-row">
+          <input
+            type="text"
+            aria-label={`Office name for ${location.key}`}
+            value={drafts.officeNameDrafts[location.id] ?? ''}
+            onChange={(event) =>
+              drafts.setOfficeNameDrafts((current) => ({ ...current, [location.id]: event.target.value }))
+            }
+            className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+          />
+          <OfficeRowActions location={location} updating={updating} drafts={drafts} actions={actions} />
+        </div>
+        <OfficeSettingsEditor
+          location={location}
+          settingsDraft={settingsDraft}
+          updating={updating}
+          changed={changed}
+          setOfficeSettingsDrafts={drafts.setOfficeSettingsDrafts}
+          onSave={() => void actions.updateOfficeSettings(location.id)}
+        />
+      </div>
+    </li>
+  );
+}
+
+function OfficeRowActions({
+  location,
+  updating,
+  drafts,
+  actions,
+}: {
+  location: OfficeLocation;
+  updating: boolean;
+  drafts: Pick<AdminDrafts, 'officeNameDrafts'>;
+  actions: ReturnType<typeof useOfficeActions>;
+}) {
+  const draftName = drafts.officeNameDrafts[location.id]?.trim();
+  return (
+    <div className="flex gap-2">
+      <button
+        type="button"
+        aria-label={`Rename office ${location.key}`}
+        disabled={updating || !draftName || draftName === location.name}
+        onClick={() => void actions.renameOffice(location.id)}
+        className="rounded border border-border bg-surface-muted px-3 py-2 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Rename'}
+      </button>
+      <button
+        type="button"
+        aria-label={`Deactivate office ${location.key}`}
+        disabled={updating || !location.isActive || location.key === 'default'}
+        onClick={() => void actions.deactivateOffice(location.id)}
+        className="rounded border border-danger bg-danger-soft px-3 py-2 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Deactivate'}
+      </button>
+    </div>
+  );
+}
+
+function OfficeSettingsEditor({
+  location,
+  settingsDraft,
+  updating,
+  changed,
+  setOfficeSettingsDrafts,
+  onSave,
+}: {
+  location: OfficeLocation;
+  settingsDraft: OfficeSettingsDraft;
+  updating: boolean;
+  changed: boolean;
+  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
+  onSave: () => void;
+}) {
+  const patchDraft = (patch: Partial<OfficeSettingsDraft>) =>
+    setOfficeSettingsDrafts((current) => ({
+      ...current,
+      [location.id]: { ...(current[location.id] ?? settingsDraft), ...patch },
+    }));
+
+  return (
+    <div className="rounded border border-border bg-surface-muted p-3">
+      <div className="flex flex-col gap-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-fg">
+          <input
+            type="checkbox"
+            aria-label={`Enable scheduled poll for ${location.key}`}
+            checked={settingsDraft.autoStartPollEnabled}
+            disabled={updating || !location.isActive}
+            onChange={(event) => patchDraft({ autoStartPollEnabled: event.target.checked })}
+          />
+          Auto-start lunch poll
+        </label>
+        <div className="grid gap-3 lg:grid-cols-2">
+          <WeekdaySelector
+            location={location}
+            settingsDraft={settingsDraft}
+            updating={updating}
+            setOfficeSettingsDrafts={setOfficeSettingsDrafts}
+          />
+          <label className="text-sm text-fg">
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
+              Poll should finish by
+            </span>
+            <input
+              type="time"
+              aria-label={`Auto-start finish time for ${location.key}`}
+              value={settingsDraft.autoStartPollFinishTime}
+              disabled={updating || !location.isActive || !settingsDraft.autoStartPollEnabled}
+              onChange={(event) => patchDraft({ autoStartPollFinishTime: event.target.value })}
+              className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted"
+            />
+          </label>
+        </div>
+        <FoodDurationSelect
+          location={location}
+          settingsDraft={settingsDraft}
+          updating={updating}
+          patchDraft={patchDraft}
+        />
+        <div className="flex justify-end">
+          <button
+            type="button"
+            aria-label={`Save office settings for ${location.key}`}
+            disabled={updating || !location.isActive || !changed}
+            onClick={onSave}
+            className="rounded border border-success bg-success-soft px-3 py-2 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+          >
+            {updating ? 'Updating...' : 'Save settings'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WeekdaySelector({
+  location,
+  settingsDraft,
+  updating,
+  setOfficeSettingsDrafts,
+}: {
+  location: OfficeLocation;
+  settingsDraft: OfficeSettingsDraft;
+  updating: boolean;
+  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Weekdays</p>
+      <div className="flex flex-wrap gap-2">
+        {OFFICE_WEEKDAY_OPTIONS.map((weekday) => {
+          const checked = settingsDraft.autoStartPollWeekdays.includes(weekday.value);
+          return (
+            <label key={weekday.value} className="flex items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg">
+              <input
+                type="checkbox"
+                aria-label={`${weekday.label} auto poll for ${location.key}`}
+                checked={checked}
+                disabled={updating || !location.isActive || !settingsDraft.autoStartPollEnabled}
+                onChange={(event) =>
+                  setOfficeSettingsDrafts((current) => {
+                    const currentDraft = current[location.id] ?? settingsDraft;
+                    const nextWeekdays = orderWeekdays(
+                      event.target.checked
+                        ? [...currentDraft.autoStartPollWeekdays, weekday.value]
+                        : currentDraft.autoStartPollWeekdays.filter((value) => value !== weekday.value),
+                    );
+                    return { ...current, [location.id]: { ...currentDraft, autoStartPollWeekdays: nextWeekdays } };
+                  })
+                }
+              />
+              <span>{weekday.label}</span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FoodDurationSelect({
+  location,
+  settingsDraft,
+  updating,
+  patchDraft,
+}: {
+  location: OfficeLocation;
+  settingsDraft: OfficeSettingsDraft;
+  updating: boolean;
+  patchDraft: (patch: Partial<OfficeSettingsDraft>) => void;
+}) {
+  return (
+    <label className="text-sm text-fg">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
+        Default food-selection duration
+      </span>
+      <select
+        aria-label={`Default food selection duration for ${location.key}`}
+        value={settingsDraft.defaultFoodSelectionDurationMinutes}
+        disabled={updating}
+        onChange={(event) => patchDraft({ defaultFoodSelectionDurationMinutes: Number(event.target.value) })}
+        className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+      >
+        {FOOD_DURATIONS.map((duration) => (
+          <option key={duration} value={duration}>{duration} min</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function UsersSection({
+  config,
+  drafts,
+  actions,
+}: {
+  config: AdminAuth;
+  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships' | 'displayNameDrafts' | 'setDisplayNameDrafts' | 'emailDrafts' | 'setEmailDrafts'>;
+  actions: ReturnType<typeof useUserActions>;
+}) {
+  return (
+    <div className="rounded border border-border bg-surface-muted p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">Users</h2>
+      {config.users.length === 0 ? (
+        <p className="text-sm text-fg-muted">No users yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {config.users.map((entry) => (
+            <UserRow key={entry.email} entry={entry} config={config} drafts={drafts} actions={actions} />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function UserRow({
+  entry,
+  config,
+  drafts,
+  actions,
+}: {
+  entry: AdminUser;
+  config: AdminAuth;
+  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships' | 'displayNameDrafts' | 'setDisplayNameDrafts' | 'emailDrafts' | 'setEmailDrafts'>;
+  actions: ReturnType<typeof useUserActions>;
+}) {
+  const isCurrentUser = config.user?.username === entry.email;
+  const canManageLocalAccount =
+    entry.localAccount && !entry.protectedBootstrapAdmin && entry.displayNameSource !== 'entra';
+  const canEditDisplayName = entry.localAccount && entry.displayNameSource !== 'entra';
+
+  return (
+    <li className="rounded border border-border bg-surface px-3 py-2 text-sm">
+      <div className="flex items-center justify-between gap-3">
+        <UserSummary entry={entry} />
+        <div className="flex max-w-xl flex-col gap-2">
+          <AccountEmailEditor
+            entry={entry}
+            drafts={drafts}
+            actions={actions}
+            canManageLocalAccount={canManageLocalAccount}
+          />
+          {!entry.localAccount ? <p className="text-xs text-fg-muted">External account email is read-only</p> : null}
+          <DisplayNameEditor
+            entry={entry}
+            drafts={drafts}
+            actions={actions}
+            canEditDisplayName={canEditDisplayName}
+          />
+          {entry.displayNameSource === 'entra' ? (
+            <p className="text-xs text-fg-muted">Managed by Microsoft Entra</p>
+          ) : null}
+          <OfficeMembershipEditor entry={entry} config={config} drafts={drafts} actions={actions} />
+          <UserRoleActions
+            entry={entry}
+            isCurrentUser={isCurrentUser}
+            canManageLocalAccount={canManageLocalAccount}
+            actions={actions}
+          />
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function UserSummary({ entry }: { entry: AdminUser }) {
+  return (
+    <div className="min-w-0">
+      <p className="truncate font-medium text-fg">{entry.email}</p>
+      <p className="text-xs text-fg-muted">
+        {entry.blocked ? 'Blocked' : entry.approved ? 'Approved' : 'Pending'} ·{' '}
+        {entry.isAdmin ? 'Admin' : 'User'}
+      </p>
+      <p className="text-xs text-fg-muted">Preferred office: {entry.officeLocationName ?? 'Unassigned'}</p>
+      <p className="text-xs text-fg-muted">
+        Assigned offices:{' '}
+        {entry.assignedOfficeLocations.length > 0
+          ? entry.assignedOfficeLocations.map((location) => location.name).join(', ')
+          : 'None'}
+      </p>
+      <p className="text-xs text-fg-muted">Display name: {entry.displayName || 'Email fallback'}</p>
+    </div>
+  );
+}
+
+function AccountEmailEditor({
+  entry,
+  drafts,
+  actions,
+  canManageLocalAccount,
+}: {
+  entry: AdminUser;
+  drafts: Pick<AdminDrafts, 'emailDrafts' | 'setEmailDrafts'>;
+  actions: ReturnType<typeof useUserActions>;
+  canManageLocalAccount: boolean;
+}) {
+  const updating = actions.updatingUserRoleEmail === entry.email;
+  const unchanged = (drafts.emailDrafts[entry.email] ?? entry.email).trim().toLowerCase() === entry.email.toLowerCase();
+  return (
+    <div className="flex flex-col gap-1 sm:flex-row">
+      <input
+        type="email"
+        aria-label={`Account email for ${entry.email}`}
+        value={drafts.emailDrafts[entry.email] ?? entry.email}
+        disabled={!canManageLocalAccount || updating}
+        onChange={(event) =>
+          drafts.setEmailDrafts((current) => ({ ...current, [entry.email]: event.target.value }))
+        }
+        className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
+      />
+      <button
+        type="button"
+        disabled={!canManageLocalAccount || updating || unchanged}
+        onClick={() => void actions.saveEmail(entry.email)}
+        className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Save email'}
+      </button>
+    </div>
+  );
+}
+
+function DisplayNameEditor({
+  entry,
+  drafts,
+  actions,
+  canEditDisplayName,
+}: {
+  entry: AdminUser;
+  drafts: Pick<AdminDrafts, 'displayNameDrafts' | 'setDisplayNameDrafts'>;
+  actions: ReturnType<typeof useUserActions>;
+  canEditDisplayName: boolean;
+}) {
+  const updating = actions.updatingUserRoleEmail === entry.email;
+  const unchanged = (drafts.displayNameDrafts[entry.email] ?? '').trim() === (entry.displayName ?? '');
+  return (
+    <div className="flex flex-col gap-1 sm:flex-row">
+      <input
+        type="text"
+        aria-label={`Display name for ${entry.email}`}
+        value={drafts.displayNameDrafts[entry.email] ?? ''}
+        disabled={!canEditDisplayName || updating}
+        onChange={(event) =>
+          drafts.setDisplayNameDrafts((current) => ({ ...current, [entry.email]: event.target.value }))
+        }
+        className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
+        placeholder="Display name"
+      />
+      <button
+        type="button"
+        disabled={!canEditDisplayName || updating || unchanged}
+        onClick={() => void actions.saveDisplayName(entry.email)}
+        className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Save name'}
+      </button>
+    </div>
+  );
+}
+
+function OfficeMembershipEditor({
+  entry,
+  config,
+  drafts,
+  actions,
+}: {
+  entry: AdminUser;
+  config: AdminAuth;
+  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships'>;
+  actions: ReturnType<typeof useUserActions>;
+}) {
+  const memberships = drafts.selectedUserOfficeMemberships[entry.email] ?? [];
+  const officesUnchanged =
+    memberships.join('|') === entry.assignedOfficeLocationIds.join('|') &&
+    (drafts.selectedUserOffices[entry.email] ?? '') === (entry.officeLocationId ?? '');
+  const updating = actions.updatingUserRoleEmail === entry.email;
+
+  return (
+    <>
+      <div className="flex flex-wrap gap-2">
+        {config.officeLocations.filter((location) => location.isActive).map((location) => (
+          <OfficeMembershipCheckbox
+            key={location.id}
+            entry={entry}
+            location={location}
+            checked={memberships.includes(location.id)}
+            disabled={updating}
+            drafts={drafts}
+          />
+        ))}
+      </div>
+      <select
+        aria-label={`Preferred office for ${entry.email}`}
+        value={drafts.selectedUserOffices[entry.email] ?? ''}
+        onChange={(event) =>
+          drafts.setSelectedUserOffices((current) => ({ ...current, [entry.email]: event.target.value }))
+        }
+        disabled={updating || memberships.length === 0}
+        className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
+      >
+        <option value="">Select preferred office</option>
+        {config.officeLocations
+          .filter((location) => memberships.includes(location.id))
+          .map((location) => (
+            <option key={location.id} value={location.id}>{location.name}</option>
+          ))}
+      </select>
+      <button
+        type="button"
+        disabled={updating || (memberships.length === 0 && !entry.isAdmin) || officesUnchanged}
+        onClick={() => void actions.assignOffice(entry.email)}
+        className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Save offices'}
+      </button>
+    </>
+  );
+}
+
+function OfficeMembershipCheckbox({
+  entry,
+  location,
+  checked,
+  disabled,
+  drafts,
+}: {
+  entry: AdminUser;
+  location: OfficeLocation;
+  checked: boolean;
+  disabled: boolean;
+  drafts: Pick<AdminDrafts, 'setSelectedUserOffices' | 'setSelectedUserOfficeMemberships'>;
+}) {
+  return (
+    <label className="flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-fg">
+      <input
+        type="checkbox"
+        aria-label={`${location.name} membership for ${entry.email}`}
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) =>
+          drafts.setSelectedUserOfficeMemberships((current) => {
+            const currentMemberships = current[entry.email] ?? [];
+            const nextMemberships = event.target.checked
+              ? [...currentMemberships, location.id]
+              : currentMemberships.filter((id) => id !== location.id);
+            updatePreferredOffice(entry.email, location.id, event.target.checked, nextMemberships, drafts);
+            return { ...current, [entry.email]: nextMemberships };
+          })
+        }
+      />
+      <span>{location.name}</span>
+    </label>
+  );
+}
+
+function updatePreferredOffice(
+  email: string,
+  locationId: string,
+  checked: boolean,
+  nextMemberships: string[],
+  drafts: Pick<AdminDrafts, 'setSelectedUserOffices'>,
+) {
+  drafts.setSelectedUserOffices((currentPreferred) => {
+    const currentOffice = currentPreferred[email];
+    if (checked) {
+      return { ...currentPreferred, [email]: currentOffice || locationId };
+    }
+    if (currentOffice === locationId) {
+      return { ...currentPreferred, [email]: nextMemberships[0] ?? '' };
+    }
+    return currentPreferred;
+  });
+}
+
+function UserRoleActions({
+  entry,
+  isCurrentUser,
+  canManageLocalAccount,
+  actions,
+}: {
+  entry: AdminUser;
+  isCurrentUser: boolean;
+  canManageLocalAccount: boolean;
+  actions: ReturnType<typeof useUserActions>;
+}) {
+  const updating = actions.updatingUserRoleEmail === entry.email;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {entry.isAdmin ? (
+        <button
+          type="button"
+          disabled={updating || isCurrentUser || entry.blocked}
+          onClick={() => void actions.demoteUser(entry.email)}
+          className="rounded border border-warning bg-warning-soft px-3 py-1 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-60"
+        >
+          {updating ? 'Updating...' : 'Demote'}
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={updating || entry.blocked}
+          onClick={() => void actions.promoteUser(entry.email)}
+          className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
+        >
+          {updating ? 'Updating...' : 'Promote'}
+        </button>
+      )}
+      <BlockToggle entry={entry} isCurrentUser={isCurrentUser} updating={updating} actions={actions} />
+      <button
+        type="button"
+        disabled={!canManageLocalAccount || updating || isCurrentUser}
+        onClick={() => void actions.deleteUser(entry.email)}
+        className="rounded border border-danger bg-danger-soft px-3 py-1 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Delete local account'}
+      </button>
+    </div>
+  );
+}
+
+function BlockToggle({
+  entry,
+  isCurrentUser,
+  updating,
+  actions,
+}: {
+  entry: AdminUser;
+  isCurrentUser: boolean;
+  updating: boolean;
+  actions: ReturnType<typeof useUserActions>;
+}) {
+  if (entry.blocked) {
+    return (
+      <button
+        type="button"
+        disabled={updating}
+        onClick={() => void actions.unblockUser(entry.email)}
+        className="rounded border border-success bg-success-soft px-3 py-1 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+      >
+        {updating ? 'Updating...' : 'Unblock'}
+      </button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      disabled={updating || isCurrentUser}
+      onClick={() => void actions.blockUser(entry.email)}
+      className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
+    >
+      {updating ? 'Updating...' : 'Block'}
+    </button>
   );
 }

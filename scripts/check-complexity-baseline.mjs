@@ -4,7 +4,6 @@ import path from 'node:path';
 
 const baselinePath = path.resolve('complexity-baseline.json');
 const update = process.argv.includes('--update');
-const bypassThresholds = process.env.QUALITY_THRESHOLDS_BYPASS === '1';
 const rules = [
   'complexity',
   'max-depth',
@@ -153,9 +152,5 @@ const failures = compare(summary, baseline);
 printSummary(summary, baseline, failures);
 
 if (failures.length > 0) {
-  if (bypassThresholds) {
-    console.warn('\nQUALITY_THRESHOLDS_BYPASS=1: complexity threshold is running in advisory mode.');
-    process.exit(0);
-  }
   process.exit(1);
 }
