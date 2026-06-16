@@ -10,6 +10,11 @@ import { createSessionCookieValue } from '../../src/server/services/authSession.
 import { ensureDefaultOfficeLocation } from '../../src/server/services/officeLocation.js';
 import prisma from '../../src/server/db.js';
 
+function logUnexpectedStatus(label: string, res: supertest.Response, expectedStatus: number): void {
+  if (res.status === expectedStatus) return;
+  console.error(label, { expectedStatus, actualStatus: res.status, body: res.body, text: res.text });
+}
+
 async function authCookie(email: string): Promise<string> {
   const office = await ensureDefaultOfficeLocation();
   await prisma.authAccessUser.upsert({
@@ -65,8 +70,9 @@ describe('food order rating and export routes', () => {
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selectionId}/orders/${orderId}/rating`)
       .set('Cookie', await authCookie('alice@example.com'))
-      .send({ rating: 4, feedbackComment: 'Fast delivery and hot food' })
-      .expect(200);
+      .send({ rating: 4, feedbackComment: 'Fast delivery and hot food' });
+    logUnexpectedStatus('rate own completed order', res, 200);
+    expect(res.status).toBe(200);
 
     expect(res.body.rating).toBe(4);
     expect(res.body.feedbackComment).toBe('Fast delivery and hot food');
@@ -141,8 +147,9 @@ describe('food order rating and export routes', () => {
     const res = await supertest(app.server)
       .post(`/api/food-selections/${selectionId}/orders/${orderId}/rating`)
       .set('Cookie', await authCookie('alice@example.com'))
-      .send({ rating: 4, feedbackComment: 'x'.repeat(301) })
-      .expect(400);
+      .send({ rating: 4, feedbackComment: 'x'.repeat(301) });
+    logUnexpectedStatus('reject too-long feedback comment', res, 400);
+    expect(res.status).toBe(400);
 
     expect(res.body).toEqual({ error: 'Feedback comment must be 300 characters or fewer' });
 
