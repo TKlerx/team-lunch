@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  CI: "true"
+  TEST_DB_PORT: "55434"
+  TEST_DATABASE_SCHEMA: team_lunch_test
+  TEST_DATABASE_URL: postgresql://teamlunch:teamlunch@127.0.0.1:55434/teamlunch_test?schema=team_lunch_test
+  AUTH_SESSION_SECRET: ci-session-secret-12345678901234567890
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Semgrep
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install semgrep
+
+      - name: Start test database
+        run: pnpm db:test:up
+
+      - name: Run quality checks and coverage
+        run: pwsh -NoProfile -File ./validate.ps1 all
+
+      - name: Install Playwright Chromium
+        if: github.event_name == 'push'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        if: github.event_name == 'push'
+        run: pnpm run test:e2e
+
+      - name: Stop test database
+        if: always()
+        run: pnpm db:test:down || true
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: reports/coverage
+          if-no-files-found: ignore
+
+      - name: Upload complexity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: reports/complexity
+          if-no-files-found: ignore
+
+      - name: Upload Playwright results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results
+          if-no-files-found: ignore

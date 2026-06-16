@@ -6,14 +6,18 @@
 .DESCRIPTION
     Usage: ./validate.ps1 [phase]
     Phases:
-      all        - typecheck + lint + duplication + semgrep + production audit + test (default, pre-commit)
+      all        - typecheck + lint + duplication + complexity + semgrep + production audit + tests w/ coverage (default, pre-commit)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
       quick      - typecheck only (use during scaffolding before tests exist)
-      test       - tests only
+      test       - tests only (no coverage)
       e2e        - Playwright E2E tests only
-      quality    - lint + duplication + semgrep
+      quality    - lint + duplication + complexity + semgrep
       commit     - validate all, then git add + commit + push
+
+    Reports (gitignored, regenerated each run):
+      reports/coverage/index.html    - test coverage (generated in all/full/commit)
+      reports/complexity/index.html  - code complexity (generated in all/full/quality/commit)
 #>
 
 param(
@@ -155,6 +159,34 @@ function Get-DuplicationSummary($result) {
     return "duplication check passed"
 }
 
+function Get-CoverageSummary($result) {
+    $output = Remove-Ansi (Get-CombinedOutput $result)
+    $testSummary = Get-TestSummary $result
+
+    $linesMatch = [regex]::Match($output, 'Lines\s+:\s+([\d.]+)%')
+    $branchesMatch = [regex]::Match($output, 'Branches\s+:\s+([\d.]+)%')
+
+    if ($linesMatch.Success) {
+        $coverageParts = @("lines $($linesMatch.Groups[1].Value)%")
+        if ($branchesMatch.Success) {
+            $coverageParts += "branches $($branchesMatch.Groups[1].Value)%"
+        }
+        return "$testSummary; coverage $($coverageParts -join ', ') -> reports/coverage"
+    }
+
+    return $testSummary
+}
+
+function Get-ComplexitySummary($result) {
+    $output = Remove-Ansi (Get-CombinedOutput $result)
+    $match = [regex]::Match($output, 'Total violations:\s+(\d+)')
+    if ($match.Success) {
+        return "complexity report generated ($($match.Groups[1].Value) violations) -> reports/complexity"
+    }
+
+    return "complexity report generated -> reports/complexity"
+}
+
 function Get-SemgrepSummary($result) {
     $output = Remove-Ansi (Get-CombinedOutput $result)
     $match = [regex]::Match($output, '(\d+)\s+Code Findings')
@@ -290,6 +322,13 @@ if ($Phase -in "all", "full", "quality", "commit") {
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
+    Invoke-ValidationStep "Complexity report (eslint)" "pnpm run complexity" "complexity" "complexity report failed" {
+        param($result)
+        Get-ComplexitySummary $result
+    }
+}
+
+if ($Phase -in "all", "full", "quality", "commit") {
     Write-Step "Security scan (semgrep)"
     try {
         $env:PYTHONUTF8 = "1"
@@ -313,7 +352,12 @@ if ($Phase -in "all", "full", "quality", "commit") {
     }
 }
 
-if ($Phase -in "all", "full", "test", "commit") {
+if ($Phase -in "all", "full", "commit") {
+    Invoke-ValidationStep "Tests + coverage (vitest --coverage)" "pnpm run coverage" "tests" "tests failed" {
+        param($result)
+        Get-CoverageSummary $result
+    }
+} elseif ($Phase -eq "test") {
     Invoke-ValidationStep "Tests (vitest)" "pnpm test" "tests" "tests failed" {
         param($result)
         Get-TestSummary $result

@@ -11,6 +11,18 @@ export default defineConfig({
   },
   test: {
     testTimeout: 10_000,
+    coverage: {
+      provider: 'v8',
+      reportsDirectory: 'reports/coverage',
+      reporter: ['text-summary', 'html', 'json-summary', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/server/generated/**',
+        'src/**/*.d.ts',
+        'src/client/main.tsx',
+        'src/**/index.{ts,tsx}',
+      ],
+    },
     projects: [
       {
         extends: true,
