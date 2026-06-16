@@ -23,12 +23,16 @@ baseline.
 
 The feature offers two distinct, complementary recommendation modes:
 - **Safe** ("Recommend a meal") — a batch-trained model that always serves its
-  best-matched ranking; this is the path gated against the deterministic
-  baseline before rollout.
+  best-matched ranking for the menu that won the poll / active food selection;
+  this is the path gated against the deterministic baseline before rollout.
 - **Explore** ("Explore something new") — an opt-in path that intentionally
   surfaces novel/uncertain items to learn and broaden the user's experience;
   because the user explicitly asks to explore, it is not held to the
   beat-the-baseline gate.
+- **Pre-vote cross-menu** ("What would I like today?") — an optional helper
+  during poll/restaurant selection that ranks likely top dishes across the
+  current office's candidate menus before a food selection exists. It is
+  personal and office-scoped, but not constrained to a single winning menu.
 
 ## Clarifications
 
@@ -40,6 +44,7 @@ The feature offers two distinct, complementary recommendation modes:
 - Q: Model/personalization scope across offices? → A: Single shared model with office as a feature (pools non-identifying flavor signal across offices, still per-user/office-scoped recommendations); per-office evaluation and enablement retained; no personal identifiers pooled.
 - Q: Safe-path rollout gate — which metric and margin? → A: Top-3 hit rate (ordered item appears in shown top 3), must exceed the baseline by ≥5 percentage points on held-out history before an office may enable it.
 - Q: Learning approach & exploration behavior — one model or both? → A: Both — a "safe" batch-trained model (exploit) for the default recommendation plus an opt-in "explore" path (exploration/bandit) as a separate user action; only the safe path is gated against the baseline. Framed as one predictor (e.g., FM) with two exploration policies: low-temperature + diversity/recency for safe, high-exploration (e.g., Thompson sampling / novelty-first) for explore. The safe path must still avoid degenerate repetition.
+- Q: Should recommendations only use the voted/winning meal, or can they help before a menu is decided? → A: The normal safe/explore recommendation for ordering MUST stay constrained to the active food selection's winning menu. Add a separate pre-vote cross-menu recommender that can rank top personal dish picks across current poll candidate menus (or all office menus when no poll is active) to help the user vote/decide, while remaining office-scoped and clearly labelled as pre-vote guidance.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -121,6 +126,33 @@ rate one of them differently and verify the real rating overrides the mark.
 2. **Given** a new user with no order history, **When** they complete onboarding marking, **Then** recommendations are personalized without waiting for real orders; **When** they skip it, **Then** recommendations fall back to the baseline with no error.
 3. **Given** a dish a user marked as liked, **When** they later order and rate it, **Then** the actual rating supersedes the pre-taste mark as the stronger signal.
 4. **Given** the system suggests dishes to mark during onboarding, **When** it builds that list, **Then** it offers a spread covering varied flavor features, not near-duplicates.
+
+---
+
+### User Story 1d - I can see likely top dishes before the menu wins (Priority: P2)
+
+While the team is still choosing a restaurant/menu, a user can ask for a
+pre-vote recommendation that scans the current office's candidate menus and
+shows the dishes they are most likely to enjoy. This helps them decide how to
+vote or whether a restaurant is attractive today, without pretending that the
+team has already chosen where to order.
+
+**Why this priority**: The normal recommender is useful after a poll winner
+exists, but users also make a decision during the poll. A cross-menu preview
+uses the same learned preferences to make that earlier decision more informed,
+without changing the core ordering flow.
+
+**Independent Test**: Seed multiple candidate menus with tagged items and a
+user flavor history, request pre-vote recommendations during an active poll,
+and verify the response ranks items across the poll's eligible menus, includes
+menu names, excludes non-candidate/excluded menus, and remains office-scoped.
+
+**Acceptance Scenarios**:
+
+1. **Given** an active poll with multiple candidate menus, **When** a user requests pre-vote recommendations, **Then** the system ranks candidate dishes across those menus and includes the menu name for every item.
+2. **Given** a poll excludes a menu, **When** pre-vote recommendations are requested for that poll, **Then** items from the excluded menu are not returned.
+3. **Given** no poll is active, **When** a user requests the cross-menu preview, **Then** the system may rank dishes from all current menus in the user's office.
+4. **Given** a user follows the pre-vote guidance and later orders/rates a recommended dish, **When** the model is trained/evaluated, **Then** the pre-vote impression can be used as additional learning/evaluation context without requiring a separate feedback prompt.
 
 ---
 
@@ -233,6 +265,8 @@ preferences.
 - A user has an allergy the FM would otherwise rank highly (e.g. learned love of peanut dishes) → the allergy hard-excludes the item regardless of learned score; the model never overrides safety.
 - An allergy/dislike term is outside the ingredient taxonomy (free-text) → substring matching against item text still applies, so the constraint is not silently dropped.
 - A user has one strongly-rated favorite that recurs on the menu → the safe path must not recommend that identical dish every single time (apply diversity/recency), while still respecting the strong preference.
+- The user asks for pre-vote guidance before any poll exists → rank across current office menus with clear "pre-vote" labelling; never cross into another office's menus.
+- The active poll contains candidate menus with no tagged items → pre-vote recommendations fall back to deterministic/current-menu signals for those items and surface admin feature-coverage warnings separately.
 
 ## Requirements *(mandatory)*
 
@@ -268,6 +302,10 @@ preferences.
 - **FR-028**: System MUST let an administrator enable or disable the opt-in explore action per office, independently of the safe-path mode; explore defaults to enabled.
 - **FR-029**: System MUST treat allergies as hard safety constraints and dislikes as soft demotions, applied deterministically after model/baseline scoring; these MUST NOT be learned by or routed through the factorization machine (safety must never be probabilistic), and MUST apply identically on the baseline, safe-learned, and explore paths.
 - **FR-030**: Allergy and dislike entry MUST offer structured selection from the shared ingredient feature vocabulary (mapping to `ingredient:*` tags for reliable matching against tagged items) plus a free-text fallback (substring match) for terms outside the taxonomy.
+- **FR-031**: The normal safe and explore recommendation endpoints for ordering MUST only recommend items from the active food selection's selected/winning menu.
+- **FR-032**: System MUST provide a separate pre-vote cross-menu recommendation endpoint that ranks candidate items across the current office's active poll menus before a food selection exists, excluding poll-excluded menus and including menu identity/name in each result.
+- **FR-033**: When no poll is active, the pre-vote cross-menu endpoint MAY rank items across all current menus in the user's office. It MUST remain office-scoped and MUST NOT use menus from other offices.
+- **FR-034**: Pre-vote recommendation impressions MUST be persisted separately from food-selection-bound impressions so later orders/ratings can be joined for learning/evaluation without inventing a fake food selection.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -278,6 +316,7 @@ preferences.
 - **Recommendation Mode Setting**: per-office flag controlling whether the safe path is served by the learned model or the deterministic baseline. The opt-in explore action is available independently of this setting.
 - **Explore Policy**: the mechanism (e.g., exploration/bandit policy) that selects novel/uncertain items for the explore action and updates from their outcomes; distinct from the safe ranking model.
 - **Anticipated-Like Mark**: a dish a user marks as liked (or disliked) without having ordered it, available anytime and as optional onboarding; an explicit pre-taste signal of lower confidence than a real rating, which a later rating of the same dish supersedes.
+- **Pre-vote Recommendation**: a personal, office-scoped ranking over item candidates across multiple menus before a poll winner/food selection exists; includes menu context and is labelled separately from ordering recommendations.
 - **Recommendation Impression**: the existing persisted snapshot of a displayed recommendation, extended to record whether the baseline or learned model produced it (reused from feature 002).
 
 ### Realtime / SSE Events *(include if feature changes shared state)*
@@ -286,7 +325,7 @@ preferences.
 
 ### Data / Migration Impact *(include if feature touches persisted data)*
 
-- New/changed models or columns: persisted item features (with provenance), stable item-identity key, learned per-user preference model storage, per-office model-evaluation results, per-office recommendation-mode setting, per-user anticipated-like marks (item + like/dislike, with item-name snapshot); the existing recommendation-impression record gains a safe-baseline / safe-learned / explore source marker.
+- New/changed models or columns: persisted item features (with provenance), stable item-identity key, learned per-user preference model storage, per-office model-evaluation results, per-office recommendation-mode setting, per-user anticipated-like marks (item + like/dislike, with item-name snapshot); the existing recommendation-impression record gains a safe-baseline / safe-learned / explore / pre-vote source marker and can persist impressions not bound to a food selection.
 - Both Postgres and SQLite schemas updated: yes (dual schema must change together).
 - Name-snapshot column needed alongside any FK: yes where new references to menu items/offices are added, following the existing snapshot convention so history survives source-row deletion.
 - `tests/server/helpers/db.ts` cleanup extended for new persisted models: yes.
@@ -310,6 +349,7 @@ preferences.
 - **SC-007**: The deterministic baseline remains available and selectable for every office at all times, with no scenario in which recommendations are unavailable due to learned-model issues.
 - **SC-008**: When a user opts into "explore", at least a defined majority of surfaced items differ from their current safe recommendation (novel flavors or higher-uncertainty items), and explore results are always labelled as exploratory.
 - **SC-009**: A new user who completes onboarding by marking liked dishes receives recommendations personalized to those flavors on their first request, without any prior orders.
+- **SC-010**: During an active poll, pre-vote recommendations include only eligible candidate menus from the user's office and include menu context for 100% of returned items.
 
 ## Assumptions
 

@@ -60,6 +60,7 @@ description: "Task list — Learned Meal Recommender"
 
 - [ ] T018 [P] [US1] Add service tests: learned safe path ranks by learned feature preference, falls back to baseline when disabled/low-data, and applies recency/diversity (no identical #1 repeat) in `tests/server/meal-recommendation-service.test.ts`
 - [ ] T019 [P] [US1] Add route tests: `POST /api/food-selections/:id/recommendations` returns `source: "safe_learned"` when enabled and persists impression with model id in `tests/server/meal-recommendation-routes.test.ts`
+- [ ] T078 [P] [US1] Add tests that safe/explore ordering recommendations only score items from the active food selection's selected menu, never other poll/menu candidates, in `tests/server/meal-recommendation-service.test.ts`
 
 ### Implementation for User Story 1
 
@@ -67,11 +68,35 @@ description: "Task list — Learned Meal Recommender"
 - [ ] T021 [US1] Apply recency penalty + light diversity pass to learned safe ranking (avoid degenerate repetition, FR-022) in `src/server/services/mealRecommendation.ts`
 - [ ] T022 [US1] Seed cold-start scoring from anticipated-like marks / threshold gate (≥4 orders or ≥2 ratings or marks present) in `src/server/services/mealRecommendation.ts`
 - [ ] T023 [US1] Keep the existing recommendation route thin; wire learned/baseline selection + error handling in `src/server/routes/foodSelections.ts`
+- [ ] T079 [US1] Keep post-vote candidate resolution explicit in `src/server/services/mealRecommendation.ts`: safe/explore candidates come only from `foodSelection.menuId`
 - [ ] T066 [P] [US1] Add tests: allergies hard-exclude and dislikes demote over the shared ingredient vocabulary (exact tag match) + free-text substring fallback, applied identically on baseline, safe-learned, and explore paths, and never learned by the FM (FR-029/FR-030), in `tests/server/meal-recommendation-service.test.ts`
 - [ ] T067 [US1] Implement the deterministic allergy/dislike constraint filter (hard-exclude vs demote) over the shared ingredient tags + free-text fallback, applied after model/baseline scoring for all paths, in `src/server/services/mealRecommendation.ts`
 - [ ] T068 [US1] Offer structured allergy/dislike selection from the ingredient feature vocabulary (with free-text fallback) in the user preferences UI in `src/client/components/` (preferences component) + `src/client/api.ts`
 
 **Checkpoint**: US1 independently functional — learned safe recommendations with guaranteed baseline fallback, allergies enforced as hard safety constraints on every path.
+
+---
+
+## Phase 3b: User Story 1d - Pre-vote cross-menu recommendations (Priority: P2)
+
+**Goal**: Before a poll winner / food selection exists, users can see their likely top dishes across eligible candidate menus to help them vote.
+
+**Independent Test**: Seed multiple office menus and an active poll with exclusions; request pre-vote recommendations; verify returned items span eligible menus only, include menu context, stay office-scoped, and persist a `pre_vote` impression not tied to a food selection.
+
+### Tests for User Story 1d
+
+- [ ] T080 [P] [US1d] Add service tests for pre-vote ranking across active poll candidate menus, excluding poll-excluded menus and other-office menus, in `tests/server/meal-recommendation-pre-vote.test.ts`
+- [ ] T081 [P] [US1d] Add route tests for `POST /api/recommender/pre-vote` with `pollId`, without `pollId`, low-history fallback, and persisted `source=pre_vote` impression in `tests/server/meal-recommendation-routes.test.ts`
+- [ ] T082 [P] [US1d] Add client tests for a pre-vote recommendation action during active polls, including menu names on returned dishes, in `tests/client/PollActiveView.test.tsx`
+
+### Implementation for User Story 1d
+
+- [ ] T083 [US1d] Implement pre-vote candidate resolution and scoring across poll-eligible/current office menus, reusing learned/baseline scoring and reason generation, in `src/server/services/mealRecommendation.ts` or `src/server/services/mealRecommendationPreVote.ts`
+- [ ] T084 [US1d] Add thin `POST /api/recommender/pre-vote` route with office/auth scope and impression persistence (`source=pre_vote`, nullable food selection / poll scope) in `src/server/routes/recommender.ts` or existing route registrar
+- [ ] T085 [US1d] Add shared response/request types and client API call for pre-vote recommendations in `src/lib/types.ts` and `src/client/api.ts`
+- [ ] T086 [US1d] Add a pre-vote recommendation control/result display to the poll UI, clearly labelled as guidance before the menu is chosen, in `src/client/components/PollActiveView.tsx`
+
+**Checkpoint**: US1d functional — users can preview personal top dishes across candidate menus before voting/order selection is complete.
 
 ---
 
