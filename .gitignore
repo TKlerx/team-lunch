@@ -23,3 +23,4 @@ graphify-out/
 .claude/settings.local.json
 backups/
 package-lock.json
+.zed/settings.json

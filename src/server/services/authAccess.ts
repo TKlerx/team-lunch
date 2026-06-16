@@ -3,7 +3,7 @@ import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
 import { localAuthUserExists, normalizeEmail } from './localAuth.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
-import { validateOfficeLocationId } from './officeLocation.js';
+import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
 import { normalizeDisplayName, resolveDisplayNameSnapshot, type DisplayNameSource } from './displayName.js';
 import { recordAuthAuditLog } from './authAudit.js';
 
@@ -1452,22 +1452,30 @@ export async function resolveUserApproval(
   accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
   pendingRequestCreated: boolean;
 }> {
+  const normalized = normalizeEmail(email);
+
   if (!isApprovalWorkflowEnabled()) {
+    const entry = await getAuthAccessEntryByEmail(normalized).catch(() => null);
+    const assignedOfficeLocations = entry ? getAssignedOfficeLocations(entry) : [];
+    const fallbackOfficeLocation = assignedOfficeLocations[0] ?? (await ensureDefaultOfficeLocation());
+    const accessibleOfficeLocations = assignedOfficeLocations.length > 0
+      ? assignedOfficeLocations
+      : [fallbackOfficeLocation];
+
     return {
       approvalRequired: false,
       isAdmin: false,
       approved: true,
       blocked: false,
-      officeLocationId: null,
-      officeLocationKey: null,
-      officeLocationName: null,
-      accessibleOfficeLocationIds: [],
-      accessibleOfficeLocations: [],
+      officeLocationId: fallbackOfficeLocation.id,
+      officeLocationKey: fallbackOfficeLocation.key,
+      officeLocationName: fallbackOfficeLocation.name,
+      accessibleOfficeLocationIds: accessibleOfficeLocations.map((location) => location.id),
+      accessibleOfficeLocations,
       pendingRequestCreated: false,
     };
   }
 
-  const normalized = normalizeEmail(email);
   if (isAdminUser(normalized)) {
     const entry = await getAuthAccessEntryByEmail(normalized).catch(() => null);
     const assignedOfficeLocations = entry ? getAssignedOfficeLocations(entry) : [];
