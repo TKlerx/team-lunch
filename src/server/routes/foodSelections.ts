@@ -378,6 +378,9 @@ function registerFallbackRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerFallbackReminderRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/fallback-reminders — ping a specific fallback-eligible missing voter
   app.post<{ Params: { id: string }; Body: PingFallbackCandidateRequest }>(
     '/api/food-selections/:id/fallback-reminders',
@@ -670,6 +673,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
   registerSelectionCompletionRoutes(app);
   registerRecommendationAndFallbackRoutes(app);
   registerFallbackRoutes(app);
+  registerFallbackReminderRoutes(app);
   registerOrderStateRoutes(app);
   registerDeliveryRoutes(app);
   registerSelectionControlRoutes(app);

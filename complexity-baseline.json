@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-16T14:30:23.322Z",
+  "updatedAt": "2026-06-16T14:57:25.421Z",
   "note": "Complexity ratchet. Validation fails when totals, per-rule counts, or worst observed metrics exceed this baseline. Lower this file after refactors improve the counts.",
   "rules": [
     "complexity",
@@ -9,11 +9,11 @@
     "max-params",
     "sonarjs/cognitive-complexity"
   ],
-  "total": 219,
+  "total": 218,
   "byRule": {
     "complexity": 49,
     "max-depth": 4,
-    "max-lines-per-function": 139,
+    "max-lines-per-function": 138,
     "max-params": 6,
     "sonarjs/cognitive-complexity": 21
   },

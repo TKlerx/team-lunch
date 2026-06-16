@@ -1260,8 +1260,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\foodSelections.ts": {
-    "mtime": 1781618992.3930497,
-    "ast_hash": "ebbceafd45d7ff21f10d8f1569675e29",
+    "mtime": 1781621569.1682622,
+    "ast_hash": "a7cf9d01cfb9a14be298a84615f6bb3c",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\menus.ts": {
@@ -4595,8 +4595,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\complexity-baseline.json": {
-    "mtime": 1781620223.32244,
-    "ast_hash": "b68d0ddec64396a5032fe45172cc3f08",
+    "mtime": 1781621845.4243832,
+    "ast_hash": "d5640e43100057ccbde4498b19122cbf",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-complexity-baseline.mjs": {
