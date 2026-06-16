@@ -18,7 +18,7 @@ they become numbered specs.
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Matches `IMPLEMENTATION_PLAN.md` item 64.3. Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
-| BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Idea | — | Successor to BACKLOG-001's deterministic feature scorer. See notes below. |
+| BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Promoted | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Successor to BACKLOG-001's deterministic feature scorer. See notes below. |
 
 ## BACKLOG-002 notes — Learned recommender
 
