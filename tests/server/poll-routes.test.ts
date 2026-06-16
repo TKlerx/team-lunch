@@ -231,6 +231,50 @@ describe('Poll routes (integration)', () => {
     await supertest(app.server).get('/api/polls/active').expect(404);
   });
 
+  // ─── GET /api/polls/:id ─────────────────────────────────
+
+  it('returns a poll by id for direct links', async () => {
+    const poll = await startPoll();
+
+    const res = await supertest(app.server).get(`/api/polls/${poll.id}`).expect(200);
+
+    expect(res.body.id).toBe(poll.id);
+    expect(res.body.description).toBe(poll.description);
+  });
+
+  it('does not return polls from another office', async () => {
+    const berlin = await createOfficeLocation('Berlin');
+    const munich = await createOfficeLocation('Munich');
+    await prisma.authAccessUser.createMany({
+      data: [
+        { email: 'berlin-links@company.com', approved: true, blocked: false, isAdmin: false, officeLocationId: berlin.id },
+        { email: 'munich-links@company.com', approved: true, blocked: false, isAdmin: false, officeLocationId: munich.id },
+      ],
+    });
+
+    const berlinCookie = `team_lunch_auth_session=${createSessionCookieValue({
+      username: 'berlin-links@company.com',
+      method: 'entra',
+      iat: Math.floor(Date.now() / 1000),
+    })}`;
+    const munichCookie = `team_lunch_auth_session=${createSessionCookieValue({
+      username: 'munich-links@company.com',
+      method: 'entra',
+      iat: Math.floor(Date.now() / 1000),
+    })}`;
+
+    const berlinPoll = await supertest(app.server)
+      .post('/api/polls')
+      .set('Cookie', berlinCookie)
+      .send({ description: 'Berlin lunch', durationMinutes: 60, excludedMenuJustifications: [] })
+      .expect(201);
+
+    await supertest(app.server)
+      .get(`/api/polls/${berlinPoll.body.id}`)
+      .set('Cookie', munichCookie)
+      .expect(404);
+  });
+
   // ─── POST /api/polls/:id/votes ──────────────────────────
 
   it('casts a vote successfully', async () => {

@@ -2,9 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { exportJWK, generateKeyPair, SignJWT } from 'jose';
 import { buildApp } from '../../src/server/index.js';
 import { upsertLocalAuthUser } from '../../src/server/services/localAuth.js';
+import { createSessionCookieValue } from '../../src/server/services/authSession.js';
 import { resetEntraOidcCacheForTests } from '../../src/server/services/entraOidc.js';
 import { resetLocalLoginProtectionForTests } from '../../src/server/services/localLoginProtection.js';
 import { cleanDatabase } from './helpers/db.js';
+import prisma from '../../src/server/db.js';
 
 function asCookieHeader(setCookieHeader: string | string[] | undefined): string {
   const values = Array.isArray(setCookieHeader) ? setCookieHeader : setCookieHeader ? [setCookieHeader] : [];
@@ -194,6 +196,52 @@ describe('auth hardening', () => {
       method: 'entra',
       displayName: 'Alice Example',
       displayNameSource: 'entra',
+    });
+
+    await app.close();
+  });
+
+  it('preserves persisted admin office context when approval workflow is disabled', async () => {
+    const office = await prisma.officeLocation.create({
+      data: { key: 'berlin', name: 'Berlin' },
+    });
+    const admin = await prisma.authAccessUser.create({
+      data: {
+        email: 'admin@example.com',
+        approved: true,
+        blocked: false,
+        isAdmin: true,
+        officeLocationId: office.id,
+      },
+    });
+    await prisma.authAccessUserOffice.create({
+      data: { authAccessUserId: admin.id, officeLocationId: office.id },
+    });
+    const app = await buildApp();
+    const session = createSessionCookieValue({
+      username: 'admin@example.com',
+      method: 'entra',
+      iat: Math.floor(Date.now() / 1000),
+    });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/auth/config',
+      headers: { cookie: `team_lunch_auth_session=${session}` },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toMatchObject({
+      auth: {
+        authenticated: true,
+        approvalRequired: false,
+        isAdmin: true,
+        role: 'admin',
+        officeLocation: { id: office.id, key: 'berlin', name: 'Berlin' },
+        accessibleOfficeLocations: expect.arrayContaining([
+          expect.objectContaining({ id: office.id, key: 'berlin', name: 'Berlin' }),
+        ]),
+      },
     });
 
     await app.close();

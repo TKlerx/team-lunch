@@ -60,12 +60,14 @@ import {
 import type { JWTPayload } from 'jose';
 import { recordAuthAuditLog } from '../services/authAudit.js';
 import { getAuthAvatarForUser } from '../services/authAvatar.js';
+import { getDatabaseConnectivityStatus } from '../services/dbConnectivity.js';
 
 type AuthConfigResponse = {
   auth: {
     entraEnabled: boolean;
     localEnabled: boolean;
     authenticated: boolean;
+    databaseUnavailable?: boolean;
     warning?: string;
     user: {
       username: string;
@@ -120,6 +122,30 @@ function buildDefaultApprovalState() {
       name: string;
       isActive: boolean;
     }>,
+  };
+}
+
+function buildDatabaseUnavailableAuthConfig(entraEnabled: boolean): AuthConfigResponse {
+  return {
+    auth: {
+      entraEnabled,
+      localEnabled: false,
+      authenticated: false,
+      databaseUnavailable: true,
+      warning:
+        'The database is unavailable, so no sign-in method can be used right now. Start the database and reload this page.',
+      user: null,
+      officeLocation: null,
+      officeLocations: [],
+      accessibleOfficeLocations: [],
+      approvalRequired: false,
+      approved: false,
+      blocked: false,
+      isAdmin: false,
+      role: null,
+      pendingApprovals: [],
+      users: [],
+    },
   };
 }
 
@@ -257,192 +283,198 @@ async function requireCurrentAuthSession(cookieHeader: string | undefined): Prom
   return { session, access };
 }
 
-export default async function authRoutes(app: FastifyInstance) {
-  const handleEntraCallback = async (
-    req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
-    reply: FastifyReply,
-  ) => {
-    try {
-      const entra = getEntraConfig();
-      if (!entra.enabled) {
-        throw serviceError('Entra authentication is not configured', 503);
-      }
-
-      const code = req.query.code;
-      const returnedState = req.query.state;
-      if (!code || !returnedState) {
-        throw serviceError('Missing Entra callback parameters', 400);
-      }
-
-      const expectedState = getEntraStateFromCookieHeader(req.headers.cookie);
-      if (!expectedState || expectedState !== returnedState) {
-        throw serviceError('Invalid Entra callback state', 401);
-      }
-
-      const body = new URLSearchParams();
-      body.set('client_id', entra.clientId);
-      body.set('client_secret', entra.clientSecret);
-      body.set('grant_type', 'authorization_code');
-      body.set('code', code);
-      body.set('redirect_uri', entra.redirectUri);
-      body.set('scope', entra.scope);
-
-      const tokenResponse = await fetch(entra.tokenUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
-      });
-
-      const tokenPayload = (await tokenResponse.json().catch(() => null)) as
-        | Record<string, unknown>
-        | null;
-      if (!tokenResponse.ok || !tokenPayload || typeof tokenPayload.id_token !== 'string') {
-        throw serviceError('Failed to complete Entra token exchange', 401);
-      }
-
-      const idTokenClaims = await verifyEntraIdToken(
-        {
-          tenantId: entra.tenantId,
-          clientId: entra.clientId,
-          openIdConfigurationUrl: entra.openIdConfigurationUrl,
-        },
-        tokenPayload.id_token,
-      );
-      const actualTenantId = getTenantIdFromClaims(idTokenClaims);
-      if (!actualTenantId || actualTenantId !== entra.tenantId) {
-        throw serviceError('Account is not in the allowed tenant', 403);
-      }
-
-      const username = getUsernameFromClaims(idTokenClaims);
-      await syncEntraDisplayName(username, getDisplayNameFromClaims(idTokenClaims));
-      const approval = await resolveUserApproval(username);
-      if (approval.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
-      const sessionVersion = await getAuthAccessSessionVersion(username);
-
-      reply.header('Set-Cookie', [
-        buildSetSessionCookieHeader({
-          username,
-          method: 'entra',
-          iat: Math.floor(Date.now() / 1000),
-          sessionVersion,
-        }),
-        buildClearEntraStateCookieHeader(),
-      ]);
-      await recordAuthAuditLog({
-        event: 'entra_login_succeeded',
-        actorEmail: username,
-        targetEmail: username,
-        metadata: { tenantId: entra.tenantId },
-      });
-
-      return reply.redirect(entra.postLoginRedirectUri);
-    } catch (err) {
-      reply.header('Set-Cookie', buildClearEntraStateCookieHeader());
-      await recordAuthAuditLog({
-        event: 'entra_login_failed',
-        metadata: {
-          reason: err instanceof Error ? err.message : 'Unknown Entra login failure',
-        },
-      });
-      return sendServiceError(reply, err);
+async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
+  try {
+    const entra = getEntraConfig();
+    if (!getDatabaseConnectivityStatus().connected) {
+      reply.header('Cache-Control', 'no-store');
+      return reply.send(buildDatabaseUnavailableAuthConfig(entra.enabled));
     }
-  };
 
-  app.get('/api/auth/config', async (req, reply) => {
-    try {
-      const entra = getEntraConfig();
-      let session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
-        session = null;
-      }
-      const localEnabled = !!session || (await hasAnyLocalAuthUsers());
-      let warning = '';
-      let approvalState = buildDefaultApprovalState();
-      let userProfile: AuthConfigResponse['auth']['user'] = null;
-      if (session) {
-        try {
-          approvalState = await resolveUserApproval(session.username);
-          await ensureAuthAccessUserForLogin(session.username);
-          await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-          const displayProfile = await getAuthDisplayProfile(session.username);
-          userProfile = {
-            username: session.username,
-            method: session.method,
-            displayName: displayProfile.displayName,
-            displayNameSource: displayProfile.displayNameSource,
-          };
-        } catch {
-          session = null;
-          reply.header('Set-Cookie', buildClearSessionCookieHeader());
-          warning =
-            'Your session expired. Please sign in again.';
-        }
-      }
-      let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
-      let users: AuthConfigResponse['auth']['users'] = [];
-      if (!warning && session && approvalState.isAdmin) {
-        try {
-          [pendingApprovals, users] = await Promise.all([
-            listPendingAccessRequests(),
-            listAccessUsers(),
-          ]);
-        } catch {
-          warning =
-            'Authentication settings are partially unavailable. Local sign-in is still available.';
-        }
-      }
-      let officeLocations: OfficeLocation[] = [];
+    let session = getAuthSessionFromCookieHeader(req.headers.cookie);
+    if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
+      session = null;
+    }
+    const localEnabled = !!session || (await hasAnyLocalAuthUsers());
+    let warning = '';
+    let approvalState = buildDefaultApprovalState();
+    let userProfile: AuthConfigResponse['auth']['user'] = null;
+    if (session) {
       try {
-        officeLocations = await listOfficeLocations();
+        approvalState = await resolveUserApproval(session.username);
+        await ensureAuthAccessUserForLogin(session.username);
+        await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
+        const displayProfile = await getAuthDisplayProfile(session.username);
+        userProfile = {
+          username: session.username,
+          method: session.method,
+          displayName: displayProfile.displayName,
+          displayNameSource: displayProfile.displayNameSource,
+        };
+      } catch {
+        session = null;
+        reply.header('Set-Cookie', buildClearSessionCookieHeader());
+        warning = 'Your session expired. Please sign in again.';
+      }
+    }
+    let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
+    let users: AuthConfigResponse['auth']['users'] = [];
+    if (!warning && session && approvalState.isAdmin) {
+      try {
+        [pendingApprovals, users] = await Promise.all([
+          listPendingAccessRequests(),
+          listAccessUsers(),
+        ]);
       } catch {
         warning =
           'Authentication settings are partially unavailable. Local sign-in is still available.';
       }
-      const accessibleOfficeLocations = approvalState.isAdmin
-        ? officeLocations
-        : officeLocations.filter((location) =>
-            approvalState.accessibleOfficeLocationIds.includes(location.id),
-          );
-
-      const response: AuthConfigResponse = {
-        auth: {
-          entraEnabled: entra.enabled,
-          localEnabled,
-          authenticated: !!session,
-          ...(warning || (!entra.enabled && !localEnabled)
-            ? {
-                warning:
-                  warning ||
-                  'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
-              }
-            : {}),
-          user: userProfile,
-          officeLocation: approvalState.officeLocationId
-            ? {
-                id: approvalState.officeLocationId,
-                key: approvalState.officeLocationKey ?? '',
-                name: approvalState.officeLocationName ?? '',
-              }
-            : null,
-          officeLocations,
-          accessibleOfficeLocations,
-          approvalRequired: approvalState.approvalRequired,
-          approved: approvalState.approved,
-          blocked: approvalState.blocked,
-          isAdmin: approvalState.isAdmin,
-          role: session ? (approvalState.isAdmin ? 'admin' : 'user') : null,
-          pendingApprovals,
-          users,
-        },
-      };
-
-      return reply.send(response);
-    } catch (err) {
-      return sendServiceError(reply, err);
     }
-  });
+    let officeLocations: OfficeLocation[] = [];
+    try {
+      officeLocations = await listOfficeLocations();
+    } catch {
+      warning =
+        'Authentication settings are partially unavailable. Local sign-in is still available.';
+    }
+    const accessibleOfficeLocations = approvalState.isAdmin
+      ? officeLocations
+      : officeLocations.filter((location) =>
+          approvalState.accessibleOfficeLocationIds.includes(location.id),
+        );
+
+    const response: AuthConfigResponse = {
+      auth: {
+        entraEnabled: entra.enabled,
+        localEnabled,
+        authenticated: !!session,
+        ...(warning || (!entra.enabled && !localEnabled)
+          ? {
+              warning:
+                warning ||
+                'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
+            }
+          : {}),
+        user: userProfile,
+        officeLocation: approvalState.officeLocationId
+          ? {
+              id: approvalState.officeLocationId,
+              key: approvalState.officeLocationKey ?? '',
+              name: approvalState.officeLocationName ?? '',
+            }
+          : null,
+        officeLocations,
+        accessibleOfficeLocations,
+        approvalRequired: approvalState.approvalRequired,
+        approved: approvalState.approved,
+        blocked: approvalState.blocked,
+        isAdmin: approvalState.isAdmin,
+        role: session ? (approvalState.isAdmin ? 'admin' : 'user') : null,
+        pendingApprovals,
+        users,
+      },
+    };
+
+    return reply.send(response);
+  } catch (err) {
+    return sendServiceError(reply, err);
+  }
+}
+
+async function handleEntraCallback(
+  req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
+  reply: FastifyReply,
+) {
+  try {
+    const entra = getEntraConfig();
+    if (!entra.enabled) {
+      throw serviceError('Entra authentication is not configured', 503);
+    }
+
+    const code = req.query.code;
+    const returnedState = req.query.state;
+    if (!code || !returnedState) {
+      throw serviceError('Missing Entra callback parameters', 400);
+    }
+
+    const expectedState = getEntraStateFromCookieHeader(req.headers.cookie);
+    if (!expectedState || expectedState !== returnedState) {
+      throw serviceError('Invalid Entra callback state', 401);
+    }
+
+    const body = new URLSearchParams();
+    body.set('client_id', entra.clientId);
+    body.set('client_secret', entra.clientSecret);
+    body.set('grant_type', 'authorization_code');
+    body.set('code', code);
+    body.set('redirect_uri', entra.redirectUri);
+    body.set('scope', entra.scope);
+
+    const tokenResponse = await fetch(entra.tokenUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+
+    const tokenPayload = (await tokenResponse.json().catch(() => null)) as
+      | Record<string, unknown>
+      | null;
+    if (!tokenResponse.ok || !tokenPayload || typeof tokenPayload.id_token !== 'string') {
+      throw serviceError('Failed to complete Entra token exchange', 401);
+    }
+
+    const idTokenClaims = await verifyEntraIdToken(
+      {
+        tenantId: entra.tenantId,
+        clientId: entra.clientId,
+        openIdConfigurationUrl: entra.openIdConfigurationUrl,
+      },
+      tokenPayload.id_token,
+    );
+    const actualTenantId = getTenantIdFromClaims(idTokenClaims);
+    if (!actualTenantId || actualTenantId !== entra.tenantId) {
+      throw serviceError('Account is not in the allowed tenant', 403);
+    }
+
+    const username = getUsernameFromClaims(idTokenClaims);
+    await syncEntraDisplayName(username, getDisplayNameFromClaims(idTokenClaims));
+    const approval = await resolveUserApproval(username);
+    if (approval.blocked) {
+      throw serviceError(getBlockedUserMessage(), 403);
+    }
+    const sessionVersion = await getAuthAccessSessionVersion(username);
+
+    reply.header('Set-Cookie', [
+      buildSetSessionCookieHeader({
+        username,
+        method: 'entra',
+        iat: Math.floor(Date.now() / 1000),
+        sessionVersion,
+      }),
+      buildClearEntraStateCookieHeader(),
+    ]);
+    await recordAuthAuditLog({
+      event: 'entra_login_succeeded',
+      actorEmail: username,
+      targetEmail: username,
+      metadata: { tenantId: entra.tenantId },
+    });
+
+    return reply.redirect(entra.postLoginRedirectUri);
+  } catch (err) {
+    reply.header('Set-Cookie', buildClearEntraStateCookieHeader());
+    await recordAuthAuditLog({
+      event: 'entra_login_failed',
+      metadata: {
+        reason: err instanceof Error ? err.message : 'Unknown Entra login failure',
+      },
+    });
+    return sendServiceError(reply, err);
+  }
+}
+
+function registerAuthStatusRoutes(app: FastifyInstance) {
+  app.get('/api/auth/config', handleAuthConfig);
 
   app.get('/api/auth/me/avatar', async (req, reply) => {
     try {
@@ -460,7 +492,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerLocalLoginRoutes(app: FastifyInstance) {
   app.post<{ Body: LocalLoginRequest }>('/api/auth/local/login', async (req, reply) => {
     try {
       const credentials = validateCredentials(req.body);
@@ -512,7 +546,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerLocalUserRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string; password?: string; officeLocationId?: string } }>(
     '/api/auth/local/users/generate',
     async (req, reply) => {
@@ -551,7 +587,9 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerProfileRoutes(app: FastifyInstance) {
   app.put<{ Body: { displayName?: string | null } }>(
     '/api/auth/me/display-name',
     async (req, reply) => {
@@ -570,7 +608,9 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerAccountProfileAdminRoutes(app: FastifyInstance) {
   app.put<{ Body: { email?: string; displayName?: string | null } }>(
     '/api/auth/users/display-name',
     async (req, reply) => {
@@ -590,7 +630,9 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerAccountLifecycleAdminRoutes(app: FastifyInstance) {
   app.put<{ Body: { email?: string; newEmail?: string } }>(
     '/api/auth/users/email',
     async (req, reply) => {
@@ -639,7 +681,9 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerApprovalRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string; officeLocationId?: string } }>('/api/auth/users/approve', async (req, reply) => {
     try {
       const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
@@ -681,7 +725,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerRoleRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string } }>('/api/auth/users/promote', async (req, reply) => {
     try {
       const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
@@ -700,7 +746,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerBlockRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string } }>('/api/auth/users/block', async (req, reply) => {
     try {
       const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
@@ -757,7 +805,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerOfficeAssignmentRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string; officeLocationId?: string } }>(
     '/api/auth/users/assign-office',
     async (req, reply) => {
@@ -816,7 +866,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerOfficeCreateRoutes(app: FastifyInstance) {
   app.post<{ Body: { name?: string } }>('/api/auth/offices', async (req, reply) => {
     try {
       const { access } = await requireCurrentAuthSession(req.headers.cookie);
@@ -835,7 +887,9 @@ export default async function authRoutes(app: FastifyInstance) {
       return sendServiceError(reply, err);
     }
   });
+}
 
+function registerOfficeMaintenanceRoutes(app: FastifyInstance) {
   app.post<{ Params: { officeId: string }; Body: { name?: string } }>(
     '/api/auth/offices/:officeId/rename',
     async (req, reply) => {
@@ -888,7 +942,9 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerAuthSessionRoutes(app: FastifyInstance) {
   app.post('/api/auth/logout', async (_req, reply) => {
     reply.header('Set-Cookie', buildClearSessionCookieHeader());
     return reply.status(204).send();
@@ -919,4 +975,20 @@ export default async function authRoutes(app: FastifyInstance) {
 
   app.get('/api/auth/entra/callback', handleEntraCallback);
   app.get('/api/auth/callback/azure-ad', handleEntraCallback);
+}
+
+export default async function authRoutes(app: FastifyInstance) {
+  registerAuthStatusRoutes(app);
+  registerLocalLoginRoutes(app);
+  registerLocalUserRoutes(app);
+  registerProfileRoutes(app);
+  registerAccountProfileAdminRoutes(app);
+  registerAccountLifecycleAdminRoutes(app);
+  registerApprovalRoutes(app);
+  registerRoleRoutes(app);
+  registerBlockRoutes(app);
+  registerOfficeAssignmentRoutes(app);
+  registerOfficeCreateRoutes(app);
+  registerOfficeMaintenanceRoutes(app);
+  registerAuthSessionRoutes(app);
 }

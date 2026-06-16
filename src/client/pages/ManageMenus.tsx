@@ -981,6 +981,212 @@ function DefaultMealPreferenceEditor({
   );
 }
 
+type MenuContactIconKind = 'external' | 'cart' | 'phone' | 'location';
+
+type MenuContactLink = {
+  key: string;
+  href: string;
+  label: string;
+  icon: MenuContactIconKind;
+  maxWidthClass: string;
+  ariaLabel?: string;
+  title?: string;
+};
+
+function getMenuContactLinks(menu: Menu): MenuContactLink[] {
+  const links: MenuContactLink[] = [];
+  if (menu.url) {
+    links.push({ key: 'url', href: menu.url, label: menu.url, icon: 'external', maxWidthClass: 'max-w-[14rem]' });
+  }
+  if (menu.orderUrl) {
+    links.push({
+      key: 'order',
+      href: menu.orderUrl,
+      label: 'Order',
+      icon: 'cart',
+      maxWidthClass: 'max-w-[14rem]',
+      ariaLabel: `Order from ${menu.name}`,
+      title: menu.orderUrl,
+    });
+  }
+  if (menu.phone) {
+    links.push({ key: 'phone', href: `tel:${menu.phone}`, label: menu.phone, icon: 'phone', maxWidthClass: 'max-w-[10rem]' });
+  }
+  if (menu.location) {
+    links.push({
+      key: 'location',
+      href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(menu.location)}`,
+      label: menu.location,
+      icon: 'location',
+      maxWidthClass: 'max-w-[14rem]',
+    });
+  }
+  return links;
+}
+
+function MenuContactIcon({ kind }: { kind: MenuContactIconKind }) {
+  if (kind === 'cart') {
+    return (
+      <>
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="20" cy="21" r="1" />
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+      </>
+    );
+  }
+  if (kind === 'phone') {
+    return (
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
+    );
+  }
+  if (kind === 'location') {
+    return (
+      <>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </>
+    );
+  }
+  return (
+    <>
+      <path d="M14 3h7v7" />
+      <path d="M10 14L21 3" />
+      <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
+    </>
+  );
+}
+
+function MenuContactLinks({ menu }: { menu: Menu }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2" onClick={(event) => event.stopPropagation()}>
+      {getMenuContactLinks(menu).map((link) => (
+        <a
+          key={link.key}
+          href={link.href}
+          target={link.href.startsWith('tel:') ? undefined : '_blank'}
+          rel={link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'}
+          aria-label={link.ariaLabel}
+          title={link.title}
+          className={`inline-flex ${link.maxWidthClass} items-center truncate text-xs text-fg-muted hover:text-fg hover:underline`}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="mr-1 h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <MenuContactIcon kind={link.icon} />
+          </svg>
+          {link.label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function MenuCardActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  return (
+    <div className="flex gap-1" onClick={(event) => event.stopPropagation()}>
+      <button type="button" onClick={onEdit} aria-label="Edit" title="Edit" className="rounded p-1.5 text-accent hover:bg-surface-muted">
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+        </svg>
+        <span className="sr-only">Edit</span>
+      </button>
+      <button type="button" onClick={onDelete} aria-label="Delete" title="Delete" className="rounded p-1.5 text-danger-fg hover:bg-surface-muted">
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M19 6l-1 14H6L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+        </svg>
+        <span className="sr-only">Delete</span>
+      </button>
+    </div>
+  );
+}
+
+function MenuCardHeader({
+  menu,
+  collapsed,
+  onToggle,
+  onEdit,
+  onDelete,
+}: {
+  menu: Menu;
+  collapsed: boolean;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div
+      className="flex cursor-pointer items-start justify-between border-b border-border px-4 py-3"
+      onClick={onToggle}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onToggle();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={collapsed ? `Expand ${menu.name}` : `Collapse ${menu.name}`}
+    >
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <h3 className="font-semibold text-fg">{menu.name}</h3>
+          <MenuContactLinks menu={menu} />
+        </div>
+        <span className="text-xs text-fg-muted">
+          {menu.items.length} {menu.items.length === 1 ? 'item' : 'items'}
+        </span>
+      </div>
+      {!collapsed && <MenuCardActions onEdit={onEdit} onDelete={onDelete} />}
+    </div>
+  );
+}
+
+function MenuCardContent({
+  menu,
+  nickname,
+  defaultPreference,
+  onDefaultPreferenceSaved,
+}: {
+  menu: Menu;
+  nickname: string | null;
+  defaultPreference?: UserMenuDefaultPreference;
+  onDefaultPreferenceSaved: (preference: UserMenuDefaultPreference) => void;
+}) {
+  return (
+    <div className="px-4 py-2">
+      {menu.items.length === 0 ? (
+        <p className="text-sm italic text-fg-muted">No items yet</p>
+      ) : (
+        <>
+          <div className="mb-1 grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+            <span>No.</span>
+            <span>Item name</span>
+            <span className="text-left">Description</span>
+            <span>Price</span>
+            <span className="justify-self-center">Edit</span>
+            <span className="justify-self-center">Delete</span>
+          </div>
+          <div className="space-y-1">
+            {menu.items.map((item) => (
+              <MenuItemRow key={item.id} item={item} menuId={menu.id} />
+            ))}
+          </div>
+        </>
+      )}
+      <AddItemForm menuId={menu.id} />
+      <DefaultMealPreferenceEditor
+        menu={menu}
+        nickname={nickname}
+        preference={defaultPreference}
+        onSaved={onDefaultPreferenceSaved}
+      />
+    </div>
+  );
+}
+
 function MenuCard({
   menu,
   nickname,
@@ -1080,193 +1286,25 @@ function MenuCard({
   return (
     <>
       <div className="rounded-lg border border-border bg-surface shadow-sm">
-        {/* Menu header */}
-        <div
-          className="flex cursor-pointer items-start justify-between border-b border-border px-4 py-3"
-          onClick={() => setCollapsed((prev) => !prev)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              setCollapsed((prev) => !prev);
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label={collapsed ? `Expand ${menu.name}` : `Collapse ${menu.name}`}
-        >
-          <>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <h3 className="font-semibold text-fg">{menu.name}</h3>
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2" onClick={(event) => event.stopPropagation()}>
-                  {menu.url ? (
-                    <a
-                      href={menu.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="mr-1 h-4 w-4 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M14 3h7v7" />
-                        <path d="M10 14L21 3" />
-                        <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
-                      </svg>
-                      {menu.url}
-                    </a>
-                  ) : null}
-                  {menu.orderUrl ? (
-                    <a
-                      href={menu.orderUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Order from ${menu.name}`}
-                      title={menu.orderUrl}
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="mr-1 h-4 w-4 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="9" cy="21" r="1" />
-                        <circle cx="20" cy="21" r="1" />
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                      </svg>
-                      Order
-                    </a>
-                  ) : null}
-                  {menu.phone ? (
-                    <a
-                      href={`tel:${menu.phone}`}
-                      className="inline-flex max-w-[10rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="mr-1 h-4 w-4 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                      {menu.phone}
-                    </a>
-                  ) : null}
-                  {menu.location ? (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(menu.location)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex max-w-[14rem] items-center truncate text-xs text-fg-muted hover:text-fg hover:underline"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="mr-1 h-4 w-4 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
-                        <circle cx="12" cy="10" r="3" />
-                      </svg>
-                      {menu.location}
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-              <span className="text-xs text-fg-muted">
-                {menu.items.length} {menu.items.length === 1 ? 'item' : 'items'}
-              </span>
-            </div>
-            {!collapsed && (
-              <div className="flex gap-1" onClick={(event) => event.stopPropagation()}>
-                <button
-                  type="button"
-                  onClick={openEditDialog}
-                  aria-label="Edit"
-                  title="Edit"
-                  className="rounded p-1.5 text-accent hover:bg-surface-muted"
-                >
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                  </svg>
-                  <span className="sr-only">Edit</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirmDelete(true)}
-                  aria-label="Delete"
-                  title="Delete"
-                  className="rounded p-1.5 text-danger-fg hover:bg-surface-muted"
-                >
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18" />
-                    <path d="M8 6V4h8v2" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                  </svg>
-                  <span className="sr-only">Delete</span>
-                </button>
-              </div>
-            )}
-          </>
-        </div>
+        <MenuCardHeader
+          menu={menu}
+          collapsed={collapsed}
+          onToggle={() => setCollapsed((prev) => !prev)}
+          onEdit={openEditDialog}
+          onDelete={() => setConfirmDelete(true)}
+        />
 
         {error && (
           <p className="px-4 py-1 text-sm text-danger-fg">{error}</p>
         )}
 
         {!collapsed && (
-          <div className="px-4 py-2">
-            {menu.items.length === 0 ? (
-              <p className="text-sm italic text-fg-muted">No items yet</p>
-            ) : (
-              <>
-                <div className="mb-1 grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-fg-muted">
-                  <span>No.</span>
-                  <span>Item name</span>
-                  <span className="text-left">Description</span>
-                  <span>Price</span>
-                  <span className="justify-self-center">Edit</span>
-                  <span className="justify-self-center">Delete</span>
-                </div>
-                <div className="space-y-1">
-                  {menu.items.map((item) => (
-                    <MenuItemRow key={item.id} item={item} menuId={menu.id} />
-                  ))}
-                </div>
-              </>
-            )}
-            <AddItemForm menuId={menu.id} />
-            <DefaultMealPreferenceEditor
-              menu={menu}
-              nickname={nickname}
-              preference={defaultPreference}
-              onSaved={onDefaultPreferenceSaved}
-            />
-          </div>
+          <MenuCardContent
+            menu={menu}
+            nickname={nickname}
+            defaultPreference={defaultPreference}
+            onDefaultPreferenceSaved={onDefaultPreferenceSaved}
+          />
         )}
       </div>
 

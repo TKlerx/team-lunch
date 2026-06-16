@@ -128,6 +128,20 @@ export default function AuthGate({ children }: AuthGateProps) {
     );
   }
 
+  if (config?.databaseUnavailable) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+        <Card className="w-full max-w-xl border-danger p-6">
+          <h2 className="mb-2 text-lg font-semibold text-fg">Database unavailable</h2>
+          <p className="text-sm text-fg-muted">
+            {authWarning ||
+              'The database is unavailable. Start the database and reload this page.'}
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
   if (!authAvailable) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
