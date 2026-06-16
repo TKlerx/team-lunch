@@ -1260,8 +1260,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\foodSelections.ts": {
-    "mtime": 1781542099.120581,
-    "ast_hash": "8c021ee28044c4ac57431f024e5061ab",
+    "mtime": 1781618672.3433876,
+    "ast_hash": "171a12fc04979d31290a231abd226268",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\menus.ts": {
@@ -4650,8 +4650,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\function-size-allowlist.json": {
-    "mtime": 1781608542.0159557,
-    "ast_hash": "d0e2b74c93fefd9122c9b7140fe405ec",
+    "mtime": 1781618917.762817,
+    "ast_hash": "20ac8e22e9b8d4ec572b852eb6ae75f2",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-function-size.mjs": {
