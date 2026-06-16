@@ -180,6 +180,10 @@ export function startPoll(
   });
 }
 
+export function fetchPoll(pollId: string): Promise<Poll> {
+  return request<Poll>(apiPath(`/polls/${pollId}`));
+}
+
 export function castVote(pollId: string, menuId: string, nickname: string): Promise<Poll> {
   void nickname;
   return request<Poll>(apiPath(`/polls/${pollId}/votes`), {

@@ -2,10 +2,106 @@ import { useEffect, useState } from 'react';
 import * as api from '../api.js';
 import MinutesActionDropdown from './MinutesActionDropdown.js';
 import { useAppState } from '../context/AppContext.js';
+import type { Poll } from '../../lib/types.js';
 
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
+type MenuVoteEntry = { menuId: string; name: string; count: number };
 
-export default function PollFinishedView() {
+function buildMenuEntries(
+  poll: Poll,
+  menus: ReturnType<typeof useAppState>['menus'],
+): MenuVoteEntry[] {
+  return Object.entries(poll.voteCounts)
+    .map(([menuId, count]) => {
+      const menu = menus.find((entry) => entry.id === menuId);
+      return { menuId, name: menu?.name ?? menuId, count };
+    })
+    .sort((a, b) => b.count - a.count);
+}
+
+function PollWinnerSummary({ poll }: { poll: Poll }) {
+  if (!poll.winnerMenuName) return null;
+
+  return (
+    <div className="mb-4 text-center">
+      <p className="text-2xl font-bold text-fg">{poll.winnerMenuName}</p>
+      {poll.winnerSelectedRandomly && (
+        <p className="text-sm text-warning-fg">chosen randomly from a tie</p>
+      )}
+      {poll.endedPrematurely && (
+        <p className="text-sm text-accent">finished early by user confirmation</p>
+      )}
+    </div>
+  );
+}
+
+function NoVotesWarning() {
+  return (
+    <div className="mb-4 rounded border border-warning bg-warning-soft p-3 text-sm text-warning-fg">
+      No votes were submitted before the timer expired. Phase 2 cannot start. Please start a new
+      poll.
+    </div>
+  );
+}
+
+function FinalVotesList({ entries, winnerMenuId }: { entries: MenuVoteEntry[]; winnerMenuId: string | null }) {
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-muted">Final votes</h3>
+      <div className="mt-1 max-h-[45vh] space-y-1 overflow-y-auto pr-1">
+        {entries.map((entry) => (
+          <div
+            key={entry.menuId}
+            className={`flex items-center justify-between rounded px-3 py-1 text-sm ${
+              entry.menuId === winnerMenuId
+                ? 'bg-success-soft font-medium text-success-fg'
+                : 'text-fg-muted'
+            }`}
+          >
+            <span>{entry.name}</span>
+            <span>{entry.count}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StartFoodSelectionControl({
+  duration,
+  submitting,
+  onSubmitMinutes,
+}: {
+  duration: number;
+  submitting: boolean;
+  onSubmitMinutes: (value: number) => Promise<boolean>;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-fg">Start food selection</label>
+      <MinutesActionDropdown
+        triggerLabel={submitting ? 'Starting...' : `Start (${duration} min)`}
+        triggerAriaLabel="Start food selection time menu"
+        options={FOOD_DURATIONS}
+        onSubmitMinutes={onSubmitMinutes}
+        disabled={submitting}
+        customPlaceholder="Custom duration in minutes"
+        customAriaLabel="Custom food selection duration in minutes"
+        submitButtonLabel="Start custom"
+      />
+    </div>
+  );
+}
+
+export default function PollFinishedView({
+  poll: explicitPoll,
+  readOnly = false,
+}: {
+  poll?: Poll | null;
+  readOnly?: boolean;
+}) {
   const { latestCompletedPoll, menus, defaultFoodSelectionDurationMinutes } = useAppState();
   const [duration, setDuration] = useState<number>(defaultFoodSelectionDurationMinutes);
   const [error, setError] = useState('');
@@ -15,17 +111,11 @@ export default function PollFinishedView() {
     setDuration(defaultFoodSelectionDurationMinutes);
   }, [defaultFoodSelectionDurationMinutes]);
 
-  if (!latestCompletedPoll) return null;
+  const poll = explicitPoll ?? latestCompletedPoll;
 
-  const poll = latestCompletedPoll;
+  if (!poll) return null;
 
-  const voteCounts = poll.voteCounts;
-  const menuEntries = Object.entries(voteCounts)
-    .map(([menuId, count]) => {
-      const menu = menus.find((entry) => entry.id === menuId);
-      return { menuId, name: menu?.name ?? menuId, count };
-    })
-    .sort((a, b) => b.count - a.count);
+  const menuEntries = buildMenuEntries(poll, menus);
   const totalVotes = menuEntries.reduce((sum, entry) => sum + entry.count, 0);
   const hasVotes = totalVotes > 0;
 
@@ -57,64 +147,18 @@ export default function PollFinishedView() {
           Cuisine Poll finished!
         </h2>
 
-        {poll.winnerMenuName && (
-          <div className="mb-4 text-center">
-            <p className="text-2xl font-bold text-fg">{poll.winnerMenuName}</p>
-            {poll.winnerSelectedRandomly && (
-              <p className="text-sm text-warning-fg">chosen randomly from a tie</p>
-            )}
-            {poll.endedPrematurely && (
-              <p className="text-sm text-accent">finished early by user confirmation</p>
-            )}
-          </div>
-        )}
-
-        {!hasVotes && (
-          <div className="mb-4 rounded border border-warning bg-warning-soft p-3 text-sm text-warning-fg">
-            No votes were submitted before the timer expired. Phase 2 cannot start. Please start a
-            new poll.
-          </div>
-        )}
-
-        {menuEntries.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-muted">
-              Final votes
-            </h3>
-            <div className="mt-1 max-h-[45vh] space-y-1 overflow-y-auto pr-1">
-              {menuEntries.map((entry) => (
-                <div
-                  key={entry.menuId}
-                  className={`flex items-center justify-between rounded px-3 py-1 text-sm ${
-                    entry.menuId === poll.winnerMenuId
-                      ? 'bg-success-soft font-medium text-success-fg'
-                      : 'text-fg-muted'
-                  }`}
-                >
-                  <span>{entry.name}</span>
-                  <span>{entry.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <PollWinnerSummary poll={poll} />
+        {!hasVotes && <NoVotesWarning />}
+        <FinalVotesList entries={menuEntries} winnerMenuId={poll.winnerMenuId} />
 
         {error && <p className="mb-4 text-center text-sm text-danger-fg">{error}</p>}
 
-        {hasVotes && (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-fg">Start food selection</label>
-            <MinutesActionDropdown
-              triggerLabel={submitting ? 'Starting...' : `Start (${duration} min)`}
-              triggerAriaLabel="Start food selection time menu"
-              options={FOOD_DURATIONS}
-              onSubmitMinutes={handleStartFoodSelection}
-              disabled={submitting}
-              customPlaceholder="Custom duration in minutes"
-              customAriaLabel="Custom food selection duration in minutes"
-              submitButtonLabel="Start custom"
-            />
-          </div>
+        {hasVotes && !readOnly && (
+          <StartFoodSelectionControl
+            duration={duration}
+            submitting={submitting}
+            onSubmitMinutes={handleStartFoodSelection}
+          />
         )}
       </div>
     </div>

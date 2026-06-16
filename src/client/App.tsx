@@ -4,11 +4,14 @@ import Header from './components/Header.js';
 import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
 import OrdersRail from './components/OrdersRail.js';
 import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.js';
+import PollFinishedView from './components/PollFinishedView.js';
 import MainView from './pages/MainView.js';
 import ManageMenus from './pages/ManageMenus.js';
 import ShoppingList from './pages/ShoppingList.js';
 import Settings from './pages/Settings.js';
 import Administration from './pages/Administration.js';
+import * as api from './api.js';
+import type { Poll } from '../lib/types.js';
 import { useAppDispatch, useAppState } from './context/AppContext.js';
 import { useAdminOfficeContext } from './context/AdminOfficeContext.js';
 import { useSSE } from './hooks/useSSE.js';
@@ -339,27 +342,107 @@ function PollRouteView({
   onOpenHistorySelection: (selectionId: string) => void;
 }) {
   const { pollId } = useParams();
-  const matchesActivePoll = !!pollId && activePoll?.id === pollId;
-  const matchesJustFinishedPoll =
-    !!pollId &&
-    !activeFoodSelectionId &&
-    latestCompletedPoll?.id === pollId &&
-    phase === 'POLL_FINISHED';
+  const matchesVisiblePoll = isVisiblePollRoute({
+    pollId,
+    activePollId: activePoll?.id,
+    activeFoodSelectionId,
+    latestCompletedPollId: latestCompletedPoll?.id,
+    phase,
+  });
+  const lookup = useHistoricalPollLookup({
+    pollId,
+    initialized,
+    skip: matchesVisiblePoll,
+  });
 
-  if (matchesActivePoll || matchesJustFinishedPoll) {
+  if (matchesVisiblePoll) {
     return <MainView phase={phase} onOpenHistorySelection={onOpenHistorySelection} />;
   }
 
-  if (!initialized) {
+  if (lookup.poll) {
+    return <PollFinishedView poll={lookup.poll} readOnly />;
+  }
+
+  if (!initialized || lookup.loading) {
     return <RouteLoadingView />;
   }
 
   return (
     <RouteUnavailableView
       title="Poll unavailable"
-      message="This poll is not the current visible poll for your office."
+      message={pollUnavailableMessage(lookup.failed)}
     />
   );
+}
+
+function isVisiblePollRoute({
+  pollId,
+  activePollId,
+  activeFoodSelectionId,
+  latestCompletedPollId,
+  phase,
+}: {
+  pollId?: string;
+  activePollId?: string;
+  activeFoodSelectionId: string | null;
+  latestCompletedPollId?: string;
+  phase: ReturnType<typeof useAppPhase>;
+}): boolean {
+  if (!pollId) return false;
+  if (activePollId === pollId) return true;
+  return !activeFoodSelectionId && latestCompletedPollId === pollId && phase === 'POLL_FINISHED';
+}
+
+function pollUnavailableMessage(failed: boolean): string {
+  if (failed) {
+    return 'This poll is not available in the current office history.';
+  }
+  return 'This poll is not the current visible poll for your office.';
+}
+
+function useHistoricalPollLookup({
+  pollId,
+  initialized,
+  skip,
+}: {
+  pollId?: string;
+  initialized: boolean;
+  skip: boolean;
+}): { poll: Poll | null; loading: boolean; failed: boolean } {
+  const [poll, setPoll] = useState<Poll | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPoll(null);
+    setFailed(false);
+
+    if (!pollId || !initialized || skip) {
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setLoading(true);
+    void api.fetchPoll(pollId)
+      .then((loadedPoll) => {
+        if (!cancelled) setPoll(loadedPoll);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pollId, initialized, skip]);
+
+  return { poll, loading, failed };
 }
 
 function FoodSelectionRouteView({

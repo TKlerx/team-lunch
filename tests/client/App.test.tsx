@@ -4,10 +4,16 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../src/client/App.js';
 import { makeFoodSelection, makeMenu, makePoll } from './helpers.js';
+import type { Poll } from '../../src/lib/types.js';
 
 const mockDispatch = vi.fn();
 const mockUseAppState = vi.fn();
 const mockUseAppPhase = vi.fn();
+const mockFetchPoll = vi.hoisted(() => vi.fn());
+
+vi.mock('../../src/client/api.js', () => ({
+  fetchPoll: mockFetchPoll,
+}));
 
 vi.mock('../../src/client/hooks/useSSE.js', () => ({
   useSSE: vi.fn(),
@@ -56,10 +62,19 @@ vi.mock('../../src/client/components/FoodSelectionCompletedView.js', () => ({
   ),
 }));
 
+vi.mock('../../src/client/components/PollFinishedView.js', () => ({
+  default: ({ poll, readOnly }: { poll?: Poll | null; readOnly?: boolean }) => (
+    <div data-testid={readOnly ? 'historical-poll-view' : 'poll-finished-view'}>
+      {poll?.id ?? 'latest'}
+    </div>
+  ),
+}));
+
 describe('App layout with Orders rail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockFetchPoll.mockRejectedValue(new Error('Poll not found'));
     mockUseAppPhase.mockReturnValue('POLL_IDLE');
     mockUseAppState.mockReturnValue({
       activePoll: null,
@@ -441,7 +456,42 @@ describe('App layout with Orders rail', () => {
     expect(screen.getByTestId('main-view')).toBeInTheDocument();
   });
 
-  it('shows an unavailable message for stale poll URLs', () => {
+  it('renders a historical poll URL loaded by API', async () => {
+    mockFetchPoll.mockResolvedValue(
+      makePoll({
+        id: 'poll-history',
+        status: 'finished',
+        winnerMenuId: 'menu-1',
+        winnerMenuName: 'Pizza Place',
+        voteCounts: { 'menu-1': 2 },
+      }),
+    );
+    mockUseAppState.mockReturnValue({
+      activePoll: null,
+      activeFoodSelection: null,
+      latestCompletedPoll: null,
+      latestCompletedFoodSelection: null,
+      menus: [makeMenu()],
+      completedFoodSelectionsHistory: [],
+      dbConnected: true,
+      dbReconnectAttempts: 0,
+      initialized: true,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={['/polls/poll-history']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByTestId('historical-poll-view')).toHaveTextContent('poll-history');
+    expect(mockFetchPoll).toHaveBeenCalledWith('poll-history');
+  });
+
+  it('shows an unavailable message for missing poll URLs', async () => {
     mockUseAppState.mockReturnValue({
       activePoll: makePoll({ id: 'poll-current', status: 'active' }),
       activeFoodSelection: null,
@@ -463,7 +513,8 @@ describe('App layout with Orders rail', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: /poll unavailable/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /poll unavailable/i })).toBeInTheDocument();
+    expect(mockFetchPoll).toHaveBeenCalledWith('poll-stale');
   });
 
   it('renders the live food-selection view for a matching food-selection URL', () => {

@@ -97,6 +97,19 @@ export default async function pollRoutes(app: FastifyInstance) {
     return reply.send(poll);
   });
 
+  // GET /api/polls/:id — get a specific poll for direct/historical URLs
+  app.get<{ Params: { id: string } }>('/api/polls/:id', async (req, reply) => {
+    try {
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      return reply.send(await pollService.getPoll(req.params.id, officeLocationId));
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
   // POST /api/polls/:id/votes — cast a vote
   app.post<{ Params: { id: string }; Body: CastVoteRequest }>(
     '/api/polls/:id/votes',

@@ -763,6 +763,11 @@ export async function getActivePoll(officeLocationId?: string): Promise<Poll | n
   return poll ? formatPoll(poll) : null;
 }
 
+export async function getPoll(pollId: string, officeLocationId?: string): Promise<Poll> {
+  const poll = await fetchPollOrThrow(pollId, officeLocationId);
+  return formatPoll(poll);
+}
+
 export async function getLatestCompletedPoll(officeLocationId?: string): Promise<Poll | null> {
   const resolvedOfficeLocationId = await resolvePollOfficeLocationId(officeLocationId);
   const poll = await prisma.poll.findFirst({

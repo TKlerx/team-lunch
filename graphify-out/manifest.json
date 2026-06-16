@@ -955,13 +955,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\App.tsx": {
-    "mtime": 1781526038.6979413,
-    "ast_hash": "931166a7086979127cebfb38173cd6a7",
+    "mtime": 1781623149.6011858,
+    "ast_hash": "ae760bedfe7789bb6314183e83f3dd07",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\api.ts": {
-    "mtime": 1781541603.2401402,
-    "ast_hash": "1a9ba5bc0bb51671d93b2cff12b7a229",
+    "mtime": 1781622884.2925467,
+    "ast_hash": "15ac3217ef628c5f78597d69f1bfc752",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\auth.ts": {
@@ -1045,8 +1045,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\PollFinishedView.tsx": {
-    "mtime": 1781124820.768159,
-    "ast_hash": "b2c8255d7cf7749ed42a41b820c855e0",
+    "mtime": 1781623093.2242842,
+    "ast_hash": "de82b9dbae5216aeeec9465f3e278928",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\PollIdleView.tsx": {
@@ -1270,8 +1270,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\polls.ts": {
-    "mtime": 1781348687.7976677,
-    "ast_hash": "a31355d1cf686bd82c92186d83dd5f46",
+    "mtime": 1781622878.3234253,
+    "ast_hash": "2571aea29387f37e681a55523a92ac12",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\routeUtils.ts": {
@@ -1365,8 +1365,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\poll.ts": {
-    "mtime": 1781348687.812375,
-    "ast_hash": "9976166d8b98bd602505f9cb1cab66ed",
+    "mtime": 1781622871.970327,
+    "ast_hash": "17599fe2d3de771619a480eba18560d1",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\shoppingList.ts": {
@@ -1400,8 +1400,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\App.test.tsx": {
-    "mtime": 1781526038.7255337,
-    "ast_hash": "40ec507a9398df37f89d6f010f7f07b0",
+    "mtime": 1781622927.0689325,
+    "ast_hash": "90b9cef8cc95426a95a7f4ad4e63dc8d",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\AuthGate.test.tsx": {
@@ -1660,8 +1660,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\poll-routes.test.ts": {
-    "mtime": 1781348687.847098,
-    "ast_hash": "66eb68392f6e0320342c80da218dc363",
+    "mtime": 1781622943.7450838,
+    "ast_hash": "a1cba53766b4b483b814d8ebe4d3ac7d",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\poll-service.test.ts": {
@@ -4595,8 +4595,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\complexity-baseline.json": {
-    "mtime": 1781621845.4243832,
-    "ast_hash": "d5640e43100057ccbde4498b19122cbf",
+    "mtime": 1781623187.0858033,
+    "ast_hash": "9ac762da4797ecf598cf9b9433058729",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-complexity-baseline.mjs": {
