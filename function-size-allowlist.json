@@ -6,11 +6,6 @@
       "file": "src/client/pages/Administration.tsx",
       "name": "Administration",
       "maxAllowedLines": 1044
-    },
-    {
-      "file": "src/server/routes/auth.ts",
-      "name": "authRoutes",
-      "maxAllowedLines": 510
     }
   ]
 }

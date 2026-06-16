@@ -9994,7 +9994,7 @@
       "source_file": "src/client/auth.ts",
       "source_location": "L9",
       "id": "client_auth_getrouterbasename",
-      "community": 3,
+      "community": 835,
       "norm_label": "getrouterbasename()"
     },
     {
@@ -10030,7 +10030,7 @@
       "source_file": "src/client/auth.ts",
       "source_location": "L29",
       "id": "client_auth_getauthenticateddisplaylabel",
-      "community": 66,
+      "community": 3,
       "norm_label": "getauthenticateddisplaylabel()"
     },
     {
@@ -10471,7 +10471,7 @@
       "source_file": "src/client/components/FoodSelectionCompletedView.tsx",
       "source_location": "L16",
       "id": "components_foodselectioncompletedview_foodselectioncompletedviewprops",
-      "community": 2,
+      "community": 835,
       "norm_label": "foodselectioncompletedviewprops"
     },
     {
@@ -10516,7 +10516,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L1",
       "id": "components_foodselectionorderboard",
-      "community": 4,
+      "community": 835,
       "norm_label": "foodselectionorderboard.tsx"
     },
     {
@@ -10525,7 +10525,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L5",
       "id": "components_foodselectionorderboard_orderboardmode",
-      "community": 4,
+      "community": 835,
       "norm_label": "orderboardmode"
     },
     {
@@ -10534,7 +10534,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L7",
       "id": "components_foodselectionorderboard_foodselectionorderboardprops",
-      "community": 4,
+      "community": 835,
       "norm_label": "foodselectionorderboardprops"
     },
     {
@@ -10543,7 +10543,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L16",
       "id": "components_foodselectionorderboard_foodselectionorderboard",
-      "community": 4,
+      "community": 835,
       "norm_label": "foodselectionorderboard()"
     },
     {
@@ -10867,7 +10867,7 @@
       "source_file": "src/client/components/OrdersRail.tsx",
       "source_location": "L4",
       "id": "components_ordersrail_ordersrailprops",
-      "community": 3,
+      "community": 835,
       "norm_label": "ordersrailprops"
     },
     {
@@ -11047,7 +11047,7 @@
       "source_file": "src/client/components/PollIdleView.tsx",
       "source_location": "L306",
       "id": "components_pollidleview_singlemenuquickstart",
-      "community": 66,
+      "community": 3,
       "norm_label": "singlemenuquickstart()"
     },
     {
@@ -11056,7 +11056,7 @@
       "source_file": "src/client/components/PollIdleView.tsx",
       "source_location": "L379",
       "id": "components_pollidleview_pollstartform",
-      "community": 66,
+      "community": 3,
       "norm_label": "pollstartform()"
     },
     {
@@ -11065,7 +11065,7 @@
       "source_file": "src/client/components/PollIdleView.tsx",
       "source_location": "L532",
       "id": "components_pollidleview_pollidleview",
-      "community": 66,
+      "community": 3,
       "norm_label": "pollidleview()"
     },
     {
@@ -11254,7 +11254,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L1",
       "id": "ui_button",
-      "community": 399,
+      "community": 296,
       "norm_label": "button.tsx"
     },
     {
@@ -11263,7 +11263,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L4",
       "id": "ui_button_buttonvariant",
-      "community": 399,
+      "community": 296,
       "norm_label": "buttonvariant"
     },
     {
@@ -11272,7 +11272,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L12",
       "id": "ui_button_buttonprops",
-      "community": 399,
+      "community": 296,
       "norm_label": "buttonprops"
     },
     {
@@ -11281,7 +11281,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L16",
       "id": "ui_button_variants",
-      "community": 399,
+      "community": 296,
       "norm_label": "variants"
     },
     {
@@ -11290,7 +11290,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L29",
       "id": "ui_button_button",
-      "community": 399,
+      "community": 296,
       "norm_label": "button()"
     },
     {
@@ -11380,7 +11380,7 @@
       "source_file": "src/client/components/ui/Input.tsx",
       "source_location": "L1",
       "id": "ui_input",
-      "community": 296,
+      "community": 833,
       "norm_label": "input.tsx"
     },
     {
@@ -11389,7 +11389,7 @@
       "source_file": "src/client/components/ui/Input.tsx",
       "source_location": "L4",
       "id": "ui_input_fieldclass",
-      "community": 296,
+      "community": 833,
       "norm_label": "fieldclass"
     },
     {
@@ -11398,7 +11398,7 @@
       "source_file": "src/client/components/ui/Input.tsx",
       "source_location": "L11",
       "id": "ui_input_input",
-      "community": 296,
+      "community": 833,
       "norm_label": "input"
     },
     {
@@ -11443,7 +11443,7 @@
       "source_file": "src/client/components/ui/Modal.tsx",
       "source_location": "L1",
       "id": "ui_modal",
-      "community": 604,
+      "community": 23,
       "norm_label": "modal.tsx"
     },
     {
@@ -11452,7 +11452,7 @@
       "source_file": "src/client/components/ui/Modal.tsx",
       "source_location": "L5",
       "id": "ui_modal_modalprops",
-      "community": 604,
+      "community": 23,
       "norm_label": "modalprops"
     },
     {
@@ -11461,7 +11461,7 @@
       "source_file": "src/client/components/ui/Modal.tsx",
       "source_location": "L21",
       "id": "ui_modal_modal",
-      "community": 604,
+      "community": 23,
       "norm_label": "modal()"
     },
     {
@@ -11686,7 +11686,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L1",
       "id": "context_appcontext",
-      "community": 4,
+      "community": 835,
       "norm_label": "appcontext.tsx"
     },
     {
@@ -11695,7 +11695,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L14",
       "id": "context_appcontext_appstate",
-      "community": 4,
+      "community": 0,
       "norm_label": "appstate"
     },
     {
@@ -11713,7 +11713,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L44",
       "id": "context_appcontext_resetteamlunchprocess",
-      "community": 4,
+      "community": 835,
       "norm_label": "resetteamlunchprocess()"
     },
     {
@@ -11722,7 +11722,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L54",
       "id": "context_appcontext_finishactivepoll",
-      "community": 4,
+      "community": 835,
       "norm_label": "finishactivepoll()"
     },
     {
@@ -11731,7 +11731,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L81",
       "id": "context_appcontext_buildfinishedpoll",
-      "community": 4,
+      "community": 835,
       "norm_label": "buildfinishedpoll()"
     },
     {
@@ -11740,7 +11740,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L95",
       "id": "context_appcontext_updateorderacrossselections",
-      "community": 4,
+      "community": 835,
       "norm_label": "updateorderacrossselections()"
     },
     {
@@ -11749,7 +11749,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L121",
       "id": "context_appcontext_withdrawactiveorder",
-      "community": 4,
+      "community": 835,
       "norm_label": "withdrawactiveorder()"
     },
     {
@@ -11758,7 +11758,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L146",
       "id": "context_appcontext_appaction",
-      "community": 4,
+      "community": 835,
       "norm_label": "appaction"
     },
     {
@@ -11767,7 +11767,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L207",
       "id": "context_appcontext_appreducer",
-      "community": 4,
+      "community": 835,
       "norm_label": "appreducer()"
     },
     {
@@ -11776,7 +11776,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L488",
       "id": "context_appcontext_appstatecontext",
-      "community": 4,
+      "community": 835,
       "norm_label": "appstatecontext"
     },
     {
@@ -11785,7 +11785,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L489",
       "id": "context_appcontext_appdispatchcontext",
-      "community": 4,
+      "community": 835,
       "norm_label": "appdispatchcontext"
     },
     {
@@ -11794,7 +11794,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L493",
       "id": "context_appcontext_appprovider",
-      "community": 3,
+      "community": 835,
       "norm_label": "appprovider()"
     },
     {
@@ -11911,7 +11911,7 @@
       "source_file": "src/client/context/ThemeContext.tsx",
       "source_location": "L57",
       "id": "context_themecontext_themeprovider",
-      "community": 3,
+      "community": 183,
       "norm_label": "themeprovider()"
     },
     {
@@ -12073,7 +12073,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L1",
       "id": "hooks_usesse",
-      "community": 4,
+      "community": 835,
       "norm_label": "usesse.ts"
     },
     {
@@ -12082,7 +12082,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L15",
       "id": "hooks_usesse_healthresponse",
-      "community": 4,
+      "community": 835,
       "norm_label": "healthresponse"
     },
     {
@@ -12091,7 +12091,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L23",
       "id": "hooks_usesse_notificationsenabledinstorage",
-      "community": 4,
+      "community": 835,
       "norm_label": "notificationsenabledinstorage()"
     },
     {
@@ -12100,7 +12100,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L32",
       "id": "hooks_usesse_currentnicknamefromstorage",
-      "community": 4,
+      "community": 835,
       "norm_label": "currentnicknamefromstorage()"
     },
     {
@@ -12109,7 +12109,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L43",
       "id": "hooks_usesse_ishealthresponse",
-      "community": 4,
+      "community": 835,
       "norm_label": "ishealthresponse()"
     },
     {
@@ -12118,7 +12118,7 @@
       "source_file": "src/client/hooks/useSSE.ts",
       "source_location": "L52",
       "id": "hooks_usesse_fetchjsonarray",
-      "community": 4,
+      "community": 835,
       "norm_label": "fetchjsonarray()"
     },
     {
@@ -12154,7 +12154,7 @@
       "source_file": "src/client/main.tsx",
       "source_location": "L1",
       "id": "client_main",
-      "community": 3,
+      "community": 835,
       "norm_label": "main.tsx"
     },
     {
@@ -12163,7 +12163,7 @@
       "source_file": "src/client/main.tsx",
       "source_location": "L11",
       "id": "client_main_bootstrap",
-      "community": 3,
+      "community": 835,
       "norm_label": "bootstrap()"
     },
     {
@@ -12505,7 +12505,7 @@
       "source_file": "src/client/pages/ManageMenus.tsx",
       "source_location": "L1454",
       "id": "pages_managemenus_managemenus",
-      "community": 166,
+      "community": 3,
       "norm_label": "managemenus()"
     },
     {
@@ -12910,7 +12910,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L29",
       "id": "lib_types_menu",
-      "community": 4,
+      "community": 835,
       "norm_label": "menu"
     },
     {
@@ -12919,7 +12919,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L42",
       "id": "lib_types_officelocation",
-      "community": 303,
+      "community": 8,
       "norm_label": "officelocation"
     },
     {
@@ -12928,7 +12928,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L55",
       "id": "lib_types_officeweekday",
-      "community": 303,
+      "community": 236,
       "norm_label": "officeweekday"
     },
     {
@@ -12937,7 +12937,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L64",
       "id": "lib_types_menuitem",
-      "community": 4,
+      "community": 835,
       "norm_label": "menuitem"
     },
     {
@@ -12946,7 +12946,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L74",
       "id": "lib_types_poll",
-      "community": 4,
+      "community": 11,
       "norm_label": "poll"
     },
     {
@@ -12973,7 +12973,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L109",
       "id": "lib_types_foodselection",
-      "community": 4,
+      "community": 835,
       "norm_label": "foodselection"
     },
     {
@@ -12982,7 +12982,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L128",
       "id": "lib_types_foodorder",
-      "community": 4,
+      "community": 11,
       "norm_label": "foodorder"
     },
     {
@@ -13036,7 +13036,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L185",
       "id": "lib_types_mealrecommendationrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "mealrecommendationrequest"
     },
     {
@@ -13054,7 +13054,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L199",
       "id": "lib_types_mealrecommendationresponse",
-      "community": 9,
+      "community": 3,
       "norm_label": "mealrecommendationresponse"
     },
     {
@@ -13063,7 +13063,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L208",
       "id": "lib_types_shoppinglistitem",
-      "community": 4,
+      "community": 0,
       "norm_label": "shoppinglistitem"
     },
     {
@@ -13234,7 +13234,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L360",
       "id": "lib_types_startfoodselectionrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "startfoodselectionrequest"
     },
     {
@@ -13243,7 +13243,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L365",
       "id": "lib_types_placeorderrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "placeorderrequest"
     },
     {
@@ -13252,7 +13252,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L371",
       "id": "lib_types_withdraworderrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "withdraworderrequest"
     },
     {
@@ -13261,7 +13261,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L376",
       "id": "lib_types_ratefoodorderrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "ratefoodorderrequest"
     },
     {
@@ -13270,7 +13270,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L382",
       "id": "lib_types_updatefoodorderprocessedrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "updatefoodorderprocessedrequest"
     },
     {
@@ -13279,7 +13279,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L387",
       "id": "lib_types_updatefoodorderdeliveredrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "updatefoodorderdeliveredrequest"
     },
     {
@@ -13297,7 +13297,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L396",
       "id": "lib_types_extendfoodselectionrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "extendfoodselectionrequest"
     },
     {
@@ -13315,7 +13315,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L404",
       "id": "lib_types_quickstartfoodselectionrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "quickstartfoodselectionrequest"
     },
     {
@@ -13324,7 +13324,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L408",
       "id": "lib_types_updatefoodselectionetarequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "updatefoodselectionetarequest"
     },
     {
@@ -13333,7 +13333,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L412",
       "id": "lib_types_placedeliveryorderrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "placedeliveryorderrequest"
     },
     {
@@ -13342,7 +13342,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L417",
       "id": "lib_types_claimorderingresponsibilityrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "claimorderingresponsibilityrequest"
     },
     {
@@ -13351,7 +13351,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L421",
       "id": "lib_types_remindmissingordersrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "remindmissingordersrequest"
     },
     {
@@ -13369,7 +13369,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L427",
       "id": "lib_types_placefallbackorderrequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "placefallbackorderrequest"
     },
     {
@@ -13378,7 +13378,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L432",
       "id": "lib_types_pingfallbackcandidaterequest",
-      "community": 8,
+      "community": 133,
       "norm_label": "pingfallbackcandidaterequest"
     },
     {
@@ -13396,7 +13396,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L441",
       "id": "lib_types_updateuserpreferencesrequest",
-      "community": 12,
+      "community": 8,
       "norm_label": "updateuserpreferencesrequest"
     },
     {
@@ -13405,7 +13405,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L447",
       "id": "lib_types_updateusermenudefaultpreferencerequest",
-      "community": 12,
+      "community": 8,
       "norm_label": "updateusermenudefaultpreferencerequest"
     },
     {
@@ -13414,7 +13414,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L454",
       "id": "lib_types_createshoppinglistitemrequest",
-      "community": 8,
+      "community": 12,
       "norm_label": "createshoppinglistitemrequest"
     },
     {
@@ -13423,7 +13423,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L459",
       "id": "lib_types_markshoppinglistitemboughtrequest",
-      "community": 8,
+      "community": 12,
       "norm_label": "markshoppinglistitemboughtrequest"
     },
     {
@@ -13432,7 +13432,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L463",
       "id": "lib_types_localloginrequest",
-      "community": 321,
+      "community": 8,
       "norm_label": "localloginrequest"
     },
     {
@@ -13450,7 +13450,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L475",
       "id": "lib_types_updateofficelocationsettingsrequest",
-      "community": 321,
+      "community": 8,
       "norm_label": "updateofficelocationsettingsrequest"
     },
     {
@@ -13468,7 +13468,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L490",
       "id": "lib_types_initialstatepayload",
-      "community": 4,
+      "community": 835,
       "norm_label": "initialstatepayload"
     },
     {
@@ -13693,7 +13693,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L223",
       "id": "routes_auth_getusernamefromclaims",
-      "community": 572,
+      "community": 321,
       "norm_label": "getusernamefromclaims()"
     },
     {
@@ -13711,7 +13711,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L242",
       "id": "routes_auth_validatecredentials",
-      "community": 572,
+      "community": 321,
       "norm_label": "validatecredentials()"
     },
     {
@@ -13742,10 +13742,136 @@
       "norm_label": "handleauthconfig()"
     },
     {
-      "label": "authRoutes()",
+      "label": "handleEntraCallback()",
       "file_type": "code",
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L384",
+      "id": "routes_auth_handleentracallback",
+      "community": 321,
+      "norm_label": "handleentracallback()"
+    },
+    {
+      "label": "registerAuthStatusRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L476",
+      "id": "routes_auth_registerauthstatusroutes",
+      "community": 321,
+      "norm_label": "registerauthstatusroutes()"
+    },
+    {
+      "label": "registerLocalLoginRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L497",
+      "id": "routes_auth_registerlocalloginroutes",
+      "community": 90,
+      "norm_label": "registerlocalloginroutes()"
+    },
+    {
+      "label": "registerLocalUserRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L551",
+      "id": "routes_auth_registerlocaluserroutes",
+      "community": 321,
+      "norm_label": "registerlocaluserroutes()"
+    },
+    {
+      "label": "registerProfileRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L592",
+      "id": "routes_auth_registerprofileroutes",
+      "community": 321,
+      "norm_label": "registerprofileroutes()"
+    },
+    {
+      "label": "registerAccountProfileAdminRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L613",
+      "id": "routes_auth_registeraccountprofileadminroutes",
+      "community": 321,
+      "norm_label": "registeraccountprofileadminroutes()"
+    },
+    {
+      "label": "registerAccountLifecycleAdminRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L635",
+      "id": "routes_auth_registeraccountlifecycleadminroutes",
+      "community": 321,
+      "norm_label": "registeraccountlifecycleadminroutes()"
+    },
+    {
+      "label": "registerApprovalRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L686",
+      "id": "routes_auth_registerapprovalroutes",
+      "community": 321,
+      "norm_label": "registerapprovalroutes()"
+    },
+    {
+      "label": "registerRoleRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L730",
+      "id": "routes_auth_registerroleroutes",
+      "community": 321,
+      "norm_label": "registerroleroutes()"
+    },
+    {
+      "label": "registerBlockRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L751",
+      "id": "routes_auth_registerblockroutes",
+      "community": 321,
+      "norm_label": "registerblockroutes()"
+    },
+    {
+      "label": "registerOfficeAssignmentRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L810",
+      "id": "routes_auth_registerofficeassignmentroutes",
+      "community": 321,
+      "norm_label": "registerofficeassignmentroutes()"
+    },
+    {
+      "label": "registerOfficeCreateRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L871",
+      "id": "routes_auth_registerofficecreateroutes",
+      "community": 321,
+      "norm_label": "registerofficecreateroutes()"
+    },
+    {
+      "label": "registerOfficeMaintenanceRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L892",
+      "id": "routes_auth_registerofficemaintenanceroutes",
+      "community": 321,
+      "norm_label": "registerofficemaintenanceroutes()"
+    },
+    {
+      "label": "registerAuthSessionRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L947",
+      "id": "routes_auth_registerauthsessionroutes",
+      "community": 352,
+      "norm_label": "registerauthsessionroutes()"
+    },
+    {
+      "label": "authRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L980",
       "id": "routes_auth_authroutes",
       "community": 321,
       "norm_label": "authroutes()"
@@ -13774,7 +13900,7 @@
       "source_file": "src/server/routes/authIdentity.ts",
       "source_location": "L20",
       "id": "routes_authidentity_requireauthenticatedactor",
-      "community": 12,
+      "community": 133,
       "norm_label": "requireauthenticatedactor()"
     },
     {
@@ -13783,7 +13909,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L1",
       "id": "routes_foodselections",
-      "community": 8,
+      "community": 133,
       "norm_label": "foodselections.ts"
     },
     {
@@ -13792,7 +13918,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L32",
       "id": "routes_foodselections_requireadminifapprovalworkflowenabled",
-      "community": 572,
+      "community": 133,
       "norm_label": "requireadminifapprovalworkflowenabled()"
     },
     {
@@ -13801,7 +13927,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L43",
       "id": "routes_foodselections_requireapprovedactorifapprovalworkflowenabled",
-      "community": 8,
+      "community": 133,
       "norm_label": "requireapprovedactorifapprovalworkflowenabled()"
     },
     {
@@ -13810,7 +13936,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L51",
       "id": "routes_foodselections_resolveoptionalapprovedactor",
-      "community": 8,
+      "community": 133,
       "norm_label": "resolveoptionalapprovedactor()"
     },
     {
@@ -13819,7 +13945,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L57",
       "id": "routes_foodselections_requireadminorselectioncreator",
-      "community": 8,
+      "community": 133,
       "norm_label": "requireadminorselectioncreator()"
     },
     {
@@ -13828,7 +13954,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L79",
       "id": "routes_foodselections_registerselectionoverviewroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerselectionoverviewroutes()"
     },
     {
@@ -13837,7 +13963,7 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L132",
       "id": "routes_foodselections_registerorderingroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerorderingroutes()"
     },
     {
@@ -13846,52 +13972,88 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L184",
       "id": "routes_foodselections_registerselectionlifecycleroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerselectionlifecycleroutes()"
+    },
+    {
+      "label": "registerSelectionCompletionRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L227",
+      "id": "routes_foodselections_registerselectioncompletionroutes",
+      "community": 133,
+      "norm_label": "registerselectioncompletionroutes()"
     },
     {
       "label": "registerRecommendationAndFallbackRoutes()",
       "file_type": "code",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L284",
+      "source_location": "L287",
       "id": "routes_foodselections_registerrecommendationandfallbackroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerrecommendationandfallbackroutes()"
+    },
+    {
+      "label": "registerFallbackRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L339",
+      "id": "routes_foodselections_registerfallbackroutes",
+      "community": 133,
+      "norm_label": "registerfallbackroutes()"
     },
     {
       "label": "registerOrderStateRoutes()",
       "file_type": "code",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L401",
+      "source_location": "L407",
       "id": "routes_foodselections_registerorderstateroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerorderstateroutes()"
     },
     {
       "label": "registerDeliveryRoutes()",
       "file_type": "code",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L456",
+      "source_location": "L462",
       "id": "routes_foodselections_registerdeliveryroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerdeliveryroutes()"
+    },
+    {
+      "label": "registerSelectionControlRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L510",
+      "id": "routes_foodselections_registerselectioncontrolroutes",
+      "community": 133,
+      "norm_label": "registerselectioncontrolroutes()"
+    },
+    {
+      "label": "registerDeliveryCompletionRoutes()",
+      "file_type": "code",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L553",
+      "id": "routes_foodselections_registerdeliverycompletionroutes",
+      "community": 133,
+      "norm_label": "registerdeliverycompletionroutes()"
     },
     {
       "label": "registerQuickStartAndExportRoutes()",
       "file_type": "code",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L584",
+      "source_location": "L596",
       "id": "routes_foodselections_registerquickstartandexportroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "registerquickstartandexportroutes()"
     },
     {
       "label": "foodSelectionRoutes()",
       "file_type": "code",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L654",
+      "source_location": "L666",
       "id": "routes_foodselections_foodselectionroutes",
-      "community": 12,
+      "community": 133,
       "norm_label": "foodselectionroutes()"
     },
     {
@@ -13927,7 +14089,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L20",
       "id": "routes_polls_requireadminifapprovalworkflowenabled",
-      "community": 572,
+      "community": 8,
       "norm_label": "requireadminifapprovalworkflowenabled()"
     },
     {
@@ -13981,7 +14143,7 @@
       "source_file": "src/server/routes/routeUtils.ts",
       "source_location": "L41",
       "id": "routes_routeutils_serviceerror",
-      "community": 572,
+      "community": 321,
       "norm_label": "serviceerror"
     },
     {
@@ -13990,7 +14152,7 @@
       "source_file": "src/server/routes/routeUtils.ts",
       "source_location": "L17",
       "id": "routes_routeutils_sendserviceerror",
-      "community": 12,
+      "community": 133,
       "norm_label": "sendserviceerror()"
     },
     {
@@ -14017,7 +14179,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L1",
       "id": "routes_userpreferences",
-      "community": 12,
+      "community": 8,
       "norm_label": "userpreferences.ts"
     },
     {
@@ -14026,7 +14188,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L11",
       "id": "routes_userpreferences_resolveuserkey",
-      "community": 12,
+      "community": 8,
       "norm_label": "resolveuserkey()"
     },
     {
@@ -14035,7 +14197,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L15",
       "id": "routes_userpreferences_userpreferencesroutes",
-      "community": 12,
+      "community": 8,
       "norm_label": "userpreferencesroutes()"
     },
     {
@@ -14170,7 +14332,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L529",
       "id": "services_authaccess_isapprovalworkflowenabled",
-      "community": 572,
+      "community": 7,
       "norm_label": "isapprovalworkflowenabled()"
     },
     {
@@ -14422,7 +14584,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L1597",
       "id": "services_authaccess_assignuserofficebyadmin",
-      "community": 7,
+      "community": 321,
       "norm_label": "assignuserofficebyadmin()"
     },
     {
@@ -14701,7 +14863,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L3",
       "id": "services_authsession_authmethod",
-      "community": 12,
+      "community": 352,
       "norm_label": "authmethod"
     },
     {
@@ -14755,7 +14917,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L40",
       "id": "services_authsession_parsecookies",
-      "community": 321,
+      "community": 352,
       "norm_label": "parsecookies()"
     },
     {
@@ -14773,7 +14935,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L61",
       "id": "services_authsession_createsessioncookievalue",
-      "community": 352,
+      "community": 40,
       "norm_label": "createsessioncookievalue()"
     },
     {
@@ -14818,7 +14980,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L122",
       "id": "services_authsession_generateentrastate",
-      "community": 321,
+      "community": 352,
       "norm_label": "generateentrastate()"
     },
     {
@@ -14845,7 +15007,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L136",
       "id": "services_authsession_getentrastatefromcookieheader",
-      "community": 321,
+      "community": 352,
       "norm_label": "getentrastatefromcookieheader()"
     },
     {
@@ -15169,7 +15331,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L77",
       "id": "services_foodselection_clearalltimers",
-      "community": 352,
+      "community": 40,
       "norm_label": "clearalltimers()"
     },
     {
@@ -15736,7 +15898,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L115",
       "id": "services_localauth_upsertlocalauthuser",
-      "community": 303,
+      "community": 132,
       "norm_label": "upsertlocalauthuser()"
     },
     {
@@ -16717,7 +16879,7 @@
       "source_file": "src/server/services/officeContext.ts",
       "source_location": "L11",
       "id": "services_officecontext_readrequestedofficelocationid",
-      "community": 12,
+      "community": 133,
       "norm_label": "readrequestedofficelocationid()"
     },
     {
@@ -16726,7 +16888,7 @@
       "source_file": "src/server/services/officeContext.ts",
       "source_location": "L25",
       "id": "services_officecontext_resolveofficelocationidfromcookie",
-      "community": 12,
+      "community": 133,
       "norm_label": "resolveofficelocationidfromcookie()"
     },
     {
@@ -16780,7 +16942,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L63",
       "id": "services_officelocation_normalizeofficelocationid",
-      "community": 40,
+      "community": 321,
       "norm_label": "normalizeofficelocationid()"
     },
     {
@@ -16879,7 +17041,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L259",
       "id": "services_officelocation_deactivateofficelocation",
-      "community": 40,
+      "community": 321,
       "norm_label": "deactivateofficelocation()"
     },
     {
@@ -16888,7 +17050,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L294",
       "id": "services_officelocation_validateofficelocationid",
-      "community": 40,
+      "community": 201,
       "norm_label": "validateofficelocationid()"
     },
     {
@@ -16906,7 +17068,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L340",
       "id": "services_officelocation_getofficedefaultfoodselectiondurationminutes",
-      "community": 201,
+      "community": 11,
       "norm_label": "getofficedefaultfoodselectiondurationminutes()"
     },
     {
@@ -17059,7 +17221,7 @@
       "source_file": "src/server/services/poll.ts",
       "source_location": "L48",
       "id": "services_poll_clearalltimers",
-      "community": 352,
+      "community": 40,
       "norm_label": "clearalltimers()"
     },
     {
@@ -17563,7 +17725,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L1",
       "id": "server_sse",
-      "community": 201,
+      "community": 11,
       "norm_label": "sse.ts"
     },
     {
@@ -17572,7 +17734,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L6",
       "id": "server_sse_clients",
-      "community": 201,
+      "community": 11,
       "norm_label": "clients"
     },
     {
@@ -17581,7 +17743,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L9",
       "id": "server_sse_register",
-      "community": 201,
+      "community": 11,
       "norm_label": "register()"
     },
     {
@@ -17590,7 +17752,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L27",
       "id": "server_sse_broadcast",
-      "community": 16,
+      "community": 11,
       "norm_label": "broadcast()"
     },
     {
@@ -17599,7 +17761,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L44",
       "id": "server_sse_getclientcount",
-      "community": 201,
+      "community": 11,
       "norm_label": "getclientcount()"
     },
     {
@@ -17626,7 +17788,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L195",
       "id": "server_sse_sendinitialstate",
-      "community": 201,
+      "community": 11,
       "norm_label": "sendinitialstate()"
     },
     {
@@ -17653,7 +17815,7 @@
       "source_file": "tests/client/Administration.test.tsx",
       "source_location": "L1",
       "id": "client_administration_test",
-      "community": 133,
+      "community": 8,
       "norm_label": "administration.test.tsx"
     },
     {
@@ -17662,7 +17824,7 @@
       "source_file": "tests/client/Administration.test.tsx",
       "source_location": "L8",
       "id": "client_administration_test_makeoffice",
-      "community": 133,
+      "community": 8,
       "norm_label": "makeoffice()"
     },
     {
@@ -17671,7 +17833,7 @@
       "source_file": "tests/client/Administration.test.tsx",
       "source_location": "L23",
       "id": "client_administration_test_jsonresponse",
-      "community": 133,
+      "community": 8,
       "norm_label": "jsonresponse()"
     },
     {
@@ -17680,7 +17842,7 @@
       "source_file": "tests/client/Administration.test.tsx",
       "source_location": "L30",
       "id": "client_administration_test_baseadminconfig",
-      "community": 133,
+      "community": 8,
       "norm_label": "baseadminconfig"
     },
     {
@@ -17689,7 +17851,7 @@
       "source_file": "tests/client/Administration.test.tsx",
       "source_location": "L54",
       "id": "client_administration_test_renderadministration",
-      "community": 133,
+      "community": 8,
       "norm_label": "renderadministration()"
     },
     {
@@ -17734,7 +17896,7 @@
       "source_file": "tests/client/AuthGate.test.tsx",
       "source_location": "L1",
       "id": "client_authgate_test",
-      "community": 192,
+      "community": 8,
       "norm_label": "authgate.test.tsx"
     },
     {
@@ -17743,7 +17905,7 @@
       "source_file": "tests/client/AuthGate.test.tsx",
       "source_location": "L6",
       "id": "client_authgate_test_authstate",
-      "community": 192,
+      "community": 8,
       "norm_label": "authstate"
     },
     {
@@ -17752,7 +17914,7 @@
       "source_file": "tests/client/AuthGate.test.tsx",
       "source_location": "L22",
       "id": "client_authgate_test_makeoffice",
-      "community": 192,
+      "community": 8,
       "norm_label": "makeoffice()"
     },
     {
@@ -17761,7 +17923,7 @@
       "source_file": "tests/client/AuthGate.test.tsx",
       "source_location": "L37",
       "id": "client_authgate_test_jsonresponse",
-      "community": 192,
+      "community": 8,
       "norm_label": "jsonresponse()"
     },
     {
@@ -17770,7 +17932,7 @@
       "source_file": "tests/client/AuthGate.test.tsx",
       "source_location": "L44",
       "id": "client_authgate_test_baseauthstate",
-      "community": 192,
+      "community": 8,
       "norm_label": "baseauthstate"
     },
     {
@@ -18643,7 +18805,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L1",
       "id": "client_shoppinglist_test",
-      "community": 4,
+      "community": 0,
       "norm_label": "shoppinglist.test.tsx"
     },
     {
@@ -18652,7 +18814,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L8",
       "id": "client_shoppinglist_test_mockuseappstate",
-      "community": 4,
+      "community": 0,
       "norm_label": "mockuseappstate"
     },
     {
@@ -18661,7 +18823,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L17",
       "id": "client_shoppinglist_test_mockcreateshoppinglistitem",
-      "community": 4,
+      "community": 0,
       "norm_label": "mockcreateshoppinglistitem"
     },
     {
@@ -18670,7 +18832,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L18",
       "id": "client_shoppinglist_test_mockmarkshoppinglistitembought",
-      "community": 4,
+      "community": 0,
       "norm_label": "mockmarkshoppinglistitembought"
     },
     {
@@ -18679,7 +18841,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L26",
       "id": "client_shoppinglist_test_renderview",
-      "community": 4,
+      "community": 0,
       "norm_label": "renderview()"
     },
     {
@@ -18724,7 +18886,7 @@
       "source_file": "tests/client/app-context.test.ts",
       "source_location": "L1",
       "id": "client_app_context_test",
-      "community": 4,
+      "community": 0,
       "norm_label": "app-context.test.ts"
     },
     {
@@ -18742,7 +18904,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L1",
       "id": "client_helpers",
-      "community": 4,
+      "community": 0,
       "norm_label": "helpers.tsx"
     },
     {
@@ -18751,7 +18913,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L12",
       "id": "client_helpers_routerwrapper",
-      "community": 4,
+      "community": 0,
       "norm_label": "routerwrapper()"
     },
     {
@@ -18895,7 +19057,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L1",
       "id": "client_usesse_test",
-      "community": 4,
+      "community": 835,
       "norm_label": "usesse.test.ts"
     },
     {
@@ -18904,7 +19066,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L10",
       "id": "client_usesse_test_eslistener",
-      "community": 4,
+      "community": 835,
       "norm_label": "eslistener"
     },
     {
@@ -18967,7 +19129,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L55",
       "id": "client_usesse_test_makepoll",
-      "community": 4,
+      "community": 835,
       "norm_label": "makepoll()"
     },
     {
@@ -18976,7 +19138,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L74",
       "id": "client_usesse_test_makefs",
-      "community": 4,
+      "community": 835,
       "norm_label": "makefs()"
     },
     {
@@ -18985,7 +19147,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L96",
       "id": "client_usesse_test_makemenu",
-      "community": 4,
+      "community": 835,
       "norm_label": "makemenu()"
     },
     {
@@ -18994,7 +19156,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L121",
       "id": "client_usesse_test_makeshoppingitem",
-      "community": 4,
+      "community": 835,
       "norm_label": "makeshoppingitem()"
     },
     {
@@ -19003,7 +19165,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L135",
       "id": "client_usesse_test_initialstatepayload",
-      "community": 4,
+      "community": 835,
       "norm_label": "initialstatepayload"
     },
     {
@@ -19021,7 +19183,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L194",
       "id": "client_usesse_test_getes",
-      "community": 4,
+      "community": 835,
       "norm_label": "getes()"
     },
     {
@@ -19030,7 +19192,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L532",
       "id": "client_usesse_test_mocknotification",
-      "community": 4,
+      "community": 835,
       "norm_label": "mocknotification"
     },
     {
@@ -19039,7 +19201,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L536",
       "id": "client_usesse_test_mocknotification_constructor",
-      "community": 4,
+      "community": 835,
       "norm_label": ".constructor()"
     },
     {
@@ -19102,7 +19264,7 @@
       "source_file": "tests/server/auth-avatar.test.ts",
       "source_location": "L1",
       "id": "server_auth_avatar_test",
-      "community": 303,
+      "community": 40,
       "norm_label": "auth-avatar.test.ts"
     },
     {
@@ -19111,7 +19273,7 @@
       "source_file": "tests/server/auth-avatar.test.ts",
       "source_location": "L9",
       "id": "server_auth_avatar_test_sessioncookie",
-      "community": 303,
+      "community": 40,
       "norm_label": "sessioncookie()"
     },
     {
@@ -19120,7 +19282,7 @@
       "source_file": "tests/server/auth-avatar.test.ts",
       "source_location": "L19",
       "id": "server_auth_avatar_test_graphtokenresponse",
-      "community": 303,
+      "community": 40,
       "norm_label": "graphtokenresponse()"
     },
     {
@@ -19282,7 +19444,7 @@
       "source_file": "tests/server/food-selection-reminder.test.ts",
       "source_location": "L1",
       "id": "server_food_selection_reminder_test",
-      "community": 40,
+      "community": 177,
       "norm_label": "food-selection-reminder.test.ts"
     },
     {
@@ -19534,7 +19696,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L1",
       "id": "server_meal_recommendation_routes_test",
-      "community": 352,
+      "community": 40,
       "norm_label": "meal-recommendation-routes.test.ts"
     },
     {
@@ -19543,7 +19705,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L109",
       "id": "server_meal_recommendation_routes_test_approvedauthheaders",
-      "community": 352,
+      "community": 40,
       "norm_label": "approvedauthheaders()"
     },
     {
@@ -19552,7 +19714,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L148",
       "id": "server_meal_recommendation_routes_test_adminauthheaders",
-      "community": 352,
+      "community": 40,
       "norm_label": "adminauthheaders()"
     },
     {
@@ -19561,7 +19723,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L152",
       "id": "server_meal_recommendation_routes_test_createmenu",
-      "community": 352,
+      "community": 40,
       "norm_label": "createmenu()"
     },
     {
@@ -19570,7 +19732,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L157",
       "id": "server_meal_recommendation_routes_test_createmenuitem",
-      "community": 352,
+      "community": 40,
       "norm_label": "createmenuitem()"
     },
     {
@@ -19579,7 +19741,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L165",
       "id": "server_meal_recommendation_routes_test_createactivefoodselection",
-      "community": 352,
+      "community": 40,
       "norm_label": "createactivefoodselection()"
     },
     {
@@ -19678,7 +19840,7 @@
       "source_file": "tests/server/poll-routes.test.ts",
       "source_location": "L1",
       "id": "server_poll_routes_test",
-      "community": 352,
+      "community": 40,
       "norm_label": "poll-routes.test.ts"
     },
     {
@@ -19687,7 +19849,7 @@
       "source_file": "tests/server/poll-routes.test.ts",
       "source_location": "L67",
       "id": "server_poll_routes_test_createmenu",
-      "community": 352,
+      "community": 40,
       "norm_label": "createmenu()"
     },
     {
@@ -19696,7 +19858,7 @@
       "source_file": "tests/server/poll-routes.test.ts",
       "source_location": "L73",
       "id": "server_poll_routes_test_startpoll",
-      "community": 352,
+      "community": 40,
       "norm_label": "startpoll()"
     },
     {
@@ -19705,7 +19867,7 @@
       "source_file": "tests/server/poll-routes.test.ts",
       "source_location": "L86",
       "id": "server_poll_routes_test_approvedauthheaders",
-      "community": 352,
+      "community": 40,
       "norm_label": "approvedauthheaders()"
     },
     {
@@ -19714,7 +19876,7 @@
       "source_file": "tests/server/poll-routes.test.ts",
       "source_location": "L118",
       "id": "server_poll_routes_test_adminauthheaders",
-      "community": 352,
+      "community": 40,
       "norm_label": "adminauthheaders()"
     },
     {
@@ -19957,7 +20119,7 @@
       "source_file": "tests/server/shopping-list-routes.test.ts",
       "source_location": "L20",
       "id": "server_shopping_list_routes_test_authcookie",
-      "community": 352,
+      "community": 40,
       "norm_label": "authcookie()"
     },
     {
@@ -19984,7 +20146,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L1",
       "id": "server_sse_integration_test",
-      "community": 352,
+      "community": 40,
       "norm_label": "sse-integration.test.ts"
     },
     {
@@ -19993,7 +20155,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L14",
       "id": "server_sse_integration_test_sseevent",
-      "community": 352,
+      "community": 40,
       "norm_label": "sseevent"
     },
     {
@@ -20002,7 +20164,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L23",
       "id": "server_sse_integration_test_connectsse",
-      "community": 352,
+      "community": 40,
       "norm_label": "connectsse()"
     },
     {
@@ -20011,7 +20173,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L77",
       "id": "server_sse_integration_test_waitforevents",
-      "community": 352,
+      "community": 40,
       "norm_label": "waitforevents()"
     },
     {
@@ -20020,7 +20182,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L100",
       "id": "server_sse_integration_test_httprequest",
-      "community": 352,
+      "community": 40,
       "norm_label": "httprequest()"
     },
     {
@@ -20029,7 +20191,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L197",
       "id": "server_sse_integration_test_teardown",
-      "community": 352,
+      "community": 40,
       "norm_label": "teardown()"
     },
     {
@@ -20038,7 +20200,7 @@
       "source_file": "tests/server/sse.test.ts",
       "source_location": "L1",
       "id": "server_sse_test",
-      "community": 201,
+      "community": 11,
       "norm_label": "sse.test.ts"
     },
     {
@@ -20047,7 +20209,7 @@
       "source_file": "tests/server/sse.test.ts",
       "source_location": "L15",
       "id": "server_sse_test_createmockresponse",
-      "community": 201,
+      "community": 11,
       "norm_label": "createmockresponse()"
     },
     {
@@ -20065,7 +20227,7 @@
       "source_file": "tests/server/user-preferences-routes.test.ts",
       "source_location": "L1",
       "id": "server_user_preferences_routes_test",
-      "community": 303,
+      "community": 40,
       "norm_label": "user-preferences-routes.test.ts"
     },
     {
@@ -20074,7 +20236,7 @@
       "source_file": "tests/server/user-preferences-routes.test.ts",
       "source_location": "L44",
       "id": "server_user_preferences_routes_test_authcookie",
-      "community": 303,
+      "community": 40,
       "norm_label": "authcookie()"
     },
     {
@@ -20083,7 +20245,7 @@
       "source_file": "tests/server/user-preferences-routes.test.ts",
       "source_location": "L54",
       "id": "server_user_preferences_routes_test_createmenufixture",
-      "community": 303,
+      "community": 40,
       "norm_label": "createmenufixture()"
     },
     {
@@ -32692,7 +32854,7 @@
       "source_file": ".agents/skills/design-taste-frontend/SKILL.md",
       "source_location": "L43",
       "id": "design_taste_frontend_skill_1_the_three_dials_core_configuration",
-      "community": 224,
+      "community": 295,
       "norm_label": "1. the three dials (core configuration)"
     },
     {
@@ -32701,7 +32863,7 @@
       "source_file": ".agents/skills/design-taste-frontend/SKILL.md",
       "source_location": "L53",
       "id": "design_taste_frontend_skill_1_a_dial_inference_design_read_dial_values",
-      "community": 224,
+      "community": 295,
       "norm_label": "1.a dial inference (design read \u2192 dial values)"
     },
     {
@@ -32710,7 +32872,7 @@
       "source_file": ".agents/skills/design-taste-frontend/SKILL.md",
       "source_location": "L64",
       "id": "design_taste_frontend_skill_1_b_use_case_presets",
-      "community": 224,
+      "community": 295,
       "norm_label": "1.b use-case presets"
     },
     {
@@ -32719,7 +32881,7 @@
       "source_file": ".agents/skills/design-taste-frontend/SKILL.md",
       "source_location": "L77",
       "id": "design_taste_frontend_skill_1_c_how_the_dials_drive_output",
-      "community": 224,
+      "community": 295,
       "norm_label": "1.c how the dials drive output"
     },
     {
@@ -102476,11 +102638,151 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/server/routes/auth.ts",
+      "source_location": "L384",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_handleentracallback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
       "source_location": "L126",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "routes_auth",
       "target": "routes_auth_normalizebasepath"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L635",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registeraccountlifecycleadminroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L613",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registeraccountprofileadminroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L686",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerapprovalroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L947",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerauthsessionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L476",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerauthstatusroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L751",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerblockroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L497",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerlocalloginroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L551",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerlocaluserroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L810",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerofficeassignmentroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L871",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerofficecreateroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L892",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerofficemaintenanceroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L592",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerprofileroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L730",
+      "weight": 1.0,
+      "source": "routes_auth",
+      "target": "routes_auth_registerroleroutes",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -103211,11 +103513,55 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/server/routes/auth.ts",
+      "source_location": "L389",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_auth_getentraconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L434",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_auth_gettenantidfromclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
       "source_location": "L205",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "routes_auth_getusernamefromclaims",
       "target": "routes_routeutils_serviceerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L439",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_auth_getusernamefromclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L440",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_auth_getdisplaynamefromclaims",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -103447,6 +103793,919 @@
       "confidence_score": 1.0,
       "source": "routes_auth_handleauthconfig",
       "target": "services_officelocation_listofficelocations"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L472",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L391",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L445",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authaccess_getauthaccesssessionversion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L443",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authaccess_getblockedusermessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L441",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authaccess_resolveuserapproval",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L440",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authaccess_syncentradisplayname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L456",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authaudit_recordauthauditlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L454",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authsession_buildclearentrastatecookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L448",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authsession_buildsetsessioncookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L400",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_authsession_getentrastatefromcookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L426",
+      "weight": 1.0,
+      "source": "routes_auth_handleentracallback",
+      "target": "services_entraoidc_verifyentraidtoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L981",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerauthstatusroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L492",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthstatusroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L482",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthstatusroutes",
+      "target": "services_authavatar_getauthavatarforuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L982",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerlocalloginroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L546",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L514",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L520",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authaccess_ensureauthaccessuserforlogin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L538",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authaccess_getauthdisplayprofile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L518",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authaccess_getblockedusermessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L516",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authaccess_resolveuserapproval",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L509",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authaudit_recordauthauditlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L530",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_authsession_buildsetsessioncookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L506",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_localauth_authenticatelocaluser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L505",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_localloginprotection_assertlocalloginallowed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L521",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_localloginprotection_clearlocalloginpenalty",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L508",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocalloginroutes",
+      "target": "services_localloginprotection_recordlocalloginfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L983",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerlocaluserroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L586",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocaluserroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L558",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocaluserroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L571",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocaluserroutes",
+      "target": "services_authaccess_approveuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L572",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocaluserroutes",
+      "target": "services_authaudit_recordauthauditlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L570",
+      "weight": 1.0,
+      "source": "routes_auth_registerlocaluserroutes",
+      "target": "services_localauth_upsertlocalauthuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L984",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerprofileroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L607",
+      "weight": 1.0,
+      "source": "routes_auth_registerprofileroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L599",
+      "weight": 1.0,
+      "source": "routes_auth_registerprofileroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L604",
+      "weight": 1.0,
+      "source": "routes_auth_registerprofileroutes",
+      "target": "services_authaccess_updatelocaldisplayname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L985",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registeraccountprofileadminroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L629",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountprofileadminroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L620",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountprofileadminroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L626",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountprofileadminroutes",
+      "target": "services_authaccess_updateuserdisplaynamebyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L986",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registeraccountlifecycleadminroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L656",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountlifecycleadminroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L642",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountlifecycleadminroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L650",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountlifecycleadminroutes",
+      "target": "server_sse_broadcast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L673",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountlifecycleadminroutes",
+      "target": "services_authaccess_deletelocaluserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L649",
+      "weight": 1.0,
+      "source": "routes_auth_registeraccountlifecycleadminroutes",
+      "target": "services_authaccess_updatelocaluseremailbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L987",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerapprovalroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L706",
+      "weight": 1.0,
+      "source": "routes_auth_registerapprovalroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L691",
+      "weight": 1.0,
+      "source": "routes_auth_registerapprovalroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L703",
+      "weight": 1.0,
+      "source": "routes_auth_registerapprovalroutes",
+      "target": "services_authaccess_approveuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L722",
+      "weight": 1.0,
+      "source": "routes_auth_registerapprovalroutes",
+      "target": "services_authaccess_declineuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L988",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerroleroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L746",
+      "weight": 1.0,
+      "source": "routes_auth_registerroleroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L735",
+      "weight": 1.0,
+      "source": "routes_auth_registerroleroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L743",
+      "weight": 1.0,
+      "source": "routes_auth_registerroleroutes",
+      "target": "services_authaccess_promoteuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L989",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerblockroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L767",
+      "weight": 1.0,
+      "source": "routes_auth_registerblockroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L756",
+      "weight": 1.0,
+      "source": "routes_auth_registerblockroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L764",
+      "weight": 1.0,
+      "source": "routes_auth_registerblockroutes",
+      "target": "services_authaccess_blockuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L802",
+      "weight": 1.0,
+      "source": "routes_auth_registerblockroutes",
+      "target": "services_authaccess_demoteuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L783",
+      "weight": 1.0,
+      "source": "routes_auth_registerblockroutes",
+      "target": "services_authaccess_unblockuserbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L990",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerofficeassignmentroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L832",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficeassignmentroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L817",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficeassignmentroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L829",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficeassignmentroutes",
+      "target": "services_authaccess_assignuserofficebyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L855",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficeassignmentroutes",
+      "target": "services_authaccess_assignuserofficesbyadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L991",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerofficecreateroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L887",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficecreateroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L876",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficecreateroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L884",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficecreateroutes",
+      "target": "services_officelocation_createofficelocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L992",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerofficemaintenanceroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L910",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficemaintenanceroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L899",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficemaintenanceroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L922",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficemaintenanceroutes",
+      "target": "services_officelocation_deactivateofficelocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L907",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficemaintenanceroutes",
+      "target": "services_officelocation_renameofficelocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L938",
+      "weight": 1.0,
+      "source": "routes_auth_registerofficemaintenanceroutes",
+      "target": "services_officelocation_updateofficelocationsettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L993",
+      "weight": 1.0,
+      "source": "routes_auth_authroutes",
+      "target": "routes_auth_registerauthsessionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L972",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthsessionroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L957",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthsessionroutes",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L949",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthsessionroutes",
+      "target": "services_authsession_buildclearsessioncookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L969",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthsessionroutes",
+      "target": "services_authsession_buildsetentrastatecookieheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/auth.ts",
+      "source_location": "L960",
+      "weight": 1.0,
+      "source": "routes_auth_registerauthsessionroutes",
+      "target": "services_authsession_generateentrastate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -103748,9 +105007,31 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L559",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerdeliverycompletionroutes",
+      "target": "routes_authidentity_requireauthenticatedactor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L462",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerdeliveryroutes",
+      "target": "routes_authidentity_requireauthenticatedactor"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L363",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerfallbackroutes",
       "target": "routes_authidentity_requireauthenticatedactor",
       "confidence_score": 1.0
     },
@@ -103761,9 +105042,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L138",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderingroutes",
-      "target": "routes_authidentity_requireauthenticatedactor",
-      "confidence_score": 1.0
+      "target": "routes_authidentity_requireauthenticatedactor"
     },
     {
       "relation": "calls",
@@ -103772,9 +105053,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L407",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderstateroutes",
-      "target": "routes_authidentity_requireauthenticatedactor",
-      "confidence_score": 1.0
+      "target": "routes_authidentity_requireauthenticatedactor"
     },
     {
       "relation": "calls",
@@ -103783,9 +105064,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L633",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerquickstartandexportroutes",
-      "target": "routes_authidentity_requireauthenticatedactor",
-      "confidence_score": 1.0
+      "target": "routes_authidentity_requireauthenticatedactor"
     },
     {
       "relation": "calls",
@@ -103794,9 +105075,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L290",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerrecommendationandfallbackroutes",
-      "target": "routes_authidentity_requireauthenticatedactor",
-      "confidence_score": 1.0
+      "target": "routes_authidentity_requireauthenticatedactor"
     },
     {
       "relation": "calls",
@@ -103805,9 +105086,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L190",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionlifecycleroutes",
-      "target": "routes_authidentity_requireauthenticatedactor",
-      "confidence_score": 1.0
+      "target": "routes_authidentity_requireauthenticatedactor"
     },
     {
       "relation": "calls",
@@ -103911,10 +105192,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/server/routes/foodSelections.ts",
-      "source_location": "L456",
+      "source_location": "L553",
       "weight": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerdeliveryroutes",
+      "target": "routes_foodselections_registerdeliverycompletionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L456",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_foodselections",
+      "target": "routes_foodselections_registerdeliveryroutes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L339",
+      "weight": 1.0,
+      "source": "routes_foodselections",
+      "target": "routes_foodselections_registerfallbackroutes",
       "confidence_score": 1.0
     },
     {
@@ -103923,9 +105224,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerorderingroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerorderingroutes"
     },
     {
       "relation": "contains",
@@ -103933,9 +105234,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L401",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerorderstateroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerorderstateroutes"
     },
     {
       "relation": "contains",
@@ -103943,9 +105244,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L584",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerquickstartandexportroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerquickstartandexportroutes"
     },
     {
       "relation": "contains",
@@ -103953,8 +105254,28 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L284",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerrecommendationandfallbackroutes",
+      "target": "routes_foodselections_registerrecommendationandfallbackroutes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L227",
+      "weight": 1.0,
+      "source": "routes_foodselections",
+      "target": "routes_foodselections_registerselectioncompletionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L510",
+      "weight": 1.0,
+      "source": "routes_foodselections",
+      "target": "routes_foodselections_registerselectioncontrolroutes",
       "confidence_score": 1.0
     },
     {
@@ -103963,9 +105284,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerselectionlifecycleroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerselectionlifecycleroutes"
     },
     {
       "relation": "contains",
@@ -103973,9 +105294,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections",
-      "target": "routes_foodselections_registerselectionoverviewroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerselectionoverviewroutes"
     },
     {
       "relation": "contains",
@@ -104200,9 +105521,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L655",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerselectionoverviewroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerselectionoverviewroutes"
     },
     {
       "relation": "calls",
@@ -104211,9 +105532,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionoverviewroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104222,9 +105543,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L88",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionoverviewroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104233,9 +105554,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionoverviewroutes",
-      "target": "services_officecontext_resolveofficelocationidfromcookie",
-      "confidence_score": 1.0
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
     },
     {
       "relation": "calls",
@@ -104244,9 +105565,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L656",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerorderingroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerorderingroutes"
     },
     {
       "relation": "calls",
@@ -104255,9 +105576,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderingroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104266,9 +105587,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderingroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104277,9 +105598,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderingroutes",
-      "target": "services_officecontext_resolveofficelocationidfromcookie",
-      "confidence_score": 1.0
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
     },
     {
       "relation": "calls",
@@ -104288,9 +105609,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L657",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerselectionlifecycleroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerselectionlifecycleroutes"
     },
     {
       "relation": "calls",
@@ -104299,9 +105620,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionlifecycleroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104310,9 +105631,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L193",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionlifecycleroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104321,7 +105642,51 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L191",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerselectionlifecycleroutes",
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L670",
+      "weight": 1.0,
+      "source": "routes_foodselections_foodselectionroutes",
+      "target": "routes_foodselections_registerselectioncompletionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L241",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncompletionroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L236",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncompletionroutes",
+      "target": "services_officecontext_readrequestedofficelocationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L234",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncompletionroutes",
       "target": "services_officecontext_resolveofficelocationidfromcookie",
       "confidence_score": 1.0
     },
@@ -104332,9 +105697,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L658",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerrecommendationandfallbackroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerrecommendationandfallbackroutes"
     },
     {
       "relation": "calls",
@@ -104343,9 +105708,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L303",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerrecommendationandfallbackroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104354,9 +105719,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L293",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerrecommendationandfallbackroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104365,7 +105730,51 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L291",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerrecommendationandfallbackroutes",
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L672",
+      "weight": 1.0,
+      "source": "routes_foodselections_foodselectionroutes",
+      "target": "routes_foodselections_registerfallbackroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L352",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerfallbackroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L347",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerfallbackroutes",
+      "target": "services_officecontext_readrequestedofficelocationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L345",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerfallbackroutes",
       "target": "services_officecontext_resolveofficelocationidfromcookie",
       "confidence_score": 1.0
     },
@@ -104376,9 +105785,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L659",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerorderstateroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerorderstateroutes"
     },
     {
       "relation": "calls",
@@ -104387,9 +105796,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L423",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderstateroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104398,9 +105807,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L409",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderstateroutes",
-      "target": "routes_routeutils_serviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_serviceerror"
     },
     {
       "relation": "calls",
@@ -104409,9 +105818,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L413",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderstateroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104420,9 +105829,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L411",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerorderstateroutes",
-      "target": "services_officecontext_resolveofficelocationidfromcookie",
-      "confidence_score": 1.0
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
     },
     {
       "relation": "calls",
@@ -104431,9 +105840,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L660",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerdeliveryroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerdeliveryroutes"
     },
     {
       "relation": "calls",
@@ -104442,9 +105851,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L474",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerdeliveryroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104453,9 +105862,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L465",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerdeliveryroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104464,7 +105873,95 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L463",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerdeliveryroutes",
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L675",
+      "weight": 1.0,
+      "source": "routes_foodselections_foodselectionroutes",
+      "target": "routes_foodselections_registerselectioncontrolroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L528",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncontrolroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L519",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncontrolroutes",
+      "target": "services_officecontext_readrequestedofficelocationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L517",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerselectioncontrolroutes",
+      "target": "services_officecontext_resolveofficelocationidfromcookie",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L676",
+      "weight": 1.0,
+      "source": "routes_foodselections_foodselectionroutes",
+      "target": "routes_foodselections_registerdeliverycompletionroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L571",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerdeliverycompletionroutes",
+      "target": "routes_routeutils_sendserviceerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L562",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerdeliverycompletionroutes",
+      "target": "services_officecontext_readrequestedofficelocationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/routes/foodSelections.ts",
+      "source_location": "L560",
+      "weight": 1.0,
+      "source": "routes_foodselections_registerdeliverycompletionroutes",
       "target": "services_officecontext_resolveofficelocationidfromcookie",
       "confidence_score": 1.0
     },
@@ -104475,9 +105972,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L661",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_foodselectionroutes",
-      "target": "routes_foodselections_registerquickstartandexportroutes",
-      "confidence_score": 1.0
+      "target": "routes_foodselections_registerquickstartandexportroutes"
     },
     {
       "relation": "calls",
@@ -104486,9 +105983,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L623",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerquickstartandexportroutes",
-      "target": "routes_routeutils_sendserviceerror",
-      "confidence_score": 1.0
+      "target": "routes_routeutils_sendserviceerror"
     },
     {
       "relation": "calls",
@@ -104497,9 +105994,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L593",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerquickstartandexportroutes",
-      "target": "services_officecontext_readrequestedofficelocationid",
-      "confidence_score": 1.0
+      "target": "services_officecontext_readrequestedofficelocationid"
     },
     {
       "relation": "calls",
@@ -104508,9 +106005,9 @@
       "source_file": "src/server/routes/foodSelections.ts",
       "source_location": "L591",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_foodselections_registerquickstartandexportroutes",
-      "target": "services_officecontext_resolveofficelocationidfromcookie",
-      "confidence_score": 1.0
+      "target": "services_officecontext_resolveofficelocationidfromcookie"
     },
     {
       "relation": "contains",
@@ -182173,5 +183670,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "06b3d82f04e91a33414a95dd4f1d52fc2e4afec8"
+  "built_at_commit": "34de2a81135401ea6b1157719c9f4e39b697a9be"
 }

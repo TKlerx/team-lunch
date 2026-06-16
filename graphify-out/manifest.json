@@ -1250,8 +1250,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\auth.ts": {
-    "mtime": 1781608471.292321,
-    "ast_hash": "da571cb1beb7aaf9c718e8f52a263b69",
+    "mtime": 1781620176.452407,
+    "ast_hash": "474d75512001db4f03f7104f529746bd",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\authIdentity.ts": {
@@ -1260,8 +1260,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\foodSelections.ts": {
-    "mtime": 1781618672.3433876,
-    "ast_hash": "171a12fc04979d31290a231abd226268",
+    "mtime": 1781618992.3930497,
+    "ast_hash": "ebbceafd45d7ff21f10d8f1569675e29",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\menus.ts": {
@@ -4595,8 +4595,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\complexity-baseline.json": {
-    "mtime": 1781607901.2813146,
-    "ast_hash": "947ce0af01b6870cc6008b34bd2b5d6b",
+    "mtime": 1781620223.32244,
+    "ast_hash": "b68d0ddec64396a5032fe45172cc3f08",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-complexity-baseline.mjs": {
@@ -4650,8 +4650,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\function-size-allowlist.json": {
-    "mtime": 1781618917.762817,
-    "ast_hash": "20ac8e22e9b8d4ec572b852eb6ae75f2",
+    "mtime": 1781620210.2367644,
+    "ast_hash": "eb2dbe1acf87bf34ca9c00ca944a2a08",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-function-size.mjs": {
