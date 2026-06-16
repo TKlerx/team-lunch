@@ -12,6 +12,14 @@ env:
   TEST_DATABASE_SCHEMA: team_lunch_test
   TEST_DATABASE_URL: postgresql://teamlunch:teamlunch@127.0.0.1:55434/teamlunch_test?schema=team_lunch_test
   AUTH_SESSION_SECRET: ci-session-secret-12345678901234567890
+  AUTH_ADMIN_EMAIL: ""
+  AUTH_ADMIN_REMINDER_EMAILS: ""
+  ENTRA_CLIENT_ID: ""
+  ENTRA_CLIENT_SECRET: ""
+  ENTRA_TENANT_ID: ""
+  ENTRA_REDIRECT_URI: ""
+  ENTRA_OPENID_CONFIGURATION_URL: ""
+  APP_PUBLIC_URL: ""
 
 jobs:
   quality:
