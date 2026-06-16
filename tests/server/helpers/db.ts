@@ -91,6 +91,11 @@ export async function cleanDatabase(): Promise<void> {
       await prisma.shoppingListItem.deleteMany();
       await prisma.mealRecommendationImpression.deleteMany();
       await prisma.foodOrder.deleteMany();
+      await prisma.userAnticipatedLike.deleteMany();
+      await prisma.modelEvaluationResult.deleteMany();
+      await prisma.officeRecommenderSetting.deleteMany();
+      await prisma.menuItemFeature.deleteMany();
+      await prisma.menuItemIdentity.deleteMany();
       await prisma.foodSelection.deleteMany();
       await prisma.pollExcludedMenu.deleteMany();
       await prisma.pollVote.deleteMany();
@@ -105,6 +110,7 @@ export async function cleanDatabase(): Promise<void> {
       await prisma.userPreference.deleteMany();
       await prisma.authAuditLog.deleteMany();
       await prisma.auditLog.deleteMany();
+      await prisma.recommenderModel.deleteMany();
       return;
     } catch (error) {
       if (attempt === 2) {
