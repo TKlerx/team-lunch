@@ -65,8 +65,11 @@ description: "Task list — Learned Meal Recommender"
 - [ ] T021 [US1] Apply recency penalty + light diversity pass to learned safe ranking (avoid degenerate repetition, FR-022) in `src/server/services/mealRecommendation.ts`
 - [ ] T022 [US1] Seed cold-start scoring from anticipated-like marks / threshold gate (≥4 orders or ≥2 ratings or marks present) in `src/server/services/mealRecommendation.ts`
 - [ ] T023 [US1] Keep the existing recommendation route thin; wire learned/baseline selection + error handling in `src/server/routes/foodSelections.ts`
+- [ ] T066 [P] [US1] Add tests: allergies hard-exclude and dislikes demote over the shared ingredient vocabulary (exact tag match) + free-text substring fallback, applied identically on baseline, safe-learned, and explore paths, and never learned by the FM (FR-029/FR-030), in `tests/server/meal-recommendation-service.test.ts`
+- [ ] T067 [US1] Implement the deterministic allergy/dislike constraint filter (hard-exclude vs demote) over the shared ingredient tags + free-text fallback, applied after model/baseline scoring for all paths, in `src/server/services/mealRecommendation.ts`
+- [ ] T068 [US1] Offer structured allergy/dislike selection from the ingredient feature vocabulary (with free-text fallback) in the user preferences UI in `src/client/components/` (preferences component) + `src/client/api.ts`
 
-**Checkpoint**: US1 independently functional — learned safe recommendations with guaranteed baseline fallback.
+**Checkpoint**: US1 independently functional — learned safe recommendations with guaranteed baseline fallback, allergies enforced as hard safety constraints on every path.
 
 ---
 

@@ -74,6 +74,14 @@ no SSE broadcast.
 `PUT /api/admin/recommender/offices/:officeId/explore`
 - Request: `{ enabled: boolean }`. 200 `{ officeLocationId, exploreEnabled }`.
 
+## Allergies & dislikes
+
+Reuse feature 002's user-preferences endpoint. Entries may be canonical ingredient
+tags from the shared vocabulary or free text. The client offers structured
+selection from the ingredient vocabulary plus a free-text fallback. Allergies are
+a hard exclude and dislikes a soft demotion, applied deterministically after
+scoring on every path (baseline, safe-learned, explore) — never FM-learned.
+
 ## Privacy invariants (all routes)
 
 - No personal identifiers (names, emails, actor keys, notes, remarks) sent to any

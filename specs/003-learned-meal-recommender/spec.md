@@ -34,6 +34,7 @@ The feature offers two distinct, complementary recommendation modes:
 
 ### Session 2026-06-16
 
+- Q: Do allergies feed the FM, and should they become a dropdown to match FM features? → A: No — allergies are hard safety constraints, never learned by the FM. They stay a deterministic filter applied after scoring, but draw from the same ingredient feature vocabulary (structured selection mapping to `ingredient:*` tags) with a free-text fallback for terms outside the taxonomy (Option C). Dislikes are a softer demotion, same vocabulary.
 - Q: Allow users to highlight meals they expect to like even without ordering? → A: Yes — an always-available "anticipated like/dislike" mark on any current-menu dish, feeding flavor-feature preferences as an explicit pre-taste signal (lower confidence than a real rating, superseded by one). Onboarding is a special case of this for new users.
 - Q: When does the safe learned path serve a user vs the baseline, and how to handle new-user cold start? → A: Optional onboarding active learning — a new/low-history user marks liked dishes from existing menus to seed their profile immediately; if skipped, fall back to baseline until ≥4 orders or ≥2 ratings. The onboarding list covers a varied spread of flavors and is skippable.
 - Q: Model/personalization scope across offices? → A: Single shared model with office as a feature (pools non-identifying flavor signal across offices, still per-user/office-scoped recommendations); per-office evaluation and enablement retained; no personal identifiers pooled.
@@ -229,6 +230,8 @@ preferences.
 - The learned model artifact is missing, stale, or fails to load at request time → recommendations fall back to the deterministic baseline within the normal latency budget.
 - Two dishes share a name across re-imports but are genuinely different → stable item identity must avoid silently merging unrelated history (documented limitation/heuristic).
 - Sparse data for a small office → the system must avoid overconfident personalization and degrade gracefully toward the baseline.
+- A user has an allergy the FM would otherwise rank highly (e.g. learned love of peanut dishes) → the allergy hard-excludes the item regardless of learned score; the model never overrides safety.
+- An allergy/dislike term is outside the ingredient taxonomy (free-text) → substring matching against item text still applies, so the constraint is not silently dropped.
 - A user has one strongly-rated favorite that recurs on the menu → the safe path must not recommend that identical dish every single time (apply diversity/recency), while still respecting the strong preference.
 
 ## Requirements *(mandatory)*
@@ -263,6 +266,8 @@ preferences.
 - **FR-026**: System MUST treat an anticipated-like mark as lower confidence than a real post-meal rating, and MUST let an actual rating of the same dish supersede the mark.
 - **FR-027**: System MUST additionally surface marking as an optional onboarding step for new/low-history users, presenting a spread of varied flavor features (informative selection) rather than near-duplicates; the step MUST be skippable without error.
 - **FR-028**: System MUST let an administrator enable or disable the opt-in explore action per office, independently of the safe-path mode; explore defaults to enabled.
+- **FR-029**: System MUST treat allergies as hard safety constraints and dislikes as soft demotions, applied deterministically after model/baseline scoring; these MUST NOT be learned by or routed through the factorization machine (safety must never be probabilistic), and MUST apply identically on the baseline, safe-learned, and explore paths.
+- **FR-030**: Allergy and dislike entry MUST offer structured selection from the shared ingredient feature vocabulary (mapping to `ingredient:*` tags for reliable matching against tagged items) plus a free-text fallback (substring match) for terms outside the taxonomy.
 
 ### Key Entities *(include if feature involves data)*
 

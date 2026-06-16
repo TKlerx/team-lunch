@@ -108,3 +108,10 @@ Per-office mode + which model serves the safe path.
 - A real rating supersedes an anticipated-like mark for the same identity —
   resolved when assembling training examples and cold-start seeds, not by deleting
   the mark.
+- Allergies/dislikes reuse feature 002's `user_preference` (`allergies_json`,
+  `dislikes_json` string arrays). Entries may be canonical ingredient tags (from
+  the shared vocabulary, e.g. `peanut`) or free text; the constraint filter matches
+  tags exactly and free text by substring. They are a deterministic hard/soft
+  constraint applied after scoring — never FM features. No schema change required
+  beyond optionally validating structured entries against the ingredient
+  vocabulary at the service layer.
