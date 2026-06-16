@@ -60,6 +60,7 @@ import {
 import type { JWTPayload } from 'jose';
 import { recordAuthAuditLog } from '../services/authAudit.js';
 import { getAuthAvatarForUser } from '../services/authAvatar.js';
+import { getDatabaseConnectivityStatus } from '../services/dbConnectivity.js';
 
 type AuthConfigResponse = {
   auth: {
@@ -67,6 +68,7 @@ type AuthConfigResponse = {
     localEnabled: boolean;
     authenticated: boolean;
     warning?: string;
+    databaseUnavailable?: boolean;
     user: {
       username: string;
       method: 'entra' | 'local';
@@ -353,6 +355,31 @@ export default async function authRoutes(app: FastifyInstance) {
   app.get('/api/auth/config', async (req, reply) => {
     try {
       const entra = getEntraConfig();
+      if (!getDatabaseConnectivityStatus().connected) {
+        const response: AuthConfigResponse = {
+          auth: {
+            entraEnabled: entra.enabled,
+            localEnabled: false,
+            authenticated: false,
+            databaseUnavailable: true,
+            warning:
+              'The database is unavailable, so no sign-in method can be used right now. Start the database (e.g. the database container) and reload this page.',
+            user: null,
+            officeLocation: null,
+            officeLocations: [],
+            accessibleOfficeLocations: [],
+            approvalRequired: false,
+            approved: false,
+            blocked: false,
+            isAdmin: false,
+            role: null,
+            pendingApprovals: [],
+            users: [],
+          },
+        };
+        reply.header('Cache-Control', 'no-store');
+        return reply.send(response);
+      }
       let session = getAuthSessionFromCookieHeader(req.headers.cookie);
       if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
         session = null;

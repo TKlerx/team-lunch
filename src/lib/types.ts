@@ -204,6 +204,7 @@ export type AuthConfigResponse = {
     localEnabled: boolean;
     authenticated: boolean;
     warning?: string;
+    databaseUnavailable?: boolean;
     user: {
       username: string;
       method: AuthMethod;

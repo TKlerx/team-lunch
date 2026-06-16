@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { buildApp } from '../../src/server/index.js';
 import { cleanDatabase } from './helpers/db.js';
+import { getDatabaseConnectivityStatus } from '../../src/server/services/dbConnectivity.js';
+
+vi.mock('../../src/server/services/dbConnectivity.js', async () => {
+  const actual = await vi.importActual<typeof import('../../src/server/services/dbConnectivity.js')>(
+    '../../src/server/services/dbConnectivity.js',
+  );
+  return { ...actual, getDatabaseConnectivityStatus: vi.fn(actual.getDatabaseConnectivityStatus) };
+});
 
 describe('auth routes config', () => {
   const originalEnv = {
@@ -13,6 +21,7 @@ describe('auth routes config', () => {
   };
 
   beforeEach(() => {
+    (getDatabaseConnectivityStatus as Mock).mockReturnValue({ connected: true, attemptCount: 0 });
     process.env.ENTRA_CLIENT_ID = 'client-id';
     process.env.ENTRA_CLIENT_SECRET = 'client-secret';
     process.env.ENTRA_TENANT_ID = 'tenant-id';
@@ -21,6 +30,7 @@ describe('auth routes config', () => {
   });
 
   afterEach(async () => {
+    (getDatabaseConnectivityStatus as Mock).mockReset();
     await cleanDatabase();
     for (const [key, value] of Object.entries(originalEnv)) {
       if (value === undefined) {
@@ -62,6 +72,25 @@ describe('auth routes config', () => {
     expect(loginRes.headers.location).toContain(
       encodeURIComponent('https://override.example.com/callback'),
     );
+
+    await app.close();
+  });
+
+  it('reports database unavailable instead of a misleading auth warning when the DB is down', async () => {
+    (getDatabaseConnectivityStatus as Mock).mockReturnValue({ connected: false, attemptCount: 1 });
+    const app = await buildApp();
+
+    const configRes = await app.inject({ method: 'GET', url: '/api/auth/config' });
+    expect(configRes.statusCode).toBe(200);
+    expect(configRes.json()).toMatchObject({
+      auth: {
+        databaseUnavailable: true,
+        localEnabled: false,
+        authenticated: false,
+      },
+    });
+    expect(configRes.json().auth.warning).toMatch(/database is unavailable/i);
+    expect(configRes.json().auth.warning).not.toMatch(/Local sign-in is still available/i);
 
     await app.close();
   });
