@@ -24,6 +24,8 @@ external ML service, no Python sidecar, no new heavy dependency.
   cheap dot-products.
 
 **Alternatives considered**:
+- *@wlearn/xlearn WASM dependency*: viable spike, not selected as the default.
+  See the dependency spike below.
 - *External ML service / Python microservice*: rejected — adds infra, deploy, and
   privacy surface; overkill for hundreds of parameters; conflicts with the
   single-package, dependency-light constitution.
@@ -175,6 +177,41 @@ per-office gate matches the shared-model-but-per-office-rollout decision.
 **Alternatives considered**: Live A/B test (rejected for v1 — needs traffic and
 time the offline replay avoids; the conservative gate is offline-first); NDCG/MRR
 (kept internally as secondary diagnostics but not the gate, per clarification Q2).
+
+## Dependency spike: FM libraries (`@wlearn/xlearn`)
+
+**Decision**: Keep the default implementation as an in-repo TypeScript FM for
+v1, but record `@wlearn/xlearn` as a viable optional spike/fallback dependency
+if the hand-rolled implementation becomes too costly or underperforms.
+
+**Findings**:
+- `@wlearn/xlearn` 0.2.0 exposes xLearn v0.44 compiled to WebAssembly for Node
+  and browser use, with LR/FM/FFM classifiers/regressors.
+- It supports dense and CSR sparse inputs, `predictProba`, model save/load as a
+  `Uint8Array`, and Apache-2.0 licensing.
+- A local Windows/Node smoke test passed: install, CommonJS import, FM create,
+  fit, `predictProba`, save/load, and `dispose`.
+- It requires explicit `.dispose()` because WASM memory is not garbage collected.
+- It does **not** support `sampleWeight`, which conflicts with the planned
+  confidence-weighted examples from Decision 2 unless we oversample examples or
+  accept weaker weighting.
+
+**Rationale for not adopting by default**:
+- Our current FM is small sparse-vector math; owning it keeps behavior,
+  serialization, confidence weights, deterministic seeding, and explainability
+  fully under test in the repo.
+- A new WASM dependency adds memory lifecycle, binary artifact, CommonJS interop,
+  and package supply-chain surface. That is acceptable only if it materially
+  reduces implementation risk or improves model quality.
+- The app's current data scale is tiny; xLearn's main advantage is high-scale
+  sparse training, which we do not need yet.
+
+**When to revisit**:
+- Hand-rolled FM training fails to beat the deterministic baseline despite sane
+  features.
+- Training/evaluation becomes slow enough that a WASM backend matters.
+- We decide confidence weights can be implemented by oversampling or by changing
+  the learning target.
 
 ## Decision 9: Privacy & office scoping
 
