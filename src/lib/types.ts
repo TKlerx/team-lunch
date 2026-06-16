@@ -239,6 +239,7 @@ export type AuthConfigResponse = {
     entraEnabled: boolean;
     localEnabled: boolean;
     authenticated: boolean;
+    databaseUnavailable?: boolean;
     warning?: string;
     user: {
       username: string;

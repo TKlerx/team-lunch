@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+.agents/
+.claude/
+.codex/
+graphify-out/
+prisma/
+src/server/generated/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+

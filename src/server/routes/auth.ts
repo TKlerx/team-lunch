@@ -60,12 +60,14 @@ import {
 import type { JWTPayload } from 'jose';
 import { recordAuthAuditLog } from '../services/authAudit.js';
 import { getAuthAvatarForUser } from '../services/authAvatar.js';
+import { getDatabaseConnectivityStatus } from '../services/dbConnectivity.js';
 
 type AuthConfigResponse = {
   auth: {
     entraEnabled: boolean;
     localEnabled: boolean;
     authenticated: boolean;
+    databaseUnavailable?: boolean;
     warning?: string;
     user: {
       username: string;
@@ -120,6 +122,30 @@ function buildDefaultApprovalState() {
       name: string;
       isActive: boolean;
     }>,
+  };
+}
+
+function buildDatabaseUnavailableAuthConfig(entraEnabled: boolean): AuthConfigResponse {
+  return {
+    auth: {
+      entraEnabled,
+      localEnabled: false,
+      authenticated: false,
+      databaseUnavailable: true,
+      warning:
+        'The database is unavailable, so no sign-in method can be used right now. Start the database and reload this page.',
+      user: null,
+      officeLocation: null,
+      officeLocations: [],
+      accessibleOfficeLocations: [],
+      approvalRequired: false,
+      approved: false,
+      blocked: false,
+      isAdmin: false,
+      role: null,
+      pendingApprovals: [],
+      users: [],
+    },
   };
 }
 
@@ -257,6 +283,104 @@ async function requireCurrentAuthSession(cookieHeader: string | undefined): Prom
   return { session, access };
 }
 
+async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
+  try {
+    const entra = getEntraConfig();
+    if (!getDatabaseConnectivityStatus().connected) {
+      reply.header('Cache-Control', 'no-store');
+      return reply.send(buildDatabaseUnavailableAuthConfig(entra.enabled));
+    }
+
+    let session = getAuthSessionFromCookieHeader(req.headers.cookie);
+    if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
+      session = null;
+    }
+    const localEnabled = !!session || (await hasAnyLocalAuthUsers());
+    let warning = '';
+    let approvalState = buildDefaultApprovalState();
+    let userProfile: AuthConfigResponse['auth']['user'] = null;
+    if (session) {
+      try {
+        approvalState = await resolveUserApproval(session.username);
+        await ensureAuthAccessUserForLogin(session.username);
+        await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
+        const displayProfile = await getAuthDisplayProfile(session.username);
+        userProfile = {
+          username: session.username,
+          method: session.method,
+          displayName: displayProfile.displayName,
+          displayNameSource: displayProfile.displayNameSource,
+        };
+      } catch {
+        session = null;
+        reply.header('Set-Cookie', buildClearSessionCookieHeader());
+        warning = 'Your session expired. Please sign in again.';
+      }
+    }
+    let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
+    let users: AuthConfigResponse['auth']['users'] = [];
+    if (!warning && session && approvalState.isAdmin) {
+      try {
+        [pendingApprovals, users] = await Promise.all([
+          listPendingAccessRequests(),
+          listAccessUsers(),
+        ]);
+      } catch {
+        warning =
+          'Authentication settings are partially unavailable. Local sign-in is still available.';
+      }
+    }
+    let officeLocations: OfficeLocation[] = [];
+    try {
+      officeLocations = await listOfficeLocations();
+    } catch {
+      warning =
+        'Authentication settings are partially unavailable. Local sign-in is still available.';
+    }
+    const accessibleOfficeLocations = approvalState.isAdmin
+      ? officeLocations
+      : officeLocations.filter((location) =>
+          approvalState.accessibleOfficeLocationIds.includes(location.id),
+        );
+
+    const response: AuthConfigResponse = {
+      auth: {
+        entraEnabled: entra.enabled,
+        localEnabled,
+        authenticated: !!session,
+        ...(warning || (!entra.enabled && !localEnabled)
+          ? {
+              warning:
+                warning ||
+                'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
+            }
+          : {}),
+        user: userProfile,
+        officeLocation: approvalState.officeLocationId
+          ? {
+              id: approvalState.officeLocationId,
+              key: approvalState.officeLocationKey ?? '',
+              name: approvalState.officeLocationName ?? '',
+            }
+          : null,
+        officeLocations,
+        accessibleOfficeLocations,
+        approvalRequired: approvalState.approvalRequired,
+        approved: approvalState.approved,
+        blocked: approvalState.blocked,
+        isAdmin: approvalState.isAdmin,
+        role: session ? (approvalState.isAdmin ? 'admin' : 'user') : null,
+        pendingApprovals,
+        users,
+      },
+    };
+
+    return reply.send(response);
+  } catch (err) {
+    return sendServiceError(reply, err);
+  }
+}
+
 export default async function authRoutes(app: FastifyInstance) {
   const handleEntraCallback = async (
     req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
@@ -350,99 +474,7 @@ export default async function authRoutes(app: FastifyInstance) {
     }
   };
 
-  app.get('/api/auth/config', async (req, reply) => {
-    try {
-      const entra = getEntraConfig();
-      let session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
-        session = null;
-      }
-      const localEnabled = !!session || (await hasAnyLocalAuthUsers());
-      let warning = '';
-      let approvalState = buildDefaultApprovalState();
-      let userProfile: AuthConfigResponse['auth']['user'] = null;
-      if (session) {
-        try {
-          approvalState = await resolveUserApproval(session.username);
-          await ensureAuthAccessUserForLogin(session.username);
-          await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
-          const displayProfile = await getAuthDisplayProfile(session.username);
-          userProfile = {
-            username: session.username,
-            method: session.method,
-            displayName: displayProfile.displayName,
-            displayNameSource: displayProfile.displayNameSource,
-          };
-        } catch {
-          session = null;
-          reply.header('Set-Cookie', buildClearSessionCookieHeader());
-          warning =
-            'Your session expired. Please sign in again.';
-        }
-      }
-      let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
-      let users: AuthConfigResponse['auth']['users'] = [];
-      if (!warning && session && approvalState.isAdmin) {
-        try {
-          [pendingApprovals, users] = await Promise.all([
-            listPendingAccessRequests(),
-            listAccessUsers(),
-          ]);
-        } catch {
-          warning =
-            'Authentication settings are partially unavailable. Local sign-in is still available.';
-        }
-      }
-      let officeLocations: OfficeLocation[] = [];
-      try {
-        officeLocations = await listOfficeLocations();
-      } catch {
-        warning =
-          'Authentication settings are partially unavailable. Local sign-in is still available.';
-      }
-      const accessibleOfficeLocations = approvalState.isAdmin
-        ? officeLocations
-        : officeLocations.filter((location) =>
-            approvalState.accessibleOfficeLocationIds.includes(location.id),
-          );
-
-      const response: AuthConfigResponse = {
-        auth: {
-          entraEnabled: entra.enabled,
-          localEnabled,
-          authenticated: !!session,
-          ...(warning || (!entra.enabled && !localEnabled)
-            ? {
-                warning:
-                  warning ||
-                  'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
-              }
-            : {}),
-          user: userProfile,
-          officeLocation: approvalState.officeLocationId
-            ? {
-                id: approvalState.officeLocationId,
-                key: approvalState.officeLocationKey ?? '',
-                name: approvalState.officeLocationName ?? '',
-              }
-            : null,
-          officeLocations,
-          accessibleOfficeLocations,
-          approvalRequired: approvalState.approvalRequired,
-          approved: approvalState.approved,
-          blocked: approvalState.blocked,
-          isAdmin: approvalState.isAdmin,
-          role: session ? (approvalState.isAdmin ? 'admin' : 'user') : null,
-          pendingApprovals,
-          users,
-        },
-      };
-
-      return reply.send(response);
-    } catch (err) {
-      return sendServiceError(reply, err);
-    }
-  });
+  app.get('/api/auth/config', handleAuthConfig);
 
   app.get('/api/auth/me/avatar', async (req, reply) => {
     try {

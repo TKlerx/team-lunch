@@ -62,6 +62,41 @@ afterEach(() => {
 });
 
 describe('AuthGate sign-in methods', () => {
+  it('shows database unavailable state before sign-in choices', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({
+          auth: {
+            ...baseAuthState,
+            localEnabled: false,
+            authenticated: false,
+            databaseUnavailable: true,
+            warning: 'The database is unavailable, so no sign-in method can be used right now.',
+            user: null,
+            approvalRequired: false,
+            approved: false,
+            isAdmin: false,
+            role: null,
+          },
+        });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <AuthGate>
+        <div>App content</div>
+      </AuthGate>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /database unavailable/i })).toBeInTheDocument();
+    expect(screen.getByText(/no sign-in method can be used/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /sign in/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('App content')).not.toBeInTheDocument();
+  });
+
   it('clears stale auth markers and shows setup error when auth is not configured', async () => {
     localStorage.setItem('team_lunch_auth_method', 'entra');
     localStorage.setItem('team_lunch_auth_role', 'admin');
