@@ -10,6 +10,8 @@ import type {
   ImportMenuViolation,
   ImportMenuPreviewResponse,
   RemindMissingOrdersResponse,
+  MealRecommendationRequest,
+  MealRecommendationResponse,
   FoodSelectionFallbackCandidate,
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
@@ -280,6 +282,14 @@ export function completeFoodSelection(selectionId: string): Promise<FoodSelectio
 export function completeFoodSelectionNow(selectionId: string): Promise<FoodSelection> {
   return request<FoodSelection>(apiPath(`/food-selections/${selectionId}/complete-now`), {
     method: 'POST',
+  });
+}
+
+export function recommendMeal(selectionId: string, useAi?: boolean): Promise<MealRecommendationResponse> {
+  const body: MealRecommendationRequest = { useAi };
+  return request<MealRecommendationResponse>(apiPath(`/food-selections/${selectionId}/recommendations`), {
+    method: 'POST',
+    body: JSON.stringify(body),
   });
 }
 

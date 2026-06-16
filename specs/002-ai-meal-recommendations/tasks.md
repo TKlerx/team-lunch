@@ -31,13 +31,13 @@ description: "Task list — AI Meal Recommendations"
 
 **Critical**: No user-story implementation should start until these tasks are complete.
 
-- [ ] T007 [P] Add failing deterministic ranking tests in `tests/server/meal-recommendation-service.test.ts`
-- [ ] T008 [P] Add failing API contract/auth tests in `tests/server/meal-recommendation-routes.test.ts`
-- [ ] T009 [P] Add failing AI payload privacy tests in `tests/server/meal-recommendation-ai.test.ts`
-- [ ] T010 Implement deterministic ranking helpers and scoring constants in `src/server/services/mealRecommendation.ts`
-- [ ] T011 Implement sanitized AI payload builder and provider-fallback boundary in `src/server/services/mealRecommendationAi.ts`
-- [ ] T012 Implement impression persistence mapper in `src/server/services/mealRecommendation.ts`
-- [ ] T013 Add route shell `POST /api/food-selections/:id/recommendations` in `src/server/routes/foodSelections.ts`
+- [X] T007 [P] Add failing deterministic ranking tests in `tests/server/meal-recommendation-service.test.ts`
+- [X] T008 [P] Add failing API contract/auth tests in `tests/server/meal-recommendation-routes.test.ts`
+- [X] T009 [P] Add failing AI payload privacy tests in `tests/server/meal-recommendation-ai.test.ts`
+- [X] T010 Implement deterministic ranking helpers and scoring constants in `src/server/services/mealRecommendation.ts`
+- [X] T011 Implement sanitized AI payload builder and provider-fallback boundary in `src/server/services/mealRecommendationAi.ts`
+- [X] T012 Implement impression persistence mapper in `src/server/services/mealRecommendation.ts`
+- [X] T013 Add route shell `POST /api/food-selections/:id/recommendations` in `src/server/routes/foodSelections.ts`
 
 **Checkpoint**: Schema, shared types, privacy guardrails, ranking foundation, persistence mapper, and route shell are ready.
 
@@ -51,19 +51,19 @@ description: "Task list — AI Meal Recommendations"
 
 ### Tests for User Story 1
 
-- [ ] T014 [P] [US1] Add service tests for personal ratings, defaults, preferences, popularity, recency, and no-history fallback in `tests/server/meal-recommendation-service.test.ts`
-- [ ] T015 [P] [US1] Add route tests for authenticated request, office scoping, unavailable selection, and persisted impression in `tests/server/meal-recommendation-routes.test.ts`
-- [ ] T016 [P] [US1] Add client tests for "Recommend a meal" button, loading state, ranked results, and add-order compatibility in `tests/client/FoodSelectionActiveView.test.tsx`
-- [ ] T017 [P] [US1] Add deterministic recommendation latency regression test for seeded office history in `tests/server/meal-recommendation-service.test.ts`
+- [X] T014 [P] [US1] Add service tests for personal ratings, defaults, preferences, popularity, recency, and no-history fallback in `tests/server/meal-recommendation-service.test.ts`
+- [X] T015 [P] [US1] Add route tests for authenticated request, office scoping, unavailable selection, and persisted impression in `tests/server/meal-recommendation-routes.test.ts`
+- [X] T016 [P] [US1] Add client tests for "Recommend a meal" button, loading state, ranked results, and add-order compatibility in `tests/client/FoodSelectionActiveView.test.tsx`
+- [X] T017 [P] [US1] Add deterministic recommendation latency regression test for seeded office history in `tests/server/meal-recommendation-service.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Query current food selection, current menu items, user history, defaults, preferences, and office popularity in `src/server/services/mealRecommendation.ts`
-- [ ] T019 [US1] Implement deterministic scoring, preference demotion/warnings, no-history fallback, and result ordering in `src/server/services/mealRecommendation.ts`
-- [ ] T020 [US1] Complete `POST /api/food-selections/:id/recommendations` auth, office resolution, validation, service call, and error handling in `src/server/routes/foodSelections.ts`
-- [ ] T021 [US1] Wire `recommendMeal` request/response handling in `src/client/api.ts`
-- [ ] T022 [US1] Add "Recommend a meal" action, loading/error states, and ranked recommendation display in `src/client/components/FoodSelectionActiveView.tsx`
-- [ ] T023 [US1] Persist displayed deterministic recommendation impressions with item/menu snapshots in `src/server/services/mealRecommendation.ts`
+- [X] T018 [US1] Query current food selection, current menu items, user history, defaults, preferences, and office popularity in `src/server/services/mealRecommendation.ts`
+- [X] T019 [US1] Implement deterministic scoring, preference demotion/warnings, no-history fallback, and result ordering in `src/server/services/mealRecommendation.ts`
+- [X] T020 [US1] Complete `POST /api/food-selections/:id/recommendations` auth, office resolution, validation, service call, and error handling in `src/server/routes/foodSelections.ts`
+- [X] T021 [US1] Wire `recommendMeal` request/response handling in `src/client/api.ts`
+- [X] T022 [US1] Add "Recommend a meal" action, loading/error states, and ranked recommendation display in `src/client/components/FoodSelectionActiveView.tsx`
+- [X] T023 [US1] Persist displayed deterministic recommendation impressions with item/menu snapshots in `src/server/services/mealRecommendation.ts`
 
 **Checkpoint**: US1 is independently functional: deterministic recommendations work on request without AI.
 
@@ -77,16 +77,16 @@ description: "Task list — AI Meal Recommendations"
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Add service tests for deterministic reason generation and source signal labels in `tests/server/meal-recommendation-service.test.ts`
-- [ ] T025 [P] [US2] Add AI enrichment success/failure/malformed-output tests in `tests/server/meal-recommendation-ai.test.ts`
-- [ ] T026 [P] [US2] Add client tests for displayed explanations and deterministic fallback warning behavior in `tests/client/FoodSelectionActiveView.test.tsx`
+- [X] T024 [P] [US2] Add service tests for deterministic reason generation and source signal labels in `tests/server/meal-recommendation-service.test.ts`
+- [X] T025 [P] [US2] Add AI enrichment success/failure/malformed-output tests in `tests/server/meal-recommendation-ai.test.ts`
+- [X] T026 [P] [US2] Add client tests for displayed explanations and deterministic fallback warning behavior in `tests/client/FoodSelectionActiveView.test.tsx`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implement deterministic explanation templates and source signal selection in `src/server/services/mealRecommendation.ts`
-- [ ] T028 [US2] Implement optional AI explanation enrichment with 2 second timeout/fallback behavior in `src/server/services/mealRecommendationAi.ts`
-- [ ] T029 [US2] Store displayed AI-assisted or fallback explanations in recommendation impressions in `src/server/services/mealRecommendation.ts`
-- [ ] T030 [US2] Render recommendation reasons, source labels, and non-blocking warnings in `src/client/components/FoodSelectionActiveView.tsx`
+- [X] T027 [US2] Implement deterministic explanation templates and source signal selection in `src/server/services/mealRecommendation.ts`
+- [X] T028 [US2] Implement optional AI explanation enrichment with 2 second timeout/fallback behavior in `src/server/services/mealRecommendationAi.ts`
+- [X] T029 [US2] Store displayed AI-assisted or fallback explanations in recommendation impressions in `src/server/services/mealRecommendation.ts`
+- [X] T030 [US2] Render recommendation reasons, source labels, and non-blocking warnings in `src/client/components/FoodSelectionActiveView.tsx`
 
 **Checkpoint**: US2 is independently functional: every suggestion explains itself and AI failure does not break recommendations.
 
@@ -100,16 +100,16 @@ description: "Task list — AI Meal Recommendations"
 
 ### Tests for User Story 4
 
-- [ ] T031 [P] [US4] Add payload exclusion tests for names, emails, actor keys, notes, and feedback remarks in `tests/server/meal-recommendation-ai.test.ts`
-- [ ] T032 [P] [US4] Add route tests for AI disabled, provider failure, and deterministic fallback persistence in `tests/server/meal-recommendation-routes.test.ts`
-- [ ] T033 [P] [US4] Add client test proving recommendation UI still works when response source is `deterministic_fallback` in `tests/client/FoodSelectionActiveView.test.tsx`
+- [X] T031 [P] [US4] Add payload exclusion tests for names, emails, actor keys, notes, and feedback remarks in `tests/server/meal-recommendation-ai.test.ts`
+- [X] T032 [P] [US4] Add route tests for AI disabled, provider failure, and deterministic fallback persistence in `tests/server/meal-recommendation-routes.test.ts`
+- [X] T033 [P] [US4] Add client test proving recommendation UI still works when response source is `deterministic_fallback` in `tests/client/FoodSelectionActiveView.test.tsx`
 
 ### Implementation for User Story 4
 
-- [ ] T034 [US4] Add AI provider configuration parsing and disabled-state behavior in `src/server/services/mealRecommendationAi.ts`
-- [ ] T035 [US4] Harden AI payload construction to exclude disallowed fields in `src/server/services/mealRecommendationAi.ts`
-- [ ] T036 [US4] Return `deterministic_fallback` source and warning on provider failure in `src/server/services/mealRecommendation.ts`
-- [ ] T037 [US4] Preserve order placement and food-selection flow behavior regardless of recommendation/AI failures in `src/client/components/FoodSelectionActiveView.tsx`
+- [X] T034 [US4] Add AI provider configuration parsing and disabled-state behavior in `src/server/services/mealRecommendationAi.ts`
+- [X] T035 [US4] Harden AI payload construction to exclude disallowed fields in `src/server/services/mealRecommendationAi.ts`
+- [X] T036 [US4] Return `deterministic_fallback` source and warning on provider failure in `src/server/services/mealRecommendation.ts`
+- [X] T037 [US4] Preserve order placement and food-selection flow behavior regardless of recommendation/AI failures in `src/client/components/FoodSelectionActiveView.tsx`
 
 **Checkpoint**: US4 is independently functional: privacy and graceful fallback behavior are covered.
 
@@ -123,14 +123,14 @@ description: "Task list — AI Meal Recommendations"
 
 ### Tests for User Story 3
 
-- [ ] T038 [P] [US3] Add outcome-learning service tests for recommended-ordered-rated-high and recommended-ordered-rated-low flows in `tests/server/meal-recommendation-service.test.ts`
-- [ ] T039 [P] [US3] Add route regression test proving no separate helpful/not-helpful feedback endpoint exists in `tests/server/meal-recommendation-routes.test.ts`
+- [X] T038 [P] [US3] Add outcome-learning service tests for recommended-ordered-rated-high and recommended-ordered-rated-low flows in `tests/server/meal-recommendation-service.test.ts`
+- [X] T039 [P] [US3] Add route regression test proving no separate helpful/not-helpful feedback endpoint exists in `tests/server/meal-recommendation-routes.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T040 [US3] Query prior recommendation impressions alongside later orders/ratings in `src/server/services/mealRecommendation.ts`
-- [ ] T041 [US3] Incorporate recommendation outcome boosts/demotions into deterministic scoring in `src/server/services/mealRecommendation.ts`
-- [ ] T042 [US3] Ensure outcome analysis remains office-scoped and actor-key scoped in `src/server/services/mealRecommendation.ts`
+- [X] T040 [US3] Query prior recommendation impressions alongside later orders/ratings in `src/server/services/mealRecommendation.ts`
+- [X] T041 [US3] Incorporate recommendation outcome boosts/demotions into deterministic scoring in `src/server/services/mealRecommendation.ts`
+- [X] T042 [US3] Ensure outcome analysis remains office-scoped and actor-key scoped in `src/server/services/mealRecommendation.ts`
 
 **Checkpoint**: US3 is independently functional: order/rating outcomes influence later recommendations without a separate feedback UI.
 
@@ -140,13 +140,13 @@ description: "Task list — AI Meal Recommendations"
 
 **Purpose**: Final documentation, validation, and graph upkeep.
 
-- [ ] T043 [P] Update feature docs/discoveries for recommendation env and privacy behavior in `README.md`
-- [ ] T044 [P] Update project runbook discoveries for recommendation impressions and AI fallback in `AGENTS.md`
-- [ ] T045 [P] Update shared persistence notes for recommendation impressions in `specs/data-model.md`
-- [ ] T046 Run focused server/client suites from `specs/002-ai-meal-recommendations/quickstart.md`
-- [ ] T047 Run `rtk pwsh -NoLogo -NoProfile -File ./validate.ps1 all`
-- [ ] T048 Run `rtk graphify update . --no-cluster` and stage updated `graphify-out/graph.json`
-- [ ] T049 Mark `IMPLEMENTATION_PLAN.md` item 64.3 complete only after implementation and validation pass
+- [X] T043 [P] Update feature docs/discoveries for recommendation env and privacy behavior in `README.md`
+- [X] T044 [P] Update project runbook discoveries for recommendation impressions and AI fallback in `AGENTS.md`
+- [X] T045 [P] Update shared persistence notes for recommendation impressions in `specs/data-model.md`
+- [X] T046 Run focused server/client suites from `specs/002-ai-meal-recommendations/quickstart.md`
+- [X] T047 Run `rtk pwsh -NoLogo -NoProfile -File ./validate.ps1 all`
+- [X] T048 Run `rtk graphify update . --no-cluster` and stage updated `graphify-out/graph.json`
+- [X] T049 Mark `IMPLEMENTATION_PLAN.md` item 64.3 complete only after implementation and validation pass
 
 ---
 

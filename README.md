@@ -243,6 +243,49 @@ If you deploy at the site root, leave both empty.
 - `ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, `ENTRA_TENANT_ID`: enable Entra login
 - `GRAPH_MAIL_SENDER`: enable Graph-based mail delivery
 
+### Optional AI Meal Recommendation Settings
+
+- `AI_RECOMMENDATION_ENDPOINT`, `AI_RECOMMENDATION_API_KEY`, `AI_RECOMMENDATION_MODEL`,
+  `AI_RECOMMENDATION_PROVIDER`: enable AI-assisted explanations for "Recommend a
+  meal". All four must be set or AI assistance stays disabled.
+- The AI never picks or ranks items - ranking is always deterministic. AI only
+  supplies short reason text for the items the deterministic ranker already
+  selected.
+- Ranking is per person and content-based: items are tagged with ingredient and
+  style features (e.g. chicken, thai, spicy), a taste profile is learned from
+  each user's own history, and unrated menu items are scored by how well their
+  features match flavors that user prefers - not just by exact dishes they
+  ordered before. The profile uses both explicit star ratings and implicit
+  signal (simply ordering an item is a mild positive vote for its features), so
+  it still works when people rarely rate.
+- Deterministic meal recommendations (`POST
+  /api/food-selections/:id/recommendations`) always work without these
+  variables. When AI is requested but not configured, unavailable, or times out
+  (2s), the response falls back to `source: "deterministic_fallback"` with a
+  warning, never an error.
+- AI payloads sent to the provider only include item/menu names, ranks, scores,
+  signal categories, and ingredient preferences. Names, emails, actor keys, order
+  notes, and feedback remarks are never sent.
+
+#### Using Azure OpenAI
+
+Set `AI_RECOMMENDATION_PROVIDER="azure-openai"` to use an Azure OpenAI chat
+deployment directly:
+
+- `AI_RECOMMENDATION_ENDPOINT`: full Azure OpenAI chat-completions URL, e.g.
+  `https://<resource>.openai.azure.com/openai/deployments/<deployment>/chat/completions?api-version=2024-08-01-preview`
+- `AI_RECOMMENDATION_API_KEY`: Azure OpenAI key, sent as the `api-key` header
+- `AI_RECOMMENDATION_MODEL`: informational (the deployment in the endpoint URL
+  determines the actual model)
+
+In this mode the app sends a chat-completion request with
+`response_format: { type: "json_object" }` and a system prompt instructing the
+model to return `{"explanations":[{"itemName":"...","reason":"..."}]}` based
+only on the sanitized item/preference data above. Any other
+`AI_RECOMMENDATION_PROVIDER` value uses the generic custom-endpoint contract
+(`Authorization: Bearer` header, `{model, items, preferences}` body, expects
+`{explanations:[...]}` directly).
+
 ## Development Commands
 
 ```bash

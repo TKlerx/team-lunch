@@ -89,6 +89,7 @@ export async function cleanDatabase(): Promise<void> {
     try {
       // Delete in dependency order (children first)
       await prisma.shoppingListItem.deleteMany();
+      await prisma.mealRecommendationImpression.deleteMany();
       await prisma.foodOrder.deleteMany();
       await prisma.foodSelection.deleteMany();
       await prisma.pollExcludedMenu.deleteMany();

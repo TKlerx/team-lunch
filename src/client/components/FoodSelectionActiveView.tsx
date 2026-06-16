@@ -11,7 +11,7 @@ import {
   isAdminAuthenticatedUser,
   isCreatorAuthenticatedUser,
 } from '../auth.js';
-import type { UserPreferences } from '../../lib/types.js';
+import type { MealRecommendationResponse, UserPreferences } from '../../lib/types.js';
 
 type ItemWarnings = {
   allergies: string[];
@@ -389,6 +389,9 @@ export default function FoodSelectionActiveView() {
   const [remindingMissing, setRemindingMissing] = useState(false);
   const [reminderMessage, setReminderMessage] = useState('');
   const [reminderError, setReminderError] = useState('');
+  const [recommendations, setRecommendations] = useState<MealRecommendationResponse | null>(null);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState('');
   if (!activeFoodSelection || !nickname) return null;
 
   const selection = activeFoodSelection;
@@ -549,6 +552,19 @@ export default function FoodSelectionActiveView() {
     }
   };
 
+  const handleRecommendMeal = async () => {
+    setRecommendationsLoading(true);
+    setRecommendationsError('');
+    try {
+      const result = await api.recommendMeal(selection.id);
+      setRecommendations(result);
+    } catch (err) {
+      setRecommendationsError((err as Error).message);
+    } finally {
+      setRecommendationsLoading(false);
+    }
+  };
+
   const timerOptions = Array.from({ length: 24 }, (_, index) => (index + 1) * 5);
   const totalSeconds = Math.max(
     1,
@@ -679,6 +695,50 @@ export default function FoodSelectionActiveView() {
             itemNumberById={itemNumberById}
             totalPrice={totalPrice}
           />
+          </div>
+          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold text-fg">Meal recommendations</h3>
+              <button
+                type="button"
+                onClick={() => void handleRecommendMeal()}
+                disabled={recommendationsLoading}
+                className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              >
+                {recommendationsLoading ? 'Thinking...' : 'Recommend a meal'}
+              </button>
+            </div>
+            {recommendationsError && (
+              <p className="mt-2 text-sm text-danger-fg">{recommendationsError}</p>
+            )}
+            {recommendations && (
+              <div className="mt-3 space-y-2">
+                {recommendations.source === 'ai_assisted' && (
+                  <p className="text-xs font-medium text-accent-fg">AI-assisted suggestions</p>
+                )}
+                {recommendations.warnings.map((warning) => (
+                  <p key={warning} className="text-xs text-warning-fg">
+                    {warning}
+                  </p>
+                ))}
+                <ul className="space-y-2">
+                  {recommendations.items.map((item) => (
+                    <li key={item.itemId ?? item.itemName} className="rounded border border-border p-2">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="text-sm font-medium text-fg">
+                          #{item.rank} {item.itemName}
+                        </span>
+                        <span className="text-xs text-fg-muted">Score: {item.score}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-fg-muted">
+                        {item.reason}
+                        {item.aiAssisted && <span className="ml-1 text-accent-fg">(AI-assisted)</span>}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           <div className="rounded-lg border border-accent bg-accent-soft p-4 shadow-sm">
             <h3 className="text-sm font-semibold text-accent-fg">Recommended next action</h3>

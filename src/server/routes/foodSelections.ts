@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import * as foodSelectionService from '../services/foodSelection.js';
 import * as pollService from '../services/poll.js';
+import * as mealRecommendationService from '../services/mealRecommendation.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
@@ -25,6 +26,7 @@ import type {
   RemindMissingOrdersRequest,
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
+  MealRecommendationRequest,
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
@@ -265,6 +267,29 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
           officeLocationId,
         );
         return reply.send({ remindedCount });
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  // POST /api/food-selections/:id/recommendations — generate a personalized meal recommendation
+  app.post<{ Params: { id: string }; Body: MealRecommendationRequest }>(
+    '/api/food-selections/:id/recommendations',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealRecommendationService.generateRecommendations(
+          req.params.id,
+          officeLocationId,
+          actor,
+          req.body?.useAi,
+        );
+        return reply.send(result);
       } catch (err) {
         return sendServiceError(reply, err);
       }

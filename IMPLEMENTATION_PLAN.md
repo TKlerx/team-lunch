@@ -1503,11 +1503,12 @@
   - Added an opt-in real-delivery smoke test guarded by `GRAPH_MAIL_TEST_RECIPIENT` so Graph mail can be verified in CI/local runs without sending mail by default
   - Added focused server coverage for Graph token/mail requests and poll-start notification behavior, then reran server notification suites plus full validation
 
-- [ ] **64.3 Meal recommender foundation + feedback loop**
+- [x] **64.3 Meal recommender foundation + feedback loop** *(done)*
   - Spec: `specs/002-ai-meal-recommendations/spec.md` (backlog `BACKLOG-001`)
-  - Define persisted recommendation signals from historical orders/ratings/preferences
-  - Add recommendation endpoint for current menu items per user
-  - Add user feedback capture on recommendations (helpful / not helpful + optional reason like disliked ingredient)
+  - Deterministic ranking from personal ratings, defaults, office popularity, recency, and ingredient preferences, with persisted `MealRecommendationImpression` snapshots
+  - Added `POST /api/food-selections/:id/recommendations`, office-scoped and auth-gated, plus "Recommend a meal" client UI with ranked results and reasons
+  - Optional AI-assisted explanations (de-identified payloads, 2s timeout, `deterministic_fallback` on failure/misconfiguration)
+  - Outcome learning: later orders/ratings for a previously recommended item demote/boost its score via the existing `personal_rating` signal — no separate helpful/not-helpful feedback UI (rejected per `research.md`, avoids UI friction/duplicate signals)
 
 ---
 
