@@ -22,6 +22,11 @@ model OfficeLocation {
   authAccessUsers   AuthAccessUser[]
   authAccessUserOffices AuthAccessUserOffice[]
   menus             Menu[]
+  menuItemIdentities MenuItemIdentity[]
+  menuItemFeatures  MenuItemFeature[]
+  userAnticipatedLikes UserAnticipatedLike[]
+  modelEvaluationResults ModelEvaluationResult[]
+  officeRecommenderSetting OfficeRecommenderSetting?
   polls             Poll[]
   foodSelections    FoodSelection[]
   shoppingListItems ShoppingListItem[]
@@ -55,17 +60,49 @@ model Menu {
 model MenuItem {
   id          String      @id @default(uuid())
   menuId      String      @map("menu_id")
+  itemIdentityKey String? @map("item_identity_key")
   itemNumber  String?     @map("item_number")
   name        String
   description String?
   price       Decimal?
   createdAt   DateTime    @default(now()) @map("created_at")
   menu        Menu        @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  menuItemFeatures MenuItemFeature[]
   foodOrders  FoodOrder[]
   userMealDefaults UserMenuDefaultPreference[]
 
   @@unique([menuId, name])
   @@map("menu_items")
+}
+
+model MenuItemIdentity {
+  id                  String   @id @default(uuid())
+  officeLocationId    String   @map("office_location_id")
+  identityKey         String   @map("identity_key")
+  displayNameSnapshot String   @map("display_name_snapshot")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([officeLocationId, identityKey])
+  @@map("menu_item_identities")
+}
+
+model MenuItemFeature {
+  id               String   @id @default(uuid())
+  menuItemId       String   @map("menu_item_id")
+  itemIdentityKey  String   @map("item_identity_key")
+  officeLocationId String   @map("office_location_id")
+  tag              String
+  provenance       String
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([menuItemId, tag])
+  @@index([itemIdentityKey, officeLocationId])
+  @@map("menu_item_features")
 }
 
 model Poll {
@@ -148,6 +185,55 @@ model FoodSelection {
 
   @@index([officeLocationId, status, createdAt])
   @@map("food_selections")
+}
+
+model RecommenderModel {
+  id                  String   @id @default(uuid())
+  version             Int      @unique
+  status              String
+  paramsJson          Json     @map("params_json")
+  factorDim           Int      @map("factor_dim")
+  trainedAt           DateTime @map("trained_at")
+  trainingSampleCount Int      @map("training_sample_count")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  mealRecommendationImpressions MealRecommendationImpression[]
+  modelEvaluationResults        ModelEvaluationResult[]
+  officeRecommenderSettings     OfficeRecommenderSetting[]
+
+  @@index([status])
+  @@map("recommender_models")
+}
+
+model ModelEvaluationResult {
+  id                 String   @id @default(uuid())
+  recommenderModelId String   @map("recommender_model_id")
+  officeLocationId   String   @map("office_location_id")
+  baselineTop3HitRate Decimal  @map("baseline_top3_hit_rate")
+  modelTop3HitRate   Decimal  @map("model_top3_hit_rate")
+  marginPoints       Decimal  @map("margin_points")
+  sampleCount        Int      @map("sample_count")
+  evaluatedAt        DateTime @default(now()) @map("evaluated_at")
+
+  recommenderModel RecommenderModel @relation(fields: [recommenderModelId], references: [id], onDelete: Cascade)
+  officeLocation   OfficeLocation   @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@index([officeLocationId, recommenderModelId])
+  @@map("model_evaluation_results")
+}
+
+model OfficeRecommenderSetting {
+  id              String   @id @default(uuid())
+  officeLocationId String   @unique @map("office_location_id")
+  safeMode        String   @default("baseline") @map("safe_mode")
+  activeModelId    String?  @map("active_model_id")
+  exploreEnabled   Boolean  @default(true) @map("explore_enabled")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+  activeModel    RecommenderModel? @relation(fields: [activeModelId], references: [id], onDelete: SetNull)
+
+  @@map("office_recommender_settings")
 }
 
 model FoodOrder {
@@ -260,6 +346,24 @@ model UserPreference {
   @@map("user_preferences")
 }
 
+model UserAnticipatedLike {
+  id                  String   @id @default(uuid())
+  actorKey            String   @map("actor_key")
+  actorEmail          String?  @map("actor_email")
+  displayNameSnapshot String?  @map("display_name_snapshot")
+  officeLocationId    String   @map("office_location_id")
+  itemIdentityKey     String   @map("item_identity_key")
+  itemNameSnapshot    String   @map("item_name_snapshot")
+  sentiment           String
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([actorKey, officeLocationId, itemIdentityKey])
+  @@map("user_anticipated_likes")
+}
+
 model UserMenuDefaultPreference {
   id                     String   @id @default(uuid())
   userKey                String   @map("user_key")
@@ -286,6 +390,7 @@ model MealRecommendationImpression {
   displayNameSnapshot String?  @map("display_name_snapshot")
   source              String
   provider            String?
+  recommenderModelId  String?  @map("recommender_model_id")
   recommendedAt       DateTime @map("recommended_at")
   inputSummaryJson    Json     @map("input_summary_json")
   itemsJson           Json     @map("items_json")
@@ -293,6 +398,7 @@ model MealRecommendationImpression {
 
   foodSelection  FoodSelection  @relation(fields: [foodSelectionId], references: [id], onDelete: Cascade)
   officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+  recommenderModel RecommenderModel? @relation(fields: [recommenderModelId], references: [id], onDelete: SetNull)
 
   @@index([foodSelectionId, actorKey])
   @@index([officeLocationId, actorKey, recommendedAt])

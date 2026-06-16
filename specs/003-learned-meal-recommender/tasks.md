@@ -14,9 +14,10 @@ description: "Task list — Learned Meal Recommender"
 
 ## Phase 1: Setup (Shared Schema + Types)
 
-- [ ] T001 Add models `menu_item_features`, `menu_item_identities`, `user_anticipated_likes`, `recommender_models`, `model_evaluation_results`, `office_recommender_settings`, add `menu_items.item_identity_key`, and widen `meal_recommendation_impressions.source` (+ `recommender_model_id`) in `prisma/schema.prisma`
-- [ ] T002 Mirror all T001 model changes in `prisma/schema.sqlite.prisma` (keep in sync)
-- [ ] T003 Create migration `prisma/migrations/<timestamp>_add_learned_recommender/migration.sql` and run `npx prisma migrate dev`
+- [x] T001 Add models `menu_item_features`, `menu_item_identities`, `user_anticipated_likes`, `recommender_models`, `model_evaluation_results`, `office_recommender_settings`, add `menu_items.item_identity_key`, and widen `meal_recommendation_impressions.source` (+ `recommender_model_id`) in `prisma/schema.prisma`
+- [x] T002 Mirror all T001 model changes in `prisma/schema.sqlite.prisma` (keep in sync)
+- [x] T003 Create migration `prisma/migrations/<timestamp>_add_learned_recommender/migration.sql` and run `npx prisma migrate dev`
+  - Discovery: the local dev migration target for this workspace was the compose-backed `teamlunch` database on `localhost:55433`; the older `paiqo` localhost target was stale here.
 - [ ] T004 Extend cleanup for the new persisted models in `tests/server/helpers/db.ts`
 - [ ] T005 [P] Add shared types (model/explore/mark/eval request+response shapes, widened `MealRecommendationSource`, admin status/mode types) in `src/lib/types.ts`
 - [ ] T006 [P] Add a seeded deterministic RNG helper for reproducible training/exploration in `src/server/services/seededRng.ts`
