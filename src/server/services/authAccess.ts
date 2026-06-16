@@ -1464,9 +1464,9 @@ export async function resolveUserApproval(
 
     return {
       approvalRequired: false,
-      isAdmin: false,
+      isAdmin: !!entry?.isAdmin,
       approved: true,
-      blocked: false,
+      blocked: !!entry?.blocked,
       officeLocationId: fallbackOfficeLocation.id,
       officeLocationKey: fallbackOfficeLocation.key,
       officeLocationName: fallbackOfficeLocation.name,
