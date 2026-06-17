@@ -18,7 +18,7 @@ const env = {
 };
 
 runOrThrow('npx', ['prisma', 'generate', '--schema', 'prisma/schema.sqlite.prisma'], env);
-runOrThrow('npx', ['prisma', 'db', 'push', '--schema', 'prisma/schema.sqlite.prisma', '--skip-generate'], env);
+runOrThrow('npx', ['prisma', 'db', 'push', '--schema', 'prisma/schema.sqlite.prisma'], env);
 
 const child = spawn('npx', ['tsx', 'watch', 'src/server/index.ts'], {
   stdio: 'inherit',
