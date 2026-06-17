@@ -17,6 +17,7 @@
     "prebuild": "node ./scripts/prisma-generate-safe.mjs",
     "build": "tsc -p tsconfig.build.json && vite build",
     "start": "node dist/server/index.js",
+    "pretypecheck": "node ./scripts/prisma-generate-safe.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\"",
     "architecture": "depcruise --config .dependency-cruiser.cjs src",
