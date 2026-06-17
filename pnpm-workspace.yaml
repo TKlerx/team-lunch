@@ -11,6 +11,7 @@ allowBuilds:
 # Dependency overrides (pnpm 11 reads these here, not from package.json).
 overrides:
   effect: 3.21.0
+  '@hono/node-server': 1.19.13
 
 # Audit policy.
 # GHSA-w5hq-g745-h8pq: uuid v3/v5/v6 missing buffer bounds check when a buffer
