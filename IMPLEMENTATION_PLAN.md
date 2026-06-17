@@ -2430,6 +2430,28 @@ it surfaced as two separate runtime failures after the initial green test run:
 - Takeaway: every process entrypoint that touches the DB now needs explicit
   env loading. Current entrypoints (`index.ts`, `auth-seed.ts`, `prisma.config.ts`)
   are covered; add `import 'dotenv/config'` to any new standalone script.
-- **Not yet validated in this pass:** Playwright E2E (`pnpm test:e2e`) and a real
-  production deploy (SSL/`NODE_EXTRA_CA_CERTS`, `prisma-production-data-check.mjs`
-  against a live Postgres). Run before merge/release.
+
+**Prod-breaking bug masked by tsx (caught by running the compiled output).**
+The v7 `prisma-client` generator emits *extensionless* relative imports
+(`./internal/class`). `tsx` (dev + the whole Vitest suite) resolves those, so
+all tests passed — but `node dist/server/index.js` (production) and the
+`prisma-production-data-check.mjs` deploy guard both crashed with
+`ERR_MODULE_NOT_FOUND: .../internal/class` because plain Node ESM requires
+explicit `.js`. Fixed by adding `importFileExtension = "js"` to both generator
+blocks. Verified against the *compiled* output: the data-check script returns
+real row counts and `node dist/server/index.js` boots and serves
+`/api/auth/config` 200. Lesson: tsx-based tests do not exercise Node's ESM
+resolver — validate the compiled `dist` under plain `node` before trusting a
+prod build.
+- **E2E validated:** `pnpm test:e2e` (2 specs) passes — Playwright builds and
+  boots the compiled **production** server against the dedicated test DB and
+  drives a real local login, so the prod boot path + `importFileExtension` fix
+  are confirmed under plain Node. (Required `.env.test` — copy from
+  `.env.test.example`; it was missing locally. Also fixed pre-existing playwright
+  install rot: stale top-level `playwright-core@1.58.2`/`playwright@1.58.2`
+  orphans caused "two versions of @playwright/test" / missing-module errors,
+  cleared by a clean `node_modules` reinstall. Unrelated to Prisma.)
+- **Still requires a real production deploy to confirm:** v7 stricter SSL
+  defaults (set `sslmode` in `DATABASE_URL` or `NODE_EXTRA_CA_CERTS` if the prod
+  DB uses TLS/private CA), pg adapter connection-pool defaults under load, and a
+  full `docker compose up` (migrate job → app boot) against a live Postgres.
