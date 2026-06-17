@@ -2407,6 +2407,29 @@ Corrections to assumptions above, plus things the upgrade guide did not call out
   Tests pass; revisit if a hung test DB needs a hard local timeout.
 - Dockerfile now copies `prisma.config.ts` before `prisma generate`; the
   engine-bundling comment and `scripts/copy-prisma-client.mjs` were removed.
+
+**Post-validation fixes (the big v7 footgun: `.env` is no longer auto-loaded).**
+Prisma <7 loaded `.env` as a side effect of importing `@prisma/client`, which
+silently populated `process.env` for anything downstream. v7 dropped this, and
+it surfaced as two separate runtime failures after the initial green test run:
+
+- **`docker compose build` failed** at the builder-stage `prisma generate`
+  (`target migrate ... exit code: 1`). Cause: `prisma.config.ts` used prisma's
+  `env('DATABASE_URL')` helper, which *throws* on a missing var, and the Docker
+  build has no `DATABASE_URL`. `generate` never needs the URL. Fixed by reading
+  `process.env.DATABASE_URL ?? ''` instead of `env(...)`. Verified with
+  `docker compose build migrate` (exit 0).
+- **`pnpm dev` showed "Failed to load authentication config"** (red banner). The
+  server crashed on startup: `db.ts` threw `DATABASE_URL is not set` because
+  nothing loaded `.env`. Fixed by adding `import 'dotenv/config'` as the *first*
+  import in `src/server/index.ts` — it must be a side-effect import, not an
+  inline `process.loadEnvFile()` call, because ESM evaluates hoisted imports
+  (which pull in `db.ts`) before inline statements. `scripts/auth-seed.ts`
+  already self-loaded `.env`, so it needed no change. Verified `/api/auth/config`
+  returns HTTP 200 with live DB data.
+- Takeaway: every process entrypoint that touches the DB now needs explicit
+  env loading. Current entrypoints (`index.ts`, `auth-seed.ts`, `prisma.config.ts`)
+  are covered; add `import 'dotenv/config'` to any new standalone script.
 - **Not yet validated in this pass:** Playwright E2E (`pnpm test:e2e`) and a real
   production deploy (SSL/`NODE_EXTRA_CA_CERTS`, `prisma-production-data-check.mjs`
   against a live Postgres). Run before merge/release.

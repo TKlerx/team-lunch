@@ -1,3 +1,10 @@
+// Load .env before any other import is evaluated. Prisma 7 no longer auto-loads
+// it (Prisma <7 did so as a side effect of importing @prisma/client), so the
+// server must do it itself or DATABASE_URL/auth env vars are missing in dev.
+// This must stay the first import: ESM evaluates imported modules in source
+// order, so route imports (which pull in ./db.ts) only run after .env is loaded.
+// In production, env comes from the container/compose and dotenv is a no-op.
+import 'dotenv/config';
 import Fastify from 'fastify';
 import type { RawServerDefault } from 'fastify';
 import cors from '@fastify/cors';
