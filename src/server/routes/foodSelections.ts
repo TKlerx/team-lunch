@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import * as foodSelectionService from '../services/foodSelection.js';
 import * as pollService from '../services/poll.js';
+import * as mealRecommendationService from '../services/mealRecommendation.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
@@ -25,6 +26,7 @@ import type {
   RemindMissingOrdersRequest,
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
+  MealRecommendationRequest,
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
@@ -74,7 +76,7 @@ async function requireAdminOrSelectionCreator(
   return actor;
 }
 
-export default async function foodSelectionRoutes(app: FastifyInstance) {
+function registerSelectionOverviewRoutes(app: FastifyInstance) {
   // POST /api/food-selections — start food selection
   app.post<{ Body: StartFoodSelectionRequest }>(
     '/api/food-selections',
@@ -125,6 +127,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     }
   });
 
+}
+
+function registerOrderingRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/orders — place/update order
   app.post<{ Params: { id: string }; Body: PlaceOrderRequest }>(
     '/api/food-selections/:id/orders',
@@ -174,6 +179,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerSelectionLifecycleRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/expire — trigger timer expiry
   app.post<{ Params: { id: string } }>(
     '/api/food-selections/:id/expire',
@@ -214,6 +222,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerSelectionCompletionRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/complete — finalize meal collection, enter ordering step
   app.post<{ Params: { id: string } }>(
     '/api/food-selections/:id/complete',
@@ -271,6 +282,32 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerRecommendationAndFallbackRoutes(app: FastifyInstance) {
+  // POST /api/food-selections/:id/recommendations — generate a personalized meal recommendation
+  app.post<{ Params: { id: string }; Body: MealRecommendationRequest }>(
+    '/api/food-selections/:id/recommendations',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealRecommendationService.generateRecommendations(
+          req.params.id,
+          officeLocationId,
+          actor,
+          req.body?.useAi,
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
   // POST /api/food-selections/:id/orders/:orderId/rating — rate completed meal
   app.post<{ Params: { id: string; orderId: string }; Body: RateFoodOrderRequest }>(
     '/api/food-selections/:id/orders/:orderId/rating',
@@ -297,6 +334,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerFallbackRoutes(app: FastifyInstance) {
   // GET /api/food-selections/:id/fallback-candidates — users eligible for organizer fallback ordering
   app.get<{ Params: { id: string } }>(
     '/api/food-selections/:id/fallback-candidates',
@@ -338,6 +378,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerFallbackReminderRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/fallback-reminders — ping a specific fallback-eligible missing voter
   app.post<{ Params: { id: string }; Body: PingFallbackCandidateRequest }>(
     '/api/food-selections/:id/fallback-reminders',
@@ -362,6 +405,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerOrderStateRoutes(app: FastifyInstance) {
   // PATCH /api/food-selections/:id/orders/:orderId/processed — mark order line as processed/unprocessed
   app.patch<{ Params: { id: string; orderId: string }; Body: UpdateFoodOrderProcessedRequest }>(
     '/api/food-selections/:id/orders/:orderId/processed',
@@ -414,6 +460,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerDeliveryRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/place-order — confirm order placement and start delivery timer
   app.post<{ Params: { id: string }; Body: ClaimOrderingResponsibilityRequest }>(
     '/api/food-selections/:id/claim-ordering',
@@ -459,6 +508,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerSelectionControlRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/timer — update active selection timer remaining minutes
   app.post<{ Params: { id: string }; Body: UpdateRemainingTimerRequest }>(
     '/api/food-selections/:id/timer',
@@ -499,6 +551,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerDeliveryCompletionRoutes(app: FastifyInstance) {
   // POST /api/food-selections/:id/eta — set/update delivery ETA in minutes for ongoing delivery phase
   app.post<{ Params: { id: string }; Body: UpdateFoodSelectionEtaRequest }>(
     '/api/food-selections/:id/eta',
@@ -539,6 +594,9 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerQuickStartAndExportRoutes(app: FastifyInstance) {
   // POST /api/food-selections/quick-start — skip poll for single menu
   app.post<{ Body: QuickStartFoodSelectionRequest }>(
     '/api/food-selections/quick-start',
@@ -606,4 +664,19 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
       }
     },
   );
+}
+
+export default async function foodSelectionRoutes(app: FastifyInstance) {
+  registerSelectionOverviewRoutes(app);
+  registerOrderingRoutes(app);
+  registerSelectionLifecycleRoutes(app);
+  registerSelectionCompletionRoutes(app);
+  registerRecommendationAndFallbackRoutes(app);
+  registerFallbackRoutes(app);
+  registerFallbackReminderRoutes(app);
+  registerOrderStateRoutes(app);
+  registerDeliveryRoutes(app);
+  registerSelectionControlRoutes(app);
+  registerDeliveryCompletionRoutes(app);
+  registerQuickStartAndExportRoutes(app);
 }

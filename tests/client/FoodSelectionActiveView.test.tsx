@@ -45,6 +45,7 @@ const mockUpdateFoodSelectionTimer = vi.fn();
 const mockGetUserPreferences = vi.fn();
 const mockUpdateUserPreferences = vi.fn();
 const mockRemindMissingOrders = vi.fn();
+const mockRecommendMeal = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
   placeOrder: (...args: unknown[]) => mockPlaceOrder(...args),
   withdrawOrder: (...args: unknown[]) => mockWithdrawOrder(...args),
@@ -54,6 +55,7 @@ vi.mock('../../src/client/api.js', () => ({
   getUserPreferences: (...args: unknown[]) => mockGetUserPreferences(...args),
   updateUserPreferences: (...args: unknown[]) => mockUpdateUserPreferences(...args),
   remindMissingOrders: (...args: unknown[]) => mockRemindMissingOrders(...args),
+  recommendMeal: (...args: unknown[]) => mockRecommendMeal(...args),
 }));
 
 import FoodSelectionActiveView from '../../src/client/components/FoodSelectionActiveView.js';
@@ -584,5 +586,170 @@ describe('FoodSelectionActiveView', () => {
 
     expect(mockAbortFoodSelection).toHaveBeenCalledWith('fs-1');
     confirmSpy.mockRestore();
+  });
+
+  // ─── Meal recommendations ────────────────────────────────
+
+  it('shows ranked recommendations when clicking "Recommend a meal"', async () => {
+    const user = userEvent.setup();
+    let resolveRecommend: (value: unknown) => void = () => {};
+    mockRecommendMeal.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveRecommend = resolve;
+        }),
+    );
+    renderView();
+
+    const button = screen.getByRole('button', { name: /recommend a meal/i });
+    await user.click(button);
+
+    expect(mockRecommendMeal).toHaveBeenCalledWith('fs-1');
+    expect(await screen.findByRole('button', { name: /thinking/i })).toBeInTheDocument();
+
+    resolveRecommend({
+      impressionId: 'impression-1',
+      foodSelectionId: 'fs-1',
+      source: 'deterministic',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: [],
+      items: [
+        {
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 80,
+          reason: 'Recommended because you rated this highly before.',
+          sourceSignals: ['personal_rating'],
+          aiAssisted: false,
+        },
+        {
+          itemId: 'item-2',
+          itemName: 'Pepperoni',
+          rank: 2,
+          score: 50,
+          reason: 'Recommended from the current menu.',
+          sourceSignals: [],
+          aiAssisted: false,
+        },
+      ],
+    });
+
+    expect(await screen.findByText('#1 Margherita')).toBeInTheDocument();
+    expect(screen.getByText('Recommended because you rated this highly before.')).toBeInTheDocument();
+    expect(screen.getByText('#2 Pepperoni')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /recommend a meal/i })).toBeInTheDocument();
+  });
+
+  it('shows an AI-assisted label when recommendations are AI-enriched', async () => {
+    const user = userEvent.setup();
+    mockRecommendMeal.mockResolvedValue({
+      impressionId: 'impression-1',
+      foodSelectionId: 'fs-1',
+      source: 'ai_assisted',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: [],
+      items: [
+        {
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 80,
+          reason: 'You loved this last time.',
+          sourceSignals: ['personal_rating'],
+          aiAssisted: true,
+        },
+      ],
+    });
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+
+    expect(await screen.findByText('AI-assisted suggestions')).toBeInTheDocument();
+    expect(screen.getByText('You loved this last time.')).toBeInTheDocument();
+    expect(screen.getByText('(AI-assisted)')).toBeInTheDocument();
+  });
+
+  it('shows a warning when recommendations fall back to deterministic', async () => {
+    const user = userEvent.setup();
+    mockRecommendMeal.mockResolvedValue({
+      impressionId: 'impression-1',
+      foodSelectionId: 'fs-1',
+      source: 'deterministic_fallback',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: ['AI assistance was unavailable; showing standard recommendations.'],
+      items: [
+        {
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 50,
+          reason: 'Recommended from the current menu.',
+          sourceSignals: ['office_popularity'],
+          aiAssisted: false,
+        },
+      ],
+    });
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+
+    expect(
+      await screen.findByText('AI assistance was unavailable; showing standard recommendations.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('#1 Margherita')).toBeInTheDocument();
+  });
+
+  it('shows an error message when the recommendation request fails', async () => {
+    const user = userEvent.setup();
+    mockRecommendMeal.mockRejectedValue(new Error('Recommendation failed'));
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+
+    expect(await screen.findByText('Recommendation failed')).toBeInTheDocument();
+  });
+
+  it('still allows placing an order after a failed recommendation request', async () => {
+    const user = userEvent.setup();
+    mockPlaceOrder.mockResolvedValue({});
+    mockRecommendMeal.mockRejectedValue(new Error('Recommendation failed'));
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+    await screen.findByText('Recommendation failed');
+
+    await user.click(screen.getAllByRole('button', { name: /^add$/i })[0]);
+    expect(mockPlaceOrder).toHaveBeenCalledWith('fs-1', 'Alice', 'item-1', undefined);
+  });
+
+  it('does not affect order placement when recommendations are shown', async () => {
+    const user = userEvent.setup();
+    mockPlaceOrder.mockResolvedValue({});
+    mockRecommendMeal.mockResolvedValue({
+      impressionId: 'impression-1',
+      foodSelectionId: 'fs-1',
+      source: 'deterministic',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: [],
+      items: [
+        {
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 80,
+          reason: 'Recommended from the current menu.',
+          sourceSignals: [],
+          aiAssisted: false,
+        },
+      ],
+    });
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+    await screen.findByText('#1 Margherita');
+
+    await user.click(screen.getAllByRole('button', { name: /^add$/i })[0]);
+    expect(mockPlaceOrder).toHaveBeenCalledWith('fs-1', 'Alice', 'item-1', undefined);
   });
 });

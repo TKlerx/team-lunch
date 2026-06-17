@@ -54,7 +54,7 @@ describe('Header', () => {
   it('shows "Shopping List" navigation link', () => {
     renderHeader();
     const link = screen.getByRole('link', { name: /shopping list/i });
-    expect(link).toHaveAttribute('href', '/shopping');
+    expect(link).toHaveAttribute('href', '/shopping-list');
   });
 
   it('shows notifications toggle with enabled state', () => {

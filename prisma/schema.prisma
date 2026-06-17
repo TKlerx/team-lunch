@@ -28,6 +28,7 @@ model OfficeLocation {
   polls             Poll[]
   foodSelections    FoodSelection[]
   shoppingListItems ShoppingListItem[]
+  mealRecommendationImpressions MealRecommendationImpression[]
 
   @@map("office_locations")
 }
@@ -136,6 +137,7 @@ model FoodSelection {
   poll           Poll           @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu           Menu?          @relation(fields: [menuId], references: [id], onDelete: SetNull)
   orders         FoodOrder[]
+  recommendationImpressions MealRecommendationImpression[]
 
   @@index([officeLocationId, status, createdAt])
   @@map("food_selections")
@@ -282,6 +284,28 @@ model UserMenuDefaultPreference {
 
   @@unique([userKey, menuId])
   @@map("user_menu_default_preferences")
+}
+
+model MealRecommendationImpression {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  foodSelectionId     String   @map("food_selection_id") @db.Uuid
+  officeLocationId    String   @map("office_location_id") @db.Uuid
+  actorKey            String   @map("actor_key") @db.VarChar(255)
+  actorEmail          String?  @map("actor_email") @db.VarChar(255)
+  displayNameSnapshot String?  @map("display_name_snapshot") @db.VarChar(255)
+  source              String   @db.VarChar(30)
+  provider            String?  @db.VarChar(60)
+  recommendedAt       DateTime @map("recommended_at") @db.Timestamptz()
+  inputSummaryJson    Json     @map("input_summary_json")
+  itemsJson           Json     @map("items_json")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  foodSelection  FoodSelection  @relation(fields: [foodSelectionId], references: [id], onDelete: Cascade)
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@index([foodSelectionId, actorKey])
+  @@index([officeLocationId, actorKey, recommendedAt])
+  @@map("meal_recommendation_impressions")
 }
 
 model ShoppingListItem {

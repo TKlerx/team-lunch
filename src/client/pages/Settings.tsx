@@ -45,6 +45,205 @@ function getDisplayNameError(value: string): string {
   return '';
 }
 
+function AccountSettingsSection({
+  accountEmail,
+  authMethod,
+  displayNameDraft,
+  displayNameError,
+  displayNameTouched,
+  canEditDisplayName,
+  onDisplayNameChange,
+}: {
+  accountEmail: string;
+  authMethod: string;
+  displayNameDraft: string;
+  displayNameError: string;
+  displayNameTouched: boolean;
+  canEditDisplayName: boolean;
+  onDisplayNameChange: (value: string) => void;
+}) {
+  const authMethodLabel = authMethod === 'entra'
+    ? 'Microsoft Entra'
+    : authMethod === 'local'
+      ? 'Local account'
+      : 'Unknown';
+
+  return (
+    <Section title="Account" description="Your account identity and the name shown in lunch votes and orders." className="mt-6">
+      <div className="space-y-3">
+        <div>
+          <p className="text-xs font-medium text-fg-muted">Account</p>
+          <p className="text-sm font-medium text-fg">{accountEmail || 'Unknown account'}</p>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-fg-muted">Authentication</p>
+          <p className="text-sm text-fg">{authMethodLabel}</p>
+        </div>
+        <label className="block text-xs font-medium text-fg">
+          Display name
+          <Input
+            aria-label="Display name"
+            value={displayNameDraft}
+            disabled={!canEditDisplayName}
+            onChange={(event) => onDisplayNameChange(event.target.value)}
+            maxLength={128}
+            className="mt-1"
+          />
+        </label>
+        {displayNameError && displayNameTouched ? <p className="text-xs text-danger-fg">{displayNameError}</p> : null}
+        <p className="text-xs text-fg-muted">
+          {canEditDisplayName ? 'This name appears in lunch votes and orders.' : 'This name is managed by Microsoft Entra.'}
+        </p>
+        {!displayNameDraft.trim() ? <p className="text-xs text-fg-muted">Your account email is displayed until a name is set.</p> : null}
+      </div>
+    </Section>
+  );
+}
+
+function OfficeSettingsSection({
+  canSwitchOfficeLocation,
+  officeLocations,
+  officeLocationDraft,
+  selectedOfficeName,
+  onOfficeLocationChange,
+}: {
+  canSwitchOfficeLocation: boolean;
+  officeLocations: Array<{ id: string; name: string }>;
+  officeLocationDraft: string;
+  selectedOfficeName: string | null;
+  onOfficeLocationChange: (value: string) => void;
+}) {
+  return (
+    <Section title="Office" description="The office location used for polls, menus, and orders." className="mt-6">
+      {canSwitchOfficeLocation && officeLocations.length > 0 ? (
+        <Select
+          aria-label="Office location"
+          value={officeLocationDraft}
+          onChange={(event) => onOfficeLocationChange(event.target.value)}
+          className="w-full sm:w-64"
+        >
+          {officeLocations.map((officeLocation) => (
+            <option key={officeLocation.id} value={officeLocation.id}>
+              {officeLocation.name}
+            </option>
+          ))}
+        </Select>
+      ) : (
+        <p className="text-sm font-medium text-fg">{selectedOfficeName ?? 'No office assigned.'}</p>
+      )}
+    </Section>
+  );
+}
+
+function IngredientPreferencesSection({
+  foodAlertsDescription,
+  allergiesDraft,
+  dislikesDraft,
+  accountEmail,
+  preferencesLoading,
+  settingsSaving,
+  onAllergiesChange,
+  onDislikesChange,
+}: {
+  foodAlertsDescription: string;
+  allergiesDraft: string;
+  dislikesDraft: string;
+  accountEmail: string;
+  preferencesLoading: boolean;
+  settingsSaving: boolean;
+  onAllergiesChange: (value: string) => void;
+  onDislikesChange: (value: string) => void;
+}) {
+  const inputDisabled = !accountEmail || preferencesLoading || settingsSaving;
+  return (
+    <Section title="Ingredient Preferences" description={foodAlertsDescription} className="mt-6">
+      <div className="space-y-3">
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="text-xs font-medium text-fg">
+            Ingredients to avoid
+            <textarea
+              value={allergiesDraft}
+              onChange={(event) => onAllergiesChange(event.target.value)}
+              rows={4}
+              className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+              placeholder="e.g. peanuts, shrimp, milk"
+              aria-label="Ingredients to avoid"
+              disabled={inputDisabled}
+            />
+          </label>
+          <label className="text-xs font-medium text-fg">
+            Less preferred ingredients
+            <textarea
+              value={dislikesDraft}
+              onChange={(event) => onDislikesChange(event.target.value)}
+              rows={4}
+              className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
+              placeholder="e.g. mushrooms, onions"
+              aria-label="Less preferred ingredients"
+              disabled={inputDisabled}
+            />
+          </label>
+        </div>
+        <p className="text-xs text-fg-muted">Separate terms with commas, semicolons, or new lines.</p>
+      </div>
+    </Section>
+  );
+}
+
+function VersionSettingsSection({ appVersion, versionLabel }: { appVersion: AppVersionResponse | null; versionLabel: string }) {
+  return (
+    <Section title="Version" description="Build metadata for support and fault tracking." className="mt-6">
+      <dl className="grid gap-2 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
+        <dt className="font-medium text-fg-muted">App</dt>
+        <dd className="break-all font-mono text-xs text-fg" data-testid="app-version">{versionLabel}</dd>
+        {appVersion?.gitBranch ? (
+          <>
+            <dt className="font-medium text-fg-muted">Branch</dt>
+            <dd className="break-all font-mono text-xs text-fg">{appVersion.gitBranch}</dd>
+          </>
+        ) : null}
+        <dt className="font-medium text-fg-muted">Runtime</dt>
+        <dd className="break-all font-mono text-xs text-fg">
+          {appVersion ? `${appVersion.environment} | ${appVersion.nodeVersion}` : 'Unavailable'}
+        </dd>
+      </dl>
+    </Section>
+  );
+}
+
+function SettingsActions({
+  settingsSaving,
+  preferencesLoading,
+  settingsUnchanged,
+  canEditDisplayName,
+  displayNameError,
+  settingsSavedMessage,
+  settingsError,
+  onCancel,
+}: {
+  settingsSaving: boolean;
+  preferencesLoading: boolean;
+  settingsUnchanged: boolean;
+  canEditDisplayName: boolean;
+  displayNameError: string;
+  settingsSavedMessage: string;
+  settingsError: string;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+      <Button type="submit" disabled={settingsSaving || preferencesLoading || settingsUnchanged || (canEditDisplayName && !!displayNameError)}>
+        {settingsSaving ? 'Saving...' : 'Save settings'}
+      </Button>
+      <Button type="button" variant="secondary" onClick={onCancel} disabled={settingsSaving || settingsUnchanged}>
+        Cancel
+      </Button>
+      {settingsSavedMessage ? <span className="text-xs text-success-fg">{settingsSavedMessage}</span> : null}
+      {settingsError ? <span className="text-xs text-danger-fg">{settingsError}</span> : null}
+    </div>
+  );
+}
+
 export default function Settings() {
   const {
     canSwitchOfficeLocation,
@@ -249,177 +448,60 @@ export default function Settings() {
           </p>
         </div>
 
-        <Section
-          title="Account"
-          description="Your account identity and the name shown in lunch votes and orders."
-          className="mt-6"
-        >
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs font-medium text-fg-muted">Account</p>
-              <p className="text-sm font-medium text-fg">{accountEmail || 'Unknown account'}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-fg-muted">Authentication</p>
-              <p className="text-sm text-fg">
-                {authMethod === 'entra'
-                  ? 'Microsoft Entra'
-                  : authMethod === 'local'
-                    ? 'Local account'
-                    : 'Unknown'}
-              </p>
-            </div>
-            <label className="block text-xs font-medium text-fg">
-              Display name
-              <Input
-                aria-label="Display name"
-                value={displayNameDraft}
-                disabled={!canEditDisplayName}
-                onChange={(event) => {
-                  setDisplayNameDraft(event.target.value);
-                  setDisplayNameTouched(true);
-                  setSettingsSavedMessage('');
-                }}
-                maxLength={128}
-                className="mt-1"
-              />
-            </label>
-            {displayNameError && displayNameTouched ? (
-              <p className="text-xs text-danger-fg">{displayNameError}</p>
-            ) : null}
-            <p className="text-xs text-fg-muted">
-              {canEditDisplayName
-                ? 'This name appears in lunch votes and orders.'
-                : 'This name is managed by Microsoft Entra.'}
-            </p>
-            {!displayNameDraft.trim() ? (
-              <p className="text-xs text-fg-muted">Your account email is displayed until a name is set.</p>
-            ) : null}
-          </div>
-        </Section>
+        <AccountSettingsSection
+          accountEmail={accountEmail}
+          authMethod={authMethod}
+          displayNameDraft={displayNameDraft}
+          displayNameError={displayNameError}
+          displayNameTouched={displayNameTouched}
+          canEditDisplayName={canEditDisplayName}
+          onDisplayNameChange={(value) => {
+            setDisplayNameDraft(value);
+            setDisplayNameTouched(true);
+            setSettingsSavedMessage('');
+          }}
+        />
 
-        <Section
-          title="Office"
-          description="The office location used for polls, menus, and orders."
-          className="mt-6"
-        >
-          {canSwitchOfficeLocation && officeLocations.length > 0 ? (
-            <Select
-              aria-label="Office location"
-              value={officeLocationDraft}
-              onChange={(event) => {
-                setOfficeLocationDraft(event.target.value);
-                setSettingsSavedMessage('');
-              }}
-              className="w-full sm:w-64"
-            >
-              {officeLocations.map((officeLocation) => (
-                <option key={officeLocation.id} value={officeLocation.id}>
-                  {officeLocation.name}
-                </option>
-              ))}
-            </Select>
-          ) : (
-            <p className="text-sm font-medium text-fg">
-              {selectedOfficeName ?? 'No office assigned.'}
-            </p>
-          )}
-        </Section>
+        <OfficeSettingsSection
+          canSwitchOfficeLocation={canSwitchOfficeLocation}
+          officeLocations={officeLocations}
+          officeLocationDraft={officeLocationDraft}
+          selectedOfficeName={selectedOfficeName}
+          onOfficeLocationChange={(value) => {
+            setOfficeLocationDraft(value);
+            setSettingsSavedMessage('');
+          }}
+        />
 
-        <Section
-          title="Ingredient Preferences"
-          description={foodAlertsDescription}
-          className="mt-6"
-        >
-          <div className="space-y-3">
-            <div className="grid gap-3 md:grid-cols-2">
-              <label className="text-xs font-medium text-fg">
-                Ingredients to avoid
-                <textarea
-                  value={allergiesDraft}
-                  onChange={(event) => {
-                    setAllergiesDraft(event.target.value);
-                    setSettingsSavedMessage('');
-                  }}
-                  rows={4}
-                  className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-                  placeholder="e.g. peanuts, shrimp, milk"
-                  aria-label="Ingredients to avoid"
-                  disabled={!accountEmail || preferencesLoading || settingsSaving}
-                />
-              </label>
-              <label className="text-xs font-medium text-fg">
-                Less preferred ingredients
-                <textarea
-                  value={dislikesDraft}
-                  onChange={(event) => {
-                    setDislikesDraft(event.target.value);
-                    setSettingsSavedMessage('');
-                  }}
-                  rows={4}
-                  className="mt-1 w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
-                  placeholder="e.g. mushrooms, onions"
-                  aria-label="Less preferred ingredients"
-                  disabled={!accountEmail || preferencesLoading || settingsSaving}
-                />
-              </label>
-            </div>
-            <p className="text-xs text-fg-muted">
-              Separate terms with commas, semicolons, or new lines.
-            </p>
-          </div>
-        </Section>
+        <IngredientPreferencesSection
+          foodAlertsDescription={foodAlertsDescription}
+          allergiesDraft={allergiesDraft}
+          dislikesDraft={dislikesDraft}
+          accountEmail={accountEmail}
+          preferencesLoading={preferencesLoading}
+          settingsSaving={settingsSaving}
+          onAllergiesChange={(value) => {
+            setAllergiesDraft(value);
+            setSettingsSavedMessage('');
+          }}
+          onDislikesChange={(value) => {
+            setDislikesDraft(value);
+            setSettingsSavedMessage('');
+          }}
+        />
 
-        <Section
-          title="Version"
-          description="Build metadata for support and fault tracking."
-          className="mt-6"
-        >
-          <dl className="grid gap-2 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
-            <dt className="font-medium text-fg-muted">App</dt>
-            <dd className="break-all font-mono text-xs text-fg" data-testid="app-version">
-              {versionLabel}
-            </dd>
-            {appVersion?.gitBranch ? (
-              <>
-                <dt className="font-medium text-fg-muted">Branch</dt>
-                <dd className="break-all font-mono text-xs text-fg">{appVersion.gitBranch}</dd>
-              </>
-            ) : null}
-            <dt className="font-medium text-fg-muted">Runtime</dt>
-            <dd className="break-all font-mono text-xs text-fg">
-              {appVersion ? `${appVersion.environment} | ${appVersion.nodeVersion}` : 'Unavailable'}
-            </dd>
-          </dl>
-        </Section>
+        <VersionSettingsSection appVersion={appVersion} versionLabel={versionLabel} />
 
-        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
-          <Button
-            type="submit"
-            disabled={
-              settingsSaving ||
-              preferencesLoading ||
-              settingsUnchanged ||
-              (canEditDisplayName && !!displayNameError)
-            }
-          >
-            {settingsSaving ? 'Saving...' : 'Save settings'}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={resetDrafts}
-            disabled={settingsSaving || settingsUnchanged}
-          >
-            Cancel
-          </Button>
-          {settingsSavedMessage ? (
-            <span className="text-xs text-success-fg">{settingsSavedMessage}</span>
-          ) : null}
-          {settingsError ? (
-            <span className="text-xs text-danger-fg">{settingsError}</span>
-          ) : null}
-        </div>
+        <SettingsActions
+          settingsSaving={settingsSaving}
+          preferencesLoading={preferencesLoading}
+          settingsUnchanged={settingsUnchanged}
+          canEditDisplayName={canEditDisplayName}
+          displayNameError={displayNameError}
+          settingsSavedMessage={settingsSavedMessage}
+          settingsError={settingsError}
+          onCancel={resetDrafts}
+        />
       </form>
     </div>
   );

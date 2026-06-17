@@ -91,6 +91,19 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 - `session_version` INT default 0; increments for sensitive access/identity changes and is embedded in signed auth cookies
 - approval/admin/blocking flags and office assignment fields
 
+### meal_recommendation_impressions
+- `id` UUID PK
+- `food_selection_id` UUID FK -> food_selections (cascade delete)
+- `office_location_id` UUID FK -> office_locations (cascade delete)
+- `actor_key` VARCHAR(255), `actor_email` VARCHAR(255) nullable, `display_name_snapshot` VARCHAR(255) nullable
+- `source` VARCHAR(30): `deterministic | ai_assisted | deterministic_fallback`
+- `provider` VARCHAR(60) nullable (AI provider name when `source = ai_assisted`)
+- `recommended_at` TIMESTAMPTZ
+- `input_summary_json` JSON: privacy-safe aggregate counts (history/rating/preference/popularity counts), no raw history
+- `items_json` JSON: snapshot of the displayed ranked items (item id/name, rank, score, reason, source signals, AI-assisted flag)
+- `created_at` TIMESTAMPTZ default now
+- index (`food_selection_id`, `actor_key`); index (`office_location_id`, `actor_key`, `recommended_at`)
+
 ### auth_audit_logs
 - `event` VARCHAR(80)
 - `actor_email` VARCHAR(255) nullable
@@ -126,3 +139,4 @@ These fields allow early/late comparison (`completed_at` vs `delivery_due_at`).
   Avatar image bytes and fallback states live only in bounded backend memory with
   TTLs, so multi-container instances cache independently and restart refetches.
 - Menus, shopping-list items, polls, and food selections are office-scoped as of phases 74.3 and 74.4.
+- `meal_recommendation_impressions` persists the displayed "Recommend a meal" response (ranks, reasons, AI/deterministic source) per actor/office for audit and outcome-learning; there is no separate helpful/not-helpful feedback table - later `food_orders`/ratings for the same actor+office are the outcome signal.

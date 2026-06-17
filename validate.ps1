@@ -6,18 +6,21 @@
 .DESCRIPTION
     Usage: ./validate.ps1 [phase]
     Phases:
-      all        - typecheck + lint + duplication + complexity + semgrep + production audit + tests w/ coverage (default, pre-commit)
+      all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + tests w/ coverage (default, pre-commit)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only (no coverage)
       e2e        - Playwright E2E tests only
-      quality    - lint + duplication + complexity + semgrep
+      quality    - lint + architecture + complexity + function-size + duplication + semgrep
       commit     - validate all, then git add + commit + push
 
     Reports (gitignored, regenerated each run):
       reports/coverage/index.html    - test coverage (generated in all/full/commit)
-      reports/complexity/index.html  - code complexity (generated in all/full/quality/commit)
+
+    Set QUALITY_THRESHOLDS_BYPASS=1 to make configured quality thresholds
+    advisory while keeping lint correctness, tests, and security checks
+    blocking.
 #>
 
 param(
@@ -139,6 +142,24 @@ function Get-TestSummary($result) {
     return "tests passed"
 }
 
+function Get-CoverageSummary($result) {
+    $output = Remove-Ansi (Get-CombinedOutput $result)
+    $testSummary = Get-TestSummary $result
+
+    $linesMatch = [regex]::Match($output, 'Lines\s+:\s+([\d.]+)%')
+    $branchesMatch = [regex]::Match($output, 'Branches\s+:\s+([\d.]+)%')
+
+    if ($linesMatch.Success) {
+        $coverageParts = @("lines $($linesMatch.Groups[1].Value)%")
+        if ($branchesMatch.Success) {
+            $coverageParts += "branches $($branchesMatch.Groups[1].Value)%"
+        }
+        return "$testSummary; coverage $($coverageParts -join ', ') -> reports/coverage"
+    }
+
+    return $testSummary
+}
+
 function Get-DuplicationSummary($result) {
     $output = Remove-Ansi (Get-CombinedOutput $result)
     $threshold = ""
@@ -159,32 +180,14 @@ function Get-DuplicationSummary($result) {
     return "duplication check passed"
 }
 
-function Get-CoverageSummary($result) {
+function Get-ArchitectureSummary($result) {
     $output = Remove-Ansi (Get-CombinedOutput $result)
-    $testSummary = Get-TestSummary $result
-
-    $linesMatch = [regex]::Match($output, 'Lines\s+:\s+([\d.]+)%')
-    $branchesMatch = [regex]::Match($output, 'Branches\s+:\s+([\d.]+)%')
-
-    if ($linesMatch.Success) {
-        $coverageParts = @("lines $($linesMatch.Groups[1].Value)%")
-        if ($branchesMatch.Success) {
-            $coverageParts += "branches $($branchesMatch.Groups[1].Value)%"
-        }
-        return "$testSummary; coverage $($coverageParts -join ', ') -> reports/coverage"
-    }
-
-    return $testSummary
-}
-
-function Get-ComplexitySummary($result) {
-    $output = Remove-Ansi (Get-CombinedOutput $result)
-    $match = [regex]::Match($output, 'Total violations:\s+(\d+)')
+    $match = [regex]::Match($output, 'dependency violations \((\d+) errors?, (\d+) warnings?\)')
     if ($match.Success) {
-        return "complexity report generated ($($match.Groups[1].Value) violations) -> reports/complexity"
+        return "architecture check passed ($($match.Groups[1].Value) errors, $($match.Groups[2].Value) warnings)"
     }
 
-    return "complexity report generated -> reports/complexity"
+    return "architecture check passed"
 }
 
 function Get-SemgrepSummary($result) {
@@ -315,16 +318,28 @@ if ($Phase -in "all", "full", "quality", "commit") {
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Duplication (jscpd)" "pnpm run duplication" "duplication" "duplication check failed" {
+    Invoke-ValidationStep "Architecture (dependency-cruiser)" "pnpm run architecture" "architecture" "architecture check failed" {
         param($result)
-        Get-DuplicationSummary $result
+        Get-ArchitectureSummary $result
     }
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Complexity report (eslint)" "pnpm run complexity" "complexity" "complexity report failed" {
+    Invoke-ValidationStep "Complexity ratchet" "pnpm run complexity" "complexity" "complexity baseline failed" {
+        "complexity baseline passed"
+    }
+}
+
+if ($Phase -in "all", "full", "quality", "commit") {
+    Invoke-ValidationStep "Function size cap" "pnpm run function-size" "function-size" "function size cap failed" {
+        "function size cap passed"
+    }
+}
+
+if ($Phase -in "all", "full", "quality", "commit") {
+    Invoke-ValidationStep "Duplication (jscpd)" "pnpm run duplication" "duplication" "duplication check failed" {
         param($result)
-        Get-ComplexitySummary $result
+        Get-DuplicationSummary $result
     }
 }
 

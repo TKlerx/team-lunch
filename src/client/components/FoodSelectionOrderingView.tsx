@@ -15,6 +15,197 @@ import type { FoodSelectionFallbackCandidate } from '../../lib/types.js';
 
 const ETA_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60] as const;
 
+function formatCompactUrl(value: string): string {
+  try {
+    const url = new URL(value);
+    return `${url.origin}/\u2026`;
+  } catch {
+    return value;
+  }
+}
+
+type OrderingContactLink = {
+  key: string;
+  href: string;
+  label: string;
+  title?: string;
+};
+
+function getOrderingContactLinks(menu: {
+  location?: string | null;
+  phone?: string | null;
+  url?: string | null;
+  orderUrl?: string | null;
+} | null | undefined): OrderingContactLink[] {
+  if (!menu) return [];
+  const links: OrderingContactLink[] = [];
+  if (menu.orderUrl) links.push({ key: 'orderUrl', href: menu.orderUrl, label: formatCompactUrl(menu.orderUrl), title: menu.orderUrl });
+  if (menu.phone) links.push({ key: 'phone', href: `tel:${menu.phone}`, label: menu.phone });
+  if (menu.url) links.push({ key: 'url', href: menu.url, label: formatCompactUrl(menu.url), title: menu.url });
+  if (menu.location) {
+    links.push({
+      key: 'location',
+      href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(menu.location)}`,
+      label: menu.location,
+    });
+  }
+  return links;
+}
+
+function OrderingContactCard({ menu }: { menu: Parameters<typeof getOrderingContactLinks>[0] }) {
+  const links = getOrderingContactLinks(menu);
+  if (links.length === 0) return null;
+
+  return (
+    <div className="mb-4 rounded border border-border bg-surface-muted p-3">
+      <table className="text-sm text-fg">
+        <tbody>
+          {links.map((link) => (
+            <tr key={link.key}>
+              <td className="py-0.5">
+                <a href={link.href} target={link.href.startsWith('tel:') ? undefined : '_blank'} rel={link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'} title={link.title} className="text-accent-fg underline hover:text-accent-fg">
+                  {link.label}
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function OrderingClaimPanel({
+  isClaimed,
+  isClaimedByMe,
+  orderingOwner,
+  etaMinutes,
+  claimingOrder,
+  submitting,
+  onClaimOrdering,
+  onPlaceOrder,
+}: {
+  isClaimed: boolean;
+  isClaimedByMe: boolean;
+  orderingOwner: string;
+  etaMinutes: number;
+  claimingOrder: boolean;
+  submitting: boolean;
+  onClaimOrdering: () => void;
+  onPlaceOrder: (value: number) => Promise<boolean>;
+}) {
+  if (!isClaimed) {
+    return (
+      <div className="mb-4 rounded border border-accent bg-accent-soft p-4">
+        <h3 className="text-sm font-semibold text-accent-fg">Nobody has claimed the order yet</h3>
+        <p className="mt-1 text-sm text-accent-fg">Claim the ordering step first so everyone knows who is calling the restaurant.</p>
+        <button type="button" onClick={onClaimOrdering} disabled={claimingOrder || submitting} className="mt-4 rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
+          {claimingOrder ? 'Claiming order...' : 'I am placing the order'}
+        </button>
+      </div>
+    );
+  }
+  if (!isClaimedByMe) {
+    return (
+      <div className="mb-4 rounded border border-warning bg-warning-soft p-4">
+        <h3 className="text-sm font-semibold text-warning-fg">{orderingOwner} is placing the order</h3>
+        <p className="mt-1 text-sm text-warning-fg">Wait for {orderingOwner} to confirm the order and ETA so no second person orders in parallel.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="mb-4 space-y-2">
+      <div className="rounded border border-success bg-success-soft px-3 py-2 text-sm text-success-fg">
+        You claimed the ordering step. Set the ETA once the restaurant confirms the order.
+      </div>
+      <label className="block text-xs font-medium uppercase tracking-wide text-fg-muted">Announced ETA (minutes)</label>
+      <MinutesActionDropdown
+        triggerLabel={submitting ? 'Placing order...' : `Order placed (ETA ${etaMinutes} min)`}
+        triggerAriaLabel="Place order ETA menu"
+        options={ETA_OPTIONS}
+        onSubmitMinutes={onPlaceOrder}
+        disabled={submitting}
+        customPlaceholder="Custom ETA in minutes"
+        customAriaLabel="Custom ETA in minutes"
+        submitButtonLabel="Confirm placed order"
+      />
+    </div>
+  );
+}
+
+function FallbackCandidateRow({
+  candidate,
+  submitting,
+  placingFallbackFor,
+  pingingFallbackFor,
+  onPlaceFallbackOrder,
+  onPingFallbackCandidate,
+}: {
+  candidate: FoodSelectionFallbackCandidate;
+  submitting: boolean;
+  placingFallbackFor: string | null;
+  pingingFallbackFor: string | null;
+  onPlaceFallbackOrder: (candidate: FoodSelectionFallbackCandidate) => void;
+  onPingFallbackCandidate: (candidate: FoodSelectionFallbackCandidate) => void;
+}) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-3 rounded border border-warning bg-surface px-3 py-2">
+      <div className="text-sm text-fg">
+        <span className="font-medium">{candidate.nickname}</span>
+        <span className="ml-2 rounded bg-warning-soft px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning-fg">Default meal configured</span>
+        <span className="ml-2 text-fg-muted">{candidate.itemNumber ? `${candidate.itemNumber} ` : ''}{candidate.itemName}</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="button" onClick={() => onPingFallbackCandidate(candidate)} disabled={pingingFallbackFor === candidate.nickname || submitting} className="rounded border border-warning bg-surface px-3 py-1.5 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50">
+          {pingingFallbackFor === candidate.nickname ? 'Pinging...' : 'Ping user'}
+        </button>
+        <button type="button" onClick={() => onPlaceFallbackOrder(candidate)} disabled={placingFallbackFor === candidate.nickname || submitting} className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-warning-on hover:opacity-90 disabled:opacity-50">
+          Place default meal
+        </button>
+      </div>
+    </li>
+  );
+}
+
+function FallbackCandidatesPanel({
+  candidates,
+  loading,
+  success,
+  error,
+  submitting,
+  placingFallbackFor,
+  pingingFallbackFor,
+  onPlaceFallbackOrder,
+  onPingFallbackCandidate,
+}: {
+  candidates: FoodSelectionFallbackCandidate[];
+  loading: boolean;
+  success: string;
+  error: string;
+  submitting: boolean;
+  placingFallbackFor: string | null;
+  pingingFallbackFor: string | null;
+  onPlaceFallbackOrder: (candidate: FoodSelectionFallbackCandidate) => void;
+  onPingFallbackCandidate: (candidate: FoodSelectionFallbackCandidate) => void;
+}) {
+  return (
+    <div className="rounded border border-warning bg-warning-soft p-4">
+      <h3 className="text-sm font-semibold text-warning-fg">Missing voters with fallback meals ({candidates.length})</h3>
+      {loading ? <p className="mt-2 text-sm text-warning-fg">Loading fallback meal options...</p> : null}
+      {!loading && candidates.length === 0 ? <p className="mt-2 text-sm italic text-warning-fg">No eligible fallback meals right now.</p> : null}
+      {!loading && candidates.length > 0 ? (
+        <ul className="mt-3 space-y-2">
+          {candidates.map((candidate) => (
+            <FallbackCandidateRow key={candidate.nickname} candidate={candidate} submitting={submitting} placingFallbackFor={placingFallbackFor} pingingFallbackFor={pingingFallbackFor} onPlaceFallbackOrder={onPlaceFallbackOrder} onPingFallbackCandidate={onPingFallbackCandidate} />
+          ))}
+        </ul>
+      ) : null}
+      {success ? <p className="mt-2 text-xs text-success-fg">{success}</p> : null}
+      {error ? <p className="mt-2 text-xs text-danger-fg">{error}</p> : null}
+    </div>
+  );
+}
+
 export default function FoodSelectionOrderingView() {
   const { activeFoodSelection, menus } = useAppState();
   const actorLabel = getAuthenticatedDisplayLabel();
@@ -229,141 +420,20 @@ export default function FoodSelectionOrderingView() {
             One person now places the real order, checks off processed items, and sets the announced ETA.
           </p>
 
-          {(selectionMenu?.phone || selectionMenu?.url || selectionMenu?.orderUrl || selectionMenu?.location) && (
-            <div className="mb-4 rounded border border-border bg-surface-muted p-3">
-              <table className="text-sm text-fg">
-                <tbody>
-                {selectionMenu?.orderUrl && (
-                  <tr>
-                    <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="9" cy="21" r="1" />
-                        <circle cx="20" cy="21" r="1" />
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                      </svg>
-                    </td>
-                    <td className="py-0.5">
-                      <a
-                        href={selectionMenu.orderUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={selectionMenu.orderUrl}
-                        className="text-accent-fg underline hover:text-accent-fg"
-                      >
-                        {(() => { try { const u = new URL(selectionMenu.orderUrl); return `${u.origin}/\u2026`; } catch { return selectionMenu.orderUrl; } })()}
-                      </a>
-                    </td>
-                  </tr>
-                )}
-                {selectionMenu?.phone && (
-                  <tr>
-                    <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.78 19.78 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.91.35 1.8.68 2.64a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.44-1.25a2 2 0 0 1 2.11-.45c.84.33 1.73.56 2.64.68A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                    </td>
-                    <td className="py-0.5">
-                      <a href={`tel:${selectionMenu.phone}`} className="text-accent-fg underline hover:text-accent-fg">
-                        {selectionMenu.phone}
-                      </a>
-                    </td>
-                  </tr>
-                )}
-                {selectionMenu?.url && (
-                  <tr>
-                    <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 3h7v7" />
-                        <path d="M10 14L21 3" />
-                        <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" />
-                      </svg>
-                    </td>
-                    <td className="py-0.5">
-                      <a
-                        href={selectionMenu.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={selectionMenu.url}
-                        className="text-accent-fg underline hover:text-accent-fg"
-                      >
-                        {(() => { try { const u = new URL(selectionMenu.url); return `${u.origin}/\u2026`; } catch { return selectionMenu.url; } })()}
-                      </a>
-                    </td>
-                  </tr>
-                )}
-                {selectionMenu?.location && (
-                  <tr>
-                    <td className="pr-2 align-top">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
-                        <circle cx="12" cy="10" r="3" />
-                      </svg>
-                    </td>
-                    <td className="py-0.5">
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectionMenu.location)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent-fg underline hover:text-accent-fg"
-                      >
-                        {selectionMenu.location}
-                      </a>
-                    </td>
-                  </tr>
-                )}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <OrderingContactCard menu={selectionMenu} />
 
           {error && <p className="mb-4 text-sm text-danger-fg">{error}</p>}
 
-          {!isClaimed ? (
-            <div className="mb-4 rounded border border-accent bg-accent-soft p-4">
-              <h3 className="text-sm font-semibold text-accent-fg">Nobody has claimed the order yet</h3>
-              <p className="mt-1 text-sm text-accent-fg">
-                Claim the ordering step first so everyone knows who is calling the restaurant.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  void handleClaimOrdering();
-                }}
-                disabled={claimingOrder || submitting}
-                className="mt-4 rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
-              >
-                {claimingOrder ? 'Claiming order...' : 'I am placing the order'}
-              </button>
-            </div>
-          ) : isClaimedByMe ? (
-            <div className="mb-4 space-y-2">
-              <div className="rounded border border-success bg-success-soft px-3 py-2 text-sm text-success-fg">
-                You claimed the ordering step. Set the ETA once the restaurant confirms the order.
-              </div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-fg-muted">
-                Announced ETA (minutes)
-              </label>
-              <MinutesActionDropdown
-                triggerLabel={
-                  submitting ? 'Placing order...' : `Order placed (ETA ${etaMinutes} min)`
-                }
-                triggerAriaLabel="Place order ETA menu"
-                options={ETA_OPTIONS}
-                onSubmitMinutes={handlePlaceOrder}
-                disabled={submitting}
-                customPlaceholder="Custom ETA in minutes"
-                customAriaLabel="Custom ETA in minutes"
-                submitButtonLabel="Confirm placed order"
-              />
-            </div>
-          ) : (
-            <div className="mb-4 rounded border border-warning bg-warning-soft p-4">
-              <h3 className="text-sm font-semibold text-warning-fg">{orderingOwner} is placing the order</h3>
-              <p className="mt-1 text-sm text-warning-fg">
-                Wait for {orderingOwner} to confirm the order and ETA so no second person orders in parallel.
-              </p>
-            </div>
-          )}
+          <OrderingClaimPanel
+            isClaimed={isClaimed}
+            isClaimedByMe={isClaimedByMe}
+            orderingOwner={orderingOwner}
+            etaMinutes={etaMinutes}
+            claimingOrder={claimingOrder}
+            submitting={submitting}
+            onClaimOrdering={() => void handleClaimOrdering()}
+            onPlaceOrder={handlePlaceOrder}
+          />
 
           <div className="mb-4">
             <button
@@ -377,58 +447,17 @@ export default function FoodSelectionOrderingView() {
           </div>
 
           {canManageFoodSelection ? (
-            <div className="rounded border border-warning bg-warning-soft p-4">
-              <h3 className="text-sm font-semibold text-warning-fg">
-                Missing voters with fallback meals ({fallbackCandidates.length})
-              </h3>
-              {fallbackLoading ? (
-                <p className="mt-2 text-sm text-warning-fg">Loading fallback meal options...</p>
-              ) : fallbackCandidates.length === 0 ? (
-                <p className="mt-2 text-sm italic text-warning-fg">
-                  No eligible fallback meals right now.
-                </p>
-              ) : (
-                <ul className="mt-3 space-y-2">
-                  {fallbackCandidates.map((candidate) => (
-                    <li
-                      key={candidate.nickname}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded border border-warning bg-surface px-3 py-2"
-                    >
-                      <div className="text-sm text-fg">
-                        <span className="font-medium">{candidate.nickname}</span>
-                        <span className="ml-2 rounded bg-warning-soft px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning-fg">
-                          Default meal configured
-                        </span>
-                        <span className="ml-2 text-fg-muted">
-                          {candidate.itemNumber ? `${candidate.itemNumber} ` : ''}
-                          {candidate.itemName}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => void handlePingFallbackCandidate(candidate)}
-                          disabled={pingingFallbackFor === candidate.nickname || submitting}
-                          className="rounded border border-warning bg-surface px-3 py-1.5 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50"
-                        >
-                          {pingingFallbackFor === candidate.nickname ? 'Pinging...' : 'Ping user'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void handlePlaceFallbackOrder(candidate)}
-                          disabled={placingFallbackFor === candidate.nickname || submitting}
-                          className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
-                        >
-                          Place default meal
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {fallbackSuccess ? <p className="mt-2 text-xs text-success-fg">{fallbackSuccess}</p> : null}
-              {fallbackError ? <p className="mt-2 text-xs text-danger-fg">{fallbackError}</p> : null}
-            </div>
+            <FallbackCandidatesPanel
+              candidates={fallbackCandidates}
+              loading={fallbackLoading}
+              success={fallbackSuccess}
+              error={fallbackError}
+              submitting={submitting}
+              placingFallbackFor={placingFallbackFor}
+              pingingFallbackFor={pingingFallbackFor}
+              onPlaceFallbackOrder={(candidate) => void handlePlaceFallbackOrder(candidate)}
+              onPingFallbackCandidate={(candidate) => void handlePingFallbackCandidate(candidate)}
+            />
           ) : null}
 
           {canManageFoodSelection && (

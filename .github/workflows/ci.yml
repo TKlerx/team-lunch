@@ -58,7 +58,7 @@ jobs:
       - name: Start test database
         run: pnpm db:test:up
 
-      - name: Run quality checks and coverage
+      - name: Run validation
         run: pwsh -NoProfile -File ./validate.ps1 all
 
       - name: Install Playwright Chromium

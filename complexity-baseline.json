@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-16T17:58:35.602Z",
+  "note": "Complexity ratchet. Validation fails when totals, per-rule counts, or worst observed metrics exceed this baseline. Lower this file after refactors improve the counts.",
+  "rules": [
+    "complexity",
+    "max-depth",
+    "max-lines-per-function",
+    "max-params",
+    "sonarjs/cognitive-complexity"
+  ],
+  "total": 211,
+  "byRule": {
+    "complexity": 44,
+    "max-depth": 4,
+    "max-lines-per-function": 137,
+    "max-params": 6,
+    "sonarjs/cognitive-complexity": 20
+  },
+  "maxMetricByRule": {
+    "complexity": 60,
+    "max-depth": 5,
+    "max-lines-per-function": 1025,
+    "max-params": 7,
+    "sonarjs/cognitive-complexity": 106
+  },
+  "topFiles": [
+    {
+      "file": "src/server/services/authAccess.ts",
+      "count": 13
+    },
+    {
+      "file": "src/client/pages/ManageMenus.tsx",
+      "count": 10
+    },
+    {
+      "file": "src/server/services/menu.ts",
+      "count": 9
+    },
+    {
+      "file": "src/server/routes/auth.ts",
+      "count": 7
+    },
+    {
+      "file": "src/server/services/foodSelection.ts",
+      "count": 7
+    },
+    {
+      "file": "src/server/services/mealRecommendation.ts",
+      "count": 7
+    },
+    {
+      "file": "src/client/components/FoodSelectionActiveView.tsx",
+      "count": 6
+    },
+    {
+      "file": "tests/server/food-selection-service.test.ts",
+      "count": 6
+    },
+    {
+      "file": "tests/server/sse-integration.test.ts",
+      "count": 5
+    },
+    {
+      "file": "src/client/components/AuthGate.tsx",
+      "count": 4
+    },
+    {
+      "file": "src/client/components/FoodSelectionCompletedView.tsx",
+      "count": 4
+    },
+    {
+      "file": "src/client/pages/Administration.tsx",
+      "count": 4
+    },
+    {
+      "file": "src/client/pages/Settings.tsx",
+      "count": 4
+    },
+    {
+      "file": "src/server/services/mealRecommendationAi.ts",
+      "count": 4
+    },
+    {
+      "file": "tests/server/poll-service.test.ts",
+      "count": 4
+    }
+  ],
+  "worstMessages": [
+    {
+      "file": "tests/server/food-selection-routes.test.ts",
+      "line": 78,
+      "column": 49,
+      "ruleId": "max-lines-per-function",
+      "metric": 1025,
+      "message": "Arrow function has too many lines (1025). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/food-selection-service.test.ts",
+      "line": 74,
+      "column": 36,
+      "ruleId": "max-lines-per-function",
+      "metric": 810,
+      "message": "Arrow function has too many lines (810). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/poll-service.test.ts",
+      "line": 82,
+      "column": 26,
+      "ruleId": "max-lines-per-function",
+      "metric": 750,
+      "message": "Arrow function has too many lines (750). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/client/FoodSelectionActiveView.test.tsx",
+      "line": 71,
+      "column": 37,
+      "ruleId": "max-lines-per-function",
+      "metric": 595,
+      "message": "Arrow function has too many lines (595). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/poll-routes.test.ts",
+      "line": 48,
+      "column": 39,
+      "ruleId": "max-lines-per-function",
+      "metric": 547,
+      "message": "Arrow function has too many lines (547). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/client/ManageMenus.test.tsx",
+      "line": 56,
+      "column": 25,
+      "ruleId": "max-lines-per-function",
+      "metric": 509,
+      "message": "Arrow function has too many lines (509). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/local-user-management-authz.test.ts",
+      "line": 6,
+      "column": 49,
+      "ruleId": "max-lines-per-function",
+      "metric": 473,
+      "message": "Arrow function has too many lines (473). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/display-name-identity.test.ts",
+      "line": 22,
+      "column": 44,
+      "ruleId": "max-lines-per-function",
+      "metric": 465,
+      "message": "Arrow function has too many lines (465). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/client/App.test.tsx",
+      "line": 73,
+      "column": 41,
+      "ruleId": "max-lines-per-function",
+      "metric": 459,
+      "message": "Arrow function has too many lines (459). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/client/Administration.test.tsx",
+      "line": 295,
+      "column": 44,
+      "ruleId": "max-lines-per-function",
+      "metric": 438,
+      "message": "Arrow function has too many lines (438). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/menu-routes.test.ts",
+      "line": 19,
+      "column": 39,
+      "ruleId": "max-lines-per-function",
+      "metric": 419,
+      "message": "Arrow function has too many lines (419). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/sse-integration.test.ts",
+      "line": 152,
+      "column": 40,
+      "ruleId": "max-lines-per-function",
+      "metric": 416,
+      "message": "Arrow function has too many lines (416). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/menu-service.test.ts",
+      "line": 11,
+      "column": 26,
+      "ruleId": "max-lines-per-function",
+      "metric": 395,
+      "message": "Arrow function has too many lines (395). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/client/useSSE.test.ts",
+      "line": 200,
+      "column": 20,
+      "ruleId": "max-lines-per-function",
+      "metric": 388,
+      "message": "Arrow function has too many lines (388). Maximum allowed is 60."
+    },
+    {
+      "file": "tests/server/food-selection-authz.test.ts",
+      "line": 11,
+      "column": 48,
+      "ruleId": "max-lines-per-function",
+      "metric": 317,
+      "message": "Arrow function has too many lines (317). Maximum allowed is 60."
+    }
+  ]
+}

@@ -1,10 +1,10 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type {
   LocalLoginRequest,
   OfficeLocation,
   UpdateOfficeLocationSettingsRequest,
-} from "../../lib/types.js";
-import { serviceError, sendServiceError } from "./routeUtils.js";
+} from '../../lib/types.js';
+import { serviceError, sendServiceError } from './routeUtils.js';
 import {
   buildClearEntraStateCookieHeader,
   buildClearSessionCookieHeader,
@@ -13,19 +13,19 @@ import {
   generateEntraState,
   getAuthSessionFromCookieHeader,
   getEntraStateFromCookieHeader,
-} from "../services/authSession.js";
+} from '../services/authSession.js';
 import {
   authenticateLocalUser,
   hasAnyLocalAuthUsers,
   localAuthUserExists,
   upsertLocalAuthUser,
-} from "../services/localAuth.js";
-import { verifyEntraIdToken } from "../services/entraOidc.js";
+} from '../services/localAuth.js';
+import { verifyEntraIdToken } from '../services/entraOidc.js';
 import {
   assertLocalLoginAllowed,
   clearLocalLoginPenalty,
   recordLocalLoginFailure,
-} from "../services/localLoginProtection.js";
+} from '../services/localLoginProtection.js';
 import {
   approveUserByAdmin,
   assignUserOfficesByAdmin,
@@ -48,51 +48,46 @@ import {
   updateLocalDisplayName,
   updateUserDisplayNameByAdmin,
   unblockUserByAdmin,
-} from "../services/authAccess.js";
-import { broadcast } from "../sse.js";
+} from '../services/authAccess.js';
+import { broadcast } from '../sse.js';
 import {
   createOfficeLocation,
   deactivateOfficeLocation,
   listOfficeLocations,
   renameOfficeLocation,
   updateOfficeLocationSettings,
-} from "../services/officeLocation.js";
-import type { JWTPayload } from "jose";
-import { recordAuthAuditLog } from "../services/authAudit.js";
-import { getAuthAvatarForUser } from "../services/authAvatar.js";
-import { getDatabaseConnectivityStatus } from "../services/dbConnectivity.js";
+} from '../services/officeLocation.js';
+import type { JWTPayload } from 'jose';
+import { recordAuthAuditLog } from '../services/authAudit.js';
+import { getAuthAvatarForUser } from '../services/authAvatar.js';
+import { getDatabaseConnectivityStatus } from '../services/dbConnectivity.js';
 
 type AuthConfigResponse = {
   auth: {
     entraEnabled: boolean;
     localEnabled: boolean;
     authenticated: boolean;
-    warning?: string;
     databaseUnavailable?: boolean;
+    warning?: string;
     user: {
       username: string;
-      method: "entra" | "local";
+      method: 'entra' | 'local';
       displayName: string | null;
-      displayNameSource: "local" | "entra" | null;
+      displayNameSource: 'local' | 'entra' | null;
     } | null;
     officeLocation: { id: string; key: string; name: string } | null;
     officeLocations: OfficeLocation[];
-    accessibleOfficeLocations: Array<{
-      id: string;
-      key: string;
-      name: string;
-      isActive: boolean;
-    }>;
+    accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
     approvalRequired: boolean;
     approved: boolean;
     blocked: boolean;
     isAdmin: boolean;
-    role: "admin" | "user" | null;
+    role: 'admin' | 'user' | null;
     pendingApprovals: Array<{ email: string; requestedAt: string }>;
     users: Array<{
       email: string;
       displayName: string | null;
-      displayNameSource: "local" | "entra" | null;
+      displayNameSource: 'local' | 'entra' | null;
       localAccount: boolean;
       protectedBootstrapAdmin: boolean;
       approved: boolean;
@@ -102,12 +97,7 @@ type AuthConfigResponse = {
       officeLocationKey: string | null;
       officeLocationName: string | null;
       assignedOfficeLocationIds: string[];
-      assignedOfficeLocations: Array<{
-        id: string;
-        key: string;
-        name: string;
-        isActive: boolean;
-      }>;
+      assignedOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
       requestedAt: string;
       approvedAt: string | null;
       blockedAt: string | null;
@@ -135,13 +125,37 @@ function buildDefaultApprovalState() {
   };
 }
 
+function buildDatabaseUnavailableAuthConfig(entraEnabled: boolean): AuthConfigResponse {
+  return {
+    auth: {
+      entraEnabled,
+      localEnabled: false,
+      authenticated: false,
+      databaseUnavailable: true,
+      warning:
+        'The database is unavailable, so no sign-in method can be used right now. Start the database and reload this page.',
+      user: null,
+      officeLocation: null,
+      officeLocations: [],
+      accessibleOfficeLocations: [],
+      approvalRequired: false,
+      approved: false,
+      blocked: false,
+      isAdmin: false,
+      role: null,
+      pendingApprovals: [],
+      users: [],
+    },
+  };
+}
+
 function normalizeBasePath(value: string | undefined): string {
-  if (!value || value === "/") {
-    return "";
+  if (!value || value === '/') {
+    return '';
   }
 
-  const withLeadingSlash = value.startsWith("/") ? value : `/${value}`;
-  return withLeadingSlash.endsWith("/")
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`;
+  return withLeadingSlash.endsWith('/')
     ? withLeadingSlash.slice(0, Math.max(1, withLeadingSlash.length - 1))
     : withLeadingSlash;
 }
@@ -151,40 +165,36 @@ function deriveEntraRedirectUri(
   appPublicUrl: string | undefined,
   basePath: string | undefined,
 ): string {
-  const explicit = explicitRedirectUri?.trim() ?? "";
+  const explicit = explicitRedirectUri?.trim() ?? '';
   if (explicit.length > 0) {
     return explicit;
   }
 
-  const appUrl = appPublicUrl?.trim() ?? "";
+  const appUrl = appPublicUrl?.trim() ?? '';
   if (appUrl.length === 0) {
-    return "";
+    return '';
   }
 
   try {
     const parsed = new URL(appUrl);
-    const origin = parsed.origin.replace(/\/$/, "");
+    const origin = parsed.origin.replace(/\/$/, '');
     return `${origin}${normalizeBasePath(basePath)}/api/auth/entra/callback`;
   } catch {
-    return "";
+    return '';
   }
 }
 
 function getEntraConfig() {
-  const clientId = process.env.ENTRA_CLIENT_ID?.trim() ?? "";
-  const clientSecret = process.env.ENTRA_CLIENT_SECRET?.trim() ?? "";
-  const tenantId = process.env.ENTRA_TENANT_ID?.trim() ?? "";
+  const clientId = process.env.ENTRA_CLIENT_ID?.trim() ?? '';
+  const clientSecret = process.env.ENTRA_CLIENT_SECRET?.trim() ?? '';
+  const tenantId = process.env.ENTRA_TENANT_ID?.trim() ?? '';
   const redirectUri = deriveEntraRedirectUri(
     process.env.ENTRA_REDIRECT_URI,
     process.env.APP_PUBLIC_URL,
     process.env.BASE_PATH,
   );
-  const normalizedBasePath = normalizeBasePath(
-    process.env.BASE_PATH?.trim() ?? "",
-  );
-  const postLoginRedirectUri = normalizedBasePath
-    ? `${normalizedBasePath}/`
-    : "/";
+  const normalizedBasePath = normalizeBasePath(process.env.BASE_PATH?.trim() ?? '');
+  const postLoginRedirectUri = normalizedBasePath ? `${normalizedBasePath}/` : '/';
 
   const enabled =
     clientId.length > 0 &&
@@ -198,81 +208,71 @@ function getEntraConfig() {
     clientSecret,
     tenantId,
     redirectUri,
-    openIdConfigurationUrl:
-      process.env.ENTRA_OPENID_CONFIGURATION_URL?.trim() ?? "",
+    openIdConfigurationUrl: process.env.ENTRA_OPENID_CONFIGURATION_URL?.trim() ?? '',
     postLoginRedirectUri,
     authorizeUrl: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize`,
     tokenUrl: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-    scope: "openid profile email",
+    scope: 'openid profile email',
   };
 }
 
 function getTenantIdFromClaims(claims: JWTPayload): string | null {
-  return typeof claims.tid === "string" ? claims.tid : null;
+  return typeof claims.tid === 'string' ? claims.tid : null;
 }
 
 function getUsernameFromClaims(claims: JWTPayload): string {
   const preferredUsername =
-    (typeof claims.preferred_username === "string" &&
-      claims.preferred_username.trim()) ||
-    (typeof claims.upn === "string" && claims.upn.trim()) ||
-    (typeof claims.email === "string" && claims.email.trim()) ||
-    (typeof claims.name === "string" && claims.name.trim()) ||
-    "";
+    (typeof claims.preferred_username === 'string' && claims.preferred_username.trim()) ||
+    (typeof claims.upn === 'string' && claims.upn.trim()) ||
+    (typeof claims.email === 'string' && claims.email.trim()) ||
+    (typeof claims.name === 'string' && claims.name.trim()) ||
+    '';
   if (!preferredUsername) {
-    throw serviceError("Unable to resolve username from Entra claims", 401);
+    throw serviceError('Unable to resolve username from Entra claims', 401);
   }
   return preferredUsername;
 }
 
 function getDisplayNameFromClaims(claims: JWTPayload): string | null {
-  return typeof claims.name === "string" && claims.name.trim().length > 0
+  return typeof claims.name === 'string' && claims.name.trim().length > 0
     ? claims.name.trim()
     : null;
 }
 
-function validateCredentials(body: LocalLoginRequest): {
-  username: string;
-  password: string;
-} {
+function validateCredentials(body: LocalLoginRequest): { username: string; password: string } {
   const username = body.username?.trim();
   const password = body.password;
 
-  if (!username || typeof password !== "string") {
-    throw serviceError("Username and password are required", 400);
+  if (!username || typeof password !== 'string') {
+    throw serviceError('Username and password are required', 400);
   }
 
   if (username.length > 100 || password.length > 200) {
-    throw serviceError("Invalid credentials payload", 400);
+    throw serviceError('Invalid credentials payload', 400);
   }
 
   return { username, password };
 }
 
 function getRequesterIpAddress(req: FastifyRequest): string {
-  const forwardedFor = req.headers["x-forwarded-for"];
-  if (typeof forwardedFor === "string" && forwardedFor.trim().length > 0) {
-    return forwardedFor.split(",")[0]?.trim() || req.ip;
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim().length > 0) {
+    return forwardedFor.split(',')[0]?.trim() || req.ip;
   }
 
   return req.ip;
 }
 
-async function requireCurrentAuthSession(
-  cookieHeader: string | undefined,
-): Promise<{
+async function requireCurrentAuthSession(cookieHeader: string | undefined): Promise<{
   session: NonNullable<ReturnType<typeof getAuthSessionFromCookieHeader>>;
   access: Awaited<ReturnType<typeof resolveUserApproval>>;
 }> {
   const session = getAuthSessionFromCookieHeader(cookieHeader);
   if (!session) {
-    throw serviceError("Authentication required", 401);
+    throw serviceError('Authentication required', 401);
   }
-  if (
-    session.method === "local" &&
-    !(await localAuthUserExists(session.username))
-  ) {
-    throw serviceError("Session expired", 401);
+  if (session.method === 'local' && !(await localAuthUserExists(session.username))) {
+    throw serviceError('Session expired', 401);
   }
   const access = await resolveUserApproval(session.username);
   await ensureAuthAccessUserForLogin(session.username);
@@ -283,429 +283,373 @@ async function requireCurrentAuthSession(
   return { session, access };
 }
 
-export default async function authRoutes(app: FastifyInstance) {
-  const handleEntraCallback = async (
-    req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
-    reply: FastifyReply,
-  ) => {
-    try {
-      const entra = getEntraConfig();
-      if (!entra.enabled) {
-        throw serviceError("Entra authentication is not configured", 503);
-      }
-
-      const code = req.query.code;
-      const returnedState = req.query.state;
-      if (!code || !returnedState) {
-        throw serviceError("Missing Entra callback parameters", 400);
-      }
-
-      const expectedState = getEntraStateFromCookieHeader(req.headers.cookie);
-      if (!expectedState || expectedState !== returnedState) {
-        throw serviceError("Invalid Entra callback state", 401);
-      }
-
-      const body = new URLSearchParams();
-      body.set("client_id", entra.clientId);
-      body.set("client_secret", entra.clientSecret);
-      body.set("grant_type", "authorization_code");
-      body.set("code", code);
-      body.set("redirect_uri", entra.redirectUri);
-      body.set("scope", entra.scope);
-
-      const tokenResponse = await fetch(entra.tokenUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body,
-      });
-
-      const tokenPayload = (await tokenResponse
-        .json()
-        .catch(() => null)) as Record<string, unknown> | null;
-      if (
-        !tokenResponse.ok ||
-        !tokenPayload ||
-        typeof tokenPayload.id_token !== "string"
-      ) {
-        throw serviceError("Failed to complete Entra token exchange", 401);
-      }
-
-      const idTokenClaims = await verifyEntraIdToken(
-        {
-          tenantId: entra.tenantId,
-          clientId: entra.clientId,
-          openIdConfigurationUrl: entra.openIdConfigurationUrl,
-        },
-        tokenPayload.id_token,
-      );
-      const actualTenantId = getTenantIdFromClaims(idTokenClaims);
-      if (!actualTenantId || actualTenantId !== entra.tenantId) {
-        throw serviceError("Account is not in the allowed tenant", 403);
-      }
-
-      const username = getUsernameFromClaims(idTokenClaims);
-      await syncEntraDisplayName(
-        username,
-        getDisplayNameFromClaims(idTokenClaims),
-      );
-      const approval = await resolveUserApproval(username);
-      if (approval.blocked) {
-        throw serviceError(getBlockedUserMessage(), 403);
-      }
-      const sessionVersion = await getAuthAccessSessionVersion(username);
-
-      reply.header("Set-Cookie", [
-        buildSetSessionCookieHeader({
-          username,
-          method: "entra",
-          iat: Math.floor(Date.now() / 1000),
-          sessionVersion,
-        }),
-        buildClearEntraStateCookieHeader(),
-      ]);
-      await recordAuthAuditLog({
-        event: "entra_login_succeeded",
-        actorEmail: username,
-        targetEmail: username,
-        metadata: { tenantId: entra.tenantId },
-      });
-
-      return reply.redirect(entra.postLoginRedirectUri);
-    } catch (err) {
-      reply.header("Set-Cookie", buildClearEntraStateCookieHeader());
-      await recordAuthAuditLog({
-        event: "entra_login_failed",
-        metadata: {
-          reason:
-            err instanceof Error ? err.message : "Unknown Entra login failure",
-        },
-      });
-      return sendServiceError(reply, err);
+async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
+  try {
+    const entra = getEntraConfig();
+    if (!getDatabaseConnectivityStatus().connected) {
+      reply.header('Cache-Control', 'no-store');
+      return reply.send(buildDatabaseUnavailableAuthConfig(entra.enabled));
     }
-  };
 
-  app.get("/api/auth/config", async (req, reply) => {
-    try {
-      const entra = getEntraConfig();
-      if (!getDatabaseConnectivityStatus().connected) {
-        const response: AuthConfigResponse = {
-          auth: {
-            entraEnabled: entra.enabled,
-            localEnabled: false,
-            authenticated: false,
-            databaseUnavailable: true,
-            warning:
-              "The database is unavailable. Start the database (e.g. the database container) and reload this page.",
-            user: null,
-            officeLocation: null,
-            officeLocations: [],
-            accessibleOfficeLocations: [],
-            approvalRequired: false,
-            approved: false,
-            blocked: false,
-            isAdmin: false,
-            role: null,
-            pendingApprovals: [],
-            users: [],
-          },
-        };
-        reply.header("Cache-Control", "no-store");
-        return reply.send(response);
-      }
-      let session = getAuthSessionFromCookieHeader(req.headers.cookie);
-      if (
-        session?.method === "local" &&
-        !(await localAuthUserExists(session.username))
-      ) {
-        session = null;
-      }
-      const localEnabled = !!session || (await hasAnyLocalAuthUsers());
-      let warning = "";
-      let approvalState = buildDefaultApprovalState();
-      let userProfile: AuthConfigResponse["auth"]["user"] = null;
-      if (session) {
-        try {
-          approvalState = await resolveUserApproval(session.username);
-          await ensureAuthAccessUserForLogin(session.username);
-          await assertAuthSessionVersion(
-            session.username,
-            session.sessionVersion ?? 0,
-          );
-          const displayProfile = await getAuthDisplayProfile(session.username);
-          userProfile = {
-            username: session.username,
-            method: session.method,
-            displayName: displayProfile.displayName,
-            displayNameSource: displayProfile.displayNameSource,
-          };
-        } catch {
-          session = null;
-          reply.header("Set-Cookie", buildClearSessionCookieHeader());
-          warning = "Your session expired. Please sign in again.";
-        }
-      }
-      let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
-      let users: AuthConfigResponse["auth"]["users"] = [];
-      if (!warning && session && approvalState.isAdmin) {
-        try {
-          [pendingApprovals, users] = await Promise.all([
-            listPendingAccessRequests(),
-            listAccessUsers(),
-          ]);
-        } catch {
-          warning =
-            "Authentication settings are partially unavailable. Local sign-in is still available.";
-        }
-      }
-      let officeLocations: OfficeLocation[] = [];
+    let session = getAuthSessionFromCookieHeader(req.headers.cookie);
+    if (session?.method === 'local' && !(await localAuthUserExists(session.username))) {
+      session = null;
+    }
+    const localEnabled = !!session || (await hasAnyLocalAuthUsers());
+    let warning = '';
+    let approvalState = buildDefaultApprovalState();
+    let userProfile: AuthConfigResponse['auth']['user'] = null;
+    if (session) {
       try {
-        officeLocations = await listOfficeLocations();
+        approvalState = await resolveUserApproval(session.username);
+        await ensureAuthAccessUserForLogin(session.username);
+        await assertAuthSessionVersion(session.username, session.sessionVersion ?? 0);
+        const displayProfile = await getAuthDisplayProfile(session.username);
+        userProfile = {
+          username: session.username,
+          method: session.method,
+          displayName: displayProfile.displayName,
+          displayNameSource: displayProfile.displayNameSource,
+        };
+      } catch {
+        session = null;
+        reply.header('Set-Cookie', buildClearSessionCookieHeader());
+        warning = 'Your session expired. Please sign in again.';
+      }
+    }
+    let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
+    let users: AuthConfigResponse['auth']['users'] = [];
+    if (!warning && session && approvalState.isAdmin) {
+      try {
+        [pendingApprovals, users] = await Promise.all([
+          listPendingAccessRequests(),
+          listAccessUsers(),
+        ]);
       } catch {
         warning =
-          "Authentication settings are partially unavailable. Local sign-in is still available.";
+          'Authentication settings are partially unavailable. Local sign-in is still available.';
       }
-      const accessibleOfficeLocations = approvalState.isAdmin
-        ? officeLocations
-        : officeLocations.filter((location) =>
-            approvalState.accessibleOfficeLocationIds.includes(location.id),
-          );
-
-      const response: AuthConfigResponse = {
-        auth: {
-          entraEnabled: entra.enabled,
-          localEnabled,
-          authenticated: !!session,
-          ...(warning || (!entra.enabled && !localEnabled)
-            ? {
-                warning:
-                  warning ||
-                  "Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.",
-              }
-            : {}),
-          user: userProfile,
-          officeLocation: approvalState.officeLocationId
-            ? {
-                id: approvalState.officeLocationId,
-                key: approvalState.officeLocationKey ?? "",
-                name: approvalState.officeLocationName ?? "",
-              }
-            : null,
-          officeLocations,
-          accessibleOfficeLocations,
-          approvalRequired: approvalState.approvalRequired,
-          approved: approvalState.approved,
-          blocked: approvalState.blocked,
-          isAdmin: approvalState.isAdmin,
-          role: session ? (approvalState.isAdmin ? "admin" : "user") : null,
-          pendingApprovals,
-          users,
-        },
-      };
-
-      return reply.send(response);
-    } catch (err) {
-      return sendServiceError(reply, err);
     }
-  });
+    let officeLocations: OfficeLocation[] = [];
+    try {
+      officeLocations = await listOfficeLocations();
+    } catch {
+      warning =
+        'Authentication settings are partially unavailable. Local sign-in is still available.';
+    }
+    const accessibleOfficeLocations = approvalState.isAdmin
+      ? officeLocations
+      : officeLocations.filter((location) =>
+          approvalState.accessibleOfficeLocationIds.includes(location.id),
+        );
 
-  app.get("/api/auth/me/avatar", async (req, reply) => {
+    const response: AuthConfigResponse = {
+      auth: {
+        entraEnabled: entra.enabled,
+        localEnabled,
+        authenticated: !!session,
+        ...(warning || (!entra.enabled && !localEnabled)
+          ? {
+              warning:
+                warning ||
+                'Authentication is required, but no authentication method is configured. Configure Microsoft Entra or create a local admin account.',
+            }
+          : {}),
+        user: userProfile,
+        officeLocation: approvalState.officeLocationId
+          ? {
+              id: approvalState.officeLocationId,
+              key: approvalState.officeLocationKey ?? '',
+              name: approvalState.officeLocationName ?? '',
+            }
+          : null,
+        officeLocations,
+        accessibleOfficeLocations,
+        approvalRequired: approvalState.approvalRequired,
+        approved: approvalState.approved,
+        blocked: approvalState.blocked,
+        isAdmin: approvalState.isAdmin,
+        role: session ? (approvalState.isAdmin ? 'admin' : 'user') : null,
+        pendingApprovals,
+        users,
+      },
+    };
+
+    return reply.send(response);
+  } catch (err) {
+    return sendServiceError(reply, err);
+  }
+}
+
+async function handleEntraCallback(
+  req: FastifyRequest<{ Querystring: { code?: string; state?: string } }>,
+  reply: FastifyReply,
+) {
+  try {
+    const entra = getEntraConfig();
+    if (!entra.enabled) {
+      throw serviceError('Entra authentication is not configured', 503);
+    }
+
+    const code = req.query.code;
+    const returnedState = req.query.state;
+    if (!code || !returnedState) {
+      throw serviceError('Missing Entra callback parameters', 400);
+    }
+
+    const expectedState = getEntraStateFromCookieHeader(req.headers.cookie);
+    if (!expectedState || expectedState !== returnedState) {
+      throw serviceError('Invalid Entra callback state', 401);
+    }
+
+    const body = new URLSearchParams();
+    body.set('client_id', entra.clientId);
+    body.set('client_secret', entra.clientSecret);
+    body.set('grant_type', 'authorization_code');
+    body.set('code', code);
+    body.set('redirect_uri', entra.redirectUri);
+    body.set('scope', entra.scope);
+
+    const tokenResponse = await fetch(entra.tokenUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+
+    const tokenPayload = (await tokenResponse.json().catch(() => null)) as
+      | Record<string, unknown>
+      | null;
+    if (!tokenResponse.ok || !tokenPayload || typeof tokenPayload.id_token !== 'string') {
+      throw serviceError('Failed to complete Entra token exchange', 401);
+    }
+
+    const idTokenClaims = await verifyEntraIdToken(
+      {
+        tenantId: entra.tenantId,
+        clientId: entra.clientId,
+        openIdConfigurationUrl: entra.openIdConfigurationUrl,
+      },
+      tokenPayload.id_token,
+    );
+    const actualTenantId = getTenantIdFromClaims(idTokenClaims);
+    if (!actualTenantId || actualTenantId !== entra.tenantId) {
+      throw serviceError('Account is not in the allowed tenant', 403);
+    }
+
+    const username = getUsernameFromClaims(idTokenClaims);
+    await syncEntraDisplayName(username, getDisplayNameFromClaims(idTokenClaims));
+    const approval = await resolveUserApproval(username);
+    if (approval.blocked) {
+      throw serviceError(getBlockedUserMessage(), 403);
+    }
+    const sessionVersion = await getAuthAccessSessionVersion(username);
+
+    reply.header('Set-Cookie', [
+      buildSetSessionCookieHeader({
+        username,
+        method: 'entra',
+        iat: Math.floor(Date.now() / 1000),
+        sessionVersion,
+      }),
+      buildClearEntraStateCookieHeader(),
+    ]);
+    await recordAuthAuditLog({
+      event: 'entra_login_succeeded',
+      actorEmail: username,
+      targetEmail: username,
+      metadata: { tenantId: entra.tenantId },
+    });
+
+    return reply.redirect(entra.postLoginRedirectUri);
+  } catch (err) {
+    reply.header('Set-Cookie', buildClearEntraStateCookieHeader());
+    await recordAuthAuditLog({
+      event: 'entra_login_failed',
+      metadata: {
+        reason: err instanceof Error ? err.message : 'Unknown Entra login failure',
+      },
+    });
+    return sendServiceError(reply, err);
+  }
+}
+
+function registerAuthStatusRoutes(app: FastifyInstance) {
+  app.get('/api/auth/config', handleAuthConfig);
+
+  app.get('/api/auth/me/avatar', async (req, reply) => {
     try {
       const { session } = await requireCurrentAuthSession(req.headers.cookie);
-      const avatar = await getAuthAvatarForUser(
-        session.username,
-        session.method,
-      );
-      reply.header("Cache-Control", `private, max-age=${avatar.maxAgeSeconds}`);
-      if (avatar.kind === "fallback") {
+      const avatar = await getAuthAvatarForUser(session.username, session.method);
+      reply.header('Cache-Control', `private, max-age=${avatar.maxAgeSeconds}`);
+      if (avatar.kind === 'fallback') {
         return reply.status(204).send();
       }
 
-      return reply.type(avatar.contentType).send(avatar.bytes);
+      return reply
+        .type(avatar.contentType)
+        .send(avatar.bytes);
     } catch (err) {
       return sendServiceError(reply, err);
     }
   });
+}
 
-  app.post<{ Body: LocalLoginRequest }>(
-    "/api/auth/local/login",
+function registerLocalLoginRoutes(app: FastifyInstance) {
+  app.post<{ Body: LocalLoginRequest }>('/api/auth/local/login', async (req, reply) => {
+    try {
+      const credentials = validateCredentials(req.body);
+      const loginAttempt = {
+        ipAddress: getRequesterIpAddress(req),
+        username: credentials.username,
+      };
+      assertLocalLoginAllowed(loginAttempt);
+      const authenticatedUsername = await authenticateLocalUser(credentials.username, credentials.password);
+      if (!authenticatedUsername) {
+        recordLocalLoginFailure(loginAttempt);
+        await recordAuthAuditLog({
+          event: 'local_login_failed',
+          targetEmail: credentials.username,
+          metadata: { reason: 'Invalid username or password' },
+        });
+        throw serviceError('Invalid username or password', 401);
+      }
+      const approval = await resolveUserApproval(authenticatedUsername);
+      if (approval.blocked) {
+        throw serviceError(getBlockedUserMessage(), 403);
+      }
+      const sessionVersion = await ensureAuthAccessUserForLogin(authenticatedUsername);
+      clearLocalLoginPenalty(loginAttempt);
+      await recordAuthAuditLog({
+        event: 'local_login_succeeded',
+        actorEmail: authenticatedUsername,
+        targetEmail: authenticatedUsername,
+      });
+
+      reply.header(
+        'Set-Cookie',
+        buildSetSessionCookieHeader({
+          username: authenticatedUsername,
+          method: 'local',
+          iat: Math.floor(Date.now() / 1000),
+          sessionVersion,
+        }),
+      );
+
+      const displayProfile = await getAuthDisplayProfile(authenticatedUsername);
+      return reply.send({
+        username: authenticatedUsername,
+        method: 'local' as const,
+        displayName: displayProfile.displayName,
+        displayNameSource: displayProfile.displayNameSource,
+      });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+}
+
+function registerLocalUserRoutes(app: FastifyInstance) {
+  app.post<{ Body: { email?: string; password?: string; officeLocationId?: string } }>(
+    '/api/auth/local/users/generate',
     async (req, reply) => {
       try {
-        const credentials = validateCredentials(req.body);
-        const loginAttempt = {
-          ipAddress: getRequesterIpAddress(req),
-          username: credentials.username,
-        };
-        assertLocalLoginAllowed(loginAttempt);
-        const authenticatedUsername = await authenticateLocalUser(
-          credentials.username,
-          credentials.password,
-        );
-        if (!authenticatedUsername) {
-          recordLocalLoginFailure(loginAttempt);
-          await recordAuthAuditLog({
-            event: "local_login_failed",
-            targetEmail: credentials.username,
-            metadata: { reason: "Invalid username or password" },
-          });
-          throw serviceError("Invalid username or password", 401);
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+        if (!access.isAdmin) {
+          throw serviceError('Admin role required', 403);
         }
-        const approval = await resolveUserApproval(authenticatedUsername);
-        if (approval.blocked) {
-          throw serviceError(getBlockedUserMessage(), 403);
+
+        const email = req.body?.email?.trim();
+        if (!email) {
+          throw serviceError('Email is required', 400);
         }
-        const sessionVersion = await ensureAuthAccessUserForLogin(
-          authenticatedUsername,
-        );
-        clearLocalLoginPenalty(loginAttempt);
+        const officeLocationId = req.body?.officeLocationId?.trim();
+        if (!officeLocationId) {
+          throw serviceError('Office location is required', 400);
+        }
+
+        const created = await upsertLocalAuthUser(email, req.body?.password);
+        await approveUserByAdmin(created.email, officeLocationId, session.username);
         await recordAuthAuditLog({
-          event: "local_login_succeeded",
-          actorEmail: authenticatedUsername,
-          targetEmail: authenticatedUsername,
+          event: 'auth_profile_created',
+          actorEmail: session.username,
+          targetEmail: created.email,
+          metadata: { source: 'local' },
         });
-
-        reply.header(
-          "Set-Cookie",
-          buildSetSessionCookieHeader({
-            username: authenticatedUsername,
-            method: "local",
-            iat: Math.floor(Date.now() / 1000),
-            sessionVersion,
-          }),
-        );
-
-        const displayProfile = await getAuthDisplayProfile(
-          authenticatedUsername,
-        );
-        return reply.send({
-          username: authenticatedUsername,
-          method: "local" as const,
-          displayName: displayProfile.displayName,
-          displayNameSource: displayProfile.displayNameSource,
+        await recordAuthAuditLog({
+          event: 'local_credentials_generated',
+          actorEmail: session.username,
+          targetEmail: created.email,
+          metadata: { generated: created.generated },
         });
+        return reply.send(created);
       } catch (err) {
         return sendServiceError(reply, err);
       }
     },
   );
+}
 
-  app.post<{
-    Body: { email?: string; password?: string; officeLocationId?: string };
-  }>("/api/auth/local/users/generate", async (req, reply) => {
-    try {
-      const { session, access } = await requireCurrentAuthSession(
-        req.headers.cookie,
-      );
-      if (!access.isAdmin) {
-        throw serviceError("Admin role required", 403);
-      }
-
-      const email = req.body?.email?.trim();
-      if (!email) {
-        throw serviceError("Email is required", 400);
-      }
-      const officeLocationId = req.body?.officeLocationId?.trim();
-      if (!officeLocationId) {
-        throw serviceError("Office location is required", 400);
-      }
-
-      const created = await upsertLocalAuthUser(email, req.body?.password);
-      await approveUserByAdmin(
-        created.email,
-        officeLocationId,
-        session.username,
-      );
-      await recordAuthAuditLog({
-        event: "auth_profile_created",
-        actorEmail: session.username,
-        targetEmail: created.email,
-        metadata: { source: "local" },
-      });
-      await recordAuthAuditLog({
-        event: "local_credentials_generated",
-        actorEmail: session.username,
-        targetEmail: created.email,
-        metadata: { generated: created.generated },
-      });
-      return reply.send(created);
-    } catch (err) {
-      return sendServiceError(reply, err);
-    }
-  });
-
+function registerProfileRoutes(app: FastifyInstance) {
   app.put<{ Body: { displayName?: string | null } }>(
-    "/api/auth/me/display-name",
+    '/api/auth/me/display-name',
     async (req, reply) => {
       try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (access.approvalRequired && !access.approved && !access.isAdmin) {
-          throw serviceError("User is awaiting approval", 403);
+          throw serviceError('User is awaiting approval', 403);
         }
-        if (session.method !== "local") {
-          throw serviceError("Display name is managed by Microsoft Entra", 400);
+        if (session.method !== 'local') {
+          throw serviceError('Display name is managed by Microsoft Entra', 400);
         }
-        const profile = await updateLocalDisplayName(
-          session.username,
-          req.body?.displayName,
-          session.username,
-        );
+        const profile = await updateLocalDisplayName(session.username, req.body?.displayName, session.username);
         return reply.send(profile);
       } catch (err) {
         return sendServiceError(reply, err);
       }
     },
   );
+}
 
+function registerAccountProfileAdminRoutes(app: FastifyInstance) {
   app.put<{ Body: { email?: string; displayName?: string | null } }>(
-    "/api/auth/users/display-name",
+    '/api/auth/users/display-name',
     async (req, reply) => {
       try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
+          throw serviceError('Admin approval required', 403);
         }
         const email = req.body?.email?.trim();
         if (!email) {
-          throw serviceError("Email is required", 400);
+          throw serviceError('Email is required', 400);
         }
-        const profile = await updateUserDisplayNameByAdmin(
-          email,
-          req.body?.displayName,
-          session.username,
-        );
+        const profile = await updateUserDisplayNameByAdmin(email, req.body?.displayName, session.username);
         return reply.send(profile);
       } catch (err) {
         return sendServiceError(reply, err);
       }
     },
   );
+}
 
+function registerAccountLifecycleAdminRoutes(app: FastifyInstance) {
   app.put<{ Body: { email?: string; newEmail?: string } }>(
-    "/api/auth/users/email",
+    '/api/auth/users/email',
     async (req, reply) => {
       try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
+          throw serviceError('Admin approval required', 403);
         }
         const email = req.body?.email?.trim();
         const newEmail = req.body?.newEmail?.trim();
         if (!email || !newEmail) {
-          throw serviceError("Email and new email are required", 400);
+          throw serviceError('Email and new email are required', 400);
         }
-        const result = await updateLocalUserEmailByAdmin(
-          email,
-          newEmail,
-          session.username,
-        );
-        broadcast("auth_session_revoked", {
+        const result = await updateLocalUserEmailByAdmin(email, newEmail, session.username);
+        broadcast('auth_session_revoked', {
           actorKey: result.previousEmail,
-          reason: "account_updated",
+          reason: 'account_updated',
         });
         return reply.send(result);
       } catch (err) {
@@ -715,23 +659,21 @@ export default async function authRoutes(app: FastifyInstance) {
   );
 
   app.delete<{ Body: { email?: string } }>(
-    "/api/auth/users",
+    '/api/auth/users',
     async (req, reply) => {
       try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
+        const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
+          throw serviceError('Admin approval required', 403);
         }
         const email = req.body?.email?.trim();
         if (!email) {
-          throw serviceError("Email is required", 400);
+          throw serviceError('Email is required', 400);
         }
         const result = await deleteLocalUserByAdmin(email, session.username);
-        broadcast("auth_session_revoked", {
+        broadcast('auth_session_revoked', {
           actorKey: result.email,
-          reason: "account_deleted",
+          reason: 'account_deleted',
         });
         return reply.send({ email: result.email, deleted: true });
       } catch (err) {
@@ -739,175 +681,149 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     },
   );
+}
 
+function registerApprovalRoutes(app: FastifyInstance) {
+  app.post<{ Body: { email?: string; officeLocationId?: string } }>('/api/auth/users/approve', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+      const officeLocationId = req.body?.officeLocationId?.trim();
+      if (!officeLocationId) {
+        throw serviceError('Office location is required', 400);
+      }
+
+      await approveUserByAdmin(email, officeLocationId, session.username);
+      return reply.send({ email, approved: true });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.post<{ Body: { email?: string } }>('/api/auth/users/decline', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+
+      await declineUserByAdmin(email, session.username);
+      return reply.send({ email, declined: true });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+}
+
+function registerRoleRoutes(app: FastifyInstance) {
+  app.post<{ Body: { email?: string } }>('/api/auth/users/promote', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+
+      await promoteUserByAdmin(email, session.username);
+      return reply.send({ email, promoted: true });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+}
+
+function registerBlockRoutes(app: FastifyInstance) {
+  app.post<{ Body: { email?: string } }>('/api/auth/users/block', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+
+      await blockUserByAdmin(email, session.username);
+      return reply.send({ email, blocked: true });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.post<{ Body: { email?: string } }>('/api/auth/users/unblock', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+
+      await unblockUserByAdmin(email, session.username);
+      return reply.send({ email, blocked: false });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.post<{ Body: { email?: string; officeLocationId?: string } }>('/api/auth/users/demote', async (req, reply) => {
+    try {
+      const { session, access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
+      }
+
+      const email = req.body?.email?.trim();
+      if (!email) {
+        throw serviceError('Email is required', 400);
+      }
+
+      await demoteUserByAdmin(email, req.body?.officeLocationId?.trim(), session.username);
+      return reply.send({ email, demoted: true });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+}
+
+function registerOfficeAssignmentRoutes(app: FastifyInstance) {
   app.post<{ Body: { email?: string; officeLocationId?: string } }>(
-    "/api/auth/users/approve",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-        const officeLocationId = req.body?.officeLocationId?.trim();
-        if (!officeLocationId) {
-          throw serviceError("Office location is required", 400);
-        }
-
-        await approveUserByAdmin(email, officeLocationId, session.username);
-        return reply.send({ email, approved: true });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string } }>(
-    "/api/auth/users/decline",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-
-        await declineUserByAdmin(email, session.username);
-        return reply.send({ email, declined: true });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string } }>(
-    "/api/auth/users/promote",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-
-        await promoteUserByAdmin(email, session.username);
-        return reply.send({ email, promoted: true });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string } }>(
-    "/api/auth/users/block",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-
-        await blockUserByAdmin(email, session.username);
-        return reply.send({ email, blocked: true });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string } }>(
-    "/api/auth/users/unblock",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-
-        await unblockUserByAdmin(email, session.username);
-        return reply.send({ email, blocked: false });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string; officeLocationId?: string } }>(
-    "/api/auth/users/demote",
-    async (req, reply) => {
-      try {
-        const { session, access } = await requireCurrentAuthSession(
-          req.headers.cookie,
-        );
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const email = req.body?.email?.trim();
-        if (!email) {
-          throw serviceError("Email is required", 400);
-        }
-
-        await demoteUserByAdmin(
-          email,
-          req.body?.officeLocationId?.trim(),
-          session.username,
-        );
-        return reply.send({ email, demoted: true });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{ Body: { email?: string; officeLocationId?: string } }>(
-    "/api/auth/users/assign-office",
+    '/api/auth/users/assign-office',
     async (req, reply) => {
       try {
         const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
+          throw serviceError('Admin approval required', 403);
         }
 
         const email = req.body?.email?.trim();
         if (!email) {
-          throw serviceError("Email is required", 400);
+          throw serviceError('Email is required', 400);
         }
         const officeLocationId = req.body?.officeLocationId?.trim();
         if (!officeLocationId) {
-          throw serviceError("Office location is required", 400);
+          throw serviceError('Office location is required', 400);
         }
 
         await assignUserOfficeByAdmin(email, officeLocationId);
@@ -924,72 +840,68 @@ export default async function authRoutes(app: FastifyInstance) {
       officeLocationIds?: string[];
       preferredOfficeLocationId?: string;
     };
-  }>("/api/auth/users/assign-offices", async (req, reply) => {
+  }>('/api/auth/users/assign-offices', async (req, reply) => {
     try {
       const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
-        throw serviceError("Admin approval required", 403);
+        throw serviceError('Admin approval required', 403);
       }
 
       const email = req.body?.email?.trim();
       if (!email) {
-        throw serviceError("Email is required", 400);
+        throw serviceError('Email is required', 400);
       }
 
       await assignUserOfficesByAdmin(
         email,
-        Array.isArray(req.body?.officeLocationIds)
-          ? req.body.officeLocationIds
-          : [],
+        Array.isArray(req.body?.officeLocationIds) ? req.body.officeLocationIds : [],
         req.body?.preferredOfficeLocationId?.trim(),
       );
       return reply.send({
         email,
-        officeLocationIds: Array.isArray(req.body?.officeLocationIds)
-          ? req.body.officeLocationIds
-          : [],
-        preferredOfficeLocationId:
-          req.body?.preferredOfficeLocationId?.trim() ?? null,
+        officeLocationIds: Array.isArray(req.body?.officeLocationIds) ? req.body.officeLocationIds : [],
+        preferredOfficeLocationId: req.body?.preferredOfficeLocationId?.trim() ?? null,
       });
     } catch (err) {
       return sendServiceError(reply, err);
     }
   });
+}
 
-  app.post<{ Body: { name?: string } }>(
-    "/api/auth/offices",
-    async (req, reply) => {
-      try {
-        const { access } = await requireCurrentAuthSession(req.headers.cookie);
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const name = req.body?.name?.trim();
-        if (!name) {
-          throw serviceError("Office location name is required", 400);
-        }
-
-        const office = await createOfficeLocation(name);
-        return reply.send({ office });
-      } catch (err) {
-        return sendServiceError(reply, err);
+function registerOfficeCreateRoutes(app: FastifyInstance) {
+  app.post<{ Body: { name?: string } }>('/api/auth/offices', async (req, reply) => {
+    try {
+      const { access } = await requireCurrentAuthSession(req.headers.cookie);
+      if (!access.isAdmin) {
+        throw serviceError('Admin approval required', 403);
       }
-    },
-  );
 
+      const name = req.body?.name?.trim();
+      if (!name) {
+        throw serviceError('Office location name is required', 400);
+      }
+
+      const office = await createOfficeLocation(name);
+      return reply.send({ office });
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+}
+
+function registerOfficeMaintenanceRoutes(app: FastifyInstance) {
   app.post<{ Params: { officeId: string }; Body: { name?: string } }>(
-    "/api/auth/offices/:officeId/rename",
+    '/api/auth/offices/:officeId/rename',
     async (req, reply) => {
       try {
         const { access } = await requireCurrentAuthSession(req.headers.cookie);
         if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
+          throw serviceError('Admin approval required', 403);
         }
 
         const name = req.body?.name?.trim();
         if (!name) {
-          throw serviceError("Office location name is required", 400);
+          throw serviceError('Office location name is required', 400);
         }
 
         const office = await renameOfficeLocation(req.params.officeId, name);
@@ -1000,71 +912,83 @@ export default async function authRoutes(app: FastifyInstance) {
     },
   );
 
-  app.post<{ Params: { officeId: string } }>(
-    "/api/auth/offices/:officeId/deactivate",
-    async (req, reply) => {
-      try {
-        const { access } = await requireCurrentAuthSession(req.headers.cookie);
-        if (!access.isAdmin) {
-          throw serviceError("Admin approval required", 403);
-        }
-
-        const office = await deactivateOfficeLocation(req.params.officeId);
-        return reply.send({ office });
-      } catch (err) {
-        return sendServiceError(reply, err);
-      }
-    },
-  );
-
-  app.post<{
-    Params: { officeId: string };
-    Body: UpdateOfficeLocationSettingsRequest;
-  }>("/api/auth/offices/:officeId/settings", async (req, reply) => {
+  app.post<{ Params: { officeId: string } }>('/api/auth/offices/:officeId/deactivate', async (req, reply) => {
     try {
       const { access } = await requireCurrentAuthSession(req.headers.cookie);
       if (!access.isAdmin) {
-        throw serviceError("Admin approval required", 403);
+        throw serviceError('Admin approval required', 403);
       }
 
-      const office = await updateOfficeLocationSettings(
-        req.params.officeId,
-        req.body,
-      );
+      const office = await deactivateOfficeLocation(req.params.officeId);
       return reply.send({ office });
     } catch (err) {
       return sendServiceError(reply, err);
     }
   });
 
-  app.post("/api/auth/logout", async (_req, reply) => {
-    reply.header("Set-Cookie", buildClearSessionCookieHeader());
+  app.post<{ Params: { officeId: string }; Body: UpdateOfficeLocationSettingsRequest }>(
+    '/api/auth/offices/:officeId/settings',
+    async (req, reply) => {
+      try {
+        const { access } = await requireCurrentAuthSession(req.headers.cookie);
+        if (!access.isAdmin) {
+          throw serviceError('Admin approval required', 403);
+        }
+
+        const office = await updateOfficeLocationSettings(req.params.officeId, req.body);
+        return reply.send({ office });
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+}
+
+function registerAuthSessionRoutes(app: FastifyInstance) {
+  app.post('/api/auth/logout', async (_req, reply) => {
+    reply.header('Set-Cookie', buildClearSessionCookieHeader());
     return reply.status(204).send();
   });
 
-  app.get("/api/auth/entra/login", async (_req, reply) => {
+  app.get('/api/auth/entra/login', async (_req, reply) => {
     try {
       const entra = getEntraConfig();
       if (!entra.enabled) {
-        throw serviceError("Entra authentication is not configured", 503);
+        throw serviceError('Entra authentication is not configured', 503);
       }
 
       const state = generateEntraState();
       const url = new URL(entra.authorizeUrl);
-      url.searchParams.set("client_id", entra.clientId);
-      url.searchParams.set("response_type", "code");
-      url.searchParams.set("redirect_uri", entra.redirectUri);
-      url.searchParams.set("response_mode", "query");
-      url.searchParams.set("scope", entra.scope);
-      url.searchParams.set("state", state);
+      url.searchParams.set('client_id', entra.clientId);
+      url.searchParams.set('response_type', 'code');
+      url.searchParams.set('redirect_uri', entra.redirectUri);
+      url.searchParams.set('response_mode', 'query');
+      url.searchParams.set('scope', entra.scope);
+      url.searchParams.set('state', state);
 
-      reply.header("Set-Cookie", buildSetEntraStateCookieHeader(state));
+      reply.header('Set-Cookie', buildSetEntraStateCookieHeader(state));
       return reply.redirect(url.toString());
     } catch (err) {
       return sendServiceError(reply, err);
     }
   });
 
-  app.get("/api/auth/entra/callback", handleEntraCallback);
-  app.get("/api/auth/callback/azure-ad", handleEntraCallback);
+  app.get('/api/auth/entra/callback', handleEntraCallback);
+  app.get('/api/auth/callback/azure-ad', handleEntraCallback);
+}
+
+export default async function authRoutes(app: FastifyInstance) {
+  registerAuthStatusRoutes(app);
+  registerLocalLoginRoutes(app);
+  registerLocalUserRoutes(app);
+  registerProfileRoutes(app);
+  registerAccountProfileAdminRoutes(app);
+  registerAccountLifecycleAdminRoutes(app);
+  registerApprovalRoutes(app);
+  registerRoleRoutes(app);
+  registerBlockRoutes(app);
+  registerOfficeAssignmentRoutes(app);
+  registerOfficeCreateRoutes(app);
+  registerOfficeMaintenanceRoutes(app);
+  registerAuthSessionRoutes(app);
 }

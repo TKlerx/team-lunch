@@ -1458,9 +1458,8 @@ export async function resolveUserApproval(
     const entry = await getAuthAccessEntryByEmail(normalized).catch(() => null);
     const assignedOfficeLocations = entry ? getAssignedOfficeLocations(entry) : [];
     const fallbackOfficeLocation = assignedOfficeLocations[0] ?? (await ensureDefaultOfficeLocation());
-    const accessibleOfficeLocations = assignedOfficeLocations.length > 0
-      ? assignedOfficeLocations
-      : [fallbackOfficeLocation];
+    const accessibleOfficeLocations =
+      assignedOfficeLocations.length > 0 ? assignedOfficeLocations : [fallbackOfficeLocation];
 
     return {
       approvalRequired: false,

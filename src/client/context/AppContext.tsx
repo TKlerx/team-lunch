@@ -51,6 +51,96 @@ function resetTeamLunchProcess(state: AppState): AppState {
   };
 }
 
+function finishActivePoll(
+  state: AppState,
+  payload: Extract<AppAction, { type: 'POLL_ENDED' }>['payload'],
+): AppState {
+  if (!state.activePoll || state.activePoll.id !== payload.pollId) return state;
+
+  if (payload.status === 'tied') {
+    return {
+      ...state,
+      activePoll: { ...state.activePoll, status: 'tied' },
+    };
+  }
+
+  if (payload.status === 'aborted') {
+    return {
+      ...state,
+      activePoll: null,
+    };
+  }
+
+  return {
+    ...state,
+    activePoll: null,
+    latestCompletedPoll: buildFinishedPoll(state.activePoll, payload),
+  };
+}
+
+function buildFinishedPoll(
+  activePoll: Poll,
+  payload: Extract<AppAction, { type: 'POLL_ENDED' }>['payload'],
+): Poll {
+  return {
+    ...activePoll,
+    status: 'finished',
+    endedPrematurely: payload.endedPrematurely ?? false,
+    winnerMenuId: payload.winner?.menuId ?? null,
+    winnerMenuName: payload.winner?.menuName ?? null,
+    winnerSelectedRandomly: payload.winner?.selectedRandomly ?? false,
+  };
+}
+
+function updateOrderAcrossSelections(state: AppState, order: FoodOrder): AppState {
+  const updateOrderList = (orders: FoodOrder[]): FoodOrder[] =>
+    orders.map((existingOrder) => (existingOrder.id === order.id ? order : existingOrder));
+
+  return {
+    ...state,
+    activeFoodSelection: state.activeFoodSelection
+      ? {
+          ...state.activeFoodSelection,
+          orders: updateOrderList(state.activeFoodSelection.orders),
+        }
+      : null,
+    latestCompletedFoodSelection: state.latestCompletedFoodSelection
+      ? {
+          ...state.latestCompletedFoodSelection,
+          orders: updateOrderList(state.latestCompletedFoodSelection.orders),
+        }
+      : null,
+    completedFoodSelectionsHistory: state.completedFoodSelectionsHistory.map((selection) =>
+      selection.orders.some((existingOrder) => existingOrder.id === order.id)
+        ? { ...selection, orders: updateOrderList(selection.orders) }
+        : selection,
+    ),
+  };
+}
+
+function withdrawActiveOrder(
+  state: AppState,
+  payload: Extract<AppAction, { type: 'ORDER_WITHDRAWN' }>['payload'],
+): AppState {
+  if (!state.activeFoodSelection) return state;
+  const { nickname, actorKey, orderId } = payload;
+
+  return {
+    ...state,
+    activeFoodSelection: {
+      ...state.activeFoodSelection,
+      orders: state.activeFoodSelection.orders.filter((order) => {
+        const sameActor = actorKey
+          ? order.actorKey === actorKey || (!order.actorKey && order.nickname === nickname)
+          : order.nickname === nickname;
+        if (!sameActor) return true;
+        if (!orderId) return false;
+        return order.id !== orderId;
+      }),
+    },
+  };
+}
+
 // ─── Actions ───────────────────────────────────────────────
 
 export type AppAction =
@@ -238,38 +328,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case 'POLL_ENDED': {
-      if (!state.activePoll || state.activePoll.id !== action.payload.pollId) return state;
-
-      if (action.payload.status === 'tied') {
-        return {
-          ...state,
-          activePoll: { ...state.activePoll, status: 'tied' },
-        };
-      }
-
-      if (action.payload.status === 'aborted') {
-        // Aborted — clear active poll, return to idle
-        return {
-          ...state,
-          activePoll: null,
-        };
-      }
-
-      // finished — move from active to latestCompleted
-      const finishedPoll: Poll = {
-        ...state.activePoll,
-        status: 'finished',
-        endedPrematurely: action.payload.endedPrematurely ?? false,
-        winnerMenuId: action.payload.winner?.menuId ?? null,
-        winnerMenuName: action.payload.winner?.menuName ?? null,
-        winnerSelectedRandomly: action.payload.winner?.selectedRandomly ?? false,
-      };
-
-      return {
-        ...state,
-        activePoll: null,
-        latestCompletedPoll: finishedPoll,
-      };
+      return finishActivePoll(state, action.payload);
     }
 
     case 'POLL_EXTENDED': {
@@ -304,49 +363,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case 'ORDER_UPDATED': {
-      const { order } = action.payload;
-      const updateOrderList = (orders: FoodOrder[]): FoodOrder[] =>
-        orders.map((o) => (o.id === order.id ? order : o));
-
-      return {
-        ...state,
-        activeFoodSelection: state.activeFoodSelection
-          ? {
-              ...state.activeFoodSelection,
-              orders: updateOrderList(state.activeFoodSelection.orders),
-            }
-          : null,
-        latestCompletedFoodSelection: state.latestCompletedFoodSelection
-          ? {
-              ...state.latestCompletedFoodSelection,
-              orders: updateOrderList(state.latestCompletedFoodSelection.orders),
-            }
-          : null,
-        completedFoodSelectionsHistory: state.completedFoodSelectionsHistory.map((selection) =>
-          selection.orders.some((o) => o.id === order.id)
-            ? { ...selection, orders: updateOrderList(selection.orders) }
-            : selection,
-        ),
-      };
+      return updateOrderAcrossSelections(state, action.payload.order);
     }
 
     case 'ORDER_WITHDRAWN': {
-      if (!state.activeFoodSelection) return state;
-      const { nickname, actorKey, orderId } = action.payload;
-      return {
-        ...state,
-        activeFoodSelection: {
-          ...state.activeFoodSelection,
-          orders: state.activeFoodSelection.orders.filter((o) => {
-            const sameActor = actorKey
-              ? o.actorKey === actorKey || (!o.actorKey && o.nickname === nickname)
-              : o.nickname === nickname;
-            if (!sameActor) return true;
-            if (!orderId) return false;
-            return o.id !== orderId;
-          }),
-        },
-      };
+      return withdrawActiveOrder(state, action.payload);
     }
 
     case 'FOOD_SELECTION_OVERTIME': {

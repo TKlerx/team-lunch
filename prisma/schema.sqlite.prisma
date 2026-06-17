@@ -27,6 +27,7 @@ model OfficeLocation {
   polls             Poll[]
   foodSelections    FoodSelection[]
   shoppingListItems ShoppingListItem[]
+  mealRecommendationImpressions MealRecommendationImpression[]
 
   @@map("office_locations")
 }
@@ -145,6 +146,7 @@ model FoodSelection {
   poll             Poll           @relation(fields: [pollId], references: [id], onDelete: Cascade)
   menu             Menu?          @relation(fields: [menuId], references: [id], onDelete: SetNull)
   orders           FoodOrder[]
+  recommendationImpressions MealRecommendationImpression[]
 
   @@index([officeLocationId, status, createdAt])
   @@map("food_selections")
@@ -275,6 +277,28 @@ model UserMenuDefaultPreference {
 
   @@unique([userKey, menuId])
   @@map("user_menu_default_preferences")
+}
+
+model MealRecommendationImpression {
+  id                  String   @id @default(uuid())
+  foodSelectionId     String   @map("food_selection_id")
+  officeLocationId    String   @map("office_location_id")
+  actorKey            String   @map("actor_key")
+  actorEmail          String?  @map("actor_email")
+  displayNameSnapshot String?  @map("display_name_snapshot")
+  source              String
+  provider            String?
+  recommendedAt       DateTime @map("recommended_at")
+  inputSummaryJson    Json     @map("input_summary_json")
+  itemsJson           Json     @map("items_json")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  foodSelection  FoodSelection  @relation(fields: [foodSelectionId], references: [id], onDelete: Cascade)
+  officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
+
+  @@index([foodSelectionId, actorKey])
+  @@index([officeLocationId, actorKey, recommendedAt])
+  @@map("meal_recommendation_impressions")
 }
 
 model ShoppingListItem {

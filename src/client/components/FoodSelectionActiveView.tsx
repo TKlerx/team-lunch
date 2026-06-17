@@ -11,7 +11,7 @@ import {
   isAdminAuthenticatedUser,
   isCreatorAuthenticatedUser,
 } from '../auth.js';
-import type { UserPreferences } from '../../lib/types.js';
+import type { MealRecommendationResponse, UserPreferences } from '../../lib/types.js';
 
 type ItemWarnings = {
   allergies: string[];
@@ -373,6 +373,399 @@ function OrderBoard({
   );
 }
 
+function MealRecommendationsList({ recommendations }: { recommendations: MealRecommendationResponse }) {
+  return (
+    <div className="mt-3 space-y-2">
+      {recommendations.source === 'ai_assisted' && (
+        <p className="text-xs font-medium text-accent-fg">AI-assisted suggestions</p>
+      )}
+      {recommendations.warnings.map((warning) => (
+        <p key={warning} className="text-xs text-warning-fg">
+          {warning}
+        </p>
+      ))}
+      <ul className="space-y-2">
+        {recommendations.items.map((item) => (
+          <li key={item.itemId ?? item.itemName} className="rounded border border-border p-2">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-sm font-medium text-fg">
+                #{item.rank} {item.itemName}
+              </span>
+              <span className="text-xs text-fg-muted">Score: {item.score}</span>
+            </div>
+            <p className="mt-1 text-xs text-fg-muted">
+              {item.reason}
+              {item.aiAssisted && <span className="ml-1 text-accent-fg">(AI-assisted)</span>}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function MealRecommendationsPanel({
+  recommendations,
+  recommendationsLoading,
+  recommendationsError,
+  onRecommendMeal,
+}: {
+  recommendations: MealRecommendationResponse | null;
+  recommendationsLoading: boolean;
+  recommendationsError: string;
+  onRecommendMeal: () => void;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-fg">Meal recommendations</h3>
+        <button
+          type="button"
+          onClick={onRecommendMeal}
+          disabled={recommendationsLoading}
+          className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {recommendationsLoading ? 'Thinking...' : 'Recommend a meal'}
+        </button>
+      </div>
+      {recommendationsError && (
+        <p className="mt-2 text-sm text-danger-fg">{recommendationsError}</p>
+      )}
+      {recommendations ? <MealRecommendationsList recommendations={recommendations} /> : null}
+    </div>
+  );
+}
+
+function MissingOrdersEmptyState({ submitting, onFinishNow }: { submitting: boolean; onFinishNow: () => void }) {
+  return (
+    <div className="mt-2 space-y-2">
+      <p className="text-sm text-accent-fg">
+        Everyone who voted has ordered. Click below when you have placed the real order.
+      </p>
+      <button
+        type="button"
+        onClick={onFinishNow}
+        disabled={submitting}
+        className="w-full rounded bg-success-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+      >
+        Click here when you place the order.
+      </button>
+    </div>
+  );
+}
+
+function MissingOrdersReminderControls({
+  votersWithoutOrderCount,
+  remindingMissing,
+  reminderMessage,
+  reminderError,
+  onRemindMissingOrders,
+}: {
+  votersWithoutOrderCount: number;
+  remindingMissing: boolean;
+  reminderMessage: string;
+  reminderError: string;
+  onRemindMissingOrders: () => void;
+}) {
+  return (
+    <div className="mt-3 space-y-2">
+      <button
+        type="button"
+        onClick={onRemindMissingOrders}
+        disabled={remindingMissing || votersWithoutOrderCount === 0}
+        className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+      >
+        {remindingMissing ? 'Sending reminders...' : 'Ping missing users'}
+      </button>
+      {reminderMessage ? <p className="text-xs text-success-fg">{reminderMessage}</p> : null}
+      {reminderError ? <p className="text-xs text-danger-fg">{reminderError}</p> : null}
+    </div>
+  );
+}
+
+function MissingOrdersList({
+  votersWithoutOrder,
+  canManageFoodSelection,
+  remindingMissing,
+  reminderMessage,
+  reminderError,
+  onRemindMissingOrders,
+}: {
+  votersWithoutOrder: string[];
+  canManageFoodSelection: boolean;
+  remindingMissing: boolean;
+  reminderMessage: string;
+  reminderError: string;
+  onRemindMissingOrders: () => void;
+}) {
+  return (
+    <>
+      <h4 className="text-sm font-semibold text-accent-fg">
+        Voted for menu but not ordered yet ({votersWithoutOrder.length})
+      </h4>
+      <p className="mt-1 text-xs text-accent-fg">
+        CTA: remind these people personally, or use the reminder function below.
+      </p>
+      <ul className="mt-2 space-y-1">
+        {votersWithoutOrder.map((name) => (
+          <li key={name} className="text-sm text-accent-fg">
+            {name}
+          </li>
+        ))}
+      </ul>
+      {canManageFoodSelection ? (
+        <MissingOrdersReminderControls
+          votersWithoutOrderCount={votersWithoutOrder.length}
+          remindingMissing={remindingMissing}
+          reminderMessage={reminderMessage}
+          reminderError={reminderError}
+          onRemindMissingOrders={onRemindMissingOrders}
+        />
+      ) : (
+        <p className="mt-2 text-xs text-accent-fg">
+          Personal reminders are available to everyone. Automatic reminder sending is admin-only.
+        </p>
+      )}
+    </>
+  );
+}
+
+function MissingOrdersPanel({
+  votersWithoutOrder,
+  canManageFoodSelection,
+  submitting,
+  remindingMissing,
+  reminderMessage,
+  reminderError,
+  onFinishNow,
+  onRemindMissingOrders,
+}: {
+  votersWithoutOrder: string[];
+  canManageFoodSelection: boolean;
+  submitting: boolean;
+  remindingMissing: boolean;
+  reminderMessage: string;
+  reminderError: string;
+  onFinishNow: () => void;
+  onRemindMissingOrders: () => void;
+}) {
+  return (
+    <div className="rounded-lg border border-accent bg-accent-soft p-4 shadow-sm">
+      <h3 className="text-sm font-semibold text-accent-fg">Recommended next action</h3>
+      {votersWithoutOrder.length === 0 ? (
+        <MissingOrdersEmptyState submitting={submitting} onFinishNow={onFinishNow} />
+      ) : (
+        <MissingOrdersList
+          votersWithoutOrder={votersWithoutOrder}
+          canManageFoodSelection={canManageFoodSelection}
+          remindingMissing={remindingMissing}
+          reminderMessage={reminderMessage}
+          reminderError={reminderError}
+          onRemindMissingOrders={onRemindMissingOrders}
+        />
+      )}
+    </div>
+  );
+}
+
+function TimerMinuteOptions({
+  timerOptions,
+  updatingTimer,
+  onSelectMinutes,
+}: {
+  timerOptions: number[];
+  updatingTimer: boolean;
+  onSelectMinutes: (minutes: number) => void;
+}) {
+  return (
+    <div className="max-h-40 overflow-y-auto border-b border-border py-1">
+      {timerOptions.map((minutes) => (
+        <button
+          key={minutes}
+          type="button"
+          onClick={() => onSelectMinutes(minutes)}
+          disabled={updatingTimer}
+          className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
+        >
+          {minutes} min
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ManualTimerInput({
+  manualRemainingMinutes,
+  onManualRemainingMinutesChange,
+  onSubmitManualMinutes,
+}: {
+  manualRemainingMinutes: string;
+  onManualRemainingMinutesChange: (value: string) => void;
+  onSubmitManualMinutes: () => void;
+}) {
+  return (
+    <div className="p-2">
+      <input
+        type="text"
+        value={manualRemainingMinutes}
+        onChange={(event) => onManualRemainingMinutesChange(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            onSubmitManualMinutes();
+          }
+        }}
+        placeholder="Manual minutes remaining"
+        className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+        aria-label="Food selection manual minutes remaining"
+      />
+    </div>
+  );
+}
+
+function FoodSelectionTimerActions({
+  selection,
+  remaining,
+  totalSeconds,
+  canAdvanceToOrdering,
+  canManageFoodSelection,
+  canAdjustFoodSelectionTimer,
+  submitting,
+  updatingTimer,
+  manualRemainingMinutes,
+  timerOptions,
+  onFinishNow,
+  onAbort,
+  onUpdateTimer,
+  onManualRemainingMinutesChange,
+}: {
+  selection: { menuName: string };
+  remaining: number;
+  totalSeconds: number;
+  canAdvanceToOrdering: boolean;
+  canManageFoodSelection: boolean;
+  canAdjustFoodSelectionTimer: boolean;
+  submitting: boolean;
+  updatingTimer: boolean;
+  manualRemainingMinutes: string;
+  timerOptions: number[];
+  onFinishNow: () => Promise<boolean>;
+  onAbort: () => Promise<void>;
+  onUpdateTimer: (remainingMinutes: number) => Promise<boolean>;
+  onManualRemainingMinutesChange: (value: string) => void;
+}) {
+  return (
+    <TimerActionHeader
+      title={<>{selection.menuName} &mdash; Food Selection</>}
+      timerLabel={formatTime(remaining)}
+      remainingSeconds={remaining}
+      totalSeconds={totalSeconds}
+      triggerAriaLabel="Food selection timer actions"
+    >
+      {({ closeMenu }) => (
+        <FoodSelectionTimerMenu
+          closeMenu={closeMenu}
+          canAdvanceToOrdering={canAdvanceToOrdering}
+          canManageFoodSelection={canManageFoodSelection}
+          canAdjustFoodSelectionTimer={canAdjustFoodSelectionTimer}
+          submitting={submitting}
+          updatingTimer={updatingTimer}
+          manualRemainingMinutes={manualRemainingMinutes}
+          timerOptions={timerOptions}
+          onFinishNow={onFinishNow}
+          onAbort={onAbort}
+          onUpdateTimer={onUpdateTimer}
+          onManualRemainingMinutesChange={onManualRemainingMinutesChange}
+        />
+      )}
+    </TimerActionHeader>
+  );
+}
+
+function FoodSelectionTimerMenu({
+  closeMenu,
+  canAdvanceToOrdering,
+  canManageFoodSelection,
+  canAdjustFoodSelectionTimer,
+  submitting,
+  updatingTimer,
+  manualRemainingMinutes,
+  timerOptions,
+  onFinishNow,
+  onAbort,
+  onUpdateTimer,
+  onManualRemainingMinutesChange,
+}: {
+  closeMenu: () => void;
+  canAdvanceToOrdering: boolean;
+  canManageFoodSelection: boolean;
+  canAdjustFoodSelectionTimer: boolean;
+  submitting: boolean;
+  updatingTimer: boolean;
+  manualRemainingMinutes: string;
+  timerOptions: number[];
+  onFinishNow: () => Promise<boolean>;
+  onAbort: () => Promise<void>;
+  onUpdateTimer: (remainingMinutes: number) => Promise<boolean>;
+  onManualRemainingMinutesChange: (value: string) => void;
+}) {
+  const updateTimerAndClose = (minutes: number) => {
+    void (async () => {
+      const done = await onUpdateTimer(minutes);
+      if (done) closeMenu();
+    })();
+  };
+
+  return (
+    <>
+      {canAdvanceToOrdering && (
+        <button
+          type="button"
+          onClick={() => {
+            void (async () => {
+              const done = await onFinishNow();
+              if (done) closeMenu();
+            })();
+          }}
+          disabled={submitting}
+          className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+        >
+          Finish meal collection
+        </button>
+      )}
+      {canManageFoodSelection && (
+        <button
+          type="button"
+          onClick={() => {
+            void (async () => {
+              await onAbort();
+              closeMenu();
+            })();
+          }}
+          disabled={submitting}
+          className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+        >
+          Abort process
+        </button>
+      )}
+      {canAdjustFoodSelectionTimer ? (
+        <>
+          <TimerMinuteOptions timerOptions={timerOptions} updatingTimer={updatingTimer} onSelectMinutes={updateTimerAndClose} />
+          <ManualTimerInput
+            manualRemainingMinutes={manualRemainingMinutes}
+            onManualRemainingMinutesChange={onManualRemainingMinutesChange}
+            onSubmitManualMinutes={() => updateTimerAndClose(Number.parseInt(manualRemainingMinutes, 10))}
+          />
+        </>
+      ) : (
+        <p className="border-b border-border px-3 py-2 text-sm text-fg-muted">
+          Only admins or the food-selection creator can adjust this timer.
+        </p>
+      )}
+    </>
+  );
+}
+
 // ─── Main component ─────────────────────────────────────────
 
 export default function FoodSelectionActiveView() {
@@ -389,6 +782,9 @@ export default function FoodSelectionActiveView() {
   const [remindingMissing, setRemindingMissing] = useState(false);
   const [reminderMessage, setReminderMessage] = useState('');
   const [reminderError, setReminderError] = useState('');
+  const [recommendations, setRecommendations] = useState<MealRecommendationResponse | null>(null);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState('');
   if (!activeFoodSelection || !nickname) return null;
 
   const selection = activeFoodSelection;
@@ -549,6 +945,19 @@ export default function FoodSelectionActiveView() {
     }
   };
 
+  const handleRecommendMeal = async () => {
+    setRecommendationsLoading(true);
+    setRecommendationsError('');
+    try {
+      const result = await api.recommendMeal(selection.id);
+      setRecommendations(result);
+    } catch (err) {
+      setRecommendationsError((err as Error).message);
+    } finally {
+      setRecommendationsLoading(false);
+    }
+  };
+
   const timerOptions = Array.from({ length: 24 }, (_, index) => (index + 1) * 5);
   const totalSeconds = Math.max(
     1,
@@ -557,102 +966,22 @@ export default function FoodSelectionActiveView() {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] p-4 lg:px-6">
-      <TimerActionHeader
-        title={
-          <>
-            {selection.menuName} &mdash; Food Selection
-          </>
-        }
-        timerLabel={formatTime(remaining)}
-        remainingSeconds={remaining}
+      <FoodSelectionTimerActions
+        selection={selection}
+        remaining={remaining}
         totalSeconds={totalSeconds}
-        triggerAriaLabel="Food selection timer actions"
-      >
-        {({ closeMenu }) => (
-          <>
-            {canAdvanceToOrdering && (
-              <button
-                type="button"
-                onClick={() => {
-                  void (async () => {
-                    const done = await handleFinishNow();
-                    if (done) closeMenu();
-                  })();
-                }}
-                disabled={submitting}
-                className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
-              >
-                Finish meal collection
-              </button>
-            )}
-
-            {canManageFoodSelection && (
-              <button
-                type="button"
-                onClick={() => {
-                  void (async () => {
-                    await handleAbort();
-                    closeMenu();
-                  })();
-                }}
-                disabled={submitting}
-                className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
-              >
-                Abort process
-              </button>
-            )}
-
-            {canAdjustFoodSelectionTimer ? (
-              <>
-                <div className="max-h-40 overflow-y-auto border-b border-border py-1">
-                  {timerOptions.map((minutes) => (
-                    <button
-                      key={minutes}
-                      type="button"
-                      onClick={() => {
-                        void (async () => {
-                          const done = await handleUpdateTimer(minutes);
-                          if (done) closeMenu();
-                        })();
-                      }}
-                      disabled={updatingTimer}
-                      className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
-                    >
-                      {minutes} min
-                    </button>
-                  ))}
-                </div>
-
-                <div className="p-2">
-                  <input
-                    type="text"
-                    value={manualRemainingMinutes}
-                    onChange={(event) => setManualRemainingMinutes(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                        void (async () => {
-                          const done = await handleUpdateTimer(
-                            Number.parseInt(manualRemainingMinutes, 10),
-                          );
-                          if (done) closeMenu();
-                        })();
-                      }
-                    }}
-                    placeholder="Manual minutes remaining"
-                    className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
-                    aria-label="Food selection manual minutes remaining"
-                  />
-                </div>
-              </>
-            ) : (
-              <p className="border-b border-border px-3 py-2 text-sm text-fg-muted">
-                Only admins or the food-selection creator can adjust this timer.
-              </p>
-            )}
-          </>
-        )}
-      </TimerActionHeader>
+        canAdvanceToOrdering={canAdvanceToOrdering}
+        canManageFoodSelection={canManageFoodSelection}
+        canAdjustFoodSelectionTimer={canAdjustFoodSelectionTimer}
+        submitting={submitting}
+        updatingTimer={updatingTimer}
+        manualRemainingMinutes={manualRemainingMinutes}
+        timerOptions={timerOptions}
+        onFinishNow={handleFinishNow}
+        onAbort={handleAbort}
+        onUpdateTimer={handleUpdateTimer}
+        onManualRemainingMinutesChange={setManualRemainingMinutes}
+      />
 
       <div className="grid gap-6 xl:grid-cols-3">
         {/* Left: Order form */}
@@ -680,60 +1009,22 @@ export default function FoodSelectionActiveView() {
             totalPrice={totalPrice}
           />
           </div>
-          <div className="rounded-lg border border-accent bg-accent-soft p-4 shadow-sm">
-            <h3 className="text-sm font-semibold text-accent-fg">Recommended next action</h3>
-            {votersWithoutOrder.length === 0 ? (
-              <div className="mt-2 space-y-2">
-                <p className="text-sm text-accent-fg">
-                  Everyone who voted has ordered. Click below when you have placed the real order.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void handleFinishNow();
-                  }}
-                  disabled={submitting}
-                  className="w-full rounded bg-success-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-                >
-                  Click here when you place the order.
-                </button>
-              </div>
-            ) : (
-              <>
-                <h4 className="text-sm font-semibold text-accent-fg">
-                  Voted for menu but not ordered yet ({votersWithoutOrder.length})
-                </h4>
-                <p className="mt-1 text-xs text-accent-fg">
-                  CTA: remind these people personally, or use the reminder function below.
-                </p>
-                <ul className="mt-2 space-y-1">
-                  {votersWithoutOrder.map((name) => (
-                    <li key={name} className="text-sm text-accent-fg">
-                      {name}
-                    </li>
-                  ))}
-                </ul>
-                {canManageFoodSelection ? (
-                  <div className="mt-3 space-y-2">
-                    <button
-                      type="button"
-                      onClick={() => void handleRemindMissingOrders()}
-                      disabled={remindingMissing || votersWithoutOrder.length === 0}
-                      className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-                    >
-                      {remindingMissing ? 'Sending reminders...' : 'Ping missing users'}
-                    </button>
-                    {reminderMessage ? <p className="text-xs text-success-fg">{reminderMessage}</p> : null}
-                    {reminderError ? <p className="text-xs text-danger-fg">{reminderError}</p> : null}
-                  </div>
-                ) : (
-                  <p className="mt-2 text-xs text-accent-fg">
-                    Personal reminders are available to everyone. Automatic reminder sending is admin-only.
-                  </p>
-                )}
-              </>
-            )}
-          </div>
+          <MealRecommendationsPanel
+            recommendations={recommendations}
+            recommendationsLoading={recommendationsLoading}
+            recommendationsError={recommendationsError}
+            onRecommendMeal={() => void handleRecommendMeal()}
+          />
+          <MissingOrdersPanel
+            votersWithoutOrder={votersWithoutOrder}
+            canManageFoodSelection={canManageFoodSelection}
+            submitting={submitting}
+            remindingMissing={remindingMissing}
+            reminderMessage={reminderMessage}
+            reminderError={reminderError}
+            onFinishNow={() => void handleFinishNow()}
+            onRemindMissingOrders={() => void handleRemindMissingOrders()}
+          />
         </div>
       </div>
 

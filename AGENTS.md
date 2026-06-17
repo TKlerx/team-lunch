@@ -10,7 +10,7 @@ Each task follows this cycle — AI agent execute steps 1–7, user observes and
 2. **Read plan** — check `IMPLEMENTATION_PLAN.md` for the next highest-priority unchecked item
 3. **Investigate** — search `src/` to confirm what exists (don't assume not implemented)
 4. **Implement** — complete the task fully (no stubs or placeholders) including tests in `tests/`
-5. **Validate** — run `./validate.ps1` (typecheck + lint + duplication + semgrep + test); fix all failures
+5. **Validate** — run `./validate.ps1` (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test); fix all failures
 6. **Update plan** — mark task `[x]` in `IMPLEMENTATION_PLAN.md`, note any discoveries
 7. **Commit** — `git add -A && git commit -m "<description>"`
 
@@ -19,15 +19,20 @@ User can steer between tasks or say "continue" to proceed to the next item.
 ### Backpressure Commands
 
 ```powershell
-./validate.ps1              # pre-commit default: typecheck + lint + duplication + semgrep + test
+./validate.ps1              # pre-commit default: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test
 ./validate.ps1 full         # pre-push / before merge: all quality checks + tests + pinned Trivy image scan + Playwright E2E
 ./validate.ps1 continuity   # optional: refresh CURRENT-WORK/RECONCILIATION and fail if they changed
 ./validate.ps1 quick        # typecheck only (scaffolding phase)
 ./validate.ps1 test         # tests only
 ./validate.ps1 e2e          # Playwright E2E only
-./validate.ps1 quality      # lint + duplication + semgrep
+./validate.ps1 quality      # lint + architecture + complexity + function-size + duplication + semgrep
 ./validate.ps1 commit       # validate all, then git commit + push
-pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold)
+pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold; QUALITY_THRESHOLDS_BYPASS=1 makes threshold advisory)
+pnpm architecture           # dependency-cruiser architecture check; currently guards against circular runtime dependencies
+pnpm complexity             # ESLint complexity ratchet; fails if complexity warning counts/worst metrics exceed complexity-baseline.json
+pnpm complexity:update      # intentionally lower/update complexity-baseline.json after refactors improve the baseline
+pnpm function-size          # hard non-test source function cap: 300 lines, no allowlist exceptions
+pnpm format:check           # Prettier check with repo/tooling ignores; not part of validate until the formatting baseline is clean
 pnpm semgrep                # Semgrep auto ruleset security scan
 pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
 pnpm db:test:up             # start the dedicated test Postgres (db-test) for server/e2e tests
@@ -76,6 +81,11 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.
 - `npm run prisma:generate:sqlite` writes generated client code to `src/server/generated/sqlite-client`; do not commit this output and remove it before lint/duplication runs if it was generated locally.
 - If a new phase view reuses large markup from another view, `npm run duplication` can exceed the 5% jscpd threshold; extract shared UI components early to keep duplication below the gate.
+- `pnpm complexity` is a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally. It has no threshold bypass.
+- `pnpm function-size` blocks any non-test source function above 300 lines with no allowlist exceptions.
+- Duplication follows the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes the duplication threshold advisory, but lint correctness, complexity, function-size, tests, and security checks still block.
+- `pnpm architecture` runs dependency-cruiser with `.dependency-cruiser.cjs`; keep circular runtime dependencies out of `src/`.
+- Prettier config and ignores are present, but `pnpm format:check` is intentionally not part of `validate.ps1` until the existing formatting baseline is cleaned up.
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
 - Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`, SQLite → `@prisma/adapter-better-sqlite3`), selected by `DB_PROVIDER`.
 - The `?schema=` URL parameter is ignored by the node-postgres driver adapter; `src/server/db.ts` parses it and passes it to `PrismaPg` as the `schema` option so runtime queries hit the same schema migrations ran against. Connection URLs for the CLI/Schema Engine (migrate/db push) come from `prisma.config.ts` (`datasource.url = env("DATABASE_URL")`), not from a `url` in `schema.prisma` (v7 removed it).
@@ -99,6 +109,9 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Poll and food-selection retention have been removed: records are kept indefinitely for analytics/recommender use.
 - Playwright e2e seeds a real local admin user into the dedicated test DB before booting the production server (`E2E_LOGIN_EMAIL` / `E2E_LOGIN_PASSWORD`, defaults in `.env.test.example`) and logs in through the normal local-auth UI; no auth bypass route is required.
 - Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it exports and prints `APP_VERSION`, `GIT_SHA`, `GIT_BRANCH`, `GIT_DIRTY`, and `BUILD_TIME`, lists Compose data volumes, builds app + migrate images, starts the DB, runs production data safety checks, creates a pre-deploy PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again. For intentional fresh installs, use `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
+- `POST /api/food-selections/:id/recommendations` persists a `MealRecommendationImpression` row per request (office/actor-scoped, ranked items + reasons snapshot) for audit/outcome-learning; no separate helpful/not-helpful feedback endpoint exists by design — order/rating history alone drives future ranking (`personal_rating` signal).
+- AI-assisted recommendation explanations require all four `AI_RECOMMENDATION_ENDPOINT`/`AI_RECOMMENDATION_API_KEY`/`AI_RECOMMENDATION_MODEL`/`AI_RECOMMENDATION_PROVIDER` env vars; if any are missing, the provider errors, returns malformed output, or the 2s timeout elapses, the response falls back to `source: "deterministic_fallback"` with a warning instead of failing the request. Set `AI_RECOMMENDATION_PROVIDER="azure-openai"` to call an Azure OpenAI chat-completions deployment directly (`api-key` header, `response_format: json_object`, parses `choices[0].message.content`); any other provider value uses the generic `Authorization: Bearer` + `{model,items,preferences}` → `{explanations:[...]}` contract. The AI never ranks items, only rewrites reason text.
+- `src/server/services/mealFeatures.ts` adds content-based per-person ranking: a curated ingredient/style keyword taxonomy (EN+DE) tags each item, a per-user `TasteProfile` is learned from order history, and the new `taste_match` signal scores unrated current-menu items by feature overlap with the profile (`SCORE_TASTE_PER_POINT=8`, clamped ±`SCORE_TASTE_MAX=40`). The profile blends explicit ratings (`rating-3`, confidence 1) with **implicit feedback** — every order is a mild positive vote for its features (`IMPLICIT_ORDER_VALUE=1`, confidence `0.4`) via a confidence-weighted mean, so the sparse weekly-ordering / rarely-rated regime still produces signal. Activates when `ratedCount >= TASTE_PROFILE_MIN_RATINGS(2)` OR `orderCount >= TASTE_PROFILE_MIN_ORDERS(4)`; below that, ranking keeps the exact-item-name behavior. Profile features come from item *name* only (history retains no description), so the taxonomy vocabulary is the shared space between history and current items. Modeling in feature space (not item space) is deliberate: menus churn weekly so classic user×item CF hits item cold-start on exactly today's menu; features stay dense and stable. Next candidate upgrades: persisted/AI-tagged item features at import, factorization machines, or a contextual bandit over features.
 
 ---
 
@@ -157,7 +170,7 @@ pnpm test:client       # vitest run --project client (component + hook tests)
 
 Full one-liner (same as CI):
 ```bash
-pnpm validate          # runs ./validate.ps1 all (typecheck + lint + duplication + semgrep + test + audit)
+pnpm validate          # runs ./validate.ps1 all (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test + audit)
 ```
 
 ## Test Database (dedicated Postgres)

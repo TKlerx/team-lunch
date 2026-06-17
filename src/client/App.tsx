@@ -1,14 +1,17 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Link, Navigate, Routes, Route, useMatch, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from './components/Header.js';
 import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
 import OrdersRail from './components/OrdersRail.js';
 import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.js';
+import PollFinishedView from './components/PollFinishedView.js';
 import MainView from './pages/MainView.js';
 import ManageMenus from './pages/ManageMenus.js';
 import ShoppingList from './pages/ShoppingList.js';
 import Settings from './pages/Settings.js';
 import Administration from './pages/Administration.js';
+import * as api from './api.js';
+import type { Poll } from '../lib/types.js';
 import { useAppDispatch, useAppState } from './context/AppContext.js';
 import { useAdminOfficeContext } from './context/AdminOfficeContext.js';
 import { useSSE } from './hooks/useSSE.js';
@@ -28,6 +31,37 @@ import {
 import { withBasePath } from './config.js';
 import cuisineAroundTheWorldImage from '../../assets/cuisine-around-the-world.png';
 import exampleCompanyLogoImage from '../../assets/example-company-logo.png';
+
+function RouteLoadingView() {
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-12 text-center">
+      <p className="text-sm font-medium text-fg-muted">Loading route...</p>
+    </div>
+  );
+}
+
+function RouteUnavailableView({
+  title,
+  message,
+}: {
+  title: string;
+  message: string;
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-12 text-center">
+      <div className="rounded-lg border border-border bg-surface/90 px-6 py-8 shadow-sm">
+        <h1 className="text-2xl font-semibold text-fg">{title}</h1>
+        <p className="mt-3 text-sm text-fg-muted">{message}</p>
+        <Link
+          to="/"
+          className="mt-6 inline-flex rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent/90"
+        >
+          Back to dashboard
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [, setAuthProfileVersion] = useState(0);
@@ -54,20 +88,21 @@ export default function App() {
     completedFoodSelectionsHistory,
     activePoll,
     activeFoodSelection,
+    latestCompletedPoll,
+    latestCompletedFoodSelection,
     menus,
     dbConnected,
     dbReconnectAttempts,
+    initialized,
   } = useAppState();
   const phase = useAppPhase();
+  const routeStateInitialized = initialized !== false;
   usePhaseNotifications(phase, notificationsEnabled, activePoll, activeFoodSelection, nickname);
-  const [selectedHistorySelectionId, setSelectedHistorySelectionId] = useState<string | null>(null);
+  const foodSelectionRouteMatch = useMatch('/food-selections/:foodSelectionId');
+  const routeFoodSelectionId = foodSelectionRouteMatch?.params.foodSelectionId ?? null;
 
   // SSE connection (fires once, stays open)
   useSSE(selectedOfficeLocationId);
-
-  useEffect(() => {
-    setSelectedHistorySelectionId(null);
-  }, [selectedOfficeLocationId]);
 
   useEffect(() => {
     const handleAuthProfileUpdated = () => {
@@ -79,11 +114,12 @@ export default function App() {
     };
   }, []);
 
-  const selectedHistorySelection = useMemo(
+  const selectedHistorySelectionId = useMemo(
     () =>
-      completedFoodSelectionsHistory.find((selection) => selection.id === selectedHistorySelectionId) ??
-      null,
-    [completedFoodSelectionsHistory, selectedHistorySelectionId],
+      routeFoodSelectionId && completedFoodSelectionsHistory.some((selection) => selection.id === routeFoodSelectionId)
+        ? routeFoodSelectionId
+        : null,
+    [completedFoodSelectionsHistory, routeFoodSelectionId],
   );
 
   const hasOngoingLunchProcess = !!activePoll || !!activeFoodSelection;
@@ -135,12 +171,10 @@ export default function App() {
   }, [activeFoodSelection, activePoll, isPollFinishedTransition]);
 
   const handleSelectSelection = (selectionId: string) => {
-    setSelectedHistorySelectionId(selectionId);
-    navigate('/');
+    navigate(`/food-selections/${selectionId}`);
   };
 
   const handleBackToOngoing = () => {
-    setSelectedHistorySelectionId(null);
     navigate('/');
   };
 
@@ -190,11 +224,21 @@ export default function App() {
             inProgressCountdownTo={inProgressDetails.countdownTo}
             onStartNewTeamLunch={() => {
               if (showInProgressAction) {
-                setSelectedHistorySelectionId(null);
+                if (activeFoodSelection) {
+                  navigate(`/food-selections/${activeFoodSelection.id}`);
+                  return;
+                }
+                if (activePoll) {
+                  navigate(`/polls/${activePoll.id}`);
+                  return;
+                }
+                if (latestCompletedPoll) {
+                  navigate(`/polls/${latestCompletedPoll.id}`);
+                  return;
+                }
                 navigate('/');
                 return;
               }
-              setSelectedHistorySelectionId(null);
               dispatch({ type: 'START_NEW_TEAM_LUNCH' });
               navigate('/');
             }}
@@ -231,28 +275,220 @@ export default function App() {
                 <Route
                   path="/"
                   element={
-                    selectedHistorySelection ? (
-                      <FoodSelectionCompletedView selection={selectedHistorySelection} isHistorical onBackToDashboard={handleBackToOngoing} />
-                    ) : (
-                      <MainView
-                        phase={phase}
-                        onOpenHistorySelection={handleSelectSelection}
-                      />
-                    )
+                    <MainView
+                      phase={phase}
+                      onOpenHistorySelection={handleSelectSelection}
+                    />
+                  }
+                />
+                <Route
+                  path="/polls/:pollId"
+                  element={
+                    <PollRouteView
+                      phase={phase}
+                      initialized={routeStateInitialized}
+                      activePoll={activePoll}
+                      activeFoodSelectionId={activeFoodSelection?.id ?? null}
+                      latestCompletedPoll={latestCompletedPoll}
+                      onOpenHistorySelection={handleSelectSelection}
+                    />
+                  }
+                />
+                <Route
+                  path="/food-selections/:foodSelectionId"
+                  element={
+                    <FoodSelectionRouteView
+                      phase={phase}
+                      initialized={routeStateInitialized}
+                      activeFoodSelection={activeFoodSelection}
+                      latestCompletedFoodSelection={latestCompletedFoodSelection}
+                      completedFoodSelectionsHistory={completedFoodSelectionsHistory}
+                      onBackToDashboard={handleBackToOngoing}
+                      onOpenHistorySelection={handleSelectSelection}
+                    />
                   }
                 />
                 <Route path="/menus" element={<ManageMenus />} />
-                <Route path="/shopping" element={<ShoppingList />} />
+                <Route path="/shopping-list" element={<ShoppingList />} />
+                <Route path="/shopping" element={<Navigate to="/shopping-list" replace />} />
                 <Route
                   path="/settings"
                   element={<Settings />}
                 />
                 <Route path="/admin" element={<Administration />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </div>
           </div>
         </main>
       </div>
     </div>
+  );
+}
+
+function PollRouteView({
+  phase,
+  initialized,
+  activePoll,
+  activeFoodSelectionId,
+  latestCompletedPoll,
+  onOpenHistorySelection,
+}: {
+  phase: ReturnType<typeof useAppPhase>;
+  initialized: boolean;
+  activePoll: ReturnType<typeof useAppState>['activePoll'];
+  activeFoodSelectionId: string | null;
+  latestCompletedPoll: ReturnType<typeof useAppState>['latestCompletedPoll'];
+  onOpenHistorySelection: (selectionId: string) => void;
+}) {
+  const { pollId } = useParams();
+  const matchesVisiblePoll = isVisiblePollRoute({
+    pollId,
+    activePollId: activePoll?.id,
+    activeFoodSelectionId,
+    latestCompletedPollId: latestCompletedPoll?.id,
+    phase,
+  });
+  const lookup = useHistoricalPollLookup({
+    pollId,
+    initialized,
+    skip: matchesVisiblePoll,
+  });
+
+  if (matchesVisiblePoll) {
+    return <MainView phase={phase} onOpenHistorySelection={onOpenHistorySelection} />;
+  }
+
+  if (lookup.poll) {
+    return <PollFinishedView poll={lookup.poll} readOnly />;
+  }
+
+  if (!initialized || lookup.loading) {
+    return <RouteLoadingView />;
+  }
+
+  return (
+    <RouteUnavailableView
+      title="Poll unavailable"
+      message={pollUnavailableMessage(lookup.failed)}
+    />
+  );
+}
+
+function isVisiblePollRoute({
+  pollId,
+  activePollId,
+  activeFoodSelectionId,
+  latestCompletedPollId,
+  phase,
+}: {
+  pollId?: string;
+  activePollId?: string;
+  activeFoodSelectionId: string | null;
+  latestCompletedPollId?: string;
+  phase: ReturnType<typeof useAppPhase>;
+}): boolean {
+  if (!pollId) return false;
+  if (activePollId === pollId) return true;
+  return !activeFoodSelectionId && latestCompletedPollId === pollId && phase === 'POLL_FINISHED';
+}
+
+function pollUnavailableMessage(failed: boolean): string {
+  if (failed) {
+    return 'This poll is not available in the current office history.';
+  }
+  return 'This poll is not the current visible poll for your office.';
+}
+
+function useHistoricalPollLookup({
+  pollId,
+  initialized,
+  skip,
+}: {
+  pollId?: string;
+  initialized: boolean;
+  skip: boolean;
+}): { poll: Poll | null; loading: boolean; failed: boolean } {
+  const [poll, setPoll] = useState<Poll | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPoll(null);
+    setFailed(false);
+
+    if (!pollId || !initialized || skip) {
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setLoading(true);
+    void api.fetchPoll(pollId)
+      .then((loadedPoll) => {
+        if (!cancelled) setPoll(loadedPoll);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pollId, initialized, skip]);
+
+  return { poll, loading, failed };
+}
+
+function FoodSelectionRouteView({
+  phase,
+  initialized,
+  activeFoodSelection,
+  latestCompletedFoodSelection,
+  completedFoodSelectionsHistory,
+  onBackToDashboard,
+  onOpenHistorySelection,
+}: {
+  phase: ReturnType<typeof useAppPhase>;
+  initialized: boolean;
+  activeFoodSelection: ReturnType<typeof useAppState>['activeFoodSelection'];
+  latestCompletedFoodSelection: ReturnType<typeof useAppState>['latestCompletedFoodSelection'];
+  completedFoodSelectionsHistory: ReturnType<typeof useAppState>['completedFoodSelectionsHistory'];
+  onBackToDashboard: () => void;
+  onOpenHistorySelection: (selectionId: string) => void;
+}) {
+  const { foodSelectionId } = useParams();
+  const completedSelection =
+    completedFoodSelectionsHistory.find((selection) => selection.id === foodSelectionId) ??
+    (latestCompletedFoodSelection?.id === foodSelectionId ? latestCompletedFoodSelection : null);
+
+  if (foodSelectionId && activeFoodSelection?.id === foodSelectionId) {
+    return <MainView phase={phase} onOpenHistorySelection={onOpenHistorySelection} />;
+  }
+
+  if (completedSelection) {
+    return (
+      <FoodSelectionCompletedView
+        selection={completedSelection}
+        isHistorical
+        onBackToDashboard={onBackToDashboard}
+      />
+    );
+  }
+
+  if (!initialized) {
+    return <RouteLoadingView />;
+  }
+
+  return (
+    <RouteUnavailableView
+      title="Food selection unavailable"
+      message="This meal is not available in the current office history or live lunch flow."
+    />
   );
 }

@@ -217,9 +217,9 @@ export default function Header({
         </Link>
 
         <Link
-          to="/shopping"
+          to="/shopping-list"
           className={`flex items-center gap-1.5 text-sm font-medium ${
-            location.pathname === '/shopping'
+            location.pathname === '/shopping-list' || location.pathname === '/shopping'
               ? 'text-accent'
               : 'text-fg-muted hover:text-accent'
           }`}

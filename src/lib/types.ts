@@ -169,6 +169,42 @@ export interface UserMenuDefaultPreference {
   updatedAt: string;
 }
 
+// ─── Meal recommendations ──────────────────────────────────
+
+export type MealRecommendationSource = 'deterministic' | 'ai_assisted' | 'deterministic_fallback';
+
+export type MealRecommendationSignal =
+  | 'personal_rating'
+  | 'taste_match'
+  | 'default_meal'
+  | 'office_popularity'
+  | 'preference_match'
+  | 'preference_warning'
+  | 'recency';
+
+export interface MealRecommendationRequest {
+  useAi?: boolean;
+}
+
+export interface MealRecommendationItem {
+  itemId: string | null;
+  itemName: string;
+  rank: number;
+  score: number;
+  reason: string;
+  sourceSignals: MealRecommendationSignal[];
+  aiAssisted: boolean;
+}
+
+export interface MealRecommendationResponse {
+  impressionId: string;
+  foodSelectionId: string;
+  source: MealRecommendationSource;
+  generatedAt: string;
+  items: MealRecommendationItem[];
+  warnings: string[];
+}
+
 export interface ShoppingListItem {
   id: string;
   name: string;
@@ -203,8 +239,8 @@ export type AuthConfigResponse = {
     entraEnabled: boolean;
     localEnabled: boolean;
     authenticated: boolean;
-    warning?: string;
     databaseUnavailable?: boolean;
+    warning?: string;
     user: {
       username: string;
       method: AuthMethod;

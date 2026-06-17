@@ -3,6 +3,11 @@ import { test, expect } from '@playwright/test';
 const E2E_LOGIN_EMAIL = process.env.E2E_LOGIN_EMAIL || 'e2e-user@team-lunch.test';
 const E2E_LOGIN_PASSWORD = process.env.E2E_LOGIN_PASSWORD || 'E2ePassword!123';
 
+function currentAppBasePath(page: import('@playwright/test').Page): string {
+  const currentPath = new URL(page.url()).pathname.replace(/\/$/, '');
+  return currentPath === '/' ? '' : currentPath;
+}
+
 async function loginAsE2eUser(page: import('@playwright/test').Page) {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
@@ -47,4 +52,17 @@ test('account dropdown opens settings, administration, and logout', async ({ pag
   await page.getByRole('button', { name: new RegExp(E2E_LOGIN_EMAIL, 'i') }).click();
   await page.getByRole('menuitem', { name: /logout/i }).click();
   await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+});
+
+test('shopping list can be opened directly from its canonical URL', async ({ page }) => {
+  await loginAsE2eUser(page);
+  const basePath = currentAppBasePath(page);
+
+  await page.goto(`${basePath}/shopping-list`);
+  await expect(page).toHaveURL(/\/shopping-list$/);
+  await expect(page.getByRole('heading', { name: /shopping list/i })).toBeVisible();
+
+  await page.goto(`${basePath}/shopping`);
+  await expect(page).toHaveURL(/\/shopping-list$/);
+  await expect(page.getByRole('heading', { name: /shopping list/i })).toBeVisible();
 });
