@@ -164,6 +164,75 @@ interface SignInScreenProps {
   onPasswordChange: (value: string) => void;
 }
 
+function MicrosoftSignInPanel({ configured }: { configured: boolean }) {
+  return (
+    <div className="space-y-2 rounded border border-border p-3">
+      <p className="text-sm font-medium text-fg">Microsoft SSO</p>
+      <Button
+        onClick={() => {
+          if (!configured) return;
+          localStorage.setItem(AUTH_METHOD_STORAGE_KEY, "entra");
+          window.location.href = withBasePath("/api/auth/entra/login");
+        }}
+        disabled={!configured}
+        title={
+          !configured ? "Microsoft Entra sign-in is not configured" : undefined
+        }
+        className="w-full"
+      >
+        Continue with Microsoft
+      </Button>
+      {!configured && (
+        <p className="text-xs text-fg-muted">
+          Microsoft Entra sign-in is not configured for this deployment.
+        </p>
+      )}
+    </div>
+  );
+}
+
+interface LocalLoginFormProps {
+  submitting: boolean;
+  username: string;
+  password: string;
+  onSubmit: (event: FormEvent) => void;
+  onUsernameChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
+}
+
+function LocalLoginForm({
+  submitting,
+  username,
+  password,
+  onSubmit,
+  onUsernameChange,
+  onPasswordChange,
+}: LocalLoginFormProps) {
+  return (
+    <form
+      onSubmit={(event) => void onSubmit(event)}
+      className="space-y-3 rounded border border-border p-3"
+    >
+      <p className="text-sm font-medium text-fg">Local account</p>
+      <Input
+        type="text"
+        value={username}
+        onChange={(event) => onUsernameChange(event.target.value)}
+        placeholder="Username"
+      />
+      <Input
+        type="password"
+        value={password}
+        onChange={(event) => onPasswordChange(event.target.value)}
+        placeholder="Password"
+      />
+      <Button type="submit" disabled={submitting} className="w-full">
+        {submitting ? "Signing in..." : "Sign in"}
+      </Button>
+    </form>
+  );
+}
+
 function SignInScreen({
   authWarning,
   error,
@@ -197,54 +266,18 @@ function SignInScreen({
           className={showDualAuth ? "grid gap-4 md:grid-cols-2" : "space-y-3"}
         >
           {showMicrosoftLogin && (
-            <div className="space-y-2 rounded border border-border p-3">
-              <p className="text-sm font-medium text-fg">Microsoft SSO</p>
-              <Button
-                onClick={() => {
-                  if (!microsoftConfigured) return;
-                  localStorage.setItem(AUTH_METHOD_STORAGE_KEY, "entra");
-                  window.location.href = withBasePath("/api/auth/entra/login");
-                }}
-                disabled={!microsoftConfigured}
-                title={
-                  !microsoftConfigured
-                    ? "Microsoft Entra sign-in is not configured"
-                    : undefined
-                }
-                className="w-full"
-              >
-                Continue with Microsoft
-              </Button>
-              {!microsoftConfigured && (
-                <p className="text-xs text-fg-muted">
-                  Microsoft Entra sign-in is not configured for this deployment.
-                </p>
-              )}
-            </div>
+            <MicrosoftSignInPanel configured={microsoftConfigured} />
           )}
 
           {showLocalLogin && (
-            <form
-              onSubmit={(event) => void onLocalLogin(event)}
-              className="space-y-3 rounded border border-border p-3"
-            >
-              <p className="text-sm font-medium text-fg">Local account</p>
-              <Input
-                type="text"
-                value={username}
-                onChange={(event) => onUsernameChange(event.target.value)}
-                placeholder="Username"
-              />
-              <Input
-                type="password"
-                value={password}
-                onChange={(event) => onPasswordChange(event.target.value)}
-                placeholder="Password"
-              />
-              <Button type="submit" disabled={submitting} className="w-full">
-                {submitting ? "Signing in..." : "Sign in"}
-              </Button>
-            </form>
+            <LocalLoginForm
+              submitting={submitting}
+              username={username}
+              password={password}
+              onSubmit={onLocalLogin}
+              onUsernameChange={onUsernameChange}
+              onPasswordChange={onPasswordChange}
+            />
           )}
         </div>
 
