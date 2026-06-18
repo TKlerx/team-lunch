@@ -1,6 +1,6 @@
-import prisma from '../db.js';
-import { serviceError } from '../routes/routeUtils.js';
-import type { Prisma } from '../generated/client/index.js';
+import prisma from "../db.js";
+import { serviceError } from "../routes/routeUtils.js";
+import type { Prisma } from "../generated/client/client.js";
 
 export interface MenuItemIdentityResult {
   menuItemId: string;
@@ -9,7 +9,10 @@ export interface MenuItemIdentityResult {
   displayNameSnapshot: string;
 }
 
-type MenuItemIdentityDb = Pick<Prisma.TransactionClient, 'menuItem' | 'menuItemIdentity'>;
+type MenuItemIdentityDb = Pick<
+  Prisma.TransactionClient,
+  "menuItem" | "menuItemIdentity"
+>;
 
 function normalizeWhitespace(value: string): string {
   return value.trim().toLocaleLowerCase();
@@ -21,9 +24,9 @@ function normalizeWhitespace(value: string): string {
  */
 export function normalizeMenuItemIdentityKey(name: string): string {
   const normalized = normalizeWhitespace(name)
-    .replace(/[\p{Z}\p{P}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/-+/g, '-');
+    .replace(/[\p{Z}\p{P}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-+/g, "-");
 
   return normalized;
 }
@@ -39,7 +42,7 @@ async function resolveMenuItem(
   });
 
   if (!menuItem) {
-    throw serviceError('Menu item not found', 404);
+    throw serviceError("Menu item not found", 404);
   }
 
   return menuItem;
@@ -54,7 +57,10 @@ export async function ensureMenuItemIdentity(
   const itemIdentityKey = normalizeMenuItemIdentityKey(menuItem.name);
 
   if (!itemIdentityKey) {
-    throw serviceError('Menu item name must contain at least one alphanumeric character', 400);
+    throw serviceError(
+      "Menu item name must contain at least one alphanumeric character",
+      400,
+    );
   }
 
   const identity = await db.menuItemIdentity.upsert({

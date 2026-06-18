@@ -12,6 +12,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
 
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN pnpm exec prisma generate
 
 COPY tsconfig.json tsconfig.build.json vite.config.ts index.html tailwind.config.ts postcss.config.js ./
@@ -37,8 +38,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /root/.npm
 
-# The Prisma client (incl. query engine) is bundled into dist by the build step
-# (scripts/copy-prisma-client.mjs), so no separate .prisma copy is needed.
+# Prisma 7 is engine-free (driver adapters), and its generated client is plain
+# TypeScript that tsc compiles straight into dist during the build — so the
+# runtime needs nothing beyond dist (no engine binary, no separate client copy).
 COPY --from=builder /app/dist ./dist
 COPY prisma ./prisma
 

@@ -73,6 +73,22 @@ jobs:
         if: always()
         run: pnpm db:test:down || true
 
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: reports/coverage
+          if-no-files-found: ignore
+
+      - name: Upload complexity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: reports/complexity
+          if-no-files-found: ignore
+
       - name: Upload Playwright results
         if: always()
         uses: actions/upload-artifact@v4

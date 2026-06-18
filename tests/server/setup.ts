@@ -124,7 +124,7 @@ function switchToSqliteServerTests(): void {
 		stdio: 'pipe',
 		env: process.env as NodeJS.ProcessEnv,
 	});
-	execSync('npx prisma db push --schema prisma/schema.sqlite.prisma --skip-generate', {
+	execSync('npx prisma db push --schema prisma/schema.sqlite.prisma', {
 		stdio: 'pipe',
 		env: process.env as NodeJS.ProcessEnv,
 	});

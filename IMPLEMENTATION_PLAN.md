@@ -2319,3 +2319,158 @@
     - Relevant `auth_access_users` and `auth_audit_logs` rows with sensitive values redacted.
     - Any deviations caused by tenant policy, Conditional Access, missing Graph permission, or app registration limits.
   - Discovery: manual live-tenant smoke validation only; this is operational verification, not a product requirement.
+
+---
+
+## Priority 89 - Prisma ORM v7 Upgrade (Jun 2026)
+
+Source: https://www.prisma.io/docs/guides/upgrade-prisma-orm/v7
+
+Upgrade from Prisma 6.4.1 to v7. v7 ships ESM-only, drops the Rust query engine
+(driver adapters required), replaces `package.json`/auto-`.env` config with
+`prisma.config.ts`, and switches the generator from `prisma-client-js` to
+`prisma-client`. Two schemas in play: `prisma/schema.prisma` (postgres),
+`prisma/schema.sqlite.prisma` (sqlite). Already satisfied by current setup:
+`"type": "module"`, tsconfig `module: ESNext` + `moduleResolution: bundler`,
+explicit generator `output`, no Prisma middleware (`$use`), no `$extends`, no
+`engineType`, no Accelerate, no MongoDB. Order below follows dependency: env
+prerequisites first, then deps, schema, runtime wiring, build, cleanup, verify.
+
+### Prerequisites & dependencies
+
+- [x] **89.1 Confirm runtime/toolchain prerequisites**
+  - Verify local + CI Node ≥ 20.19.0 (recommend 22.x). TypeScript already 5.7.3 (≥ 5.4 OK).
+  - Check CI workflow node version pins and Docker base image node version.
+  - Optional: bump tsconfig `target` ES2022 → ES2023 per guide (low priority, non-blocking).
+
+- [x] **89.2 Bump Prisma packages + add driver adapters**
+  - `pnpm add @prisma/client@7` ; `pnpm add -D prisma@7`.
+  - Add postgres adapter: `@prisma/adapter-pg` + `pg`.
+  - Add sqlite adapter: `@prisma/adapter-better-sqlite3` + `better-sqlite3`.
+  - Add `dotenv` (env no longer auto-loaded by Prisma in v7).
+  - Update `pnpm.onlyBuiltDependencies` for new native deps (`better-sqlite3`, `pg` if needed); drop `@prisma/engines` (no Rust engine in v7).
+
+### Schema & config
+
+- [x] **89.3 Switch generator to `prisma-client` in both schemas**
+  - `prisma/schema.prisma` + `prisma/schema.sqlite.prisma`: `provider = "prisma-client-js"` → `"prisma-client"`.
+  - Keep explicit `output`. Add `runtime = "nodejs"` and `moduleFormat = "esm"`.
+  - Note: new generator emits `.ts` source (not precompiled JS) → see 89.6 build impact.
+
+- [x] **89.4 Create `prisma.config.ts` at repo root**
+  - `import "dotenv/config"`, `defineConfig` from `prisma/config`.
+  - Set `schema`, `migrations.path: "prisma/migrations"`, `datasource.url: env("DATABASE_URL")`.
+  - Decide multi-schema handling: keep explicit `--schema prisma/schema.sqlite.prisma` on sqlite scripts (config points at postgres schema).
+  - Seeding no longer automatic in v7: wire `migrations.seed` only if `prisma migrate dev` is expected to seed (current `auth:seed` runs via tsx outside Prisma — confirm whether migrate-dev relied on auto-seed).
+  - Remove `prisma`-related config from `package.json` if any conflicts with new config file.
+
+### Runtime wiring
+
+- [x] **89.5 Rewrite `src/server/db.ts` for driver adapters + new import path**
+  - Imports: `./generated/client/index.js` → new generated entry (`./generated/client/client.js` per v7 output layout); same for sqlite client.
+  - Build adapter per `DB_PROVIDER`: postgres → `new PrismaPg({ connectionString: DATABASE_URL })`; sqlite → `new PrismaBetterSqlite3({ url: DATABASE_URL })`.
+  - `new PrismaClient()` → `new PrismaClient({ adapter })` (db.ts:27).
+  - Verify connection-pool defaults under adapter; configure pool on `PrismaPg` if timeouts appear (v7 defaults differ from v6).
+  - Update other client importers: `src/server/services/menu.ts`, `scripts/prisma-production-data-check.mjs`.
+
+### Build pipeline
+
+- [x] **89.6 Make build compile generated client + retire engine copy**
+  - Generated client is now `.ts` → ensure tsc (build config) compiles `src/server/generated/**` into `dist` (currently effectively skipped).
+  - `scripts/copy-prisma-client.mjs`: no Rust engine DLL to copy now — simplify to copy compiled client output if still needed, or remove if tsc emits it directly.
+  - Validate `pnpm build` then `node dist/server/index.js` resolves the generated client from dist.
+
+- [x] **89.7 Retire Windows DLL-lock workaround**
+  - `scripts/prisma-generate-safe.mjs`: EPERM / `query_engine-windows.dll.node` branch is dead under v7 (no native engine). Remove the lock-retry logic; keep plain `prisma generate` if still wrapped.
+
+### CLI / scripts audit
+
+- [x] **89.8 Audit Prisma CLI usage for removed flags**
+  - Scan scripts + Docker + CI for removed flags: `--skip-generate`, `--skip-seed`, `db execute --schema/--url`, `migrate diff --from-url/--to-url` (→ `--from-config-datasource`/`--to-config-datasource`).
+  - Check removed env vars (`PRISMA_CLIENT_ENGINE_TYPE`, `PRISMA_CLI_QUERY_ENGINE_TYPE`, `PRISMA_MIGRATE_SKIP_SEED`, etc.) in `.env*`, compose, CI.
+  - `scripts/prisma-predeploy-check.mjs` / `prisma:migrate:deploy` Docker job: confirm still valid under v7.
+
+### Verification
+
+- [x] **89.9 Regenerate clients + run full validation**
+  - Regenerate both clients (`prisma generate` + sqlite variant).
+  - Confirm `dbgenerated("gen_random_uuid()")`, `@db.Uuid`, `@db.Timestamptz`, citext still emit/migrate identically (low risk; same migration engine).
+  - Run: `pnpm typecheck`, `pnpm test`, `pnpm test:server:sqlite`, `pnpm test:e2e`, `pnpm build`.
+  - Prod DB: stricter SSL defaults in v7 — verify cert path / set `NODE_EXTRA_CA_CERTS` if connection fails.
+  - Update `README.md` / `AGENTS.md` Prisma version + workflow notes; run `graphify update .`.
+
+### Outcome & discoveries (Jun 17 2026)
+
+Prisma **6.4.1 → 7.8.0** on `feature/prisma-v7-upgrade`. Validated: typecheck,
+build, lint (0 errors), client 308, server 437 on Postgres/`adapter-pg` and 437
+on SQLite/`adapter-better-sqlite3`, `docker compose build`, compiled server boot
+(`node dist`), `prisma-production-data-check.mjs`, and Playwright E2E (boots the
+compiled prod server). Real-PROD items still open — see sub-section below.
+
+Key v7 gotchas + fixes (the ones that bite — guide didn't flag most):
+
+- **`?schema=` is ignored by `adapter-pg`** (highest impact). It's a Prisma-engine
+  concept, so runtime queries defaulted to `public` and every table-scoped test
+  failed with "table does not exist". Fix: `db.ts` parses `?schema=` and passes
+  it as the `PrismaPg` `schema` option. Migrations unaffected (Schema Engine
+  still honors the URL param).
+- **`.env` is no longer auto-loaded** (v6 loaded it as a side effect of importing
+  `@prisma/client`). Caused two failures: `pnpm dev` crashed (`DATABASE_URL is
+  not set`), and `docker compose build` failed at `prisma generate` because
+  `prisma.config.ts` used prisma's `env()` helper, which *throws* on a missing
+  var. Fixes: `import 'dotenv/config'` as the **first** import in `index.ts` (must
+  be a side-effect import — ESM evaluates hoisted imports, incl. `db.ts`, before
+  inline statements); `prisma.config.ts` reads `process.env.DATABASE_URL ?? ''`
+  (not `env()`, which `generate` never needs). Any new DB-touching entrypoint
+  needs explicit env loading (`auth-seed.ts` already self-loads).
+- **Generator emits extensionless imports** (`./internal/class`). `tsx` (dev +
+  all tests) resolves them, so tests passed, but compiled `dist` crashes under
+  plain Node with `ERR_MODULE_NOT_FOUND`. Fix: `importFileExtension = "js"` on
+  both generators. Lesson: validate compiled `dist` under `node`, not just tsx.
+- **`url` is forbidden in the schema `datasource` block** (not just movable).
+  Removed from both schemas; Schema Engine reads it from `prisma.config.ts`. The
+  runtime client never uses it — it connects via the driver adapter.
+- **`@prisma/engines` is NOT dropped** — v7 removes only the *query* engine; the
+  Rust *Schema Engine* still ships for migrate/db push.
+- **Build-script approval lives in `pnpm-workspace.yaml` `allowBuilds`**, not
+  `package.json`. `better-sqlite3` had to be set `true` there.
+- Minor: `--skip-generate` removed from `db push`; `connect_timeout`/`pool_timeout`
+  URL params now ignored by `adapter-pg`; Dockerfile copies `prisma.config.ts`
+  before generate; `scripts/copy-prisma-client.mjs` removed (tsc compiles the
+  client straight into `dist`).
+### ⚠️ Production deploy validation — OPEN (must verify on real PROD)
+
+Everything above is validated locally (tsx, compiled `dist` under plain Node,
+Docker build, E2E). The items below **cannot be exercised without real
+production infrastructure** (TLS-terminated Postgres, prod load, the live
+compose stack) and **must be checked during/after the first v7 deploy** before
+declaring the upgrade done. Driver adapters changed how the runtime connects, so
+these are genuinely new risk surfaces, not formalities.
+
+- [ ] **89.P1 — TLS/SSL connection to prod Postgres.** v7 enforces stricter TLS
+  defaults via the `pg` driver adapter (not the old Rust engine). Confirm the app
+  connects to the production DB. If it fails with a cert/SSL error: add
+  `sslmode=require` (or appropriate mode) to `DATABASE_URL`, and for a private/
+  self-signed CA set `NODE_EXTRA_CA_CERTS` to the CA bundle path in the container.
+  Verify both the `app` service and the `migrate` job connect.
+- [ ] **89.P2 — Full `docker compose up` stack against live Postgres.** Run the
+  real stack (not just `build`): `db` healthy → `migrate` job runs
+  `prisma migrate deploy` to completion → `app` boots and serves traffic. Confirm
+  the migrate job reads `DATABASE_URL` from compose env (no `.env` in container)
+  and that `prisma.config.ts` is present in the image for the Schema Engine.
+- [ ] **89.P3 — `?schema=` / search_path on prod.** Prod `DATABASE_URL` uses
+  `?schema=public`; confirm runtime queries hit the right schema (the pg adapter
+  ignores the URL param — `db.ts` parses it and passes `schema` to `PrismaPg`).
+  Smoke-test a read + write after deploy.
+- [ ] **89.P4 — Connection-pool behaviour under load.** Pool defaults differ from
+  the v6 engine, and the `connect_timeout`/`pool_timeout` URL params are now
+  ignored by `pg`. Watch for pool exhaustion / connection timeouts under real
+  traffic; if needed, configure pool size + timeouts explicitly on the `PrismaPg`
+  options in `src/server/db.ts`.
+- [ ] **89.P5 — Production data-safety guard on live DB.** `prisma-production-
+  data-check.mjs` was rewritten for the v7 ESM client + pg adapter and verified
+  against a dev DB only. Confirm it runs in the actual deploy pipeline and
+  correctly reports row counts / blocks an empty-DB deploy.
+- [ ] **89.P6 — Post-deploy smoke of critical flows.** After deploy: auth login
+  (Entra + local), a poll lifecycle, a food-selection + order, and an Excel
+  export — to confirm no adapter-level query regressions in real conditions.

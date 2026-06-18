@@ -32,7 +32,7 @@ pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold; QU
 pnpm architecture           # dependency-cruiser architecture check; currently guards against circular runtime dependencies
 pnpm complexity             # ESLint complexity ratchet; fails if complexity warning counts/worst metrics exceed complexity-baseline.json
 pnpm complexity:update      # intentionally lower/update complexity-baseline.json after refactors improve the baseline
-pnpm function-size          # hard non-test source function cap: 300 lines, with current oversized functions allowlisted at their existing size
+pnpm function-size          # hard non-test source function cap: 300 lines, no allowlist exceptions
 pnpm format:check           # Prettier check with repo/tooling ignores; not part of validate until the formatting baseline is clean
 pnpm semgrep                # Semgrep auto ruleset security scan
 pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
@@ -83,9 +83,9 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.
 - `npm run prisma:generate:sqlite` writes generated client code to `src/server/generated/sqlite-client`; do not commit this output and remove it before lint/duplication runs if it was generated locally.
 - If a new phase view reuses large markup from another view, `npm run duplication` can exceed the 5% jscpd threshold; extract shared UI components early to keep duplication below the gate.
-- `pnpm complexity` is now a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally.
-- `pnpm function-size` blocks any non-test source function above 300 lines unless it is in `function-size-allowlist.json`; allowlisted functions are capped at their current size and should be removed from the list once refactored below 300.
-- Complexity and duplication follow the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes threshold failures advisory, but lint correctness, tests, and security checks still block.
+- `pnpm complexity` is a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally. It has no threshold bypass.
+- `pnpm function-size` blocks any non-test source function above 300 lines with no allowlist exceptions.
+- Duplication follows the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes the duplication threshold advisory, but lint correctness, complexity, function-size, tests, and security checks still block.
 - `pnpm architecture` runs dependency-cruiser with `.dependency-cruiser.cjs`; keep circular runtime dependencies out of `src/`.
 - `@wlearn/xlearn` 0.2.0 is available for the recommendation-model spike; import it as a CommonJS default/dynamic import, use `XLearnFM.create({ task: 'classification', ... })`, and always call `.dispose()` after tests or benchmarks because the WASM heap is not GC-managed.
 - Learned-safe recommendations now derive `taste_match` copy from model feature contributions, not opaque model internals, and the AI overlay still reuses the same shared fallback path.
@@ -95,8 +95,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Settings now offers canonical ingredient quick-picks plus free-text fallback; the saved payload still uses the existing `updateUserPreferences` API contract.
 - Prettier config and ignores are present, but `pnpm format:check` is intentionally not part of `validate.ps1` until the existing formatting baseline is cleaned up.
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
-- On Windows, `npx prisma generate` may fail with `EPERM ... query_engine-windows.dll.node` if the engine file is locked by a running process; stop the locking process and regenerate normally before tests/builds. Use `PRISMA_GENERATE_ALLOW_NO_ENGINE=1 node ./scripts/prisma-generate-safe.mjs` only for type-only refreshes, then run `pnpm exec prisma generate` before server tests.
-- Running server tests with a Prisma client generated via `--no-engine` fails with datasource validation expecting `prisma://`; regenerate with `pnpm exec prisma generate` (engine-enabled) before `pnpm test`/`./validate.ps1`.
+- Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`, SQLite → `@prisma/adapter-better-sqlite3`), selected by `DB_PROVIDER`.
+- The `?schema=` URL parameter is ignored by the node-postgres driver adapter; `src/server/db.ts` parses it and passes it to `PrismaPg` as the `schema` option so runtime queries hit the same schema migrations ran against. Connection URLs for the CLI/Schema Engine (migrate/db push) come from `prisma.config.ts` (`datasource.url = env("DATABASE_URL")`), not from a `url` in `schema.prisma` (v7 removed it).
 - Food-selection no-order reminders for voters are scheduled from `FOOD_SELECTION_REMINDER_MINUTES_BEFORE` (default `5`) and only target vote nicknames that are valid email addresses.
 - Microsoft Graph mail delivery now reuses the Entra app registration (`ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, `ENTRA_TENANT_ID`) and requires `GRAPH_MAIL_SENDER`; if Graph mail is not configured, approval/poll/reminder notifications are skipped without failing core flows.
 - Real Graph-mail smoke delivery is test-gated by `GRAPH_MAIL_TEST_RECIPIENT`; when unset, `tests/server/notification-email.test.ts` does not send any real mail.
@@ -181,7 +181,7 @@ pnpm test:client       # vitest run --project client (component + hook tests)
 
 Full one-liner (same as CI):
 ```bash
-pnpm validate          # runs ./validate.ps1 all (typecheck + lint + complexity + duplication + semgrep + test + audit)
+pnpm validate          # runs ./validate.ps1 all (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test + audit)
 ```
 
 ## Test Database (dedicated Postgres)
@@ -221,9 +221,10 @@ against schema `public` unless `ALLOW_DANGEROUS_TEST_SCHEMA=true`.
 DB and boots the **production** server (`NODE_ENV=production`, serving
 `dist/client`) on `E2E_PORT` (default `4173`). It requires `TEST_DATABASE_URL`
 (via `.env.test`) and `pnpm db:test:up`. Set `PLAYWRIGHT_BASE_URL` to point at an
-already-running server instead (CI/remote). Note: `pnpm build` now also copies
-the Prisma client into `dist` (`scripts/copy-prisma-client.mjs`), since it's
-generated to `src/server/generated/client` (explicit output for pnpm).
+already-running server instead (CI/remote). Note: the Prisma 7 client is plain
+TypeScript generated to `src/server/generated/client`, so `tsc` compiles it
+straight into `dist` during `pnpm build` — no separate copy step (the old
+`scripts/copy-prisma-client.mjs`) and no engine binary to bundle.
 
 ## Test Coverage Requirements
 

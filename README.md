@@ -1,5 +1,7 @@
 # Team Lunch
 
+[![CI](https://github.com/TKlerx/team-lunch/actions/workflows/ci.yml/badge.svg)](https://github.com/TKlerx/team-lunch/actions/workflows/ci.yml)
+
 Team Lunch is a collaborative lunch coordination app for teams. It helps a group pick a place to eat, collect everyone's order, and track delivery status in real time.
 
 The app has three main phases:
