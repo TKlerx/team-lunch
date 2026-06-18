@@ -29,6 +29,7 @@ import {
   type MealRecommendationFeatureContribution,
 } from './mealRecommendationModel.js';
 import { normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
+import { DEFAULT_RECOMMENDATION_COUNT } from './userPreferences.js';
 
 export interface RecommendationActor {
   actorKey: string;
@@ -516,6 +517,14 @@ export function applyColdStartFallback(scoredItems: ScoredItem[]): void {
   }
 }
 
+function getRecommendationCount(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_RECOMMENDATION_COUNT;
+  }
+
+  return Math.max(1, Math.min(10, Math.round(value)));
+}
+
 export async function loadRecommendationMenuItems(selectionId: string, officeLocationId: string) {
   const selection = await prisma.foodSelection.findFirst({
     where: { id: selectionId, officeLocationId },
@@ -628,6 +637,7 @@ export async function generateRecommendations(
   const dislikes = Array.isArray(userPreference?.dislikesJson)
     ? (userPreference!.dislikesJson as unknown[]).filter((entry): entry is string => typeof entry === 'string')
     : [];
+  const recommendationCount = getRecommendationCount(userPreference?.recommendationCount);
 
   const tasteProfile = buildTasteProfile(history);
   const anticipatedLikeProfile = await buildAnticipatedLikeSeed(officeLocationId, actor.actorKey, history);
@@ -705,7 +715,7 @@ export async function generateRecommendations(
     allergies,
     dislikes,
   });
-  const items = rankItems(constrainedItems);
+  const items = rankItems(constrainedItems).slice(0, recommendationCount);
 
   const warnings: string[] = [];
 
@@ -756,6 +766,7 @@ export async function generateRecommendations(
     tasteProfileFeatureCount: tasteProfile.weights.size,
     tasteProfileRatedCount: tasteProfile.ratedCount,
     seedTasteProfileFeatureCount: anticipatedLikeProfile?.weights.size ?? 0,
+    recommendationCount,
   } as Prisma.InputJsonValue;
 
   const impression = await persistMealRecommendationImpression({

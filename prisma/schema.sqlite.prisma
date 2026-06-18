@@ -339,12 +339,14 @@ model AuthAuditLog {
 }
 
 model UserPreference {
-  id            String   @id @default(uuid())
-  userKey       String   @unique @map("user_key")
-  allergiesJson Json     @default("[]") @map("allergies_json")
-  dislikesJson  Json     @default("[]") @map("dislikes_json")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  userKey         String   @unique @map("user_key")
+  allergiesJson   Json     @default("[]") @map("allergies_json")
+  dislikesJson    Json     @default("[]") @map("dislikes_json")
+  explorationRate Float    @default(0.5) @map("exploration_rate")
+  recommendationCount Int  @default(3) @map("recommendation_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("user_preferences")
 }

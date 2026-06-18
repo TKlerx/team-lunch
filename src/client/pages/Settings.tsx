@@ -21,6 +21,8 @@ const EMPTY_PREFERENCES: UserPreferences = {
   userKey: '',
   allergies: [],
   dislikes: [],
+  explorationRate: 0.5,
+  recommendationCount: 3,
   updatedAt: new Date(0).toISOString(),
 };
 
@@ -219,22 +221,37 @@ function IngredientPreferencesSection({
   foodAlertsDescription,
   allergiesDraft,
   dislikesDraft,
+  explorationRateDraft,
+  recommendationCountDraft,
   accountEmail,
   preferencesLoading,
   settingsSaving,
   onAllergiesChange,
   onDislikesChange,
+  onExplorationRateChange,
+  onRecommendationCountChange,
 }: {
   foodAlertsDescription: string;
   allergiesDraft: string;
   dislikesDraft: string;
+  explorationRateDraft: number;
+  recommendationCountDraft: number;
   accountEmail: string;
   preferencesLoading: boolean;
   settingsSaving: boolean;
   onAllergiesChange: (value: string) => void;
   onDislikesChange: (value: string) => void;
+  onExplorationRateChange: (value: number) => void;
+  onRecommendationCountChange: (value: number) => void;
 }) {
   const inputDisabled = !accountEmail || preferencesLoading || settingsSaving;
+  const explorationLabel =
+    explorationRateDraft < 0.34
+      ? 'Familiar'
+      : explorationRateDraft > 0.66
+        ? 'Adventurous'
+        : 'Balanced';
+
   return (
     <Section title="Ingredient Preferences" description={foodAlertsDescription} className="mt-6">
       <div className="space-y-3">
@@ -279,6 +296,56 @@ function IngredientPreferencesSection({
           />
         </div>
         <p className="text-xs text-fg-muted">Separate terms with commas, semicolons, or new lines.</p>
+        <div className="rounded border border-border bg-surface-muted p-3">
+          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_12rem]">
+            <div className="min-w-0">
+              <label htmlFor="exploration-rate" className="text-xs font-medium text-fg">
+                Meal exploration style
+              </label>
+              <p className="mt-1 text-xs text-fg-muted">
+                Controls how adventurous the Explore button should be for you.
+              </p>
+              <input
+                id="exploration-rate"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={Math.round(explorationRateDraft * 100)}
+                onChange={(event) => onExplorationRateChange(Number(event.target.value) / 100)}
+                disabled={inputDisabled}
+                className="mt-3 w-full accent-accent-solid"
+                aria-label="Meal exploration style"
+              />
+              <div className="mt-1 flex justify-between text-[11px] text-fg-muted">
+                <span>More familiar</span>
+                <span>More adventurous</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <span className="inline-flex rounded-full bg-surface px-2 py-1 text-xs font-medium text-fg">
+                {explorationLabel}
+              </span>
+              <label htmlFor="recommendation-count" className="block text-xs font-medium text-fg">
+                Recommendations to show
+                <Select
+                  id="recommendation-count"
+                  aria-label="Recommendations to show"
+                  value={String(recommendationCountDraft)}
+                  onChange={(event) => onRecommendationCountChange(Number(event.target.value))}
+                  disabled={inputDisabled}
+                  className="mt-1 w-full"
+                >
+                  {[1, 2, 3, 4, 5, 10].map((count) => (
+                    <option key={count} value={count}>
+                      {count} meal{count === 1 ? '' : 's'}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
     </Section>
   );
@@ -350,6 +417,8 @@ export default function Settings() {
   const [preferences, setPreferences] = useState<UserPreferences>(EMPTY_PREFERENCES);
   const [allergiesDraft, setAllergiesDraft] = useState('');
   const [dislikesDraft, setDislikesDraft] = useState('');
+  const [explorationRateDraft, setExplorationRateDraft] = useState(EMPTY_PREFERENCES.explorationRate);
+  const [recommendationCountDraft, setRecommendationCountDraft] = useState(EMPTY_PREFERENCES.recommendationCount);
   const [preferencesLoading, setPreferencesLoading] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsError, setSettingsError] = useState('');
@@ -365,7 +434,9 @@ export default function Settings() {
   const dislikeTerms = parsePreferenceTerms(dislikesDraft);
   const preferencesUnchanged =
     allergyTerms.join('\u0000') === preferences.allergies.join('\u0000') &&
-    dislikeTerms.join('\u0000') === preferences.dislikes.join('\u0000');
+    dislikeTerms.join('\u0000') === preferences.dislikes.join('\u0000') &&
+    explorationRateDraft === preferences.explorationRate &&
+    recommendationCountDraft === preferences.recommendationCount;
   const storedDisplayName = localStorage.getItem(DISPLAY_NAME_STORAGE_KEY) ?? '';
   const displayNameError = getDisplayNameError(displayNameDraft);
   const displayNameUnchanged = displayNameDraft.trim() === storedDisplayName;
@@ -379,6 +450,8 @@ export default function Settings() {
     setOfficeLocationDraft(selectedOfficeLocationId ?? '');
     setAllergiesDraft(preferences.allergies.join(', '));
     setDislikesDraft(preferences.dislikes.join(', '));
+    setExplorationRateDraft(preferences.explorationRate);
+    setRecommendationCountDraft(preferences.recommendationCount);
     setDisplayNameDraft(storedDisplayName);
     setDisplayNameTouched(false);
     setSettingsError('');
@@ -437,6 +510,8 @@ export default function Settings() {
       setPreferences(EMPTY_PREFERENCES);
       setAllergiesDraft('');
       setDislikesDraft('');
+      setExplorationRateDraft(EMPTY_PREFERENCES.explorationRate);
+      setRecommendationCountDraft(EMPTY_PREFERENCES.recommendationCount);
       return;
     }
 
@@ -451,6 +526,8 @@ export default function Settings() {
         setPreferences(loaded);
         setAllergiesDraft(loaded.allergies.join(', '));
         setDislikesDraft(loaded.dislikes.join(', '));
+        setExplorationRateDraft(loaded.explorationRate);
+        setRecommendationCountDraft(loaded.recommendationCount);
       } catch (err) {
         if (cancelled) return;
         setSettingsError((err as Error).message);
@@ -505,10 +582,14 @@ export default function Settings() {
           accountEmail,
           allergyTerms,
           dislikeTerms,
+          explorationRateDraft,
+          recommendationCountDraft,
         );
         setPreferences(saved);
         setAllergiesDraft(saved.allergies.join(', '));
         setDislikesDraft(saved.dislikes.join(', '));
+        setExplorationRateDraft(saved.explorationRate);
+        setRecommendationCountDraft(saved.recommendationCount);
       }
 
       setSettingsSavedMessage('Settings saved.');
@@ -571,6 +652,8 @@ export default function Settings() {
           foodAlertsDescription={foodAlertsDescription}
           allergiesDraft={allergiesDraft}
           dislikesDraft={dislikesDraft}
+          explorationRateDraft={explorationRateDraft}
+          recommendationCountDraft={recommendationCountDraft}
           accountEmail={accountEmail}
           preferencesLoading={preferencesLoading}
           settingsSaving={settingsSaving}
@@ -580,6 +663,14 @@ export default function Settings() {
           }}
           onDislikesChange={(value) => {
             setDislikesDraft(value);
+            setSettingsSavedMessage('');
+          }}
+          onExplorationRateChange={(value) => {
+            setExplorationRateDraft(value);
+            setSettingsSavedMessage('');
+          }}
+          onRecommendationCountChange={(value) => {
+            setRecommendationCountDraft(value);
             setSettingsSavedMessage('');
           }}
         />

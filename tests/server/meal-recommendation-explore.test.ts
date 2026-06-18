@@ -191,4 +191,61 @@ describe('Meal recommendation explore service', () => {
     expect(impression?.source).toBe('explore');
     expect(Array.isArray(impression?.itemsJson)).toBe(true);
   });
+
+  it('uses the actor exploration rate in the persisted explore decision summary', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await prisma.userPreference.create({
+      data: {
+        userKey: ACTOR.actorKey,
+        allergiesJson: [],
+        dislikesJson: [],
+        explorationRate: 0.9,
+      },
+    });
+
+    const result = await generateExploreRecommendations(selection.id, office.id, ACTOR, 'seed-rate');
+
+    const impression = await prisma.mealRecommendationImpression.findUnique({
+      where: { id: result.impressionId },
+    });
+    expect(impression?.inputSummaryJson).toMatchObject({
+      explorationRate: 0.9,
+      recommendationCount: 3,
+    });
+  });
+
+  it('limits explore recommendations to the actor recommendation count', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+      'Garden Salad',
+    ]);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await prisma.userPreference.create({
+      data: {
+        userKey: ACTOR.actorKey,
+        allergiesJson: [],
+        dislikesJson: [],
+        recommendationCount: 2,
+      },
+    });
+
+    const result = await generateExploreRecommendations(selection.id, office.id, ACTOR, 'seed-count');
+
+    expect(result.items).toHaveLength(2);
+    expect(result.items.map((item) => item.rank)).toEqual([1, 2]);
+    const impression = await prisma.mealRecommendationImpression.findUnique({
+      where: { id: result.impressionId },
+    });
+    expect(impression?.inputSummaryJson).toMatchObject({
+      recommendationCount: 2,
+    });
+    expect(impression?.itemsJson).toHaveLength(2);
+  });
 });

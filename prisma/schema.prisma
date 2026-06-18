@@ -346,12 +346,14 @@ model AuthAuditLog {
 }
 
 model UserPreference {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userKey       String   @unique @map("user_key") @db.VarChar(255)
-  allergiesJson Json     @default("[]") @map("allergies_json")
-  dislikesJson  Json     @default("[]") @map("dislikes_json")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userKey         String   @unique @map("user_key") @db.VarChar(255)
+  allergiesJson   Json     @default("[]") @map("allergies_json")
+  dislikesJson    Json     @default("[]") @map("dislikes_json")
+  explorationRate Float    @default(0.5) @map("exploration_rate")
+  recommendationCount Int  @default(3) @map("recommendation_count")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   @@map("user_preferences")
 }
