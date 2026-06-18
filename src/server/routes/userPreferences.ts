@@ -31,6 +31,7 @@ export default async function userPreferencesRoutes(app: FastifyInstance) {
         req.body.allergies,
         req.body.dislikes,
         req.body.explorationRate,
+        req.body.recommendationCount,
       );
       return reply.send(preferences);
     } catch (err) {

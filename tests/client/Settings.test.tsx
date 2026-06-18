@@ -38,6 +38,7 @@ describe('Settings', () => {
       allergies: ['peanuts'],
       dislikes: ['mushrooms'],
       explorationRate: 0.5,
+      recommendationCount: 3,
       updatedAt: '2026-01-01T00:00:00.000Z',
     });
     mockUpdateUserPreferences.mockResolvedValue({
@@ -45,6 +46,7 @@ describe('Settings', () => {
       allergies: ['peanuts', 'shrimp'],
       dislikes: ['mushrooms', 'onions'],
       explorationRate: 0.5,
+      recommendationCount: 3,
       updatedAt: '2026-01-01T00:00:00.000Z',
     });
     mockFetchAppVersion.mockResolvedValue({
@@ -74,6 +76,7 @@ describe('Settings', () => {
     expect(await screen.findByRole('textbox', { name: /ingredients to avoid/i })).toHaveValue('peanuts');
     expect(screen.getByRole('textbox', { name: /less preferred ingredients/i })).toHaveValue('mushrooms');
     expect(screen.getByRole('slider', { name: /meal exploration style/i })).toHaveValue('50');
+    expect(screen.getByRole('combobox', { name: /recommendations to show/i })).toHaveValue('3');
   });
 
   it('shows app build metadata for support diagnostics', async () => {
@@ -103,6 +106,7 @@ describe('Settings', () => {
       ['peanuts', 'shrimp'],
       ['mushrooms', 'onions'],
       0.5,
+      3,
     );
     expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
     await waitFor(() => {
@@ -136,6 +140,7 @@ describe('Settings', () => {
       ['peanut', 'smoked salmon'],
       ['mushroom', 'truffle oil'],
       0.5,
+      3,
     );
     expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
   });
@@ -147,6 +152,7 @@ describe('Settings', () => {
       allergies: ['peanuts'],
       dislikes: ['mushrooms'],
       explorationRate: 0.85,
+      recommendationCount: 3,
       updatedAt: '2026-01-01T00:00:00.000Z',
     });
     render(<Settings />);
@@ -160,6 +166,35 @@ describe('Settings', () => {
       ['peanuts'],
       ['mushrooms'],
       0.85,
+      3,
+    );
+    expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
+  });
+
+  it('saves a personal recommendation count from the settings page', async () => {
+    const user = userEvent.setup();
+    mockUpdateUserPreferences.mockResolvedValue({
+      userKey: 'Alice',
+      allergies: ['peanuts'],
+      dislikes: ['mushrooms'],
+      explorationRate: 0.5,
+      recommendationCount: 5,
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    render(<Settings />);
+
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: /recommendations to show/i }),
+      '5',
+    );
+    await user.click(screen.getByRole('button', { name: /save settings/i }));
+
+    expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
+      'alice@example.com',
+      ['peanuts'],
+      ['mushrooms'],
+      0.5,
+      5,
     );
     expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
   });

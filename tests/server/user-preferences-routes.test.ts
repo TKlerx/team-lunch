@@ -82,6 +82,7 @@ describe('User preferences routes (integration)', () => {
     expect(res.body.allergies).toEqual([]);
     expect(res.body.dislikes).toEqual([]);
     expect(res.body.explorationRate).toBe(0.5);
+    expect(res.body.recommendationCount).toBe(3);
   });
 
   it('saves and returns preferences for the signed-in user', async () => {
@@ -94,6 +95,7 @@ describe('User preferences routes (integration)', () => {
         allergies: ['peanuts', 'shrimp', 'peanuts'],
         dislikes: ['onions'],
         explorationRate: 0.85,
+        recommendationCount: 5,
       })
       .expect(200);
 
@@ -101,6 +103,7 @@ describe('User preferences routes (integration)', () => {
     expect(save.body.allergies).toEqual(['peanuts', 'shrimp']);
     expect(save.body.dislikes).toEqual(['onions']);
     expect(save.body.explorationRate).toBe(0.85);
+    expect(save.body.recommendationCount).toBe(5);
 
     const fetch = await supertest(app.server)
       .get('/api/user/preferences')
@@ -111,6 +114,7 @@ describe('User preferences routes (integration)', () => {
     expect(fetch.body.allergies).toEqual(['peanuts', 'shrimp']);
     expect(fetch.body.dislikes).toEqual(['onions']);
     expect(fetch.body.explorationRate).toBe(0.85);
+    expect(fetch.body.recommendationCount).toBe(5);
   });
 
   it('rejects invalid payload types', async () => {
@@ -142,6 +146,22 @@ describe('User preferences routes (integration)', () => {
       .expect(400);
 
     expect(res.body.error).toContain('explorationRate must be a number from 0 to 1');
+  });
+
+  it('rejects invalid recommendation count values', async () => {
+    const cookie = await authCookie();
+    const res = await supertest(app.server)
+      .put('/api/user/preferences')
+      .set('Cookie', cookie)
+      .send({
+        nickname: 'alice@example.com',
+        allergies: [],
+        dislikes: [],
+        recommendationCount: 2.5,
+      })
+      .expect(400);
+
+    expect(res.body.error).toContain('recommendationCount must be an integer from 1 to 10');
   });
 
   it('returns empty menu-default preferences for the signed-in user', async () => {

@@ -5,6 +5,9 @@ const MAX_TERMS = 40;
 const MAX_TERM_LENGTH = 60;
 const MAX_USER_KEY_LENGTH = 255;
 export const DEFAULT_EXPLORATION_RATE = 0.5;
+export const DEFAULT_RECOMMENDATION_COUNT = 3;
+const MIN_RECOMMENDATION_COUNT = 1;
+const MAX_RECOMMENDATION_COUNT = 10;
 
 function normalizeUserKey(input: string): string {
   const trimmed = input.trim();
@@ -71,11 +74,39 @@ function normalizeExplorationRate(value: unknown): number {
   return Math.max(0, Math.min(1, Number(value.toFixed(2))));
 }
 
+function parseRecommendationCount(value: unknown): number {
+  if (value === undefined || value === null) {
+    return DEFAULT_RECOMMENDATION_COUNT;
+  }
+
+  if (typeof value !== 'number' || !Number.isInteger(value)) {
+    throw Object.assign(new Error('recommendationCount must be an integer from 1 to 10'), { statusCode: 400 });
+  }
+
+  if (value < MIN_RECOMMENDATION_COUNT || value > MAX_RECOMMENDATION_COUNT) {
+    throw Object.assign(new Error('recommendationCount must be an integer from 1 to 10'), { statusCode: 400 });
+  }
+
+  return value;
+}
+
+function normalizeRecommendationCount(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_RECOMMENDATION_COUNT;
+  }
+
+  return Math.max(
+    MIN_RECOMMENDATION_COUNT,
+    Math.min(MAX_RECOMMENDATION_COUNT, Math.round(value)),
+  );
+}
+
 function formatUserPreferences(record: {
   userKey: string;
   allergiesJson: unknown;
   dislikesJson: unknown;
   explorationRate: unknown;
+  recommendationCount: unknown;
   updatedAt: Date;
 }): UserPreferences {
   return {
@@ -83,6 +114,7 @@ function formatUserPreferences(record: {
     allergies: toStringArray(record.allergiesJson),
     dislikes: toStringArray(record.dislikesJson),
     explorationRate: normalizeExplorationRate(record.explorationRate),
+    recommendationCount: normalizeRecommendationCount(record.recommendationCount),
     updatedAt: record.updatedAt.toISOString(),
   };
 }
@@ -99,6 +131,7 @@ export async function getUserPreferences(userKeyInput: string): Promise<UserPref
       allergies: [],
       dislikes: [],
       explorationRate: DEFAULT_EXPLORATION_RATE,
+      recommendationCount: DEFAULT_RECOMMENDATION_COUNT,
       updatedAt: new Date(0).toISOString(),
     };
   }
@@ -111,11 +144,13 @@ export async function upsertUserPreferences(
   allergiesInput: unknown,
   dislikesInput: unknown,
   explorationRateInput?: unknown,
+  recommendationCountInput?: unknown,
 ): Promise<UserPreferences> {
   const userKey = normalizeUserKey(userKeyInput);
   const allergies = parseStringArray(allergiesInput, 'allergies');
   const dislikes = parseStringArray(dislikesInput, 'dislikes');
   const explorationRate = parseExplorationRate(explorationRateInput);
+  const recommendationCount = parseRecommendationCount(recommendationCountInput);
 
   const updated = await prisma.userPreference.upsert({
     where: { userKey },
@@ -124,11 +159,13 @@ export async function upsertUserPreferences(
       allergiesJson: allergies,
       dislikesJson: dislikes,
       explorationRate,
+      recommendationCount,
     },
     update: {
       allergiesJson: allergies,
       dislikesJson: dislikes,
       explorationRate,
+      recommendationCount,
     },
   });
 

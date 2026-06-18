@@ -324,6 +324,28 @@ describe('Meal recommendation service', () => {
     expect((impression?.itemsJson as unknown[]).length).toBe(2);
   });
 
+  it('limits safe recommendations to the actor recommendation count', async () => {
+    const { office, selection } = await setupActiveSelection([
+      'Pad Thai',
+      'Green Curry',
+      'Beef Burger',
+      'Garden Salad',
+    ]);
+    await userPreferencesService.upsertUserPreferences(ACTOR.actorKey, [], [], 0.5, 2);
+
+    const result = await generateRecommendations(selection.id, office.id, ACTOR);
+
+    expect(result.items).toHaveLength(2);
+    expect(result.items.map((item) => item.rank)).toEqual([1, 2]);
+    const impression = await prisma.mealRecommendationImpression.findUnique({
+      where: { id: result.impressionId },
+    });
+    expect(impression?.inputSummaryJson).toMatchObject({
+      recommendationCount: 2,
+    });
+    expect((impression?.itemsJson as unknown[]).length).toBe(2);
+  });
+
   // ─── Outcome learning ────────────────────────────────────
 
   it('demotes a previously recommended item the actor ordered and later rated poorly', async () => {

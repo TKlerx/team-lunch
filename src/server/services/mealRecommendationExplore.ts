@@ -12,6 +12,7 @@ import {
   persistMealRecommendationImpression,
   type RecommendationActor,
 } from './mealRecommendation.js';
+import { DEFAULT_RECOMMENDATION_COUNT } from './userPreferences.js';
 
 type FeatureCounts = {
   positive: number;
@@ -50,6 +51,14 @@ function normalizeExplorationRate(value: unknown): number {
     return DEFAULT_EXPLORATION_RATE;
   }
   return Math.max(0, Math.min(1, value));
+}
+
+function normalizeRecommendationCount(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_RECOMMENDATION_COUNT;
+  }
+
+  return Math.max(1, Math.min(10, Math.round(value)));
 }
 
 function scaleForExplorationRate(explorationRate: number): number {
@@ -380,6 +389,7 @@ export async function generateExploreRecommendations(
     ? (userPreference!.dislikesJson as unknown[]).filter((entry): entry is string => typeof entry === 'string')
     : [];
   const explorationRate = normalizeExplorationRate(userPreference?.explorationRate);
+  const recommendationCount = normalizeRecommendationCount(userPreference?.recommendationCount);
 
   const featureCounts = buildFeatureCounts(history, anticipatedLikes);
   const observedFeatureCount = countObservedFeatures(featureCounts);
@@ -449,7 +459,7 @@ export async function generateExploreRecommendations(
     allergies,
     dislikes,
   });
-  const items = rankExploreItems(constrainedItems);
+  const items = rankExploreItems(constrainedItems).slice(0, recommendationCount);
 
   const recommendedAt = new Date();
   const inputSummaryJson: Prisma.InputJsonValue = {
@@ -459,6 +469,7 @@ export async function generateExploreRecommendations(
     observedFeatureCount,
     epsilon,
     explorationRate,
+    recommendationCount,
     fallbackUsed: useFallback,
     allergyCount: allergies.length,
     dislikeCount: dislikes.length,

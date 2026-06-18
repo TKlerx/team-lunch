@@ -17,6 +17,8 @@ Shared request/response types live in `src/lib/types.ts`.
   the active food selection's selected/winning `menuId`.
 - Response items unchanged shape: `{ itemId, itemName, rank, score, reason,
   sourceSignals, aiAssisted }`; reasons remain human-readable flavor features.
+- The number of returned ordering recommendations follows the signed-in user's
+  `recommendationCount` preference, default `3`.
 
 ## Pre-vote cross-menu recommendations
 
@@ -43,6 +45,8 @@ Shared request/response types live in `src/lib/types.ts`.
 - Uses the signed-in user's `explorationRate` preference (`0` familiar to `1`
   adventurous, default `0.5`) to tune novelty/uncertainty sampling. Office-level
   `exploreEnabled` remains the admin availability switch.
+- The number of returned explore recommendations follows the signed-in user's
+  `recommendationCount` preference, default `3`.
 - 200 even when the user has no history (varied current-menu spread).
 - Candidate scope is intentionally narrow: this endpoint only scores items from
   the active food selection's selected/winning `menuId`.
@@ -103,17 +107,19 @@ Reuse feature 002's user-preferences endpoint. Entries may be canonical ingredie
 tags from the shared vocabulary or free text. The client offers structured
 selection from the ingredient vocabulary plus a free-text fallback. The same
 endpoint stores `explorationRate`, a per-user number from `0` to `1` for the
-Explore action. Allergies are a hard exclude and dislikes a soft demotion,
+Explore action, and `recommendationCount`, a per-user integer from `1` to `10`
+that controls how many safe/explore ordering recommendations are shown
+(default `3`). Allergies are a hard exclude and dislikes a soft demotion,
 applied deterministically after scoring on every path (baseline, safe-learned,
 explore) — never FM-learned.
 
 `GET /api/user/preferences`
-- Returns `{ userKey, allergies, dislikes, explorationRate, updatedAt }`.
+- Returns `{ userKey, allergies, dislikes, explorationRate, recommendationCount, updatedAt }`.
 
 `PUT /api/user/preferences`
-- Request: `{ allergies: string[], dislikes: string[], explorationRate?: number }`.
-- Missing `explorationRate` preserves the default `0.5` behavior for older
-  clients.
+- Request: `{ allergies: string[], dislikes: string[], explorationRate?: number, recommendationCount?: number }`.
+- Missing `explorationRate` preserves the default `0.5` behavior and missing
+  `recommendationCount` preserves the default `3` behavior for older clients.
 
 ## Admin: offline comparison export (follow-up)
 

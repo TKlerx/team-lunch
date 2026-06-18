@@ -46,6 +46,7 @@ The feature offers two distinct, complementary recommendation modes:
 - Q: Learning approach & exploration behavior — one model or both? → A: Both — a "safe" batch-trained model (exploit) for the default recommendation plus an opt-in "explore" path (exploration/bandit) as a separate user action; only the safe path is gated against the baseline. Framed as one predictor (e.g., FM) with two exploration policies: low-temperature + diversity/recency for safe, high-exploration (e.g., Thompson sampling / novelty-first) for explore. The safe path must still avoid degenerate repetition.
 - Q: Should recommendations only use the voted/winning meal, or can they help before a menu is decided? → A: The normal safe/explore recommendation for ordering MUST stay constrained to the active food selection's winning menu. Add a separate pre-vote cross-menu recommender that can rank top personal dish picks across current poll candidate menus (or all office menus when no poll is active) to help the user vote/decide, while remaining office-scoped and clearly labelled as pre-vote guidance.
 - Q: Can exploration intensity be personalized? → A: Yes — keep admin control over whether Explore is available per office, but let each user choose an exploration rate in Settings. The value tunes how strongly the Explore action favors novelty/uncertainty for that user; it is not used for allergy safety and does not affect the safe default recommendation path.
+- Q: How many ordering recommendations should be shown? → A: Default to 3, matching the top-3 evaluation metric, but let each user choose their own recommendation count in Settings (bounded 1–10). The safe and explore ordering endpoints both honor that personal setting.
 - Q: What evaluation work remains beyond baseline-vs-model gating? → A: Add an admin-only recommender/order dataset export before deeper model bake-offs. The export should include historical impressions, shown ranks, chosen orders, item identity/features, model source/version, office, and timestamps with actor identifiers pseudonymized, so self-built FM, xlearn FM, and future policies can be compared offline without direct production access.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -308,6 +309,7 @@ preferences.
 - **FR-032**: System MUST provide a separate pre-vote cross-menu recommendation endpoint that ranks candidate items across the current office's active poll menus before a food selection exists, excluding poll-excluded menus and including menu identity/name in each result.
 - **FR-033**: When no poll is active, the pre-vote cross-menu endpoint MAY rank items across all current menus in the user's office. It MUST remain office-scoped and MUST NOT use menus from other offices.
 - **FR-034**: Pre-vote recommendation impressions MUST be persisted separately from food-selection-bound impressions so later orders/ratings can be joined for learning/evaluation without inventing a fake food selection.
+- **FR-035**: System MUST let each user configure how many safe/explore ordering recommendations are shown, defaulting to 3 and bounded to 1–10 items.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -364,3 +366,4 @@ preferences.
 - Implicit and explicit feedback capture already exists (delivered in feature 002) and is reused as the learning signal.
 - Stable item identity relies on a best-effort heuristic (e.g., normalized name within an office/menu); perfectly disambiguating genuinely different dishes that share a name is a known limitation, not a guarantee.
 - Evaluation uses the already-persisted recommendation impressions plus subsequent orders/ratings as ground truth; no new user-facing feedback prompt is introduced.
+- The default recommendation count remains 3 so online UI behavior aligns with the top-3 evaluation metric; users can raise or lower their personal shortlist size in Settings.

@@ -158,6 +158,7 @@ export interface UserPreferences {
   allergies: string[];
   dislikes: string[];
   explorationRate: number;
+  recommendationCount: number;
   updatedAt: string;
 }
 
@@ -569,6 +570,7 @@ export interface UpdateUserPreferencesRequest {
   allergies: string[];
   dislikes: string[];
   explorationRate?: number;
+  recommendationCount?: number;
 }
 
 export interface UpdateUserMenuDefaultPreferenceRequest {

@@ -598,11 +598,12 @@ export function updateUserPreferences(
   allergies: string[],
   dislikes: string[],
   explorationRate?: number,
+  recommendationCount?: number,
 ): Promise<UserPreferences> {
   void nickname;
   return request<UserPreferences>(apiPath('/user/preferences'), {
     method: 'PUT',
-    body: JSON.stringify({ allergies, dislikes, explorationRate }),
+    body: JSON.stringify({ allergies, dislikes, explorationRate, recommendationCount }),
   });
 }
 
