@@ -1,6 +1,6 @@
 # Specs Backlog
 
-**Last Updated**: 2026-06-16
+**Last Updated**: 2026-06-18
 
 This backlog is the canonical intake list for unstructured feature wishes before
 they become numbered specs.
@@ -18,11 +18,34 @@ they become numbered specs.
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Matches `IMPLEMENTATION_PLAN.md` item 64.3. Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
-| BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Promoted | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Successor to BACKLOG-001's deterministic feature scorer. See notes below. |
+| BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Delivered | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md); successor to BACKLOG-001's deterministic feature scorer. See notes below. |
+| BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Former `IMPLEMENTATION_PLAN.md` item 78.2. Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |
+
+## BACKLOG-003 notes — Ordering claim timeout and recovery
+
+Current shipped behavior records exactly one ordering claimer and blocks a second
+claim while that claim remains active. There is no claim lease, no claim expiry,
+and no automatic release if the claimer walks away.
+
+Potential feature shape:
+
+- Give an ordering claim a default `10`-minute lease.
+- Allow the current claimer to extend the lease by another `10` minutes while it
+  is still active.
+- When the lease expires, release the claim but keep the food selection in
+  ordering so another approved user can take over.
+- Broadcast claim extension and release/expiry state changes to all clients in
+  the affected office.
+- Show remaining claim time in the ordering UI and make the takeover path clear
+  after expiry.
+
+Promotion guidance: this is small enough to be a food-selection spec update if it
+is bundled with existing ordering semantics. Create a separate numbered spec only
+if the recovery behavior grows into broader handoff/audit/escalation flows.
 
 ## BACKLOG-002 notes — Learned recommender
 
-Successor to the current deterministic content-based scorer
+Delivered successor to the current deterministic content-based scorer
 (`src/server/services/mealFeatures.ts` + `mealRecommendation.ts`). Model in
 **feature space, not item space**: menus are stable per office today but can be
 re-imported or replaced (especially other offices), so classic user×item

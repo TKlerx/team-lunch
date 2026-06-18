@@ -19,7 +19,7 @@
 - [x] User Story 5 landed: learned scoring, marks, and history all join on stable item identity, and the transfer tests now cover both menu re-import survival and per-office isolation.
 - [x] Full repo validation passed: `./validate.ps1 all` is green after refreshing the complexity baseline and trimming the oversized Administration function.
 - [x] Feature 003 is complete; no remaining learned-recommender implementation work is blocked in this workspace.
-- Note: the unchecked items below are carryover follow-ups or manual validation, not feature-003 deliverables. `78.3` is already implemented; `78.2` is an optional recovery safeguard; `79.1` and `80.1` would require new product decisions; `88.13` is live Entra smoke testing.
+- Note: new or unresolved product ideas now belong in `specs/BACKLOG.md` or a numbered spec. `78.3` is already implemented; `79.1` and `80.1` would require new product decisions; `88.13` is live Entra smoke testing.
 
 ---
 
@@ -1914,16 +1914,6 @@
     - office-scoped default-duration hydration
   - Validation:
     - `./validate.ps1`
-
-- [ ] **78.2 Add ordering-claim timeout and recovery**
-  - Prevent `ORDERING` from getting stuck when someone claims responsibility but never places the order
-  - Add a default `10`-minute claim lease when a user starts the final ordering step
-  - Allow the current claimer to extend the lease by another `10` minutes while the claim is still active
-  - When the lease expires, automatically release the claim but keep the food selection in `ordering` so another user can take over
-  - Broadcast claim, extension, and expiration/release events so all clients stay in sync
-  - Update the ordering UI to show remaining claim time and a clear takeover path after expiry
-  - Add service, route, SSE, and client coverage for orphan-prevention behavior
-  - Discovery: the migrated food-selection spec does not require claim expiry, so keep this as a separate operational enhancement if we ever want abandoned-claim recovery.
 
 - [x] **78.3 Allow late meal selection until ordering is explicitly claimed**
   - Revisit the current behavior where meal selection effectively closes for non-voters as soon as the poll finishes
