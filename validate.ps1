@@ -9,7 +9,7 @@
       all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + test (default, local/CI gate)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
-      precommit  - typecheck + lint (fast pre-commit hook)
+      precommit  - typecheck + lint + architecture + complexity + function-size + duplication (fast-ish pre-commit hook)
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only
       e2e        - Playwright E2E tests only
@@ -297,26 +297,26 @@ if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Lint (eslint)" "pnpm run lint" "lint" "lint failed" { "lint passed" }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Architecture (dependency-cruiser)" "pnpm run architecture" "architecture" "architecture check failed" {
         param($result)
         Get-ArchitectureSummary $result
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Complexity ratchet" "pnpm run complexity" "complexity" "complexity baseline failed" {
         "complexity baseline passed"
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Function size cap" "pnpm run function-size" "function-size" "function size cap failed" {
         "function size cap passed"
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Duplication (jscpd)" "pnpm run duplication" "duplication" "duplication check failed" {
         param($result)
         Get-DuplicationSummary $result
