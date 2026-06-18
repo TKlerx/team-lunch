@@ -330,6 +330,29 @@ describe('recommender admin routes', () => {
     });
   });
 
+  it('allows learned mode before evaluation so an office can pilot a trained model', async () => {
+    const office = await ensureDefaultOfficeLocation();
+    const adminCookie = await createAdminCookie('admin@example.com', office.id);
+
+    const model = trainMealRecommendationModel(
+      [{ features: ['user:alice@example.com', `office:${office.id}`, 'ingredient:chicken'], label: 1, weight: 1 }],
+      { seed: 13, factorDim: 4, epochs: 10 },
+    );
+    const saved = await saveMealRecommendationModel(model, 1);
+
+    const modeResponse = await supertest(app.server)
+      .put(`/api/admin/recommender/offices/${office.id}/mode`)
+      .set('Cookie', adminCookie)
+      .send({ safeMode: 'learned', modelVersion: saved.version })
+      .expect(200);
+
+    expect(modeResponse.body).toEqual({
+      officeLocationId: office.id,
+      safeMode: 'learned',
+      activeModelVersion: saved.version,
+    });
+  });
+
   it('blocks learned mode when the office margin is below threshold', async () => {
     const office = await ensureDefaultOfficeLocation();
     const adminCookie = await createAdminCookie('admin@example.com', office.id);

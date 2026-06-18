@@ -94,8 +94,11 @@ no SSE broadcast.
 
 `PUT /api/admin/recommender/offices/:officeId/mode`
 - Request: `{ safeMode: "baseline" | "learned", modelVersion?: number }`.
-- Enabling `learned` requires an evaluation for that office meeting the ≥5pt
+- Enabling `learned` is allowed before an office has evaluation data so admins
+  can pilot the trained model. If an evaluation exists, it must meet the ≥5pt
   margin; otherwise 409 `{ error: "Model does not beat baseline for this office" }`.
+- Unevaluated learned recommendations return a warning telling the user the
+  model has not been evaluated for their office yet.
 - 200 `{ officeLocationId, safeMode, activeModelVersion }`.
 
 `PUT /api/admin/recommender/offices/:officeId/explore`

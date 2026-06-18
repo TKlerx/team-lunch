@@ -637,6 +637,9 @@ describe('Meal recommendation routes (integration)', () => {
       .expect(200);
 
     expect(res.body.source).toBe('safe_learned');
+    expect(res.body.warnings).toEqual(
+      expect.arrayContaining([expect.stringContaining('not been evaluated for your office')]),
+    );
 
     const impression = await prisma.mealRecommendationImpression.findUnique({
       where: { id: res.body.impressionId },

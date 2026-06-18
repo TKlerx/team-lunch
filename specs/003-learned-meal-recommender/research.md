@@ -166,9 +166,11 @@ and works across containers).
 orders as ground truth: for each historical recommendation, compute whether the
 ordered item was in the top 3 of (a) the baseline ranking and (b) the candidate
 model's ranking, over a held-out time split, aggregated per office. Store a
-`ModelEvaluationResult` row. The per-office enable action is blocked unless the
-model's top-3 hit rate exceeds the baseline's by ≥5 percentage points (SC-001 /
-FR-011).
+`ModelEvaluationResult` row. Admins may pilot a trained model before an office
+has enough evaluation samples, with a user-facing warning on learned
+recommendations; once evaluation exists, the per-office enable action is blocked
+unless the model's top-3 hit rate exceeds the baseline's by ≥5 percentage points
+(SC-001 / FR-011).
 
 **Rationale**: Uses already-persisted impressions (no new ground-truth capture);
 top-3 hit rate is the clarified metric; held-out split avoids training-on-test;

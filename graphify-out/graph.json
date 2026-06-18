@@ -7609,7 +7609,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L1",
       "id": "scripts_e2e_server",
-      "community": 339,
+      "community": 199,
       "norm_label": "e2e-server.mjs"
     },
     {
@@ -7618,7 +7618,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L9",
       "id": "scripts_e2e_server_loadenv",
-      "community": 339,
+      "community": 199,
       "norm_label": "loadenv()"
     },
     {
@@ -7627,7 +7627,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L22",
       "id": "scripts_e2e_server_testdburl",
-      "community": 339,
+      "community": 199,
       "norm_label": "testdburl"
     },
     {
@@ -7636,7 +7636,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L34",
       "id": "scripts_e2e_server_env",
-      "community": 339,
+      "community": 199,
       "norm_label": "env"
     },
     {
@@ -7645,7 +7645,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L48",
       "id": "scripts_e2e_server_migrate",
-      "community": 339,
+      "community": 199,
       "norm_label": "migrate"
     },
     {
@@ -7654,7 +7654,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L58",
       "id": "scripts_e2e_server_seede2elocaluser",
-      "community": 339,
+      "community": 12,
       "norm_label": "seede2elocaluser()"
     },
     {
@@ -7663,7 +7663,7 @@
       "source_file": "scripts/e2e-server.mjs",
       "source_location": "L120",
       "id": "scripts_e2e_server_server",
-      "community": 339,
+      "community": 199,
       "norm_label": "server"
     },
     {
@@ -10345,7 +10345,7 @@
       "source_file": "src/client/auth.ts",
       "source_location": "L9",
       "id": "client_auth_getrouterbasename",
-      "community": 199,
+      "community": 468,
       "norm_label": "getrouterbasename()"
     },
     {
@@ -10435,7 +10435,7 @@
       "source_file": "src/client/components/AuthGate.tsx",
       "source_location": "L20",
       "id": "components_authgate_fetchauthconfig",
-      "community": 200,
+      "community": 4,
       "norm_label": "fetchauthconfig()"
     },
     {
@@ -10597,7 +10597,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L1",
       "id": "components_fooddeliveryview",
-      "community": 8,
+      "community": 128,
       "norm_label": "fooddeliveryview.tsx"
     },
     {
@@ -10606,7 +10606,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L22",
       "id": "components_fooddeliveryview_formatlateduration",
-      "community": 8,
+      "community": 128,
       "norm_label": "formatlateduration()"
     },
     {
@@ -10615,7 +10615,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L36",
       "id": "components_fooddeliveryview_formatdatetime",
-      "community": 8,
+      "community": 128,
       "norm_label": "formatdatetime()"
     },
     {
@@ -10624,7 +10624,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L42",
       "id": "components_fooddeliveryview_formatcompacturl",
-      "community": 8,
+      "community": 128,
       "norm_label": "formatcompacturl()"
     },
     {
@@ -10633,7 +10633,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L51",
       "id": "components_fooddeliveryview_deliveryorder",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliveryorder"
     },
     {
@@ -10642,7 +10642,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L60",
       "id": "components_fooddeliveryview_deliverycontactlink",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliverycontactlink"
     },
     {
@@ -10651,7 +10651,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L68",
       "id": "components_fooddeliveryview_deliverycontacticon",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliverycontacticon()"
     },
     {
@@ -10660,7 +10660,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L100",
       "id": "components_fooddeliveryview_getdeliverycontactlinks",
-      "community": 8,
+      "community": 128,
       "norm_label": "getdeliverycontactlinks()"
     },
     {
@@ -10669,7 +10669,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L124",
       "id": "components_fooddeliveryview_restaurantcontactcard",
-      "community": 8,
+      "community": 128,
       "norm_label": "restaurantcontactcard()"
     },
     {
@@ -10678,7 +10678,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L147",
       "id": "components_fooddeliveryview_deliveryetacontrols",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliveryetacontrols()"
     },
     {
@@ -10687,7 +10687,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L189",
       "id": "components_fooddeliveryview_deliverytimermenu",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliverytimermenu()"
     },
     {
@@ -10696,7 +10696,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L240",
       "id": "components_fooddeliveryview_deliverytimeractions",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliverytimeractions()"
     },
     {
@@ -10714,7 +10714,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L301",
       "id": "components_fooddeliveryview_deliveryorderslist",
-      "community": 8,
+      "community": 128,
       "norm_label": "deliveryorderslist()"
     },
     {
@@ -10723,7 +10723,7 @@
       "source_file": "src/client/components/FoodDeliveryView.tsx",
       "source_location": "L373",
       "id": "components_fooddeliveryview_fooddeliveryview",
-      "community": 8,
+      "community": 128,
       "norm_label": "fooddeliveryview()"
     },
     {
@@ -10930,7 +10930,7 @@
       "source_file": "src/client/components/FoodSelectionActiveView.tsx",
       "source_location": "L844",
       "id": "components_foodselectionactiveview_foodselectiontimeractions",
-      "community": 8,
+      "community": 128,
       "norm_label": "foodselectiontimeractions()"
     },
     {
@@ -11002,7 +11002,7 @@
       "source_file": "src/client/components/FoodSelectionCompletedView.tsx",
       "source_location": "L16",
       "id": "components_foodselectioncompletedview_foodselectioncompletedviewprops",
-      "community": 4,
+      "community": 8,
       "norm_label": "foodselectioncompletedviewprops"
     },
     {
@@ -11047,7 +11047,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L1",
       "id": "components_foodselectionorderboard",
-      "community": 4,
+      "community": 8,
       "norm_label": "foodselectionorderboard.tsx"
     },
     {
@@ -11056,7 +11056,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L5",
       "id": "components_foodselectionorderboard_orderboardmode",
-      "community": 4,
+      "community": 8,
       "norm_label": "orderboardmode"
     },
     {
@@ -11065,7 +11065,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L7",
       "id": "components_foodselectionorderboard_foodselectionorderboardprops",
-      "community": 4,
+      "community": 8,
       "norm_label": "foodselectionorderboardprops"
     },
     {
@@ -11074,7 +11074,7 @@
       "source_file": "src/client/components/FoodSelectionOrderBoard.tsx",
       "source_location": "L16",
       "id": "components_foodselectionorderboard_foodselectionorderboard",
-      "community": 4,
+      "community": 8,
       "norm_label": "foodselectionorderboard()"
     },
     {
@@ -11164,7 +11164,7 @@
       "source_file": "src/client/components/FoodSelectionOrderingView.tsx",
       "source_location": "L209",
       "id": "components_foodselectionorderingview_foodselectionorderingview",
-      "community": 128,
+      "community": 8,
       "norm_label": "foodselectionorderingview()"
     },
     {
@@ -11263,7 +11263,7 @@
       "source_file": "src/client/components/Header.tsx",
       "source_location": "L76",
       "id": "components_header_accountavatar",
-      "community": 200,
+      "community": 4,
       "norm_label": "accountavatar()"
     },
     {
@@ -11425,7 +11425,7 @@
       "source_file": "src/client/components/OrdersRail.tsx",
       "source_location": "L1",
       "id": "components_ordersrail",
-      "community": 8,
+      "community": 128,
       "norm_label": "ordersrail.tsx"
     },
     {
@@ -11434,7 +11434,7 @@
       "source_file": "src/client/components/OrdersRail.tsx",
       "source_location": "L4",
       "id": "components_ordersrail_ordersrailprops",
-      "community": 4,
+      "community": 8,
       "norm_label": "ordersrailprops"
     },
     {
@@ -11443,7 +11443,7 @@
       "source_file": "src/client/components/OrdersRail.tsx",
       "source_location": "L17",
       "id": "components_ordersrail_formatcompletedat",
-      "community": 8,
+      "community": 128,
       "norm_label": "formatcompletedat()"
     },
     {
@@ -11452,7 +11452,7 @@
       "source_file": "src/client/components/OrdersRail.tsx",
       "source_location": "L23",
       "id": "components_ordersrail_ordersrail",
-      "community": 8,
+      "community": 128,
       "norm_label": "ordersrail()"
     },
     {
@@ -12082,7 +12082,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L1",
       "id": "ui_button",
-      "community": 130,
+      "community": 306,
       "norm_label": "button.tsx"
     },
     {
@@ -12091,7 +12091,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L4",
       "id": "ui_button_buttonvariant",
-      "community": 130,
+      "community": 306,
       "norm_label": "buttonvariant"
     },
     {
@@ -12100,7 +12100,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L12",
       "id": "ui_button_buttonprops",
-      "community": 130,
+      "community": 306,
       "norm_label": "buttonprops"
     },
     {
@@ -12109,7 +12109,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L16",
       "id": "ui_button_variants",
-      "community": 130,
+      "community": 306,
       "norm_label": "variants"
     },
     {
@@ -12118,7 +12118,7 @@
       "source_file": "src/client/components/ui/Button.tsx",
       "source_location": "L29",
       "id": "ui_button_button",
-      "community": 130,
+      "community": 306,
       "norm_label": "button()"
     },
     {
@@ -12379,7 +12379,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L1",
       "id": "client_config",
-      "community": 165,
+      "community": 4,
       "norm_label": "config.ts"
     },
     {
@@ -12388,7 +12388,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L1",
       "id": "client_config_normalizebasepath",
-      "community": 165,
+      "community": 4,
       "norm_label": "normalizebasepath()"
     },
     {
@@ -12397,7 +12397,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L12",
       "id": "client_config_appbasepath",
-      "community": 165,
+      "community": 4,
       "norm_label": "appbasepath"
     },
     {
@@ -12406,7 +12406,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L16",
       "id": "client_config_withbasepath",
-      "community": 200,
+      "community": 4,
       "norm_label": "withbasepath()"
     },
     {
@@ -12415,7 +12415,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L23",
       "id": "client_config_getstoredadminofficelocationid",
-      "community": 165,
+      "community": 4,
       "norm_label": "getstoredadminofficelocationid()"
     },
     {
@@ -12424,7 +12424,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L37",
       "id": "client_config_setstoredadminofficelocationid",
-      "community": 165,
+      "community": 4,
       "norm_label": "setstoredadminofficelocationid()"
     },
     {
@@ -12433,7 +12433,7 @@
       "source_file": "src/client/config.ts",
       "source_location": "L50",
       "id": "client_config_withofficelocationcontext",
-      "community": 165,
+      "community": 4,
       "norm_label": "withofficelocationcontext()"
     },
     {
@@ -12442,7 +12442,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L1",
       "id": "context_adminofficecontext",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficecontext.tsx"
     },
     {
@@ -12451,7 +12451,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L15",
       "id": "context_adminofficecontext_adminofficelocationoption",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficelocationoption"
     },
     {
@@ -12460,7 +12460,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L22",
       "id": "context_adminofficecontext_adminofficecontextvalue",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficecontextvalue"
     },
     {
@@ -12469,7 +12469,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L32",
       "id": "context_adminofficecontext_adminofficeproviderprops",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficeproviderprops"
     },
     {
@@ -12478,7 +12478,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L41",
       "id": "context_adminofficecontext_adminofficecontext",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficecontext"
     },
     {
@@ -12487,7 +12487,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L55",
       "id": "context_adminofficecontext_resolvepreferredofficelocationid",
-      "community": 165,
+      "community": 4,
       "norm_label": "resolvepreferredofficelocationid()"
     },
     {
@@ -12496,7 +12496,7 @@
       "source_file": "src/client/context/AdminOfficeContext.tsx",
       "source_location": "L79",
       "id": "context_adminofficecontext_adminofficeprovider",
-      "community": 165,
+      "community": 4,
       "norm_label": "adminofficeprovider()"
     },
     {
@@ -12514,7 +12514,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L1",
       "id": "context_appcontext",
-      "community": 4,
+      "community": 193,
       "norm_label": "appcontext.tsx"
     },
     {
@@ -12523,7 +12523,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L14",
       "id": "context_appcontext_appstate",
-      "community": 568,
+      "community": 193,
       "norm_label": "appstate"
     },
     {
@@ -12532,7 +12532,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L29",
       "id": "context_appcontext_initialappstate",
-      "community": 852,
+      "community": 193,
       "norm_label": "initialappstate"
     },
     {
@@ -12541,7 +12541,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L44",
       "id": "context_appcontext_resetteamlunchprocess",
-      "community": 4,
+      "community": 193,
       "norm_label": "resetteamlunchprocess()"
     },
     {
@@ -12550,7 +12550,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L54",
       "id": "context_appcontext_finishactivepoll",
-      "community": 4,
+      "community": 193,
       "norm_label": "finishactivepoll()"
     },
     {
@@ -12559,7 +12559,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L81",
       "id": "context_appcontext_buildfinishedpoll",
-      "community": 4,
+      "community": 193,
       "norm_label": "buildfinishedpoll()"
     },
     {
@@ -12568,7 +12568,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L95",
       "id": "context_appcontext_updateorderacrossselections",
-      "community": 4,
+      "community": 193,
       "norm_label": "updateorderacrossselections()"
     },
     {
@@ -12577,7 +12577,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L121",
       "id": "context_appcontext_withdrawactiveorder",
-      "community": 4,
+      "community": 193,
       "norm_label": "withdrawactiveorder()"
     },
     {
@@ -12586,7 +12586,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L146",
       "id": "context_appcontext_appaction",
-      "community": 4,
+      "community": 193,
       "norm_label": "appaction"
     },
     {
@@ -12595,7 +12595,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L207",
       "id": "context_appcontext_appreducer",
-      "community": 4,
+      "community": 193,
       "norm_label": "appreducer()"
     },
     {
@@ -12604,7 +12604,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L488",
       "id": "context_appcontext_appstatecontext",
-      "community": 4,
+      "community": 193,
       "norm_label": "appstatecontext"
     },
     {
@@ -12613,7 +12613,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L489",
       "id": "context_appcontext_appdispatchcontext",
-      "community": 4,
+      "community": 193,
       "norm_label": "appdispatchcontext"
     },
     {
@@ -12622,7 +12622,7 @@
       "source_file": "src/client/context/AppContext.tsx",
       "source_location": "L493",
       "id": "context_appcontext_appprovider",
-      "community": 199,
+      "community": 468,
       "norm_label": "appprovider()"
     },
     {
@@ -12739,7 +12739,7 @@
       "source_file": "src/client/context/ThemeContext.tsx",
       "source_location": "L57",
       "id": "context_themecontext_themeprovider",
-      "community": 199,
+      "community": 468,
       "norm_label": "themeprovider()"
     },
     {
@@ -12784,7 +12784,7 @@
       "source_file": "src/client/hooks/useCountdown.ts",
       "source_location": "L1",
       "id": "hooks_usecountdown",
-      "community": 8,
+      "community": 128,
       "norm_label": "usecountdown.ts"
     },
     {
@@ -12793,7 +12793,7 @@
       "source_file": "src/client/hooks/useCountdown.ts",
       "source_location": "L7",
       "id": "hooks_usecountdown_usecountdown",
-      "community": 8,
+      "community": 128,
       "norm_label": "usecountdown()"
     },
     {
@@ -12802,7 +12802,7 @@
       "source_file": "src/client/hooks/useCountdown.ts",
       "source_location": "L37",
       "id": "hooks_usecountdown_useelapsedsince",
-      "community": 8,
+      "community": 128,
       "norm_label": "useelapsedsince()"
     },
     {
@@ -12811,7 +12811,7 @@
       "source_file": "src/client/hooks/useCountdown.ts",
       "source_location": "L66",
       "id": "hooks_usecountdown_formattime",
-      "community": 8,
+      "community": 128,
       "norm_label": "formattime()"
     },
     {
@@ -12982,7 +12982,7 @@
       "source_file": "src/client/main.tsx",
       "source_location": "L1",
       "id": "client_main",
-      "community": 199,
+      "community": 468,
       "norm_label": "main.tsx"
     },
     {
@@ -12991,7 +12991,7 @@
       "source_file": "src/client/main.tsx",
       "source_location": "L11",
       "id": "client_main_bootstrap",
-      "community": 199,
+      "community": 468,
       "norm_label": "bootstrap()"
     },
     {
@@ -13063,7 +13063,7 @@
       "source_file": "src/client/pages/Administration.tsx",
       "source_location": "L67",
       "id": "pages_administration_fetchadminconfig",
-      "community": 200,
+      "community": 4,
       "norm_label": "fetchadminconfig()"
     },
     {
@@ -13072,7 +13072,7 @@
       "source_file": "src/client/pages/Administration.tsx",
       "source_location": "L77",
       "id": "pages_administration_requestadmin",
-      "community": 200,
+      "community": 4,
       "norm_label": "requestadmin()"
     },
     {
@@ -14188,7 +14188,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L29",
       "id": "lib_types_menu",
-      "community": 4,
+      "community": 8,
       "norm_label": "menu"
     },
     {
@@ -14206,7 +14206,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L55",
       "id": "lib_types_officeweekday",
-      "community": 18,
+      "community": 5,
       "norm_label": "officeweekday"
     },
     {
@@ -14215,7 +14215,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L64",
       "id": "lib_types_menuitem",
-      "community": 4,
+      "community": 193,
       "norm_label": "menuitem"
     },
     {
@@ -14224,7 +14224,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L74",
       "id": "lib_types_poll",
-      "community": 4,
+      "community": 87,
       "norm_label": "poll"
     },
     {
@@ -14242,7 +14242,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L97",
       "id": "lib_types_pollvote",
-      "community": 364,
+      "community": 6,
       "norm_label": "pollvote"
     },
     {
@@ -14251,7 +14251,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L109",
       "id": "lib_types_foodselection",
-      "community": 4,
+      "community": 8,
       "norm_label": "foodselection"
     },
     {
@@ -14260,7 +14260,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L128",
       "id": "lib_types_foodorder",
-      "community": 4,
+      "community": 193,
       "norm_label": "foodorder"
     },
     {
@@ -14341,7 +14341,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L197",
       "id": "lib_types_mealrecommendationrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "mealrecommendationrequest"
     },
     {
@@ -14386,7 +14386,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L224",
       "id": "lib_types_mealrecommendationprevoterequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "mealrecommendationprevoterequest"
     },
     {
@@ -14431,7 +14431,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L259",
       "id": "lib_types_mealrecommendationmarkrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "mealrecommendationmarkrequest"
     },
     {
@@ -14566,7 +14566,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L335",
       "id": "lib_types_shoppinglistitem",
-      "community": 568,
+      "community": 193,
       "norm_label": "shoppinglistitem"
     },
     {
@@ -14692,7 +14692,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L462",
       "id": "lib_types_startpollrequest",
-      "community": 20,
+      "community": 2,
       "norm_label": "startpollrequest"
     },
     {
@@ -14701,7 +14701,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L471",
       "id": "lib_types_castvoterequest",
-      "community": 20,
+      "community": 2,
       "norm_label": "castvoterequest"
     },
     {
@@ -14710,7 +14710,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L476",
       "id": "lib_types_withdrawvoterequest",
-      "community": 20,
+      "community": 2,
       "norm_label": "withdrawvoterequest"
     },
     {
@@ -14719,7 +14719,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L481",
       "id": "lib_types_extendpollrequest",
-      "community": 20,
+      "community": 2,
       "norm_label": "extendpollrequest"
     },
     {
@@ -14737,7 +14737,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L487",
       "id": "lib_types_startfoodselectionrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "startfoodselectionrequest"
     },
     {
@@ -14746,7 +14746,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L492",
       "id": "lib_types_placeorderrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "placeorderrequest"
     },
     {
@@ -14755,7 +14755,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L498",
       "id": "lib_types_withdraworderrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "withdraworderrequest"
     },
     {
@@ -14764,7 +14764,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L503",
       "id": "lib_types_ratefoodorderrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "ratefoodorderrequest"
     },
     {
@@ -14773,7 +14773,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L509",
       "id": "lib_types_updatefoodorderprocessedrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "updatefoodorderprocessedrequest"
     },
     {
@@ -14782,7 +14782,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L514",
       "id": "lib_types_updatefoodorderdeliveredrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "updatefoodorderdeliveredrequest"
     },
     {
@@ -14800,7 +14800,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L523",
       "id": "lib_types_extendfoodselectionrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "extendfoodselectionrequest"
     },
     {
@@ -14809,7 +14809,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L527",
       "id": "lib_types_updateremainingtimerrequest",
-      "community": 20,
+      "community": 2,
       "norm_label": "updateremainingtimerrequest"
     },
     {
@@ -14818,7 +14818,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L531",
       "id": "lib_types_quickstartfoodselectionrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "quickstartfoodselectionrequest"
     },
     {
@@ -14827,7 +14827,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L535",
       "id": "lib_types_updatefoodselectionetarequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "updatefoodselectionetarequest"
     },
     {
@@ -14836,7 +14836,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L539",
       "id": "lib_types_placedeliveryorderrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "placedeliveryorderrequest"
     },
     {
@@ -14845,7 +14845,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L544",
       "id": "lib_types_claimorderingresponsibilityrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "claimorderingresponsibilityrequest"
     },
     {
@@ -14854,7 +14854,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L548",
       "id": "lib_types_remindmissingordersrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "remindmissingordersrequest"
     },
     {
@@ -14872,7 +14872,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L554",
       "id": "lib_types_placefallbackorderrequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "placefallbackorderrequest"
     },
     {
@@ -14881,7 +14881,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L559",
       "id": "lib_types_pingfallbackcandidaterequest",
-      "community": 6,
+      "community": 20,
       "norm_label": "pingfallbackcandidaterequest"
     },
     {
@@ -14899,7 +14899,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L568",
       "id": "lib_types_updateuserpreferencesrequest",
-      "community": 20,
+      "community": 6,
       "norm_label": "updateuserpreferencesrequest"
     },
     {
@@ -14908,7 +14908,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L576",
       "id": "lib_types_updateusermenudefaultpreferencerequest",
-      "community": 20,
+      "community": 6,
       "norm_label": "updateusermenudefaultpreferencerequest"
     },
     {
@@ -14917,7 +14917,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L583",
       "id": "lib_types_createshoppinglistitemrequest",
-      "community": 6,
+      "community": 2,
       "norm_label": "createshoppinglistitemrequest"
     },
     {
@@ -14926,7 +14926,7 @@
       "source_file": "src/lib/types.ts",
       "source_location": "L588",
       "id": "lib_types_markshoppinglistitemboughtrequest",
-      "community": 6,
+      "community": 2,
       "norm_label": "markshoppinglistitemboughtrequest"
     },
     {
@@ -15205,7 +15205,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L242",
       "id": "routes_auth_validatecredentials",
-      "community": 18,
+      "community": 31,
       "norm_label": "validatecredentials()"
     },
     {
@@ -15223,7 +15223,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L266",
       "id": "routes_auth_requirecurrentauthsession",
-      "community": 31,
+      "community": 2,
       "norm_label": "requirecurrentauthsession()"
     },
     {
@@ -15259,7 +15259,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L497",
       "id": "routes_auth_registerlocalloginroutes",
-      "community": 31,
+      "community": 178,
       "norm_label": "registerlocalloginroutes()"
     },
     {
@@ -15295,7 +15295,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L635",
       "id": "routes_auth_registeraccountlifecycleadminroutes",
-      "community": 10,
+      "community": 31,
       "norm_label": "registeraccountlifecycleadminroutes()"
     },
     {
@@ -15304,7 +15304,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L686",
       "id": "routes_auth_registerapprovalroutes",
-      "community": 10,
+      "community": 31,
       "norm_label": "registerapprovalroutes()"
     },
     {
@@ -15322,7 +15322,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L751",
       "id": "routes_auth_registerblockroutes",
-      "community": 10,
+      "community": 31,
       "norm_label": "registerblockroutes()"
     },
     {
@@ -15331,7 +15331,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L810",
       "id": "routes_auth_registerofficeassignmentroutes",
-      "community": 10,
+      "community": 31,
       "norm_label": "registerofficeassignmentroutes()"
     },
     {
@@ -15340,7 +15340,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L871",
       "id": "routes_auth_registerofficecreateroutes",
-      "community": 18,
+      "community": 31,
       "norm_label": "registerofficecreateroutes()"
     },
     {
@@ -15349,7 +15349,7 @@
       "source_file": "src/server/routes/auth.ts",
       "source_location": "L892",
       "id": "routes_auth_registerofficemaintenanceroutes",
-      "community": 18,
+      "community": 31,
       "norm_label": "registerofficemaintenanceroutes()"
     },
     {
@@ -15376,7 +15376,7 @@
       "source_file": "src/server/routes/authIdentity.ts",
       "source_location": "L1",
       "id": "routes_authidentity",
-      "community": 31,
+      "community": 2,
       "norm_label": "authidentity.ts"
     },
     {
@@ -15385,7 +15385,7 @@
       "source_file": "src/server/routes/authIdentity.ts",
       "source_location": "L12",
       "id": "routes_authidentity_authenticatedactor",
-      "community": 31,
+      "community": 2,
       "norm_label": "authenticatedactor"
     },
     {
@@ -15592,7 +15592,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L1",
       "id": "routes_polls",
-      "community": 20,
+      "community": 2,
       "norm_label": "polls.ts"
     },
     {
@@ -15601,7 +15601,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L20",
       "id": "routes_polls_requireadminifapprovalworkflowenabled",
-      "community": 20,
+      "community": 2,
       "norm_label": "requireadminifapprovalworkflowenabled()"
     },
     {
@@ -15610,7 +15610,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L31",
       "id": "routes_polls_requireapprovedactorifapprovalworkflowenabled",
-      "community": 20,
+      "community": 2,
       "norm_label": "requireapprovedactorifapprovalworkflowenabled()"
     },
     {
@@ -15619,7 +15619,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L39",
       "id": "routes_polls_resolveoptionalapprovedactor",
-      "community": 20,
+      "community": 2,
       "norm_label": "resolveoptionalapprovedactor()"
     },
     {
@@ -15628,7 +15628,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L45",
       "id": "routes_polls_requireadminorpollcreator",
-      "community": 20,
+      "community": 2,
       "norm_label": "requireadminorpollcreator()"
     },
     {
@@ -15637,7 +15637,7 @@
       "source_file": "src/server/routes/polls.ts",
       "source_location": "L67",
       "id": "routes_polls_pollroutes",
-      "community": 20,
+      "community": 2,
       "norm_label": "pollroutes()"
     },
     {
@@ -15673,7 +15673,7 @@
       "source_file": "src/server/routes/routeUtils.ts",
       "source_location": "L1",
       "id": "routes_routeutils",
-      "community": 20,
+      "community": 2,
       "norm_label": "routeutils.ts"
     },
     {
@@ -15682,7 +15682,7 @@
       "source_file": "src/server/routes/routeUtils.ts",
       "source_location": "L41",
       "id": "routes_routeutils_serviceerror",
-      "community": 18,
+      "community": 31,
       "norm_label": "serviceerror"
     },
     {
@@ -15700,7 +15700,7 @@
       "source_file": "src/server/routes/shoppingList.ts",
       "source_location": "L1",
       "id": "routes_shoppinglist",
-      "community": 20,
+      "community": 2,
       "norm_label": "shoppinglist.ts"
     },
     {
@@ -15709,7 +15709,7 @@
       "source_file": "src/server/routes/shoppingList.ts",
       "source_location": "L14",
       "id": "routes_shoppinglist_shoppinglistroutes",
-      "community": 20,
+      "community": 2,
       "norm_label": "shoppinglistroutes()"
     },
     {
@@ -15718,7 +15718,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L1",
       "id": "routes_userpreferences",
-      "community": 20,
+      "community": 6,
       "norm_label": "userpreferences.ts"
     },
     {
@@ -15727,7 +15727,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L11",
       "id": "routes_userpreferences_resolveuserkey",
-      "community": 20,
+      "community": 6,
       "norm_label": "resolveuserkey()"
     },
     {
@@ -15736,7 +15736,7 @@
       "source_file": "src/server/routes/userPreferences.ts",
       "source_location": "L15",
       "id": "routes_userpreferences_userpreferencesroutes",
-      "community": 20,
+      "community": 6,
       "norm_label": "userpreferencesroutes()"
     },
     {
@@ -15790,7 +15790,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L215",
       "id": "services_authaccess_getauthdisplayprofile",
-      "community": 31,
+      "community": 10,
       "norm_label": "getauthdisplayprofile()"
     },
     {
@@ -15916,7 +15916,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L638",
       "id": "services_authaccess_readsessionversion",
-      "community": 31,
+      "community": 2,
       "norm_label": "readsessionversion()"
     },
     {
@@ -15925,7 +15925,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L647",
       "id": "services_authaccess_getauthaccesssessionversion",
-      "community": 31,
+      "community": 2,
       "norm_label": "getauthaccesssessionversion()"
     },
     {
@@ -15934,7 +15934,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L655",
       "id": "services_authaccess_ensureauthaccessuserforlogin",
-      "community": 31,
+      "community": 2,
       "norm_label": "ensureauthaccessuserforlogin()"
     },
     {
@@ -15943,7 +15943,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L681",
       "id": "services_authaccess_assertauthsessionversion",
-      "community": 31,
+      "community": 2,
       "norm_label": "assertauthsessionversion()"
     },
     {
@@ -16123,7 +16123,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L1597",
       "id": "services_authaccess_assignuserofficebyadmin",
-      "community": 10,
+      "community": 31,
       "norm_label": "assignuserofficebyadmin()"
     },
     {
@@ -16141,7 +16141,7 @@
       "source_file": "src/server/services/authAccess.ts",
       "source_location": "L1643",
       "id": "services_authaccess_getblockedusermessage",
-      "community": 31,
+      "community": 2,
       "norm_label": "getblockedusermessage()"
     },
     {
@@ -16393,7 +16393,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L1",
       "id": "services_authsession",
-      "community": 31,
+      "community": 1,
       "norm_label": "authsession.ts"
     },
     {
@@ -16402,7 +16402,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L3",
       "id": "services_authsession_authmethod",
-      "community": 31,
+      "community": 2,
       "norm_label": "authmethod"
     },
     {
@@ -16411,7 +16411,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L9",
       "id": "services_authsession_authsession",
-      "community": 31,
+      "community": 1,
       "norm_label": "authsession"
     },
     {
@@ -16420,7 +16420,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L20",
       "id": "services_authsession_getsessionsecret",
-      "community": 31,
+      "community": 2,
       "norm_label": "getsessionsecret()"
     },
     {
@@ -16429,7 +16429,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L28",
       "id": "services_authsession_base64urlencode",
-      "community": 31,
+      "community": 1,
       "norm_label": "base64urlencode()"
     },
     {
@@ -16438,7 +16438,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L32",
       "id": "services_authsession_base64urldecode",
-      "community": 31,
+      "community": 2,
       "norm_label": "base64urldecode()"
     },
     {
@@ -16447,7 +16447,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L36",
       "id": "services_authsession_signdata",
-      "community": 31,
+      "community": 2,
       "norm_label": "signdata()"
     },
     {
@@ -16483,7 +16483,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L70",
       "id": "services_authsession_parsesessioncookievalue",
-      "community": 31,
+      "community": 2,
       "norm_label": "parsesessioncookievalue()"
     },
     {
@@ -16492,7 +16492,7 @@
       "source_file": "src/server/services/authSession.ts",
       "source_location": "L107",
       "id": "services_authsession_getauthsessionfromcookieheader",
-      "community": 31,
+      "community": 2,
       "norm_label": "getauthsessionfromcookieheader()"
     },
     {
@@ -16870,7 +16870,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L77",
       "id": "services_foodselection_clearalltimers",
-      "community": 1,
+      "community": 12,
       "norm_label": "clearalltimers()"
     },
     {
@@ -16879,7 +16879,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L92",
       "id": "services_foodselection_formatfoodorderrecord",
-      "community": 5,
+      "community": 170,
       "norm_label": "formatfoodorderrecord()"
     },
     {
@@ -16978,7 +16978,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L285",
       "id": "services_foodselection_validatenickname",
-      "community": 5,
+      "community": 170,
       "norm_label": "validatenickname()"
     },
     {
@@ -16996,7 +16996,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L299",
       "id": "services_foodselection_resolveorderidentity",
-      "community": 5,
+      "community": 170,
       "norm_label": "resolveorderidentity()"
     },
     {
@@ -17023,7 +17023,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L323",
       "id": "services_foodselection_buildfallbackordernote",
-      "community": 5,
+      "community": 170,
       "norm_label": "buildfallbackordernote()"
     },
     {
@@ -17059,7 +17059,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L368",
       "id": "services_foodselection_resolvefoodselectionofficelocationid",
-      "community": 5,
+      "community": 170,
       "norm_label": "resolvefoodselectionofficelocationid()"
     },
     {
@@ -17077,7 +17077,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L395",
       "id": "services_foodselection_getwinnervoternicknames",
-      "community": 5,
+      "community": 170,
       "norm_label": "getwinnervoternicknames()"
     },
     {
@@ -17095,7 +17095,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L435",
       "id": "services_foodselection_validaterating",
-      "community": 5,
+      "community": 170,
       "norm_label": "validaterating()"
     },
     {
@@ -17104,7 +17104,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L444",
       "id": "services_foodselection_normalizefeedbackcomment",
-      "community": 5,
+      "community": 170,
       "norm_label": "normalizefeedbackcomment()"
     },
     {
@@ -17131,7 +17131,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L543",
       "id": "services_foodselection_placeorder",
-      "community": 5,
+      "community": 170,
       "norm_label": "placeorder()"
     },
     {
@@ -17140,7 +17140,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L611",
       "id": "services_foodselection_withdraworder",
-      "community": 5,
+      "community": 170,
       "norm_label": "withdraworder()"
     },
     {
@@ -17185,7 +17185,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L780",
       "id": "services_foodselection_rateorder",
-      "community": 5,
+      "community": 170,
       "norm_label": "rateorder()"
     },
     {
@@ -17194,7 +17194,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L829",
       "id": "services_foodselection_setorderprocessed",
-      "community": 5,
+      "community": 170,
       "norm_label": "setorderprocessed()"
     },
     {
@@ -17203,7 +17203,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L869",
       "id": "services_foodselection_listfallbackordercandidates",
-      "community": 5,
+      "community": 170,
       "norm_label": "listfallbackordercandidates()"
     },
     {
@@ -17212,7 +17212,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L944",
       "id": "services_foodselection_getfallbackeligibletarget",
-      "community": 5,
+      "community": 170,
       "norm_label": "getfallbackeligibletarget()"
     },
     {
@@ -17221,7 +17221,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L1017",
       "id": "services_foodselection_placefallbackorder",
-      "community": 5,
+      "community": 170,
       "norm_label": "placefallbackorder()"
     },
     {
@@ -17230,7 +17230,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L1055",
       "id": "services_foodselection_sendfallbackcandidatereminder",
-      "community": 5,
+      "community": 170,
       "norm_label": "sendfallbackcandidatereminder()"
     },
     {
@@ -17239,7 +17239,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L1091",
       "id": "services_foodselection_setorderdelivered",
-      "community": 5,
+      "community": 170,
       "norm_label": "setorderdelivered()"
     },
     {
@@ -17248,7 +17248,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L1137",
       "id": "services_foodselection_exportordersforuserxlsx",
-      "community": 5,
+      "community": 170,
       "norm_label": "exportordersforuserxlsx()"
     },
     {
@@ -17311,7 +17311,7 @@
       "source_file": "src/server/services/foodSelection.ts",
       "source_location": "L1353",
       "id": "services_foodselection_getcompletedfoodselectionshistory",
-      "community": 5,
+      "community": 170,
       "norm_label": "getcompletedfoodselectionshistory()"
     },
     {
@@ -17338,7 +17338,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L1",
       "id": "services_localauth",
-      "community": 339,
+      "community": 165,
       "norm_label": "localauth.ts"
     },
     {
@@ -17347,7 +17347,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L6",
       "id": "services_localauth_scrypt",
-      "community": 339,
+      "community": 165,
       "norm_label": "scrypt"
     },
     {
@@ -17356,7 +17356,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L9",
       "id": "services_localauth_localauthusermodel",
-      "community": 339,
+      "community": 165,
       "norm_label": "localauthusermodel"
     },
     {
@@ -17374,7 +17374,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L28",
       "id": "services_localauth_validateemailorthrow",
-      "community": 339,
+      "community": 165,
       "norm_label": "validateemailorthrow()"
     },
     {
@@ -17383,7 +17383,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L37",
       "id": "services_localauth_createpasswordhash",
-      "community": 339,
+      "community": 165,
       "norm_label": "createpasswordhash()"
     },
     {
@@ -17392,7 +17392,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L43",
       "id": "services_localauth_verifypassword",
-      "community": 339,
+      "community": 165,
       "norm_label": "verifypassword()"
     },
     {
@@ -17401,7 +17401,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L57",
       "id": "services_localauth_generaterandompassword",
-      "community": 339,
+      "community": 165,
       "norm_label": "generaterandompassword()"
     },
     {
@@ -17419,7 +17419,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L86",
       "id": "services_localauth_authenticatelocaluser",
-      "community": 339,
+      "community": 165,
       "norm_label": "authenticatelocaluser()"
     },
     {
@@ -17437,7 +17437,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L115",
       "id": "services_localauth_upsertlocalauthuser",
-      "community": 339,
+      "community": 1,
       "norm_label": "upsertlocalauthuser()"
     },
     {
@@ -17446,7 +17446,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L136",
       "id": "services_localauth_updatelocalauthuseremail",
-      "community": 339,
+      "community": 165,
       "norm_label": "updatelocalauthuseremail()"
     },
     {
@@ -17455,7 +17455,7 @@
       "source_file": "src/server/services/localAuth.ts",
       "source_location": "L148",
       "id": "services_localauth_deletelocalauthuser",
-      "community": 339,
+      "community": 165,
       "norm_label": "deletelocalauthuser()"
     },
     {
@@ -17599,7 +17599,7 @@
       "source_file": "src/server/services/localLoginProtection.ts",
       "source_location": "L102",
       "id": "services_localloginprotection_resetlocalloginprotectionfortests",
-      "community": 339,
+      "community": 178,
       "norm_label": "resetlocalloginprotectionfortests()"
     },
     {
@@ -17896,7 +17896,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L1",
       "id": "services_mealitemidentity",
-      "community": 12,
+      "community": 13,
       "norm_label": "mealitemidentity.ts"
     },
     {
@@ -17905,7 +17905,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L5",
       "id": "services_mealitemidentity_menuitemidentityresult",
-      "community": 12,
+      "community": 13,
       "norm_label": "menuitemidentityresult"
     },
     {
@@ -17914,7 +17914,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L12",
       "id": "services_mealitemidentity_menuitemidentitydb",
-      "community": 12,
+      "community": 13,
       "norm_label": "menuitemidentitydb"
     },
     {
@@ -17923,7 +17923,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L17",
       "id": "services_mealitemidentity_normalizewhitespace",
-      "community": 12,
+      "community": 7,
       "norm_label": "normalizewhitespace()"
     },
     {
@@ -17932,7 +17932,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L25",
       "id": "services_mealitemidentity_normalizemenuitemidentitykey",
-      "community": 12,
+      "community": 7,
       "norm_label": "normalizemenuitemidentitykey()"
     },
     {
@@ -17941,7 +17941,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L34",
       "id": "services_mealitemidentity_resolvemenuitem",
-      "community": 12,
+      "community": 13,
       "norm_label": "resolvemenuitem()"
     },
     {
@@ -17950,7 +17950,7 @@
       "source_file": "src/server/services/mealItemIdentity.ts",
       "source_location": "L51",
       "id": "services_mealitemidentity_ensuremenuitemidentity",
-      "community": 12,
+      "community": 13,
       "norm_label": "ensuremenuitemidentity()"
     },
     {
@@ -17993,7 +17993,7 @@
       "label": "ScoredItem",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L95",
+      "source_location": "L97",
       "id": "services_mealrecommendation_scoreditem",
       "community": 14,
       "norm_label": "scoreditem"
@@ -18002,7 +18002,7 @@
       "label": "REASON_PRIORITY",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L104",
+      "source_location": "L106",
       "id": "services_mealrecommendation_reason_priority",
       "community": 14,
       "norm_label": "reason_priority"
@@ -18011,7 +18011,7 @@
       "label": "normalizeForMatch()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L114",
+      "source_location": "L116",
       "id": "services_mealrecommendation_normalizeformatch",
       "community": 14,
       "norm_label": "normalizeformatch()"
@@ -18020,7 +18020,7 @@
       "label": "findMatchingTerm()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L118",
+      "source_location": "L120",
       "id": "services_mealrecommendation_findmatchingterm",
       "community": 14,
       "norm_label": "findmatchingterm()"
@@ -18029,7 +18029,7 @@
       "label": "normalizePreferenceTerm()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L128",
+      "source_location": "L130",
       "id": "services_mealrecommendation_normalizepreferenceterm",
       "community": 14,
       "norm_label": "normalizepreferenceterm()"
@@ -18038,7 +18038,7 @@
       "label": "findStructuredIngredientMatch()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L133",
+      "source_location": "L135",
       "id": "services_mealrecommendation_findstructuredingredientmatch",
       "community": 14,
       "norm_label": "findstructuredingredientmatch()"
@@ -18047,7 +18047,7 @@
       "label": "resolveHistoryIdentityKey()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L149",
+      "source_location": "L151",
       "id": "services_mealrecommendation_resolvehistoryidentitykey",
       "community": 14,
       "norm_label": "resolvehistoryidentitykey()"
@@ -18056,7 +18056,7 @@
       "label": "fetchActorHistory()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L155",
+      "source_location": "L157",
       "id": "services_mealrecommendation_fetchactorhistory",
       "community": 14,
       "norm_label": "fetchactorhistory()"
@@ -18065,7 +18065,7 @@
       "label": "fetchOfficePopularity()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L183",
+      "source_location": "L185",
       "id": "services_mealrecommendation_fetchofficepopularity",
       "community": 14,
       "norm_label": "fetchofficepopularity()"
@@ -18074,7 +18074,7 @@
       "label": "buildReason()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L193",
+      "source_location": "L195",
       "id": "services_mealrecommendation_buildreason",
       "community": 14,
       "norm_label": "buildreason()"
@@ -18083,7 +18083,7 @@
       "label": "ScoringContext",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L210",
+      "source_location": "L212",
       "id": "services_mealrecommendation_scoringcontext",
       "community": 14,
       "norm_label": "scoringcontext"
@@ -18092,7 +18092,7 @@
       "label": "AnticipatedLikeSeed",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L221",
+      "source_location": "L223",
       "id": "services_mealrecommendation_anticipatedlikeseed",
       "community": 14,
       "norm_label": "anticipatedlikeseed"
@@ -18101,7 +18101,7 @@
       "label": "buildTasteReason()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L227",
+      "source_location": "L229",
       "id": "services_mealrecommendation_buildtastereason",
       "community": 15,
       "norm_label": "buildtastereason()"
@@ -18110,7 +18110,7 @@
       "label": "joinFeatureLabels()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L234",
+      "source_location": "L236",
       "id": "services_mealrecommendation_joinfeaturelabels",
       "community": 14,
       "norm_label": "joinfeaturelabels()"
@@ -18119,7 +18119,7 @@
       "label": "buildLearnedTasteReason()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L244",
+      "source_location": "L246",
       "id": "services_mealrecommendation_buildlearnedtastereason",
       "community": 14,
       "norm_label": "buildlearnedtastereason()"
@@ -18128,7 +18128,7 @@
       "label": "mergeTasteProfiles()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L276",
+      "source_location": "L278",
       "id": "services_mealrecommendation_mergetasteprofiles",
       "community": 14,
       "norm_label": "mergetasteprofiles()"
@@ -18137,7 +18137,7 @@
       "label": "buildAnticipatedLikeSeed()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L295",
+      "source_location": "L297",
       "id": "services_mealrecommendation_buildanticipatedlikeseed",
       "community": 14,
       "norm_label": "buildanticipatedlikeseed()"
@@ -18146,7 +18146,7 @@
       "label": "getLatestRecommendedTopItemName()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L335",
+      "source_location": "L337",
       "id": "services_mealrecommendation_getlatestrecommendedtopitemname",
       "community": 14,
       "norm_label": "getlatestrecommendedtopitemname()"
@@ -18155,7 +18155,7 @@
       "label": "applyLearnedSafePathAdjustments()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L351",
+      "source_location": "L353",
       "id": "services_mealrecommendation_applylearnedsafepathadjustments",
       "community": 14,
       "norm_label": "applylearnedsafepathadjustments()"
@@ -18164,7 +18164,7 @@
       "label": "scoreMenuItem()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L391",
+      "source_location": "L393",
       "id": "services_mealrecommendation_scoremenuitem",
       "community": 15,
       "norm_label": "scoremenuitem()"
@@ -18173,7 +18173,7 @@
       "label": "applyPreferenceConstraints()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L464",
+      "source_location": "L466",
       "id": "services_mealrecommendation_applypreferenceconstraints",
       "community": 14,
       "norm_label": "applypreferenceconstraints()"
@@ -18182,7 +18182,7 @@
       "label": "applyColdStartFallback()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L506",
+      "source_location": "L508",
       "id": "services_mealrecommendation_applycoldstartfallback",
       "community": 14,
       "norm_label": "applycoldstartfallback()"
@@ -18191,7 +18191,7 @@
       "label": "getRecommendationCount()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L520",
+      "source_location": "L522",
       "id": "services_mealrecommendation_getrecommendationcount",
       "community": 14,
       "norm_label": "getrecommendationcount()"
@@ -18200,7 +18200,7 @@
       "label": "loadRecommendationMenuItems()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L528",
+      "source_location": "L530",
       "id": "services_mealrecommendation_loadrecommendationmenuitems",
       "community": 54,
       "norm_label": "loadrecommendationmenuitems()"
@@ -18209,7 +18209,7 @@
       "label": "rankItems()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L553",
+      "source_location": "L555",
       "id": "services_mealrecommendation_rankitems",
       "community": 14,
       "norm_label": "rankitems()"
@@ -18218,16 +18218,25 @@
       "label": "persistMealRecommendationImpression()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L571",
+      "source_location": "L573",
       "id": "services_mealrecommendation_persistmealrecommendationimpression",
       "community": 14,
       "norm_label": "persistmealrecommendationimpression()"
     },
     {
+      "label": "getLearnedModelEvaluationWarning()",
+      "file_type": "code",
+      "source_file": "src/server/services/mealRecommendation.ts",
+      "source_location": "L597",
+      "id": "services_mealrecommendation_getlearnedmodelevaluationwarning",
+      "community": 14,
+      "norm_label": "getlearnedmodelevaluationwarning()"
+    },
+    {
       "label": "generateRecommendations()",
       "file_type": "code",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L595",
+      "source_location": "L623",
       "id": "services_mealrecommendation_generaterecommendations",
       "community": 14,
       "norm_label": "generaterecommendations()"
@@ -18418,7 +18427,7 @@
       "source_file": "src/server/services/mealRecommendationAi.ts",
       "source_location": "L331",
       "id": "services_mealrecommendationai_resetairecommendationconfigfortests",
-      "community": 1,
+      "community": 12,
       "norm_label": "resetairecommendationconfigfortests()"
     },
     {
@@ -18526,7 +18535,7 @@
       "source_file": "src/server/services/mealRecommendationEval.ts",
       "source_location": "L92",
       "id": "services_mealrecommendationeval_rankmodelcandidates",
-      "community": 99,
+      "community": 15,
       "norm_label": "rankmodelcandidates()"
     },
     {
@@ -18913,7 +18922,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L134",
       "id": "services_mealrecommendationmodel_clamp",
-      "community": 99,
+      "community": 7,
       "norm_label": "clamp()"
     },
     {
@@ -18985,7 +18994,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L221",
       "id": "services_mealrecommendationmodel_initializefactors",
-      "community": 12,
+      "community": 7,
       "norm_label": "initializefactors()"
     },
     {
@@ -19030,7 +19039,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L319",
       "id": "services_mealrecommendationmodel_scoremealrecommendationmodel",
-      "community": 99,
+      "community": 14,
       "norm_label": "scoremealrecommendationmodel()"
     },
     {
@@ -19093,7 +19102,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L427",
       "id": "services_mealrecommendationmodel_loadorderitemfeatures",
-      "community": 7,
+      "community": 15,
       "norm_label": "loadorderitemfeatures()"
     },
     {
@@ -19156,7 +19165,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L594",
       "id": "services_mealrecommendationmodel_resolveimpressionorderedidentitykey",
-      "community": 12,
+      "community": 7,
       "norm_label": "resolveimpressionorderedidentitykey()"
     },
     {
@@ -19183,7 +19192,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L625",
       "id": "services_mealrecommendationmodel_loadimpressionpayloaditemfeatures",
-      "community": 7,
+      "community": 15,
       "norm_label": "loadimpressionpayloaditemfeatures()"
     },
     {
@@ -19354,7 +19363,7 @@
       "source_file": "src/server/services/mealRecommendationModel.ts",
       "source_location": "L927",
       "id": "services_mealrecommendationmodel_persistmealrecommendationmodel",
-      "community": 12,
+      "community": 6,
       "norm_label": "persistmealrecommendationmodel()"
     },
     {
@@ -19804,7 +19813,7 @@
       "source_file": "src/server/services/menu.ts",
       "source_location": "L297",
       "id": "services_menu_syncmenuitemderiveddata",
-      "community": 12,
+      "community": 13,
       "norm_label": "syncmenuitemderiveddata()"
     },
     {
@@ -19813,7 +19822,7 @@
       "source_file": "src/server/services/menu.ts",
       "source_location": "L328",
       "id": "services_menu_syncmenuitemsderiveddata",
-      "community": 12,
+      "community": 13,
       "norm_label": "syncmenuitemsderiveddata()"
     },
     {
@@ -20074,7 +20083,7 @@
       "source_file": "src/server/services/officeContext.ts",
       "source_location": "L1",
       "id": "services_officecontext",
-      "community": 20,
+      "community": 2,
       "norm_label": "officecontext.ts"
     },
     {
@@ -20146,7 +20155,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L63",
       "id": "services_officelocation_normalizeofficelocationid",
-      "community": 18,
+      "community": 31,
       "norm_label": "normalizeofficelocationid()"
     },
     {
@@ -20209,7 +20218,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L189",
       "id": "services_officelocation_ensuredefaultofficelocation",
-      "community": 1,
+      "community": 12,
       "norm_label": "ensuredefaultofficelocation()"
     },
     {
@@ -20218,7 +20227,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L205",
       "id": "services_officelocation_listofficelocations",
-      "community": 18,
+      "community": 5,
       "norm_label": "listofficelocations()"
     },
     {
@@ -20245,7 +20254,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L259",
       "id": "services_officelocation_deactivateofficelocation",
-      "community": 18,
+      "community": 31,
       "norm_label": "deactivateofficelocation()"
     },
     {
@@ -20272,7 +20281,7 @@
       "source_file": "src/server/services/officeLocation.ts",
       "source_location": "L340",
       "id": "services_officelocation_getofficedefaultfoodselectiondurationminutes",
-      "community": 364,
+      "community": 18,
       "norm_label": "getofficedefaultfoodselectiondurationminutes()"
     },
     {
@@ -20281,7 +20290,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L1",
       "id": "services_officepollschedule",
-      "community": 18,
+      "community": 5,
       "norm_label": "officepollschedule.ts"
     },
     {
@@ -20290,7 +20299,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L13",
       "id": "services_officepollschedule_getweekday",
-      "community": 18,
+      "community": 5,
       "norm_label": "getweekday()"
     },
     {
@@ -20299,7 +20308,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L21",
       "id": "services_officepollschedule_getscheduledatekey",
-      "community": 18,
+      "community": 5,
       "norm_label": "getscheduledatekey()"
     },
     {
@@ -20308,7 +20317,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L28",
       "id": "services_officepollschedule_getschedulecreatedby",
-      "community": 18,
+      "community": 5,
       "norm_label": "getschedulecreatedby()"
     },
     {
@@ -20317,7 +20326,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L32",
       "id": "services_officepollschedule_getminutesuntilscheduledfinish",
-      "community": 18,
+      "community": 5,
       "norm_label": "getminutesuntilscheduledfinish()"
     },
     {
@@ -20326,7 +20335,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L41",
       "id": "services_officepollschedule_hasexistinglunchactivitytoday",
-      "community": 18,
+      "community": 5,
       "norm_label": "hasexistinglunchactivitytoday()"
     },
     {
@@ -20335,7 +20344,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L68",
       "id": "services_officepollschedule_shouldautostartpoll",
-      "community": 18,
+      "community": 5,
       "norm_label": "shouldautostartpoll()"
     },
     {
@@ -20344,7 +20353,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L104",
       "id": "services_officepollschedule_runofficepollschedulecheck",
-      "community": 18,
+      "community": 5,
       "norm_label": "runofficepollschedulecheck()"
     },
     {
@@ -20353,7 +20362,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L132",
       "id": "services_officepollschedule_startofficepollscheduler",
-      "community": 18,
+      "community": 5,
       "norm_label": "startofficepollscheduler()"
     },
     {
@@ -20362,7 +20371,7 @@
       "source_file": "src/server/services/officePollSchedule.ts",
       "source_location": "L146",
       "id": "services_officepollschedule_stopofficepollscheduler",
-      "community": 18,
+      "community": 5,
       "norm_label": "stopofficepollscheduler()"
     },
     {
@@ -20402,13 +20411,13 @@
       "norm_label": "getorcreatesetting()"
     },
     {
-      "label": "assertModelBeatsBaseline()",
+      "label": "assertModelHasNotFailedBaseline()",
       "file_type": "code",
       "source_file": "src/server/services/officeRecommenderSettings.ts",
       "source_location": "L48",
-      "id": "services_officerecommendersettings_assertmodelbeatsbaseline",
-      "community": 99,
-      "norm_label": "assertmodelbeatsbaseline()"
+      "id": "services_officerecommendersettings_assertmodelhasnotfailedbaseline",
+      "community": 6,
+      "norm_label": "assertmodelhasnotfailedbaseline()"
     },
     {
       "label": "getOfficeRecommenderSettings()",
@@ -20425,7 +20434,7 @@
       "source_file": "src/server/services/officeRecommenderSettings.ts",
       "source_location": "L71",
       "id": "services_officerecommendersettings_setofficerecommendersafemode",
-      "community": 99,
+      "community": 6,
       "norm_label": "setofficerecommendersafemode()"
     },
     {
@@ -20506,7 +20515,7 @@
       "source_file": "src/server/services/poll.ts",
       "source_location": "L48",
       "id": "services_poll_clearalltimers",
-      "community": 1,
+      "community": 12,
       "norm_label": "clearalltimers()"
     },
     {
@@ -20893,7 +20902,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L1",
       "id": "services_shoppinglist",
-      "community": 424,
+      "community": 18,
       "norm_label": "shoppinglist.ts"
     },
     {
@@ -20902,7 +20911,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L6",
       "id": "services_shoppinglist_formatshoppinglistitem",
-      "community": 424,
+      "community": 18,
       "norm_label": "formatshoppinglistitem()"
     },
     {
@@ -20911,7 +20920,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L28",
       "id": "services_shoppinglist_resolveshoppingofficelocationid",
-      "community": 424,
+      "community": 18,
       "norm_label": "resolveshoppingofficelocationid()"
     },
     {
@@ -20920,7 +20929,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L36",
       "id": "services_shoppinglist_validatename",
-      "community": 424,
+      "community": 18,
       "norm_label": "validatename()"
     },
     {
@@ -20929,7 +20938,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L46",
       "id": "services_shoppinglist_validateactor",
-      "community": 424,
+      "community": 18,
       "norm_label": "validateactor()"
     },
     {
@@ -20938,7 +20947,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L56",
       "id": "services_shoppinglist_listshoppinglistitems",
-      "community": 424,
+      "community": 18,
       "norm_label": "listshoppinglistitems()"
     },
     {
@@ -20947,7 +20956,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L65",
       "id": "services_shoppinglist_addshoppinglistitem",
-      "community": 424,
+      "community": 18,
       "norm_label": "addshoppinglistitem()"
     },
     {
@@ -20956,7 +20965,7 @@
       "source_file": "src/server/services/shoppingList.ts",
       "source_location": "L87",
       "id": "services_shoppinglist_markshoppinglistitembought",
-      "community": 424,
+      "community": 18,
       "norm_label": "markshoppinglistitembought()"
     },
     {
@@ -21118,7 +21127,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L1",
       "id": "server_sse",
-      "community": 364,
+      "community": 18,
       "norm_label": "sse.ts"
     },
     {
@@ -21127,7 +21136,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L6",
       "id": "server_sse_clients",
-      "community": 364,
+      "community": 18,
       "norm_label": "clients"
     },
     {
@@ -21136,7 +21145,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L9",
       "id": "server_sse_register",
-      "community": 364,
+      "community": 18,
       "norm_label": "register()"
     },
     {
@@ -21145,7 +21154,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L27",
       "id": "server_sse_broadcast",
-      "community": 5,
+      "community": 11,
       "norm_label": "broadcast()"
     },
     {
@@ -21154,7 +21163,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L44",
       "id": "server_sse_getclientcount",
-      "community": 364,
+      "community": 18,
       "norm_label": "getclientcount()"
     },
     {
@@ -21181,7 +21190,7 @@
       "source_file": "src/server/sse.ts",
       "source_location": "L195",
       "id": "server_sse_sendinitialstate",
-      "community": 364,
+      "community": 170,
       "norm_label": "sendinitialstate()"
     },
     {
@@ -21298,7 +21307,7 @@
       "source_file": "tests/client/App.test.tsx",
       "source_location": "L1",
       "id": "client_app_test",
-      "community": 306,
+      "community": 193,
       "norm_label": "app.test.tsx"
     },
     {
@@ -21307,7 +21316,7 @@
       "source_file": "tests/client/App.test.tsx",
       "source_location": "L9",
       "id": "client_app_test_mockdispatch",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockdispatch"
     },
     {
@@ -21316,7 +21325,7 @@
       "source_file": "tests/client/App.test.tsx",
       "source_location": "L10",
       "id": "client_app_test_mockuseappstate",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -21325,7 +21334,7 @@
       "source_file": "tests/client/App.test.tsx",
       "source_location": "L11",
       "id": "client_app_test_mockuseappphase",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockuseappphase"
     },
     {
@@ -21334,7 +21343,7 @@
       "source_file": "tests/client/App.test.tsx",
       "source_location": "L12",
       "id": "client_app_test_mockfetchpoll",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockfetchpoll"
     },
     {
@@ -21388,7 +21397,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L1",
       "id": "client_fooddeliveryview_test",
-      "community": 849,
+      "community": 193,
       "norm_label": "fooddeliveryview.test.tsx"
     },
     {
@@ -21397,7 +21406,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L9",
       "id": "client_fooddeliveryview_test_mockuseappstate",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -21406,7 +21415,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L10",
       "id": "client_fooddeliveryview_test_mockdispatch",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockdispatch"
     },
     {
@@ -21415,7 +21424,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L11",
       "id": "client_fooddeliveryview_test_mockuseappdispatch",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockuseappdispatch"
     },
     {
@@ -21424,7 +21433,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L13",
       "id": "client_fooddeliveryview_test_mockupdateeta",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockupdateeta"
     },
     {
@@ -21433,7 +21442,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L14",
       "id": "client_fooddeliveryview_test_mockconfirmarrival",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockconfirmarrival"
     },
     {
@@ -21442,7 +21451,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L15",
       "id": "client_fooddeliveryview_test_mockabortfoodselection",
-      "community": 849,
+      "community": 193,
       "norm_label": "mockabortfoodselection"
     },
     {
@@ -21451,7 +21460,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L16",
       "id": "client_fooddeliveryview_test_mocksetorderdelivered",
-      "community": 849,
+      "community": 193,
       "norm_label": "mocksetorderdelivered"
     },
     {
@@ -21460,7 +21469,7 @@
       "source_file": "tests/client/FoodDeliveryView.test.tsx",
       "source_location": "L36",
       "id": "client_fooddeliveryview_test_renderview",
-      "community": 849,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -21649,7 +21658,7 @@
       "source_file": "tests/client/FoodSelectionCompletedView.test.tsx",
       "source_location": "L1",
       "id": "client_foodselectioncompletedview_test",
-      "community": 2,
+      "community": 193,
       "norm_label": "foodselectioncompletedview.test.tsx"
     },
     {
@@ -21658,7 +21667,7 @@
       "source_file": "tests/client/FoodSelectionCompletedView.test.tsx",
       "source_location": "L9",
       "id": "client_foodselectioncompletedview_test_mockuseappstate",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -21667,7 +21676,7 @@
       "source_file": "tests/client/FoodSelectionCompletedView.test.tsx",
       "source_location": "L10",
       "id": "client_foodselectioncompletedview_test_mockrateorder",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockrateorder"
     },
     {
@@ -21676,7 +21685,7 @@
       "source_file": "tests/client/FoodSelectionCompletedView.test.tsx",
       "source_location": "L30",
       "id": "client_foodselectioncompletedview_test_renderview",
-      "community": 2,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -21685,7 +21694,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L1",
       "id": "client_foodselectionorderingview_test",
-      "community": 850,
+      "community": 193,
       "norm_label": "foodselectionorderingview.test.tsx"
     },
     {
@@ -21694,7 +21703,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L9",
       "id": "client_foodselectionorderingview_test_mockuseappstate",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -21703,7 +21712,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L18",
       "id": "client_foodselectionorderingview_test_mockplacedeliveryorder",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockplacedeliveryorder"
     },
     {
@@ -21712,7 +21721,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L19",
       "id": "client_foodselectionorderingview_test_mockclaimorderingresponsibility",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockclaimorderingresponsibility"
     },
     {
@@ -21721,7 +21730,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L20",
       "id": "client_foodselectionorderingview_test_mocksetorderprocessed",
-      "community": 850,
+      "community": 193,
       "norm_label": "mocksetorderprocessed"
     },
     {
@@ -21730,7 +21739,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L21",
       "id": "client_foodselectionorderingview_test_mockfetchfallbackordercandidates",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockfetchfallbackordercandidates"
     },
     {
@@ -21739,7 +21748,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L22",
       "id": "client_foodselectionorderingview_test_mockplacefallbackorder",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockplacefallbackorder"
     },
     {
@@ -21748,7 +21757,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L23",
       "id": "client_foodselectionorderingview_test_mockpingfallbackcandidate",
-      "community": 850,
+      "community": 193,
       "norm_label": "mockpingfallbackcandidate"
     },
     {
@@ -21757,7 +21766,7 @@
       "source_file": "tests/client/FoodSelectionOrderingView.test.tsx",
       "source_location": "L35",
       "id": "client_foodselectionorderingview_test_renderview",
-      "community": 850,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -21766,7 +21775,7 @@
       "source_file": "tests/client/FoodSelectionOvertimeView.test.tsx",
       "source_location": "L1",
       "id": "client_foodselectionovertimeview_test",
-      "community": 2,
+      "community": 193,
       "norm_label": "foodselectionovertimeview.test.tsx"
     },
     {
@@ -21775,7 +21784,7 @@
       "source_file": "tests/client/FoodSelectionOvertimeView.test.tsx",
       "source_location": "L11",
       "id": "client_foodselectionovertimeview_test_mockuseappstate",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -21784,7 +21793,7 @@
       "source_file": "tests/client/FoodSelectionOvertimeView.test.tsx",
       "source_location": "L21",
       "id": "client_foodselectionovertimeview_test_mockextendfoodselection",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockextendfoodselection"
     },
     {
@@ -21793,7 +21802,7 @@
       "source_file": "tests/client/FoodSelectionOvertimeView.test.tsx",
       "source_location": "L22",
       "id": "client_foodselectionovertimeview_test_mockcompletefoodselection",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockcompletefoodselection"
     },
     {
@@ -21802,7 +21811,7 @@
       "source_file": "tests/client/FoodSelectionOvertimeView.test.tsx",
       "source_location": "L30",
       "id": "client_foodselectionovertimeview_test_renderview",
-      "community": 2,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -21991,7 +22000,7 @@
       "source_file": "tests/client/OrdersRail.test.tsx",
       "source_location": "L1",
       "id": "client_ordersrail_test",
-      "community": 2,
+      "community": 193,
       "norm_label": "ordersrail.test.tsx"
     },
     {
@@ -22000,7 +22009,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L1",
       "id": "client_pollactiveview_test",
-      "community": 848,
+      "community": 193,
       "norm_label": "pollactiveview.test.tsx"
     },
     {
@@ -22009,7 +22018,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L11",
       "id": "client_pollactiveview_test_mockuseappstate",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -22018,7 +22027,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L21",
       "id": "client_pollactiveview_test_mockisadminauthenticateduser",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockisadminauthenticateduser"
     },
     {
@@ -22027,7 +22036,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L22",
       "id": "client_pollactiveview_test_mockiscreatorauthenticateduser",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockiscreatorauthenticateduser"
     },
     {
@@ -22036,7 +22045,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L31",
       "id": "client_pollactiveview_test_mockusecountdown",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockusecountdown"
     },
     {
@@ -22045,7 +22054,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L40",
       "id": "client_pollactiveview_test_mockcastvote",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockcastvote"
     },
     {
@@ -22054,7 +22063,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L41",
       "id": "client_pollactiveview_test_mockwithdrawvote",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockwithdrawvote"
     },
     {
@@ -22063,7 +22072,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L42",
       "id": "client_pollactiveview_test_mockendpoll",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockendpoll"
     },
     {
@@ -22072,7 +22081,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L43",
       "id": "client_pollactiveview_test_mockabortpoll",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockabortpoll"
     },
     {
@@ -22081,7 +22090,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L44",
       "id": "client_pollactiveview_test_mockupdatepolltimer",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockupdatepolltimer"
     },
     {
@@ -22090,7 +22099,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L45",
       "id": "client_pollactiveview_test_mockrecommendprevote",
-      "community": 848,
+      "community": 193,
       "norm_label": "mockrecommendprevote"
     },
     {
@@ -22099,7 +22108,7 @@
       "source_file": "tests/client/PollActiveView.test.tsx",
       "source_location": "L57",
       "id": "client_pollactiveview_test_renderview",
-      "community": 848,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -22108,7 +22117,7 @@
       "source_file": "tests/client/PollFinishedView.test.tsx",
       "source_location": "L1",
       "id": "client_pollfinishedview_test",
-      "community": 306,
+      "community": 193,
       "norm_label": "pollfinishedview.test.tsx"
     },
     {
@@ -22117,7 +22126,7 @@
       "source_file": "tests/client/PollFinishedView.test.tsx",
       "source_location": "L11",
       "id": "client_pollfinishedview_test_mockuseappstate",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -22126,7 +22135,7 @@
       "source_file": "tests/client/PollFinishedView.test.tsx",
       "source_location": "L21",
       "id": "client_pollfinishedview_test_mockstartfoodselection",
-      "community": 306,
+      "community": 193,
       "norm_label": "mockstartfoodselection"
     },
     {
@@ -22135,7 +22144,7 @@
       "source_file": "tests/client/PollFinishedView.test.tsx",
       "source_location": "L28",
       "id": "client_pollfinishedview_test_renderview",
-      "community": 306,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -22144,7 +22153,7 @@
       "source_file": "tests/client/PollIdleView.test.tsx",
       "source_location": "L1",
       "id": "client_pollidleview_test",
-      "community": 2,
+      "community": 193,
       "norm_label": "pollidleview.test.tsx"
     },
     {
@@ -22153,7 +22162,7 @@
       "source_file": "tests/client/PollIdleView.test.tsx",
       "source_location": "L9",
       "id": "client_pollidleview_test_mockuseappstate",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -22162,7 +22171,7 @@
       "source_file": "tests/client/PollIdleView.test.tsx",
       "source_location": "L19",
       "id": "client_pollidleview_test_mockstartpoll",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockstartpoll"
     },
     {
@@ -22171,7 +22180,7 @@
       "source_file": "tests/client/PollIdleView.test.tsx",
       "source_location": "L20",
       "id": "client_pollidleview_test_mockquickstartfoodselection",
-      "community": 2,
+      "community": 193,
       "norm_label": "mockquickstartfoodselection"
     },
     {
@@ -22180,7 +22189,7 @@
       "source_file": "tests/client/PollIdleView.test.tsx",
       "source_location": "L29",
       "id": "client_pollidleview_test_renderview",
-      "community": 2,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -22189,7 +22198,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L1",
       "id": "client_polltiedview_test",
-      "community": 568,
+      "community": 193,
       "norm_label": "polltiedview.test.tsx"
     },
     {
@@ -22198,7 +22207,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L11",
       "id": "client_polltiedview_test_mockuseappstate",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -22207,7 +22216,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L21",
       "id": "client_polltiedview_test_mockextendpoll",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockextendpoll"
     },
     {
@@ -22216,7 +22225,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L22",
       "id": "client_polltiedview_test_mockrandomwinner",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockrandomwinner"
     },
     {
@@ -22225,7 +22234,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L23",
       "id": "client_polltiedview_test_mockabortpoll",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockabortpoll"
     },
     {
@@ -22234,7 +22243,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L24",
       "id": "client_polltiedview_test_mockisadminauthenticateduser",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockisadminauthenticateduser"
     },
     {
@@ -22243,7 +22252,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L25",
       "id": "client_polltiedview_test_mockiscreatorauthenticateduser",
-      "community": 568,
+      "community": 193,
       "norm_label": "mockiscreatorauthenticateduser"
     },
     {
@@ -22252,7 +22261,7 @@
       "source_file": "tests/client/PollTiedView.test.tsx",
       "source_location": "L39",
       "id": "client_polltiedview_test_renderview",
-      "community": 568,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -22378,7 +22387,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L1",
       "id": "client_shoppinglist_test",
-      "community": 852,
+      "community": 193,
       "norm_label": "shoppinglist.test.tsx"
     },
     {
@@ -22387,7 +22396,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L8",
       "id": "client_shoppinglist_test_mockuseappstate",
-      "community": 852,
+      "community": 193,
       "norm_label": "mockuseappstate"
     },
     {
@@ -22396,7 +22405,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L17",
       "id": "client_shoppinglist_test_mockcreateshoppinglistitem",
-      "community": 852,
+      "community": 193,
       "norm_label": "mockcreateshoppinglistitem"
     },
     {
@@ -22405,7 +22414,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L18",
       "id": "client_shoppinglist_test_mockmarkshoppinglistitembought",
-      "community": 852,
+      "community": 193,
       "norm_label": "mockmarkshoppinglistitembought"
     },
     {
@@ -22414,7 +22423,7 @@
       "source_file": "tests/client/ShoppingList.test.tsx",
       "source_location": "L26",
       "id": "client_shoppinglist_test_renderview",
-      "community": 852,
+      "community": 193,
       "norm_label": "renderview()"
     },
     {
@@ -22459,7 +22468,7 @@
       "source_file": "tests/client/app-context.test.ts",
       "source_location": "L1",
       "id": "client_app_context_test",
-      "community": 852,
+      "community": 193,
       "norm_label": "app-context.test.ts"
     },
     {
@@ -22477,7 +22486,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L1",
       "id": "client_helpers",
-      "community": 4,
+      "community": 193,
       "norm_label": "helpers.tsx"
     },
     {
@@ -22486,7 +22495,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L12",
       "id": "client_helpers_routerwrapper",
-      "community": 4,
+      "community": 193,
       "norm_label": "routerwrapper()"
     },
     {
@@ -22495,7 +22504,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L25",
       "id": "client_helpers_makemenuitem",
-      "community": 2,
+      "community": 193,
       "norm_label": "makemenuitem()"
     },
     {
@@ -22504,7 +22513,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L38",
       "id": "client_helpers_makemenu",
-      "community": 2,
+      "community": 193,
       "norm_label": "makemenu()"
     },
     {
@@ -22513,7 +22522,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L54",
       "id": "client_helpers_makepoll",
-      "community": 306,
+      "community": 193,
       "norm_label": "makepoll()"
     },
     {
@@ -22522,7 +22531,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L73",
       "id": "client_helpers_makefoodorder",
-      "community": 2,
+      "community": 193,
       "norm_label": "makefoodorder()"
     },
     {
@@ -22531,7 +22540,7 @@
       "source_file": "tests/client/helpers.tsx",
       "source_location": "L89",
       "id": "client_helpers_makefoodselection",
-      "community": 2,
+      "community": 193,
       "norm_label": "makefoodselection()"
     },
     {
@@ -22630,7 +22639,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L1",
       "id": "client_usesse_test",
-      "community": 4,
+      "community": 468,
       "norm_label": "usesse.test.ts"
     },
     {
@@ -22639,7 +22648,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L10",
       "id": "client_usesse_test_eslistener",
-      "community": 4,
+      "community": 468,
       "norm_label": "eslistener"
     },
     {
@@ -22702,7 +22711,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L55",
       "id": "client_usesse_test_makepoll",
-      "community": 4,
+      "community": 468,
       "norm_label": "makepoll()"
     },
     {
@@ -22711,7 +22720,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L74",
       "id": "client_usesse_test_makefs",
-      "community": 4,
+      "community": 468,
       "norm_label": "makefs()"
     },
     {
@@ -22720,7 +22729,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L96",
       "id": "client_usesse_test_makemenu",
-      "community": 4,
+      "community": 468,
       "norm_label": "makemenu()"
     },
     {
@@ -22729,7 +22738,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L121",
       "id": "client_usesse_test_makeshoppingitem",
-      "community": 4,
+      "community": 468,
       "norm_label": "makeshoppingitem()"
     },
     {
@@ -22738,7 +22747,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L135",
       "id": "client_usesse_test_initialstatepayload",
-      "community": 4,
+      "community": 468,
       "norm_label": "initialstatepayload"
     },
     {
@@ -22756,7 +22765,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L194",
       "id": "client_usesse_test_getes",
-      "community": 4,
+      "community": 468,
       "norm_label": "getes()"
     },
     {
@@ -22765,7 +22774,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L532",
       "id": "client_usesse_test_mocknotification",
-      "community": 4,
+      "community": 468,
       "norm_label": "mocknotification"
     },
     {
@@ -22774,7 +22783,7 @@
       "source_file": "tests/client/useSSE.test.ts",
       "source_location": "L536",
       "id": "client_usesse_test_mocknotification_constructor",
-      "community": 4,
+      "community": 468,
       "norm_label": ".constructor()"
     },
     {
@@ -22819,7 +22828,7 @@
       "source_file": "tests/server/auth-approval-reminder.test.ts",
       "source_location": "L1",
       "id": "server_auth_approval_reminder_test",
-      "community": 10,
+      "community": 161,
       "norm_label": "auth-approval-reminder.test.ts"
     },
     {
@@ -22864,7 +22873,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L1",
       "id": "server_auth_hardening_test",
-      "community": 339,
+      "community": 1,
       "norm_label": "auth-hardening.test.ts"
     },
     {
@@ -22873,7 +22882,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L11",
       "id": "server_auth_hardening_test_ascookieheader",
-      "community": 339,
+      "community": 1,
       "norm_label": "ascookieheader()"
     },
     {
@@ -22882,7 +22891,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L18",
       "id": "server_auth_hardening_test_ascookielist",
-      "community": 339,
+      "community": 1,
       "norm_label": "ascookielist()"
     },
     {
@@ -22891,7 +22900,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L68",
       "id": "server_auth_hardening_test_createentratoken",
-      "community": 339,
+      "community": 1,
       "norm_label": "createentratoken()"
     },
     {
@@ -22900,7 +22909,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L101",
       "id": "server_auth_hardening_test_mockentraexchange",
-      "community": 339,
+      "community": 1,
       "norm_label": "mockentraexchange()"
     },
     {
@@ -22909,7 +22918,7 @@
       "source_file": "tests/server/auth-hardening.test.ts",
       "source_location": "L139",
       "id": "server_auth_hardening_test_startentralogin",
-      "community": 339,
+      "community": 1,
       "norm_label": "startentralogin()"
     },
     {
@@ -23008,7 +23017,7 @@
       "source_file": "tests/server/food-selection-authz.test.ts",
       "source_location": "L44",
       "id": "server_food_selection_authz_test_createapprovednonadmin",
-      "community": 1,
+      "community": 12,
       "norm_label": "createapprovednonadmin()"
     },
     {
@@ -23017,7 +23026,7 @@
       "source_file": "tests/server/food-selection-reminder.test.ts",
       "source_location": "L1",
       "id": "server_food_selection_reminder_test",
-      "community": 1,
+      "community": 161,
       "norm_label": "food-selection-reminder.test.ts"
     },
     {
@@ -23242,7 +23251,7 @@
       "source_file": "tests/server/local-auth.test.ts",
       "source_location": "L1",
       "id": "server_local_auth_test",
-      "community": 339,
+      "community": 165,
       "norm_label": "local-auth.test.ts"
     },
     {
@@ -23260,7 +23269,7 @@
       "source_file": "tests/server/meal-anticipated-likes.test.ts",
       "source_location": "L1",
       "id": "server_meal_anticipated_likes_test",
-      "community": 1,
+      "community": 11,
       "norm_label": "meal-anticipated-likes.test.ts"
     },
     {
@@ -23269,7 +23278,7 @@
       "source_file": "tests/server/meal-anticipated-likes.test.ts",
       "source_location": "L27",
       "id": "server_meal_anticipated_likes_test_actor",
-      "community": 1,
+      "community": 11,
       "norm_label": "actor()"
     },
     {
@@ -23305,7 +23314,7 @@
       "source_file": "tests/server/meal-features-tagging.test.ts",
       "source_location": "L1",
       "id": "server_meal_features_tagging_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "meal-features-tagging.test.ts"
     },
     {
@@ -23314,7 +23323,7 @@
       "source_file": "tests/server/meal-features-tagging.test.ts",
       "source_location": "L12",
       "id": "server_meal_features_tagging_test_importitem",
-      "community": 1,
+      "community": 12,
       "norm_label": "importitem"
     },
     {
@@ -23323,7 +23332,7 @@
       "source_file": "tests/server/meal-features-tagging.test.ts",
       "source_location": "L18",
       "id": "server_meal_features_tagging_test_buildimportpayload",
-      "community": 1,
+      "community": 12,
       "norm_label": "buildimportpayload()"
     },
     {
@@ -23332,7 +23341,7 @@
       "source_file": "tests/server/meal-features-tagging.test.ts",
       "source_location": "L41",
       "id": "server_meal_features_tagging_test_getfeaturerows",
-      "community": 1,
+      "community": 12,
       "norm_label": "getfeaturerows()"
     },
     {
@@ -23422,7 +23431,7 @@
       "source_file": "tests/server/meal-recommendation-explore.test.ts",
       "source_location": "L1",
       "id": "server_meal_recommendation_explore_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "meal-recommendation-explore.test.ts"
     },
     {
@@ -23431,7 +23440,7 @@
       "source_file": "tests/server/meal-recommendation-explore.test.ts",
       "source_location": "L71",
       "id": "server_meal_recommendation_explore_test_actor",
-      "community": 1,
+      "community": 12,
       "norm_label": "actor"
     },
     {
@@ -23440,7 +23449,7 @@
       "source_file": "tests/server/meal-recommendation-explore.test.ts",
       "source_location": "L91",
       "id": "server_meal_recommendation_explore_test_setupactiveselection",
-      "community": 1,
+      "community": 12,
       "norm_label": "setupactiveselection()"
     },
     {
@@ -23449,7 +23458,7 @@
       "source_file": "tests/server/meal-recommendation-explore.test.ts",
       "source_location": "L107",
       "id": "server_meal_recommendation_explore_test_seedhistoricalorder",
-      "community": 1,
+      "community": 12,
       "norm_label": "seedhistoricalorder()"
     },
     {
@@ -23494,7 +23503,7 @@
       "source_file": "tests/server/meal-recommendation-pre-vote.test.ts",
       "source_location": "L1",
       "id": "server_meal_recommendation_pre_vote_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "meal-recommendation-pre-vote.test.ts"
     },
     {
@@ -23503,7 +23512,7 @@
       "source_file": "tests/server/meal-recommendation-pre-vote.test.ts",
       "source_location": "L42",
       "id": "server_meal_recommendation_pre_vote_test_actor",
-      "community": 1,
+      "community": 12,
       "norm_label": "actor"
     },
     {
@@ -23512,7 +23521,7 @@
       "source_file": "tests/server/meal-recommendation-pre-vote.test.ts",
       "source_location": "L62",
       "id": "server_meal_recommendation_pre_vote_test_createmenuwithitems",
-      "community": 1,
+      "community": 12,
       "norm_label": "createmenuwithitems()"
     },
     {
@@ -23521,7 +23530,7 @@
       "source_file": "tests/server/meal-recommendation-pre-vote.test.ts",
       "source_location": "L70",
       "id": "server_meal_recommendation_pre_vote_test_seedhistoricalorder",
-      "community": 1,
+      "community": 12,
       "norm_label": "seedhistoricalorder()"
     },
     {
@@ -23530,7 +23539,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L1",
       "id": "server_meal_recommendation_routes_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "meal-recommendation-routes.test.ts"
     },
     {
@@ -23539,7 +23548,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L112",
       "id": "server_meal_recommendation_routes_test_approvedauthheaders",
-      "community": 1,
+      "community": 12,
       "norm_label": "approvedauthheaders()"
     },
     {
@@ -23548,7 +23557,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L151",
       "id": "server_meal_recommendation_routes_test_adminauthheaders",
-      "community": 1,
+      "community": 12,
       "norm_label": "adminauthheaders()"
     },
     {
@@ -23557,7 +23566,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L155",
       "id": "server_meal_recommendation_routes_test_createmenu",
-      "community": 1,
+      "community": 12,
       "norm_label": "createmenu()"
     },
     {
@@ -23566,7 +23575,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L160",
       "id": "server_meal_recommendation_routes_test_createmenuitem",
-      "community": 1,
+      "community": 12,
       "norm_label": "createmenuitem()"
     },
     {
@@ -23575,7 +23584,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L168",
       "id": "server_meal_recommendation_routes_test_createactivefoodselection",
-      "community": 1,
+      "community": 12,
       "norm_label": "createactivefoodselection()"
     },
     {
@@ -23584,7 +23593,7 @@
       "source_file": "tests/server/meal-recommendation-routes.test.ts",
       "source_location": "L203",
       "id": "server_meal_recommendation_routes_test_seedhistoricalorder",
-      "community": 1,
+      "community": 12,
       "norm_label": "seedhistoricalorder()"
     },
     {
@@ -23845,7 +23854,7 @@
       "source_file": "tests/server/poll-service.test.ts",
       "source_location": "L1",
       "id": "server_poll_service_test",
-      "community": 1,
+      "community": 161,
       "norm_label": "poll-service.test.ts"
     },
     {
@@ -23854,7 +23863,7 @@
       "source_file": "tests/server/poll-service.test.ts",
       "source_location": "L100",
       "id": "server_poll_service_test_createtestmenus",
-      "community": 1,
+      "community": 161,
       "norm_label": "createtestmenus()"
     },
     {
@@ -23863,7 +23872,7 @@
       "source_file": "tests/server/poll-service.test.ts",
       "source_location": "L109",
       "id": "server_poll_service_test_createactivepoll",
-      "community": 1,
+      "community": 161,
       "norm_label": "createactivepoll()"
     },
     {
@@ -23872,7 +23881,7 @@
       "source_file": "tests/server/poll-service.test.ts",
       "source_location": "L113",
       "id": "server_poll_service_test_registerapproveduser",
-      "community": 1,
+      "community": 161,
       "norm_label": "registerapproveduser()"
     },
     {
@@ -23935,7 +23944,7 @@
       "source_file": "tests/server/retention-integration.test.ts",
       "source_location": "L1",
       "id": "server_retention_integration_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "retention-integration.test.ts"
     },
     {
@@ -23944,7 +23953,7 @@
       "source_file": "tests/server/retention-integration.test.ts",
       "source_location": "L22",
       "id": "server_retention_integration_test_createmenu",
-      "community": 1,
+      "community": 12,
       "norm_label": "createmenu()"
     },
     {
@@ -23953,7 +23962,7 @@
       "source_file": "tests/server/retention-integration.test.ts",
       "source_location": "L32",
       "id": "server_retention_integration_test_createmenuitem",
-      "community": 1,
+      "community": 12,
       "norm_label": "createmenuitem()"
     },
     {
@@ -23962,7 +23971,7 @@
       "source_file": "tests/server/retention-integration.test.ts",
       "source_location": "L41",
       "id": "server_retention_integration_test_createfinishedpoll",
-      "community": 1,
+      "community": 12,
       "norm_label": "createfinishedpoll()"
     },
     {
@@ -23971,7 +23980,7 @@
       "source_file": "tests/server/retention-integration.test.ts",
       "source_location": "L66",
       "id": "server_retention_integration_test_createcompletedfoodselection",
-      "community": 1,
+      "community": 12,
       "norm_label": "createcompletedfoodselection()"
     },
     {
@@ -23980,7 +23989,7 @@
       "source_file": "tests/server/route-utils.test.ts",
       "source_location": "L1",
       "id": "server_route_utils_test",
-      "community": 20,
+      "community": 2,
       "norm_label": "route-utils.test.ts"
     },
     {
@@ -23989,7 +23998,7 @@
       "source_file": "tests/server/route-utils.test.ts",
       "source_location": "L4",
       "id": "server_route_utils_test_createreplystub",
-      "community": 20,
+      "community": 2,
       "norm_label": "createreplystub()"
     },
     {
@@ -24133,7 +24142,7 @@
       "source_file": "tests/server/shopping-list-service.test.ts",
       "source_location": "L1",
       "id": "server_shopping_list_service_test",
-      "community": 1,
+      "community": 18,
       "norm_label": "shopping-list-service.test.ts"
     },
     {
@@ -24151,7 +24160,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L1",
       "id": "server_sse_integration_test",
-      "community": 1,
+      "community": 12,
       "norm_label": "sse-integration.test.ts"
     },
     {
@@ -24160,7 +24169,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L14",
       "id": "server_sse_integration_test_sseevent",
-      "community": 1,
+      "community": 12,
       "norm_label": "sseevent"
     },
     {
@@ -24169,7 +24178,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L23",
       "id": "server_sse_integration_test_connectsse",
-      "community": 1,
+      "community": 12,
       "norm_label": "connectsse()"
     },
     {
@@ -24178,7 +24187,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L77",
       "id": "server_sse_integration_test_waitforevents",
-      "community": 1,
+      "community": 12,
       "norm_label": "waitforevents()"
     },
     {
@@ -24187,7 +24196,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L100",
       "id": "server_sse_integration_test_httprequest",
-      "community": 1,
+      "community": 12,
       "norm_label": "httprequest()"
     },
     {
@@ -24196,7 +24205,7 @@
       "source_file": "tests/server/sse-integration.test.ts",
       "source_location": "L197",
       "id": "server_sse_integration_test_teardown",
-      "community": 1,
+      "community": 12,
       "norm_label": "teardown()"
     },
     {
@@ -24205,7 +24214,7 @@
       "source_file": "tests/server/sse.test.ts",
       "source_location": "L1",
       "id": "server_sse_test",
-      "community": 364,
+      "community": 18,
       "norm_label": "sse.test.ts"
     },
     {
@@ -24214,7 +24223,7 @@
       "source_file": "tests/server/sse.test.ts",
       "source_location": "L15",
       "id": "server_sse_test_createmockresponse",
-      "community": 364,
+      "community": 18,
       "norm_label": "createmockresponse()"
     },
     {
@@ -79067,7 +79076,7 @@
       "label": "Allergies & dislikes",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/contracts/api.md",
-      "source_location": "L104",
+      "source_location": "L107",
       "id": "contracts_api_allergies_dislikes",
       "community": 319,
       "norm_label": "allergies & dislikes"
@@ -79076,7 +79085,7 @@
       "label": "Admin: offline comparison export (follow-up)",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/contracts/api.md",
-      "source_location": "L124",
+      "source_location": "L127",
       "id": "contracts_api_admin_offline_comparison_export_follow_up",
       "community": 319,
       "norm_label": "admin: offline comparison export (follow-up)"
@@ -79085,7 +79094,7 @@
       "label": "Privacy invariants (all routes)",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/contracts/api.md",
-      "source_location": "L133",
+      "source_location": "L136",
       "id": "contracts_api_privacy_invariants_all_routes",
       "community": 319,
       "norm_label": "privacy invariants (all routes)"
@@ -79328,7 +79337,7 @@
       "label": "Local flow",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/quickstart.md",
-      "source_location": "L24",
+      "source_location": "L26",
       "id": "003_learned_meal_recommender_quickstart_local_flow",
       "community": 431,
       "norm_label": "local flow"
@@ -79337,7 +79346,7 @@
       "label": "Test focus (Vitest)",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/quickstart.md",
-      "source_location": "L44",
+      "source_location": "L47",
       "id": "003_learned_meal_recommender_quickstart_test_focus_vitest",
       "community": 431,
       "norm_label": "test focus (vitest)"
@@ -79346,7 +79355,7 @@
       "label": "Known limitations (v1)",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/quickstart.md",
-      "source_location": "L58",
+      "source_location": "L62",
       "id": "003_learned_meal_recommender_quickstart_known_limitations_v1",
       "community": 431,
       "norm_label": "known limitations (v1)"
@@ -79445,7 +79454,7 @@
       "label": "Dependency spike: FM libraries (`@wlearn/xlearn`)",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/research.md",
-      "source_location": "L181",
+      "source_location": "L183",
       "id": "003_learned_meal_recommender_research_dependency_spike_fm_libraries_wlearn_xlearn",
       "community": 250,
       "norm_label": "dependency spike: fm libraries (`@wlearn/xlearn`)"
@@ -79454,7 +79463,7 @@
       "label": "Decision 9: Privacy & office scoping",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/research.md",
-      "source_location": "L216",
+      "source_location": "L218",
       "id": "003_learned_meal_recommender_research_decision_9_privacy_office_scoping",
       "community": 250,
       "norm_label": "decision 9: privacy & office scoping"
@@ -79463,7 +79472,7 @@
       "label": "Resolved deferrals from spec",
       "file_type": "document",
       "source_file": "specs/003-learned-meal-recommender/research.md",
-      "source_location": "L229",
+      "source_location": "L231",
       "id": "003_learned_meal_recommender_research_resolved_deferrals_from_spec",
       "community": 250,
       "norm_label": "resolved deferrals from spec"
@@ -83625,6 +83634,15 @@
       "id": "shopping_list_tasks_notes",
       "community": 487,
       "norm_label": "notes"
+    },
+    {
+      "label": "assertModelBeatsBaseline()",
+      "file_type": "code",
+      "source_file": "src/server/services/officeRecommenderSettings.ts",
+      "source_location": "L48",
+      "community": 6,
+      "norm_label": "assertmodelbeatsbaseline()",
+      "id": "services_officerecommendersettings_assertmodelbeatsbaseline"
     }
   ],
   "links": [
@@ -114752,6 +114770,17 @@
       "target": "routes_routeutils_serviceerror"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/services/officeRecommenderSettings.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "services_officerecommendersettings_assertmodelhasnotfailedbaseline",
+      "target": "routes_routeutils_serviceerror",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -123392,11 +123421,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/server/services/mealRecommendation.ts",
-      "source_location": "L520",
+      "source_location": "L597",
       "weight": 1.0,
       "source": "services_mealrecommendation",
-      "target": "services_mealrecommendation_getrecommendationcount",
+      "target": "services_mealrecommendation_getlearnedmodelevaluationwarning",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/services/mealRecommendation.ts",
+      "source_location": "L520",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_mealrecommendation",
+      "target": "services_mealrecommendation_getrecommendationcount"
     },
     {
       "relation": "contains",
@@ -123666,9 +123705,9 @@
       "source_file": "src/server/services/mealRecommendation.ts",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_mealrecommendation",
-      "target": "services_userpreferences",
-      "confidence_score": 1.0
+      "target": "services_userpreferences"
     },
     {
       "relation": "imports_from",
@@ -124150,9 +124189,9 @@
       "source_file": "src/server/services/mealRecommendation.ts",
       "source_location": "L640",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_mealrecommendation_generaterecommendations",
-      "target": "services_mealrecommendation_getrecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_mealrecommendation_getrecommendationcount"
     },
     {
       "relation": "calls",
@@ -124252,6 +124291,17 @@
       "weight": 1.0,
       "source": "services_mealrecommendationprevote_generateprevoterecommendations",
       "target": "services_mealrecommendation_persistmealrecommendationimpression"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/services/mealRecommendation.ts",
+      "source_location": "L750",
+      "weight": 1.0,
+      "source": "services_mealrecommendation_generaterecommendations",
+      "target": "services_mealrecommendation_getlearnedmodelevaluationwarning",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -125419,9 +125469,9 @@
       "source_file": "src/server/services/mealRecommendationExplore.ts",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_mealrecommendationexplore",
-      "target": "services_mealrecommendationexplore_normalizerecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_mealrecommendationexplore_normalizerecommendationcount"
     },
     {
       "relation": "contains",
@@ -125523,9 +125573,9 @@
       "source_file": "src/server/services/mealRecommendationExplore.ts",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_mealrecommendationexplore",
-      "target": "services_userpreferences",
-      "confidence_score": 1.0
+      "target": "services_userpreferences"
     },
     {
       "relation": "calls",
@@ -125578,9 +125628,9 @@
       "source_file": "src/server/services/mealRecommendationExplore.ts",
       "source_location": "L392",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_mealrecommendationexplore_generateexplorerecommendations",
-      "target": "services_mealrecommendationexplore_normalizerecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_mealrecommendationexplore_normalizerecommendationcount"
     },
     {
       "relation": "calls",
@@ -131774,6 +131824,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/server/services/officeRecommenderSettings.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "services_officerecommendersettings",
+      "target": "services_officerecommendersettings_assertmodelhasnotfailedbaseline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/services/officeRecommenderSettings.ts",
       "source_location": "L64",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -131883,6 +131943,17 @@
       "confidence_score": 1.0,
       "source": "services_officerecommendersettings_setofficerecommendersafemode",
       "target": "services_officerecommendersettings_getorcreatesetting"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/server/services/officeRecommenderSettings.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "services_officerecommendersettings_setofficerecommendersafemode",
+      "target": "services_officerecommendersettings_assertmodelhasnotfailedbaseline",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -133907,9 +133978,9 @@
       "source_file": "src/server/services/userPreferences.ts",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_userpreferences",
-      "target": "services_userpreferences_normalizerecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_userpreferences_normalizerecommendationcount"
     },
     {
       "relation": "contains",
@@ -133937,9 +134008,9 @@
       "source_file": "src/server/services/userPreferences.ts",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_userpreferences",
-      "target": "services_userpreferences_parserecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_userpreferences_parserecommendationcount"
     },
     {
       "relation": "contains",
@@ -134044,9 +134115,9 @@
       "source_file": "src/server/services/userPreferences.ts",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_userpreferences_upsertuserpreferences",
-      "target": "services_userpreferences_parserecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_userpreferences_parserecommendationcount"
     },
     {
       "relation": "calls",
@@ -134055,9 +134126,9 @@
       "source_file": "src/server/services/userPreferences.ts",
       "source_location": "L117",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_userpreferences_formatuserpreferences",
-      "target": "services_userpreferences_normalizerecommendationcount",
-      "confidence_score": 1.0
+      "target": "services_userpreferences_normalizerecommendationcount"
     },
     {
       "relation": "calls",
@@ -199627,5 +199698,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f5a1f71592fd7325b234849330500b718ceb371f"
+  "built_at_commit": "4373b1889fd059274f95c97de0e3a57218ac2fb1"
 }

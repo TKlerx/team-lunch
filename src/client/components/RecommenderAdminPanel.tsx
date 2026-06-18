@@ -436,7 +436,7 @@ function RecommenderAdminPanelContent({
   return (
     <Section
       title="Learned Recommender"
-      description="Train the model, review offline lift, and only flip an office to learned mode after it beats baseline."
+      description="Train the model, review offline lift, and pilot learned mode with user-facing warnings until enough evaluation data exists."
       className="mt-6"
     >
       <div className="space-y-4 rounded-xl border border-border bg-surface-muted p-4">
@@ -444,7 +444,7 @@ function RecommenderAdminPanelContent({
           <div>
             <p className="text-sm font-semibold text-fg">Rollout control</p>
             <p className="mt-1 text-sm text-fg-muted">
-              Learned mode stays gated by the latest office margin result. Explore remains opt-in per office.
+              Learned mode can be piloted before evaluation; below-baseline evaluations still block rollout. Explore remains opt-in per office.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
