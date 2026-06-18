@@ -128,24 +128,18 @@ function RestaurantContactCard({ menu }: { menu: Parameters<typeof getDeliveryCo
   return (
     <div className="mt-4 rounded border border-border bg-surface-muted p-3">
       <h3 className="mb-2 text-sm font-semibold text-fg">Restaurant contact</h3>
-      <table className="text-sm text-fg">
-        <tbody>
-          {links.map((link) => (
-            <tr key={link.key}>
-              <td className="pr-2 align-top">
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <DeliveryContactIcon icon={link.icon} />
-                </svg>
-              </td>
-              <td className="py-0.5">
-                <a href={link.href} target={link.href.startsWith('tel:') ? undefined : '_blank'} rel={link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'} title={link.title} className="text-accent-fg underline hover:text-accent-fg">
-                  {link.label}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul aria-label="Restaurant contact links" className="space-y-2 text-sm text-fg">
+        {links.map((link) => (
+          <li key={link.key} className="flex items-start gap-2">
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-fg-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <DeliveryContactIcon icon={link.icon} />
+            </svg>
+            <a href={link.href} target={link.href.startsWith('tel:') ? undefined : '_blank'} rel={link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'} title={link.title} className="min-w-0 break-words text-accent-fg underline hover:text-accent-fg">
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -283,7 +277,7 @@ function DeliveredOrderRow({
   const resolvedPrice = resolveOrderPrice(order, priceByItemId, priceByItemName);
 
   return (
-    <div className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5">
+    <div className="flex flex-col gap-2 rounded bg-surface px-2 py-1.5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-baseline gap-2">
         <input
           type="checkbox"
@@ -297,7 +291,7 @@ function DeliveredOrderRow({
         </span>
         {order.notes && <span className="truncate text-xs text-fg-muted">({order.notes})</span>}
       </div>
-      <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+      <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
         {resolvedPrice === null ? '-' : formatPrice(resolvedPrice)}
       </span>
     </div>

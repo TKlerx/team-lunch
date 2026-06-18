@@ -12,12 +12,29 @@ import type {
   RemindMissingOrdersResponse,
   MealRecommendationRequest,
   MealRecommendationResponse,
+  MealRecommendationExploreResponse,
+  MealRecommendationPreVoteRequest,
+  MealRecommendationPreVoteResponse,
+  MealRecommendationMarkRequest,
+  MealRecommendationMarkDeleteResponse,
+  MealRecommendationMarkListResponse,
+  MealRecommendationMarkResponse,
+  MealRecommendationOnboardingCandidatesResponse,
+  RecommenderEvaluationRequest,
+  RecommenderEvaluationResponse,
+  MealAnticipatedLikeSentiment,
   FoodSelectionFallbackCandidate,
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
   PingFallbackCandidateResponse,
   ShoppingListItem,
   AppVersionResponse,
+  RecommenderOfficeExploreRequest,
+  RecommenderOfficeExploreResponse,
+  RecommenderOfficeModeRequest,
+  RecommenderOfficeModeResponse,
+  RecommenderStatusResponse,
+  RecommenderTrainResponse,
 } from '../lib/types.js';
 import { withBasePath, withOfficeLocationContext } from './config.js';
 
@@ -55,6 +72,27 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 
 function apiPath(path: string): string {
   return withOfficeLocationContext(`/api${path}`);
+}
+
+export function normalizePreferenceTerms(terms: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const term of terms) {
+    const normalized = term.trim();
+    if (!normalized) {
+      continue;
+    }
+
+    const dedupeKey = normalized.toLocaleLowerCase();
+    if (seen.has(dedupeKey)) {
+      continue;
+    }
+    seen.add(dedupeKey);
+    result.push(normalized);
+  }
+
+  return result;
 }
 
 // ─── Menu API ──────────────────────────────────────────────
@@ -295,6 +333,106 @@ export function recommendMeal(selectionId: string, useAi?: boolean): Promise<Mea
     method: 'POST',
     body: JSON.stringify(body),
   });
+}
+
+export function exploreMeal(selectionId: string): Promise<MealRecommendationExploreResponse> {
+  return request<MealRecommendationExploreResponse>(
+    apiPath(`/food-selections/${selectionId}/recommendations/explore`),
+    {
+      method: 'POST',
+      body: JSON.stringify({}),
+    },
+  );
+}
+
+export function recommendPreVote(
+  pollId?: string,
+  limit?: number,
+): Promise<MealRecommendationPreVoteResponse> {
+  const body: MealRecommendationPreVoteRequest = { pollId, limit };
+  return request<MealRecommendationPreVoteResponse>(apiPath('/recommender/pre-vote'), {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
+export function upsertMealRecommendationMark(
+  selectionId: string,
+  itemId: string,
+  sentiment: MealAnticipatedLikeSentiment,
+): Promise<MealRecommendationMarkResponse> {
+  const body: MealRecommendationMarkRequest = { sentiment };
+  return request<MealRecommendationMarkResponse>(apiPath(`/food-selections/${selectionId}/marks/${itemId}`), {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteMealRecommendationMark(
+  selectionId: string,
+  itemId: string,
+): Promise<MealRecommendationMarkDeleteResponse> {
+  return request<MealRecommendationMarkDeleteResponse>(apiPath(`/food-selections/${selectionId}/marks/${itemId}`), {
+    method: 'DELETE',
+  });
+}
+
+export function fetchMealRecommendationMarks(selectionId: string): Promise<MealRecommendationMarkListResponse> {
+  return request<MealRecommendationMarkListResponse>(apiPath(`/food-selections/${selectionId}/marks`));
+}
+
+export function fetchMealRecommendationOnboardingCandidates(): Promise<MealRecommendationOnboardingCandidatesResponse> {
+  return request<MealRecommendationOnboardingCandidatesResponse>(apiPath('/recommender/onboarding/candidates'));
+}
+
+export function fetchRecommenderStatus(): Promise<RecommenderStatusResponse> {
+  return request<RecommenderStatusResponse>(apiPath('/admin/recommender/status'));
+}
+
+export function trainRecommenderModel(): Promise<RecommenderTrainResponse> {
+  return request<RecommenderTrainResponse>(apiPath('/admin/recommender/train'), {
+    method: 'POST',
+  });
+}
+
+export function evaluateRecommenderModel(
+  modelVersion?: number,
+): Promise<RecommenderEvaluationResponse> {
+  const body: RecommenderEvaluationRequest = modelVersion == null ? {} : { modelVersion };
+  return request<RecommenderEvaluationResponse>(apiPath('/admin/recommender/evaluate'), {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
+export function updateRecommenderOfficeMode(
+  officeLocationId: string,
+  safeMode: RecommenderOfficeModeRequest['safeMode'],
+  modelVersion?: number | null,
+): Promise<RecommenderOfficeModeResponse> {
+  const body: RecommenderOfficeModeRequest =
+    modelVersion == null ? { safeMode } : { safeMode, modelVersion };
+  return request<RecommenderOfficeModeResponse>(
+    apiPath(`/admin/recommender/offices/${officeLocationId}/mode`),
+    {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    },
+  );
+}
+
+export function updateRecommenderOfficeExploreEnabled(
+  officeLocationId: string,
+  enabled: boolean,
+): Promise<RecommenderOfficeExploreResponse> {
+  const body: RecommenderOfficeExploreRequest = { enabled };
+  return request<RecommenderOfficeExploreResponse>(
+    apiPath(`/admin/recommender/offices/${officeLocationId}/explore`),
+    {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    },
+  );
 }
 
 export function remindMissingOrders(selectionId: string): Promise<RemindMissingOrdersResponse> {

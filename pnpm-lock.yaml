@@ -20,6 +20,9 @@ importers:
       '@prisma/client':
         specifier: ^6.4.1
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@wlearn/xlearn':
+        specifier: 0.2.0
+        version: 0.2.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1195,6 +1198,15 @@ packages:
 
   '@vitest/utils@3.2.6':
     resolution: {integrity: sha512-lI23nIs4bnT3T8NIoh+vFaz5s2/DdP0Jgt2jxwgWljvwn82cLJtyi/If+fjFyoLMGIOz0U/fKvWE0d4jsNQEfg==}
+
+  '@wlearn/core@0.2.0':
+    resolution: {integrity: sha512-2ociuRhZHJkHrFhTMk2t6QubPyyblA5mDWi9DNL1/XHiamV+M5sKLUoMnwHLPnrZeZbMZqitQPQtE79kgW4Ggg==}
+
+  '@wlearn/types@0.1.1':
+    resolution: {integrity: sha512-iI6mW9oaon1374DZUD8ivUUq4L6Yj/2STeZZcIbkXbcGnV43GAHnKa8KfOS4AiJv1Ngl+Hph5DZo39pMpRlGpQ==}
+
+  '@wlearn/xlearn@0.2.0':
+    resolution: {integrity: sha512-AjDDeOp743ZV/9rjOWYYdGoN5iFaFXF7ZrBgIEkY5BEf7nP0h1yc/Dv+Lai3x1TfYqxAwQDJfgo5pm0rYPk3iw==}
 
   abstract-logging@2.0.1:
     resolution: {integrity: sha512-2BjRTZxTPvheOvGbBslFSYOUkr+SjPtOnrLP33f+VIWLzezQpZcqVg7ja3L4dBXmzzgwT+a029jRx5PCi3JuiA==}
@@ -4274,6 +4286,16 @@ snapshots:
       '@vitest/pretty-format': 3.2.6
       loupe: 3.2.1
       tinyrainbow: 2.0.0
+
+  '@wlearn/core@0.2.0':
+    dependencies:
+      '@wlearn/types': 0.1.1
+
+  '@wlearn/types@0.1.1': {}
+
+  '@wlearn/xlearn@0.2.0':
+    dependencies:
+      '@wlearn/core': 0.2.0
 
   abstract-logging@2.0.1: {}
 

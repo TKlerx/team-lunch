@@ -42,12 +42,14 @@ const mockWithdrawVote = vi.fn();
 const mockEndPoll = vi.fn();
 const mockAbortPoll = vi.fn();
 const mockUpdatePollTimer = vi.fn();
+const mockRecommendPreVote = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
   castVote: (...args: unknown[]) => mockCastVote(...args),
   withdrawVote: (...args: unknown[]) => mockWithdrawVote(...args),
   endPoll: (...args: unknown[]) => mockEndPoll(...args),
   abortPoll: (...args: unknown[]) => mockAbortPoll(...args),
   updatePollTimer: (...args: unknown[]) => mockUpdatePollTimer(...args),
+  recommendPreVote: (...args: unknown[]) => mockRecommendPreVote(...args),
 }));
 
 import PollActiveView from '../../src/client/components/PollActiveView.js';
@@ -118,6 +120,38 @@ describe('PollActiveView', () => {
     expect(sushiBtn).toBeDefined();
     // Pizza Place should show as voted (✓ prefix)
     expect(pizzaBtn?.textContent).toContain('✓');
+  });
+
+  it('loads pre-vote recommendations with menu context and renders the result card', async () => {
+    const user = userEvent.setup();
+    mockRecommendPreVote.mockResolvedValue({
+      source: 'pre_vote',
+      pollId: 'poll-1',
+      items: [
+        {
+          menuId: 'menu-1',
+          menuName: 'Pizza Place',
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 88,
+          reason: 'Recommended because it matches flavors you tend to like (tomato).',
+          sourceSignals: ['taste_match'],
+          aiAssisted: false,
+        },
+      ],
+      warnings: ['There is not enough history yet, so these suggestions use the deterministic baseline.'],
+    });
+
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /show suggestions/i }));
+
+    expect(mockRecommendPreVote).toHaveBeenCalledWith('poll-1', 5);
+    expect(await screen.findByText(/pre-vote recommendations/i)).toBeInTheDocument();
+    expect(screen.getByText(/margherita/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/pizza place/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/not enough history yet/i)).toBeInTheDocument();
   });
 
   it('calls castVote when clicking an unvoted menu', async () => {

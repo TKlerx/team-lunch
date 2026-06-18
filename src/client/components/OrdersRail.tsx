@@ -43,7 +43,7 @@ export default function OrdersRail({
     : 'mb-4 w-full rounded-lg border border-accent/50 bg-accent-soft px-3 py-2 text-left text-sm font-semibold text-accent-fg hover:bg-accent-soft/70 disabled:cursor-not-allowed disabled:opacity-50';
 
   return (
-    <aside className="flex min-h-0 w-80 flex-col border-r border-border bg-surface p-4">
+    <aside className="flex min-h-0 w-full flex-col border-b border-border bg-surface p-4 md:w-80 md:border-b-0 md:border-r">
       <button
         type="button"
         onClick={onStartNewTeamLunch}

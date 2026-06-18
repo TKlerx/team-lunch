@@ -16,6 +16,15 @@ export interface AiRecommendationPayload {
   };
 }
 
+export interface AiFeatureTaggingPayloadItem {
+  itemName: string;
+  description: string | null;
+}
+
+export interface AiFeatureTaggingPayload {
+  items: AiFeatureTaggingPayloadItem[];
+}
+
 type AiRecommendationConfig = {
   endpoint: string;
   apiKey: string;
@@ -25,6 +34,7 @@ type AiRecommendationConfig = {
 
 const AI_TIMEOUT_MS = 2000;
 const MAX_REASON_LENGTH = 200;
+const MAX_TAGS_PER_ITEM = 6;
 const AZURE_OPENAI_PROVIDER = 'azure-openai';
 
 const AZURE_SYSTEM_PROMPT =
@@ -33,6 +43,11 @@ const AZURE_SYSTEM_PROMPT =
   'preferences. Do not invent items that are not in the list or reference any other data. ' +
   'Respond with strict JSON in this exact shape: ' +
   '{"explanations":[{"itemName":"...","reason":"..."}]}';
+
+const AZURE_TAGGING_SYSTEM_PROMPT =
+  'You assign canonical flavor feature tags to menu items. Use only strict JSON in this exact shape: ' +
+  '{"taggings":[{"itemName":"...","tags":["ingredient:...","style:..."]}]}. ' +
+  'Only return tags in ingredient:* or style:* format. If nothing fits, return an empty tags array.';
 
 let cachedConfig: AiRecommendationConfig | null | undefined;
 
@@ -87,6 +102,27 @@ async function parseAzureChatExplanations(response: Response): Promise<{ explana
   }
 }
 
+async function parseAzureChatTaggings(response: Response): Promise<{ taggings?: unknown } | null> {
+  const data = (await response.json()) as { choices?: { message?: { content?: unknown } }[] };
+  const content = data.choices?.[0]?.message?.content;
+  if (typeof content !== 'string') {
+    return null;
+  }
+  try {
+    return JSON.parse(content) as { taggings?: unknown };
+  } catch {
+    return null;
+  }
+}
+
+function normalizeFeatureTag(tag: string): string {
+  return tag.trim().toLowerCase();
+}
+
+function isConstrainedFeatureTag(tag: string): boolean {
+  return /^(ingredient|style):[a-z0-9][a-z0-9_-]*$/.test(tag);
+}
+
 /**
  * Builds the privacy-minimized payload sent to the AI provider. Only
  * item/menu names, ranks, scores, signal categories, and ingredient
@@ -110,6 +146,57 @@ export function buildSanitizedPayload(
       dislikes: [...preferences.dislikes],
     },
   };
+}
+
+/**
+ * Builds the privacy-minimized payload for import-time tag gap filling.
+ * Only item names and descriptions are included, never IDs or user context.
+ */
+export function buildSanitizedTaggingPayload(items: AiFeatureTaggingPayloadItem[]): AiFeatureTaggingPayload {
+  return {
+    items: items.map((item) => ({
+      itemName: item.itemName,
+      description: item.description,
+    })),
+  };
+}
+
+function parseFeatureTaggings(data: { taggings?: unknown } | null): Map<string, string[]> | null {
+  if (!data || !Array.isArray(data.taggings)) {
+    return null;
+  }
+
+  const result = new Map<string, string[]>();
+  for (const entry of data.taggings) {
+    if (!entry || typeof entry !== 'object') {
+      continue;
+    }
+
+    const typedEntry = entry as { itemName?: unknown; tags?: unknown };
+    if (typeof typedEntry.itemName !== 'string' || !Array.isArray(typedEntry.tags)) {
+      continue;
+    }
+
+    const itemName = typedEntry.itemName;
+    const rawTags = typedEntry.tags as unknown[];
+    const tags = Array.from(
+      new Set(
+        rawTags
+          .filter((tag): tag is string => typeof tag === 'string')
+          .map(normalizeFeatureTag)
+          .filter(isConstrainedFeatureTag),
+      ),
+    ).slice(0, MAX_TAGS_PER_ITEM);
+
+    if (tags.length === 0) {
+      continue;
+    }
+
+    const existing = result.get(itemName) ?? [];
+    result.set(itemName, Array.from(new Set([...existing, ...tags])).slice(0, MAX_TAGS_PER_ITEM));
+  }
+
+  return result.size > 0 ? result : null;
 }
 
 /**
@@ -180,6 +267,60 @@ export async function requestAiExplanations(
     }
 
     return result.size > 0 ? result : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/**
+ * Requests canonical flavor tags for menu items the keyword taxonomy could
+ * not tag. Returns null on missing config, timeout, provider error, or
+ * malformed output so import can continue without blocking.
+ */
+export async function requestAiFeatureTags(
+  payload: AiFeatureTaggingPayload,
+): Promise<Map<string, string[]> | null> {
+  const config = getAiRecommendationConfig();
+  if (!config || payload.items.length === 0) {
+    return null;
+  }
+
+  const isAzure = isAzureOpenAiConfig(config);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  try {
+    const response = await getFetch()(config.endpoint, {
+      method: 'POST',
+      headers: isAzure
+        ? { 'Content-Type': 'application/json', 'api-key': config.apiKey }
+        : { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
+      body: JSON.stringify(
+        isAzure
+          ? {
+              messages: [
+                { role: 'system', content: AZURE_TAGGING_SYSTEM_PROMPT },
+                { role: 'user', content: JSON.stringify(payload) },
+              ],
+              response_format: { type: 'json_object' },
+            }
+          : {
+              model: config.model,
+              items: payload.items,
+            },
+      ),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = isAzure
+      ? await parseAzureChatTaggings(response)
+      : ((await response.json()) as { taggings?: unknown });
+    return parseFeatureTaggings(data);
   } catch {
     return null;
   } finally {

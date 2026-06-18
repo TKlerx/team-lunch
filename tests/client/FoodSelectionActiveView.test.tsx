@@ -46,6 +46,11 @@ const mockGetUserPreferences = vi.fn();
 const mockUpdateUserPreferences = vi.fn();
 const mockRemindMissingOrders = vi.fn();
 const mockRecommendMeal = vi.fn();
+const mockExploreMeal = vi.fn();
+const mockFetchMealRecommendationMarks = vi.fn();
+const mockUpsertMealRecommendationMark = vi.fn();
+const mockDeleteMealRecommendationMark = vi.fn();
+const mockFetchMealRecommendationOnboardingCandidates = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
   placeOrder: (...args: unknown[]) => mockPlaceOrder(...args),
   withdrawOrder: (...args: unknown[]) => mockWithdrawOrder(...args),
@@ -56,6 +61,12 @@ vi.mock('../../src/client/api.js', () => ({
   updateUserPreferences: (...args: unknown[]) => mockUpdateUserPreferences(...args),
   remindMissingOrders: (...args: unknown[]) => mockRemindMissingOrders(...args),
   recommendMeal: (...args: unknown[]) => mockRecommendMeal(...args),
+  exploreMeal: (...args: unknown[]) => mockExploreMeal(...args),
+  fetchMealRecommendationMarks: (...args: unknown[]) => mockFetchMealRecommendationMarks(...args),
+  upsertMealRecommendationMark: (...args: unknown[]) => mockUpsertMealRecommendationMark(...args),
+  deleteMealRecommendationMark: (...args: unknown[]) => mockDeleteMealRecommendationMark(...args),
+  fetchMealRecommendationOnboardingCandidates: (...args: unknown[]) =>
+    mockFetchMealRecommendationOnboardingCandidates(...args),
 }));
 
 import FoodSelectionActiveView from '../../src/client/components/FoodSelectionActiveView.js';
@@ -90,6 +101,8 @@ describe('FoodSelectionActiveView', () => {
       updatedAt: '2026-01-01T00:00:00.000Z',
     });
     mockRemindMissingOrders.mockResolvedValue({ remindedCount: 1 });
+    mockFetchMealRecommendationMarks.mockResolvedValue({ marks: [] });
+    mockFetchMealRecommendationOnboardingCandidates.mockResolvedValue({ candidates: [] });
     mockUseCountdown.mockReturnValue(600); // 10 min
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -189,7 +202,30 @@ describe('FoodSelectionActiveView', () => {
   it('shows per-item add actions and withdraw action', () => {
     renderView();
     expect(screen.getAllByRole('button', { name: /^add$/i })).toHaveLength(2);
+    expect(screen.getByRole('button', { name: /^like margherita$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^dislike pepperoni$/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /withdraw/i })).toBeInTheDocument();
+  });
+
+  it('loads existing anticipated-like marks and can clear them', async () => {
+    const user = userEvent.setup();
+    mockFetchMealRecommendationMarks.mockResolvedValue({
+      marks: [
+        {
+          itemId: 'item-1',
+          itemIdentityKey: 'margherita',
+          sentiment: 'like',
+        },
+      ],
+    });
+    mockDeleteMealRecommendationMark.mockResolvedValue({ removed: true });
+
+    renderView();
+
+    expect(await screen.findByText(/marked like/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /clear mark for margherita/i }));
+
+    expect(mockDeleteMealRecommendationMark).toHaveBeenCalledWith('fs-1', 'item-1');
   });
 
   it('does not render the food alerts editor in the order flow', () => {
@@ -331,6 +367,23 @@ describe('FoodSelectionActiveView', () => {
 
     await user.click(screen.getByRole('button', { name: 'Remove' }));
     expect(mockWithdrawOrder).toHaveBeenCalledWith('fs-1', 'Alice', 'order-1');
+  });
+
+  it('keeps the own-order remove action visible on small screens', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus,
+      activeFoodSelection: makeFoodSelection({
+        orders: [
+          makeFoodOrder({ id: 'order-1', nickname: 'Alice', itemId: 'item-1', itemName: 'Margherita' }),
+        ],
+      }),
+    });
+
+    renderView();
+
+    expect(screen.getByRole('button', { name: 'Remove' })).toHaveClass('opacity-100');
   });
 
   it('calls withdrawOrder when clicking Withdraw', async () => {
@@ -639,6 +692,65 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.getByText('Recommended because you rated this highly before.')).toBeInTheDocument();
     expect(screen.getByText('#2 Pepperoni')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /recommend a meal/i })).toBeInTheDocument();
+  });
+
+  it('shows exploratory recommendations when clicking "Explore something new"', async () => {
+    const user = userEvent.setup();
+    mockExploreMeal.mockResolvedValue({
+      impressionId: 'impression-2',
+      foodSelectionId: 'fs-1',
+      source: 'explore',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: ['Exploratory suggestions are intentionally less certain than safe recommendations.'],
+      items: [
+        {
+          itemId: 'item-2',
+          itemName: 'Pepperoni',
+          rank: 1,
+          score: 88,
+          reason: 'Exploratory pick: it leans into newer flavors like pepperoni.',
+          sourceSignals: [],
+          aiAssisted: false,
+        },
+      ],
+    });
+
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /explore something new/i }));
+
+    expect(mockExploreMeal).toHaveBeenCalledWith('fs-1');
+    expect(await screen.findByText('Exploratory suggestions')).toBeInTheDocument();
+    expect(screen.getByText(/exploratory pick/i)).toBeInTheDocument();
+  });
+
+  it('opens the onboarding dialog and can mark a candidate there', async () => {
+    const user = userEvent.setup();
+    mockFetchMealRecommendationOnboardingCandidates.mockResolvedValue({
+      candidates: [
+        {
+          itemId: 'candidate-1',
+          itemName: 'Chicken Pad Thai',
+          itemIdentityKey: 'chicken-pad-thai',
+          tags: ['ingredient:chicken', 'style:thai'],
+        },
+      ],
+    });
+    mockUpsertMealRecommendationMark.mockResolvedValue({
+      itemIdentityKey: 'chicken-pad-thai',
+      sentiment: 'like',
+    });
+
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /mark dishes you expect to like/i }));
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(await screen.findByText('Chicken Pad Thai')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /^like chicken pad thai$/i }));
+
+    expect(mockUpsertMealRecommendationMark).toHaveBeenCalledWith('fs-1', 'candidate-1', 'like');
   });
 
   it('shows an AI-assisted label when recommendations are AI-enriched', async () => {

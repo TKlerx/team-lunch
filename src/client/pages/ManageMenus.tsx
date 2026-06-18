@@ -362,12 +362,12 @@ function MenuItemRow({
             placeholder="Price (optional)"
           />
           {error && <p className="text-sm text-danger-fg">{error}</p>}
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
               onClick={() => void handleSave()}
               disabled={submitting}
-              className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50"
+              className="w-full rounded bg-accent-solid px-3 py-2 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50 sm:w-auto sm:py-1"
             >
               Save
             </button>
@@ -381,7 +381,7 @@ function MenuItemRow({
                 setPrice(item.price === null ? '' : item.price.toFixed(2));
                 setError('');
               }}
-              className="rounded px-3 py-1 text-xs text-fg-muted hover:bg-surface-muted"
+              className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"
             >
               Cancel
             </button>
@@ -393,17 +393,17 @@ function MenuItemRow({
 
   return (
     <>
-      <div className="grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] items-start gap-2 rounded px-3 py-2 hover:bg-surface-muted">
-        <p className="whitespace-nowrap text-sm font-medium text-fg-muted">{item.itemNumber ?? '-'}</p>
-        <p className="truncate text-sm font-medium text-fg">{item.name}</p>
+      <div className="grid grid-cols-1 gap-2 rounded px-3 py-2 hover:bg-surface-muted sm:grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] sm:items-start">
+        <p className="inline-flex w-fit rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-fg-muted sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal">{item.itemNumber ?? '-'}</p>
+        <p className="whitespace-normal break-words text-sm font-medium text-fg sm:truncate">{item.name}</p>
         <p className="whitespace-normal break-words text-left text-sm text-fg-muted">{item.description ?? '-'}</p>
-        <p className="whitespace-nowrap text-sm font-medium text-success-fg">{formatPrice(item.price)}</p>
+        <p className="text-sm font-medium text-success-fg sm:whitespace-nowrap">{formatPrice(item.price)}</p>
         <button
           type="button"
           onClick={() => setEditing(true)}
           aria-label="Edit"
           title="Edit"
-          className="justify-self-center whitespace-nowrap rounded p-1.5 text-accent hover:bg-surface-muted"
+          className="inline-flex min-h-9 min-w-9 items-center justify-center rounded p-1.5 text-accent hover:bg-surface-muted sm:justify-self-center sm:min-h-0 sm:min-w-0 sm:whitespace-nowrap"
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
@@ -416,7 +416,7 @@ function MenuItemRow({
           onClick={() => setConfirmDelete(true)}
           aria-label="Delete"
           title="Delete"
-          className="justify-self-center whitespace-nowrap rounded p-1.5 text-danger-fg hover:bg-surface-muted"
+          className="inline-flex min-h-9 min-w-9 items-center justify-center rounded p-1.5 text-danger-fg hover:bg-surface-muted sm:justify-self-center sm:min-h-0 sm:min-w-0 sm:whitespace-nowrap"
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
@@ -567,14 +567,14 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
     <div className="rounded-lg border border-accent/40 bg-accent-soft/40 p-4 shadow-sm">
       {/* Row 1: AI help text with "Copy AI prompt" button */}
       <div className="rounded border border-border bg-surface p-3">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <p className="text-xs text-fg-muted">
             You can use AI to generate the menu JSON from a PDF or website. Copy the prompt, paste it into your AI assistant, and provide the menu text.
           </p>
           <button
             type="button"
             onClick={() => { void copyPromptTemplate(); }}
-            className="shrink-0 rounded border border-accent px-3 py-1 text-xs font-medium text-accent-fg hover:bg-surface-muted"
+            className="w-full shrink-0 rounded border border-accent px-3 py-2 text-xs font-medium text-accent-fg hover:bg-surface-muted sm:w-auto sm:py-1"
           >
             {copyStatus === 'copied' ? 'Copied' : 'Copy AI prompt'}
           </button>
@@ -583,7 +583,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
 
       {/* Row 2: JSON textarea with "Import from JSON file" button */}
       <div className="mt-3 rounded border border-border bg-surface p-3">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <label htmlFor="menu-import-json-text" className="text-xs font-semibold uppercase tracking-wide text-fg-muted">
             Paste menu JSON
           </label>
@@ -598,7 +598,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             type="button"
             disabled={submitting}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded border border-accent px-3 py-1 text-xs font-medium text-accent-fg hover:bg-surface-muted disabled:opacity-50"
+            className="w-full rounded border border-accent px-3 py-2 text-xs font-medium text-accent-fg hover:bg-surface-muted disabled:opacity-50 sm:w-auto sm:py-1"
           >
             Import from JSON file
           </button>
@@ -645,7 +645,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             {error ? 'Fix the errors above to preview the import.' : 'Import or enter menu JSON to see a preview.'}
           </p>
         )}
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <button
             type="button"
             disabled={submitting || !preview || pendingPayload === null}
@@ -676,7 +676,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
                 if (imported) onClose();
               })();
             }}
-            className="rounded bg-success-solid px-3 py-1 font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded bg-success-solid px-3 py-2 font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-50 sm:w-auto sm:py-1"
           >
             Confirm Import
           </button>
@@ -684,7 +684,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
             type="button"
             disabled={submitting}
             onClick={onClose}
-            className="rounded border border-border bg-surface px-3 py-1 font-medium text-fg hover:bg-surface-muted disabled:opacity-50"
+            className="w-full rounded border border-border bg-surface px-3 py-2 font-medium text-fg hover:bg-surface-muted disabled:opacity-50 sm:w-auto sm:py-1"
           >
             Cancel
           </button>
@@ -751,7 +751,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-1 text-xs font-medium text-accent hover:text-accent-fg"
+        className="mt-1 inline-flex min-h-9 items-center rounded px-2 py-1 text-xs font-medium text-accent hover:bg-surface-muted hover:text-accent-fg"
       >
         + Add item
       </button>
@@ -797,11 +797,11 @@ function AddItemForm({ menuId }: { menuId: string }) {
         placeholder="Price (optional)"
       />
       {error && <p className="text-sm text-danger-fg">{error}</p>}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50"
+          className="w-full rounded bg-accent-solid px-3 py-2 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-50 sm:w-auto sm:py-1"
         >
           Add
         </button>
@@ -815,7 +815,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
             setPrice('');
             setError('');
           }}
-          className="rounded px-3 py-1 text-xs text-fg-muted hover:bg-surface-muted"
+          className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"
         >
           Cancel
         </button>
@@ -1118,7 +1118,7 @@ function MenuCardHeader({
 }) {
   return (
     <div
-      className="flex cursor-pointer items-start justify-between border-b border-border px-4 py-3"
+      className="flex cursor-pointer flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
       onClick={onToggle}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -1161,7 +1161,7 @@ function MenuCardContent({
         <p className="text-sm italic text-fg-muted">No items yet</p>
       ) : (
         <>
-          <div className="mb-1 grid grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+          <div className="mb-1 hidden gap-2 px-3 text-xs font-semibold uppercase tracking-wide text-fg-muted sm:grid sm:grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content]">
             <span>No.</span>
             <span>Item name</span>
             <span className="text-left">Description</span>
@@ -1504,7 +1504,7 @@ export default function ManageMenus() {
   const sorted = [...menus].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="w-full p-6">
+    <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-fg">Manage Menus</h1>
       </div>

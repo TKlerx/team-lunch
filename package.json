@@ -47,6 +47,7 @@
     "@fastify/cors": "^10.0.2",
     "@fastify/static": "^9.1.3",
     "@prisma/client": "^6.4.1",
+    "@wlearn/xlearn": "0.2.0",
     "clsx": "^2.1.1",
     "exceljs": "^4.4.0",
     "fastify": "^5.8.5",
@@ -100,5 +101,21 @@
       "@swc/core",
       "sharp"
     ]
-  }
+  },
+  "description": "Team Lunch is a collaborative lunch coordination app for teams. It helps a group pick a place to eat, collect everyone's order, and track delivery status in real time.",
+  "main": "eslint.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TKlerx/team-lunch.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TKlerx/team-lunch/issues"
+  },
+  "homepage": "https://github.com/TKlerx/team-lunch#readme"
 }

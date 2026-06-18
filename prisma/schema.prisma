@@ -127,6 +127,7 @@ model Poll {
   votes          PollVote[]
   excludedMenus  PollExcludedMenu[]
   foodSelections FoodSelection[]
+  mealRecommendationImpressions MealRecommendationImpression[]
 
   @@index([officeLocationId, status])
   @@map("polls")
@@ -390,7 +391,8 @@ model UserMenuDefaultPreference {
 
 model MealRecommendationImpression {
   id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  foodSelectionId     String   @map("food_selection_id") @db.Uuid
+  foodSelectionId     String?  @map("food_selection_id") @db.Uuid
+  pollId              String?  @map("poll_id") @db.Uuid
   officeLocationId    String   @map("office_location_id") @db.Uuid
   actorKey            String   @map("actor_key") @db.VarChar(255)
   actorEmail          String?  @map("actor_email") @db.VarChar(255)
@@ -403,11 +405,13 @@ model MealRecommendationImpression {
   itemsJson           Json     @map("items_json")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  foodSelection  FoodSelection  @relation(fields: [foodSelectionId], references: [id], onDelete: Cascade)
+  foodSelection  FoodSelection? @relation(fields: [foodSelectionId], references: [id], onDelete: Cascade)
+  poll           Poll?          @relation(fields: [pollId], references: [id], onDelete: SetNull)
   officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
   recommenderModel RecommenderModel? @relation(fields: [recommenderModelId], references: [id], onDelete: SetNull)
 
   @@index([foodSelectionId, actorKey])
+  @@index([pollId, actorKey])
   @@index([officeLocationId, actorKey, recommendedAt])
   @@map("meal_recommendation_impressions")
 }

@@ -171,7 +171,17 @@ export interface UserMenuDefaultPreference {
 
 // ─── Meal recommendations ──────────────────────────────────
 
-export type MealRecommendationSource = 'deterministic' | 'ai_assisted' | 'deterministic_fallback';
+export type MealRecommendationSource =
+  | 'deterministic'
+  | 'ai_assisted'
+  | 'deterministic_fallback'
+  | 'safe_learned'
+  | 'explore'
+  | 'pre_vote';
+
+export type RecommenderSafeMode = 'baseline' | 'learned';
+export type RecommenderModelStatus = 'trained' | 'active' | 'retired';
+export type MealAnticipatedLikeSentiment = 'like' | 'dislike';
 
 export type MealRecommendationSignal =
   | 'personal_rating'
@@ -185,6 +195,8 @@ export type MealRecommendationSignal =
 export interface MealRecommendationRequest {
   useAi?: boolean;
 }
+
+export type MealRecommendationExploreRequest = Record<string, never>;
 
 export interface MealRecommendationItem {
   itemId: string | null;
@@ -203,6 +215,119 @@ export interface MealRecommendationResponse {
   generatedAt: string;
   items: MealRecommendationItem[];
   warnings: string[];
+}
+
+export type MealRecommendationExploreResponse = MealRecommendationResponse;
+
+export interface MealRecommendationPreVoteRequest {
+  pollId?: string;
+  limit?: number;
+}
+
+export interface MealRecommendationPreVoteItem {
+  menuId: string;
+  menuName: string;
+  itemId: string;
+  itemName: string;
+  rank: number;
+  score: number;
+  reason: string;
+  sourceSignals: MealRecommendationSignal[];
+  aiAssisted: boolean;
+}
+
+export interface MealRecommendationPreVoteResponse {
+  source: 'pre_vote';
+  pollId?: string;
+  items: MealRecommendationPreVoteItem[];
+  warnings: string[];
+}
+
+export interface MealRecommendationMark {
+  itemId: string;
+  itemIdentityKey: string;
+  sentiment: MealAnticipatedLikeSentiment;
+}
+
+export interface MealRecommendationMarkResponse {
+  itemIdentityKey: string;
+  sentiment: MealAnticipatedLikeSentiment;
+}
+
+export interface MealRecommendationMarkRequest {
+  sentiment: MealAnticipatedLikeSentiment;
+}
+
+export interface MealRecommendationMarkListResponse {
+  marks: MealRecommendationMark[];
+}
+
+export interface MealRecommendationMarkDeleteResponse {
+  removed: true;
+}
+
+export interface MealRecommendationOnboardingCandidate {
+  itemId: string;
+  itemName: string;
+  itemIdentityKey: string;
+  tags: string[];
+}
+
+export interface MealRecommendationOnboardingCandidatesResponse {
+  candidates: MealRecommendationOnboardingCandidate[];
+}
+
+export interface RecommenderTrainResponse {
+  modelVersion: number;
+  trainingSampleCount: number;
+}
+
+export interface RecommenderEvaluationRequest {
+  modelVersion?: number;
+}
+
+export interface RecommenderEvaluationOfficeResult {
+  officeLocationId: string;
+  baselineTop3HitRate: number;
+  modelTop3HitRate: number;
+  marginPoints: number;
+  sampleCount: number;
+}
+
+export interface RecommenderEvaluationResponse {
+  results: RecommenderEvaluationOfficeResult[];
+}
+
+export interface RecommenderStatusOffice {
+  officeLocationId: string;
+  safeMode: RecommenderSafeMode;
+  exploreEnabled: boolean;
+  latestMargin: number | null;
+}
+
+export interface RecommenderStatusResponse {
+  activeModelVersion: number | null;
+  offices: RecommenderStatusOffice[];
+}
+
+export interface RecommenderOfficeModeRequest {
+  safeMode: RecommenderSafeMode;
+  modelVersion?: number;
+}
+
+export interface RecommenderOfficeModeResponse {
+  officeLocationId: string;
+  safeMode: RecommenderSafeMode;
+  activeModelVersion: number | null;
+}
+
+export interface RecommenderOfficeExploreRequest {
+  enabled: boolean;
+}
+
+export interface RecommenderOfficeExploreResponse {
+  officeLocationId: string;
+  exploreEnabled: boolean;
 }
 
 export interface ShoppingListItem {

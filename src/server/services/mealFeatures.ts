@@ -11,6 +11,8 @@
  * personal rather than just "popular" or "you ordered this exact dish".
  */
 
+import prisma from '../db.js';
+
 export type FeatureTag = string; // e.g. "ingredient:chicken", "style:thai"
 
 // Curated synonym taxonomy. Keys are canonical feature names; values are
@@ -122,7 +124,7 @@ const EXPLICIT_RATING_CONFIDENCE = 1;
  * estimate while plentiful unrated orders still build a usable signal in the
  * sparse, rarely-rated, weekly-ordering regime.
  */
-export function buildTasteProfile(history: { itemName: string; rating: number | null }[]): TasteProfile {
+export function buildTasteProfile(history: { itemName: string; rating: number | null; itemIdentityKey?: string | null }[]): TasteProfile {
   const weightedSum = new Map<FeatureTag, number>(); // Σ value * confidence
   const confidenceSum = new Map<FeatureTag, number>(); // Σ confidence
   let ratedCount = 0;
@@ -179,4 +181,60 @@ export function scoreTasteMatch(itemFeatures: FeatureTag[], profile: TasteProfil
   }
 
   return { score, likedLabels, dislikedLabels };
+}
+
+export interface MenuItemFeatureLookup {
+  menuItemId: string;
+  officeLocationId: string;
+  itemIdentityKey: string | null;
+  name: string;
+  description: string | null;
+}
+
+function uniqueTags(tags: Array<{ tag: string }>): FeatureTag[] {
+  const seen = new Set<string>();
+  const result: FeatureTag[] = [];
+  for (const entry of tags) {
+    if (seen.has(entry.tag)) continue;
+    seen.add(entry.tag);
+    result.push(entry.tag);
+  }
+  return result;
+}
+
+/**
+ * Loads the persisted tags for a menu item when they exist. Legacy items that
+ * have not been tagged yet fall back to live keyword extraction so the
+ * recommender never loses feature coverage while imports are being backfilled.
+ */
+export async function loadMenuItemFeatures(input: MenuItemFeatureLookup): Promise<FeatureTag[]> {
+  const persisted = await prisma.menuItemFeature.findMany({
+    where: {
+      menuItemId: input.menuItemId,
+      officeLocationId: input.officeLocationId,
+    },
+    orderBy: { createdAt: 'asc' },
+    select: { tag: true },
+  });
+
+  if (persisted.length > 0) {
+    return uniqueTags(persisted);
+  }
+
+  if (input.itemIdentityKey) {
+    const identityFeatures = await prisma.menuItemFeature.findMany({
+      where: {
+        officeLocationId: input.officeLocationId,
+        itemIdentityKey: input.itemIdentityKey,
+      },
+      orderBy: { createdAt: 'asc' },
+      select: { tag: true },
+    });
+
+    if (identityFeatures.length > 0) {
+      return uniqueTags(identityFeatures);
+    }
+  }
+
+  return extractFeatures(input.name, input.description);
 }

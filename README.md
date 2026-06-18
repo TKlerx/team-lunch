@@ -21,6 +21,8 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 - Timed food ordering rounds
 - Delivery tracking with ETA updates
 - Menu management and JSON import
+- Learned meal recommendations with safe, explore, and pre-vote guidance
+- Anticipated like/dislike marks and onboarding seeds for cold start
 - Shopping list support
 - Multi-office support
 - Optional local auth
@@ -251,6 +253,9 @@ If you deploy at the site root, leave both empty.
 - The AI never picks or ranks items - ranking is always deterministic. AI only
   supplies short reason text for the items the deterministic ranker already
   selected.
+- The same `AI_RECOMMENDATION_*` environment boundary is reused for menu-import
+  feature gap filling; if AI tagging is configured, untagged imports can gain
+  ingredient/style features automatically, otherwise imports still complete.
 - Ranking is per person and content-based: items are tagged with ingredient and
   style features (e.g. chicken, thai, spicy), a taste profile is learned from
   each user's own history, and unrated menu items are scored by how well their

@@ -212,7 +212,7 @@ export default function App() {
 
         <DatabaseConnectionModal open={!dbConnected} attemptCount={dbReconnectAttempts} />
 
-        <main className="flex min-h-0 flex-1">
+        <main className="flex min-h-0 flex-1 flex-col md:flex-row">
           <OrdersRail
             history={completedFoodSelectionsHistory}
             selectedSelectionId={selectedHistorySelectionId}

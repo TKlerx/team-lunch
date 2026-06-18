@@ -23,6 +23,24 @@ describe('OrdersRail', () => {
     expect(actionButton.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it('uses a full-width rail shell on small screens', () => {
+    render(
+      <OrdersRail
+        history={[]}
+        selectedSelectionId={null}
+        onSelectSelection={vi.fn()}
+        onStartNewTeamLunch={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('complementary')).toHaveClass(
+      'w-full',
+      'border-b',
+      'md:w-80',
+      'md:border-r',
+    );
+  });
+
   it('renders history entries with most recent first (input order)', () => {
     render(
       <OrdersRail

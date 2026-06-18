@@ -35,6 +35,14 @@ describe('Header', () => {
     expect(screen.getByText('Team Lunch')).toBeInTheDocument();
   });
 
+  it('stacks the shell on small screens', () => {
+    renderHeader();
+    const shell = screen.getByRole('banner').firstElementChild as HTMLElement | null;
+    expect(shell).not.toBeNull();
+    expect(shell).toHaveClass('flex-col');
+    expect(shell).toHaveClass('lg:flex-row');
+  });
+
   it('shows the pizza logo next to the title', () => {
     renderHeader();
     expect(screen.getByRole('img', { name: /pizza logo/i })).toBeInTheDocument();

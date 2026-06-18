@@ -4,6 +4,7 @@ import { useAppState } from '../context/AppContext.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import MealOnboardingDialog from './MealOnboardingDialog.js';
 import { formatPrice } from '../utils/orderCopy.js';
 import {
   getAuthenticatedActorKey,
@@ -11,7 +12,13 @@ import {
   isAdminAuthenticatedUser,
   isCreatorAuthenticatedUser,
 } from '../auth.js';
-import type { MealRecommendationResponse, UserPreferences } from '../../lib/types.js';
+import type {
+  MealAnticipatedLikeSentiment,
+  MealRecommendationMark,
+  MealRecommendationOnboardingCandidate,
+  MealRecommendationResponse,
+  UserPreferences,
+} from '../../lib/types.js';
 
 type ItemWarnings = {
   allergies: string[];
@@ -61,6 +68,10 @@ function OrderForm({
   existingOrders,
   itemWarningsById,
   preferences,
+  mealMarksByItemId,
+  marksLoading,
+  markingItemId,
+  onToggleMealMark,
 }: {
   selectionId: string;
   menuItems: {
@@ -74,6 +85,10 @@ function OrderForm({
   existingOrders: { id: string; itemId: string | null; itemName: string; notes: string | null }[];
   itemWarningsById: Map<string, ItemWarnings>;
   preferences: UserPreferences;
+  mealMarksByItemId: Map<string, MealRecommendationMark>;
+  marksLoading: boolean;
+  markingItemId: string | null;
+  onToggleMealMark: (itemId: string, sentiment: MealAnticipatedLikeSentiment) => void;
 }) {
   const [itemNotes, setItemNotes] = useState<Record<string, string>>({});
   const [itemSearch, setItemSearch] = useState('');
@@ -150,13 +165,13 @@ function OrderForm({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-sm font-semibold text-fg">Your order</h3>
         <Link
           to="/settings"
           aria-label="Ingredient Preferences"
           title={formatIngredientPreferencesTooltip(preferences)}
-          className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="inline-flex min-h-9 w-full shrink-0 items-center justify-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:w-auto"
         >
           <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
             person_heart
@@ -179,12 +194,12 @@ function OrderForm({
             key={item.id}
             className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted"
           >
-            <div className="flex items-baseline justify-between gap-3">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
               <span className="truncate text-sm font-medium text-fg">
                 {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
                 <span>{item.name}</span>
               </span>
-              <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+              <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
                 {item.price === null ? '-' : formatPrice(item.price)}
               </span>
             </div>
@@ -203,7 +218,7 @@ function OrderForm({
                 </p>
               ) : null}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <input
                 type="text"
                 value={itemNotes[item.id] ?? ''}
@@ -219,13 +234,67 @@ function OrderForm({
                 type="button"
                 onClick={() => void handleAddItem(item.id)}
                 disabled={addingItemId === item.id || withdrawingAll}
-                className="shrink-0 rounded bg-accent-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                className="w-full shrink-0 rounded bg-accent-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
               >
                 Add
               </button>
             </div>
-          </div>
-        ))}
+            <div className="flex flex-wrap items-center gap-2">
+                {mealMarksByItemId.get(item.id) ? (
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+                      mealMarksByItemId.get(item.id)?.sentiment === 'like'
+                        ? 'bg-success-soft text-success-fg'
+                        : 'bg-warning-soft text-warning-fg'
+                    }`}
+                  >
+                    Marked {mealMarksByItemId.get(item.id)?.sentiment}
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-medium uppercase tracking-wide text-fg-muted">
+                    Mark this dish
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => void onToggleMealMark(item.id, 'like')}
+                  disabled={markingItemId === item.id || marksLoading}
+                  className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                    mealMarksByItemId.get(item.id)?.sentiment === 'like'
+                      ? 'border-success bg-success-soft text-success-fg'
+                      : 'border-border text-fg-muted hover:bg-surface-muted'
+                  }`}
+                  aria-label={`Like ${item.name}`}
+                >
+                  Like
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void onToggleMealMark(item.id, 'dislike')}
+                  disabled={markingItemId === item.id || marksLoading}
+                  className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                    mealMarksByItemId.get(item.id)?.sentiment === 'dislike'
+                      ? 'border-warning bg-warning-soft text-warning-fg'
+                      : 'border-border text-fg-muted hover:bg-surface-muted'
+                  }`}
+                  aria-label={`Dislike ${item.name}`}
+                >
+                  Dislike
+                </button>
+                {mealMarksByItemId.get(item.id) ? (
+                  <button
+                    type="button"
+                    onClick={() => void onToggleMealMark(item.id, mealMarksByItemId.get(item.id)?.sentiment ?? 'like')}
+                    disabled={markingItemId === item.id || marksLoading}
+                    className="rounded border border-border px-2.5 py-1 text-xs font-medium text-fg-muted hover:bg-surface-muted disabled:opacity-50"
+                    aria-label={`Clear mark for ${item.name}`}
+                  >
+                    Clear
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ))}
         {filteredMenuItems.length === 0 && (
           <p className="text-sm italic text-fg-muted">No matching items found</p>
         )}
@@ -332,8 +401,8 @@ function OrderBoard({
             </div>
             <div className="space-y-1">
               {userOrders.map((o) => (
-                <div key={o.id} className="group flex items-center justify-between gap-2 rounded bg-surface px-2 py-1.5">
-                  <div className="flex min-w-0 items-baseline gap-2">
+                <div key={o.id} className="group flex flex-col gap-2 rounded bg-surface px-2 py-1.5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
                     <span className="truncate text-sm text-fg">
                       {o.itemId && itemNumberById.has(o.itemId) && (
                         <span className="mr-1 text-fg-muted">{itemNumberById.get(o.itemId)}</span>
@@ -342,8 +411,8 @@ function OrderBoard({
                     </span>
                     {o.notes && <span className="truncate text-xs text-fg-muted">({o.notes})</span>}
                   </div>
-                  <div className="ml-2 flex items-center gap-2">
-                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+                  <div className="flex items-center justify-between gap-2 sm:ml-2 sm:justify-end">
+                    <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
                       {o.itemId && priceByItemId.has(o.itemId)
                         ? formatPrice(priceByItemId.get(o.itemId) as number)
                         : '-'}
@@ -353,7 +422,7 @@ function OrderBoard({
                         type="button"
                         onClick={() => void handleRemoveFromBoard(o.id)}
                         disabled={removingOrderId === o.id}
-                        className="rounded border border-border px-2 py-1 text-xs text-fg-muted opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 hover:bg-surface-muted disabled:opacity-50"
+                        className="inline-flex min-h-9 items-center justify-center rounded border border-border px-2 py-1 text-xs text-fg-muted opacity-100 transition-opacity hover:bg-surface-muted disabled:opacity-50 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
                       >
                         Remove
                       </button>
@@ -378,6 +447,12 @@ function MealRecommendationsList({ recommendations }: { recommendations: MealRec
     <div className="mt-3 space-y-2">
       {recommendations.source === 'ai_assisted' && (
         <p className="text-xs font-medium text-accent-fg">AI-assisted suggestions</p>
+      )}
+      {recommendations.source === 'explore' && (
+        <p className="text-xs font-medium text-warning-fg">Exploratory suggestions</p>
+      )}
+      {recommendations.source === 'safe_learned' && (
+        <p className="text-xs font-medium text-accent-fg">Learned suggestions</p>
       )}
       {recommendations.warnings.map((warning) => (
         <p key={warning} className="text-xs text-warning-fg">
@@ -407,26 +482,49 @@ function MealRecommendationsList({ recommendations }: { recommendations: MealRec
 function MealRecommendationsPanel({
   recommendations,
   recommendationsLoading,
+  recommendationsLoadingAction,
   recommendationsError,
   onRecommendMeal,
+  onExploreMeal,
+  onOpenOnboarding,
 }: {
   recommendations: MealRecommendationResponse | null;
   recommendationsLoading: boolean;
+  recommendationsLoadingAction: 'recommend' | 'explore' | null;
   recommendationsError: string;
   onRecommendMeal: () => void;
+  onExploreMeal: () => void;
+  onOpenOnboarding: () => void;
 }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <h3 className="text-sm font-semibold text-fg">Meal recommendations</h3>
-        <button
-          type="button"
-          onClick={onRecommendMeal}
-          disabled={recommendationsLoading}
-          className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {recommendationsLoading ? 'Thinking...' : 'Recommend a meal'}
-        </button>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          <button
+            type="button"
+            onClick={onRecommendMeal}
+            disabled={recommendationsLoading}
+            className="w-full rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
+          >
+            {recommendationsLoading && recommendationsLoadingAction === 'recommend' ? 'Thinking...' : 'Recommend a meal'}
+          </button>
+          <button
+            type="button"
+            onClick={onExploreMeal}
+            disabled={recommendationsLoading}
+            className="w-full rounded border border-warning px-3 py-1.5 text-sm font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50 sm:w-auto"
+          >
+            {recommendationsLoading && recommendationsLoadingAction === 'explore' ? 'Exploring...' : 'Explore something new'}
+          </button>
+          <button
+            type="button"
+            onClick={onOpenOnboarding}
+            className="w-full rounded border border-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-soft sm:w-auto"
+          >
+            Mark dishes you expect to like
+          </button>
+        </div>
       </div>
       {recommendationsError && (
         <p className="mt-2 text-sm text-danger-fg">{recommendationsError}</p>
@@ -473,7 +571,7 @@ function MissingOrdersReminderControls({
         type="button"
         onClick={onRemindMissingOrders}
         disabled={remindingMissing || votersWithoutOrderCount === 0}
-        className="rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
       >
         {remindingMissing ? 'Sending reminders...' : 'Ping missing users'}
       </button>
@@ -784,7 +882,16 @@ export default function FoodSelectionActiveView() {
   const [reminderError, setReminderError] = useState('');
   const [recommendations, setRecommendations] = useState<MealRecommendationResponse | null>(null);
   const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsLoadingAction, setRecommendationsLoadingAction] = useState<'recommend' | 'explore' | null>(null);
   const [recommendationsError, setRecommendationsError] = useState('');
+  const [mealMarks, setMealMarks] = useState<MealRecommendationMark[]>([]);
+  const [marksLoading, setMarksLoading] = useState(false);
+  const [marksError, setMarksError] = useState('');
+  const [markingItemId, setMarkingItemId] = useState<string | null>(null);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [onboardingError, setOnboardingError] = useState('');
+  const [onboardingCandidates, setOnboardingCandidates] = useState<MealRecommendationOnboardingCandidate[]>([]);
   if (!activeFoodSelection || !nickname) return null;
 
   const selection = activeFoodSelection;
@@ -815,6 +922,10 @@ export default function FoodSelectionActiveView() {
           .map((item) => [item.id, item.itemNumber as string]),
       ),
     [menuItems],
+  );
+  const mealMarksByItemId = useMemo(
+    () => new Map(mealMarks.map((mark) => [mark.itemId, mark])),
+    [mealMarks],
   );
   const totalPrice = useMemo(
     () => selection.orders.reduce((sum, order) => {
@@ -875,6 +986,66 @@ export default function FoodSelectionActiveView() {
       cancelled = true;
     };
   }, [nickname]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadMarks = async () => {
+      setMarksLoading(true);
+      setMarksError('');
+      try {
+        const result = await api.fetchMealRecommendationMarks(selection.id);
+        if (cancelled) {
+          return;
+        }
+        setMealMarks(result.marks);
+      } catch (err) {
+        if (cancelled) {
+          return;
+        }
+        setMarksError((err as Error).message);
+      } finally {
+        if (!cancelled) {
+          setMarksLoading(false);
+        }
+      }
+    };
+    void loadMarks();
+    return () => {
+      cancelled = true;
+    };
+  }, [selection.id]);
+
+  useEffect(() => {
+    if (!onboardingOpen) {
+      return;
+    }
+
+    let cancelled = false;
+    const loadOnboardingCandidates = async () => {
+      setOnboardingLoading(true);
+      setOnboardingError('');
+      try {
+        const result = await api.fetchMealRecommendationOnboardingCandidates();
+        if (cancelled) {
+          return;
+        }
+        setOnboardingCandidates(result.candidates);
+      } catch (err) {
+        if (cancelled) {
+          return;
+        }
+        setOnboardingError((err as Error).message);
+      } finally {
+        if (!cancelled) {
+          setOnboardingLoading(false);
+        }
+      }
+    };
+    void loadOnboardingCandidates();
+    return () => {
+      cancelled = true;
+    };
+  }, [onboardingOpen]);
 
   const handleFinishNow = async (): Promise<boolean> => {
     const confirmed = window.confirm('Confirm completion?');
@@ -946,6 +1117,7 @@ export default function FoodSelectionActiveView() {
   };
 
   const handleRecommendMeal = async () => {
+    setRecommendationsLoadingAction('recommend');
     setRecommendationsLoading(true);
     setRecommendationsError('');
     try {
@@ -955,7 +1127,66 @@ export default function FoodSelectionActiveView() {
       setRecommendationsError((err as Error).message);
     } finally {
       setRecommendationsLoading(false);
+      setRecommendationsLoadingAction(null);
     }
+  };
+
+  const handleExploreMeal = async () => {
+    setRecommendationsLoadingAction('explore');
+    setRecommendationsLoading(true);
+    setRecommendationsError('');
+    try {
+      const result = await api.exploreMeal(selection.id);
+      setRecommendations(result);
+    } catch (err) {
+      setRecommendationsError((err as Error).message);
+    } finally {
+      setRecommendationsLoading(false);
+      setRecommendationsLoadingAction(null);
+    }
+  };
+
+  const handleToggleMealMark = async (
+    itemId: string,
+    sentiment: MealAnticipatedLikeSentiment,
+  ) => {
+    const current = mealMarksByItemId.get(itemId);
+    setMarkingItemId(itemId);
+    setMarksError('');
+    try {
+      if (current?.sentiment === sentiment) {
+        await api.deleteMealRecommendationMark(selection.id, itemId);
+        setMealMarks((previous) => previous.filter((mark) => mark.itemId !== itemId));
+      } else {
+        const result = await api.upsertMealRecommendationMark(selection.id, itemId, sentiment);
+        setMealMarks((previous) => [
+          ...previous.filter((mark) => mark.itemId !== itemId),
+          {
+            itemId,
+            itemIdentityKey: result.itemIdentityKey,
+            sentiment: result.sentiment,
+          },
+        ]);
+      }
+
+      if (onboardingOpen) {
+        const refreshed = await api.fetchMealRecommendationOnboardingCandidates();
+        setOnboardingCandidates(refreshed.candidates);
+      }
+    } catch (err) {
+      setMarksError((err as Error).message);
+    } finally {
+      setMarkingItemId(null);
+    }
+  };
+
+  const handleOpenOnboarding = () => {
+    setOnboardingOpen(true);
+  };
+
+  const handleCloseOnboarding = () => {
+    setOnboardingOpen(false);
+    setOnboardingError('');
   };
 
   const timerOptions = Array.from({ length: 24 }, (_, index) => (index + 1) * 5);
@@ -993,6 +1224,10 @@ export default function FoodSelectionActiveView() {
             existingOrders={myOrders.map((o) => ({ id: o.id, itemId: o.itemId, itemName: o.itemName, notes: o.notes }))}
             itemWarningsById={itemWarningsById}
             preferences={preferences}
+            mealMarksByItemId={mealMarksByItemId}
+            marksLoading={marksLoading}
+            markingItemId={markingItemId}
+            onToggleMealMark={handleToggleMealMark}
           />
         </div>
 
@@ -1012,8 +1247,11 @@ export default function FoodSelectionActiveView() {
           <MealRecommendationsPanel
             recommendations={recommendations}
             recommendationsLoading={recommendationsLoading}
+            recommendationsLoadingAction={recommendationsLoadingAction}
             recommendationsError={recommendationsError}
             onRecommendMeal={() => void handleRecommendMeal()}
+            onExploreMeal={() => void handleExploreMeal()}
+            onOpenOnboarding={handleOpenOnboarding}
           />
           <MissingOrdersPanel
             votersWithoutOrder={votersWithoutOrder}
@@ -1028,7 +1266,19 @@ export default function FoodSelectionActiveView() {
         </div>
       </div>
 
+      <MealOnboardingDialog
+        open={onboardingOpen}
+        loading={onboardingLoading}
+        error={onboardingError}
+        candidates={onboardingCandidates}
+        onClose={handleCloseOnboarding}
+        onMarkCandidate={async (itemId, sentiment) => {
+          await handleToggleMealMark(itemId, sentiment);
+        }}
+      />
+
       {preferencesError && <p className="mt-4 text-sm text-danger-fg">{preferencesError}</p>}
+      {marksError && <p className="mt-4 text-sm text-danger-fg">{marksError}</p>}
       {error && <p className="mt-4 text-sm text-danger-fg">{error}</p>}
     </div>
   );

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Settings from '../../src/client/pages/Settings.js';
 
@@ -68,8 +69,8 @@ describe('Settings', () => {
     await waitFor(() => {
       expect(mockGetUserPreferences).toHaveBeenCalledWith('alice@example.com');
     });
-    expect(await screen.findByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts');
-    expect(screen.getByLabelText(/less preferred ingredients/i)).toHaveValue('mushrooms');
+    expect(await screen.findByRole('textbox', { name: /ingredients to avoid/i })).toHaveValue('peanuts');
+    expect(screen.getByRole('textbox', { name: /less preferred ingredients/i })).toHaveValue('mushrooms');
   });
 
   it('shows app build metadata for support diagnostics', async () => {
@@ -86,8 +87,8 @@ describe('Settings', () => {
     const user = userEvent.setup();
     render(<Settings />);
 
-    const allergies = await screen.findByLabelText(/ingredients to avoid/i);
-    const dislikes = screen.getByLabelText(/less preferred ingredients/i);
+    const allergies = await screen.findByRole('textbox', { name: /ingredients to avoid/i });
+    const dislikes = screen.getByRole('textbox', { name: /less preferred ingredients/i });
     await user.clear(allergies);
     await user.type(allergies, 'peanuts, shrimp');
     await user.clear(dislikes);
@@ -101,8 +102,37 @@ describe('Settings', () => {
     );
     expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts, shrimp');
+      expect(screen.getByRole('textbox', { name: /ingredients to avoid/i })).toHaveValue('peanuts, shrimp');
     });
+  });
+
+  it('saves structured ingredient selections alongside free-text fallback', async () => {
+    const user = userEvent.setup();
+    render(<Settings />);
+
+    const avoidQuickPicks = await screen.findByRole('group', {
+      name: /quick picks for ingredients to avoid/i,
+    });
+    const dislikeQuickPicks = screen.getByRole('group', {
+      name: /quick picks for less preferred ingredients/i,
+    });
+    const allergies = screen.getByRole('textbox', { name: /ingredients to avoid/i });
+    const dislikes = screen.getByRole('textbox', { name: /less preferred ingredients/i });
+    await user.clear(allergies);
+    await user.clear(dislikes);
+    await user.click(within(avoidQuickPicks).getByRole('button', { name: /peanut/i }));
+    await user.click(within(dislikeQuickPicks).getByRole('button', { name: /mushroom/i }));
+
+    await user.type(allergies, ', smoked salmon');
+    await user.type(dislikes, ', truffle oil');
+    await user.click(screen.getByRole('button', { name: /save settings/i }));
+
+    expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
+      'alice@example.com',
+      ['peanut', 'smoked salmon'],
+      ['mushroom', 'truffle oil'],
+    );
+    expect(await screen.findByText(/settings saved/i)).toBeInTheDocument();
   });
 
   it('stages office changes until settings are saved', async () => {
@@ -118,7 +148,7 @@ describe('Settings', () => {
     });
     render(<Settings />);
 
-    await screen.findByLabelText(/ingredients to avoid/i);
+    await screen.findByRole('textbox', { name: /ingredients to avoid/i });
     await user.selectOptions(screen.getByLabelText(/office location/i), 'office-2');
 
     expect(mockSetSelectedOfficeLocationId).not.toHaveBeenCalled();
@@ -141,12 +171,12 @@ describe('Settings', () => {
     render(<Settings />);
 
     await user.selectOptions(screen.getByLabelText(/office location/i), 'office-2');
-    await user.clear(await screen.findByLabelText(/ingredients to avoid/i));
-    await user.type(screen.getByLabelText(/ingredients to avoid/i), 'shrimp');
+    await user.clear(await screen.findByRole('textbox', { name: /ingredients to avoid/i }));
+    await user.type(screen.getByRole('textbox', { name: /ingredients to avoid/i }), 'shrimp');
     await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(screen.getByLabelText(/office location/i)).toHaveValue('office-1');
-    expect(screen.getByLabelText(/ingredients to avoid/i)).toHaveValue('peanuts');
+    expect(screen.getByRole('textbox', { name: /ingredients to avoid/i })).toHaveValue('peanuts');
     expect(mockSetSelectedOfficeLocationId).not.toHaveBeenCalled();
     expect(mockUpdateUserPreferences).not.toHaveBeenCalled();
   });

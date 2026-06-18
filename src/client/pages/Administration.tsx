@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { withBasePath } from '../config.js';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
 import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
+import RecommenderAdminPanel from '../components/RecommenderAdminPanel.js';
 import {
   LOCAL_PASSWORD_MIN_LENGTH,
   LOCAL_PASSWORD_MAX_LENGTH,
@@ -119,12 +120,7 @@ export default function Administration() {
   const [officeNameDrafts, setOfficeNameDrafts] = useState<Record<string, string>>({});
   const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<Record<string, OfficeSettingsDraft>>({});
   const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
-  const [createdLocalUser, setCreatedLocalUser] = useState<{
-    email: string;
-    password: string;
-    generated: boolean;
-  } | null>(null);
-
+  const [createdLocalUser, setCreatedLocalUser] = useState<{ email: string; password: string; generated: boolean } | null>(null);
   useEffect(() => {
     void (async () => {
       setLoading(true);
@@ -616,6 +612,8 @@ export default function Administration() {
       </div>
 
       <div className="space-y-4">
+          <RecommenderAdminPanel officeLocations={config.officeLocations} />
+
           <div className="rounded border border-border bg-surface-muted p-4">
             <h2 className="mb-3 text-sm font-semibold text-fg">Pending approvals</h2>
             {config.pendingApprovals.length === 0 ? (

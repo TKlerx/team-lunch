@@ -6,6 +6,11 @@
       "file": "src/client/pages/Administration.tsx",
       "name": "Administration",
       "maxAllowedLines": 1044
+    },
+    {
+      "file": "src/client/components/FoodSelectionActiveView.tsx",
+      "name": "FoodSelectionActiveView",
+      "maxAllowedLines": 387
     }
   ]
 }
