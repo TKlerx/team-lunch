@@ -137,6 +137,24 @@ describe('pre-vote recommendation service', () => {
     expect(Array.isArray(impression?.itemsJson)).toBe(true);
   });
 
+  it('keeps side dishes out of pre-vote recommendations', async () => {
+    const office = await ensureDefaultOfficeLocation();
+    const curryMenu = await createMenuWithItems(office.id, 'Curry House', [
+      'Garlic Naan',
+      'Chicken Curry',
+      'Paneer Tikka',
+    ]);
+    const poll = await pollService.startPoll('Lunch poll', 60, [], office.id, ACTOR.actorKey);
+
+    await seedHistoricalOrder(office.id, poll.id, curryMenu.id, curryMenu.name, 'Garlic Naan', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, curryMenu.id, curryMenu.name, 'Chicken Curry', { rating: 4 });
+
+    const result = await generatePreVoteRecommendations(office.id, ACTOR, { pollId: poll.id, limit: 5 });
+
+    expect(result.items.map((item) => item.itemName)).not.toContain('Garlic Naan');
+    expect(result.items.map((item) => item.itemName)).toEqual(['Chicken Curry', 'Paneer Tikka']);
+  });
+
   it('falls back to the current office menus when no poll is active and keeps office scope', async () => {
     const office = await ensureDefaultOfficeLocation();
     const otherOffice = await createOfficeLocation('Other Office');
