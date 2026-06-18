@@ -111,10 +111,10 @@ describe('FoodSelectionCompletedView', () => {
   it('shows all orders with nickname, item, and notes', () => {
     renderView();
     expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('12 Margherita')).toBeInTheDocument();
-    expect(screen.getByText('(extra cheese)')).toBeInTheDocument();
+    expect(screen.getByText('12 Margherita')).toHaveAttribute('title', '12 Margherita');
+    expect(screen.getByText('(extra cheese)')).toHaveAttribute('title', 'extra cheese');
     expect(screen.getByText('Bob')).toBeInTheDocument();
-    expect(screen.getByText('21 Pepperoni')).toBeInTheDocument();
+    expect(screen.getByText('21 Pepperoni')).toHaveAttribute('title', '21 Pepperoni');
     expect(screen.getByText('€9.50')).toBeInTheDocument();
     expect(screen.getByText('€11.00')).toBeInTheDocument();
     expect(screen.getByText('Total: €20.50')).toBeInTheDocument();

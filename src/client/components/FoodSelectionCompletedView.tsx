@@ -180,80 +180,81 @@ export default function FoodSelectionCompletedView({
           <p className="mb-4 text-center text-sm italic text-fg-muted">No orders were placed</p>
         ) : (
           <div className="mb-6 max-h-[55vh] space-y-1 overflow-y-auto pr-1">
-            {selection.orders.map((o) => (
-              <div key={o.id} className="flex items-baseline justify-between gap-3 rounded bg-surface-muted px-3 py-2">
-                <div className="min-w-0 flex-1">
-                  <div className="flex min-w-0 items-baseline gap-2">
-                    <span className="text-sm font-medium text-fg">{o.nickname}</span>
-                    <span className="text-sm text-fg-muted">&middot;</span>
-                    <span className="truncate text-sm text-fg">
-                      {(() => {
-                        const itemNumber = resolveOrderItemNumber(
-                          o,
-                          itemNumberByItemId,
-                          itemNumberByItemName,
-                        );
-                        return itemNumber ? `${itemNumber} ${o.itemName}` : o.itemName;
-                      })()}
-                    </span>
-                    {o.notes && <span className="truncate text-xs text-fg-muted">({o.notes})</span>}
+            {selection.orders.map((o) => {
+              const itemNumber = resolveOrderItemNumber(o, itemNumberByItemId, itemNumberByItemName);
+              const displayName = itemNumber ? `${itemNumber} ${o.itemName}` : o.itemName;
+              return (
+                <div key={o.id} className="flex items-baseline justify-between gap-3 rounded bg-surface-muted px-3 py-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 items-baseline gap-2">
+                      <span className="text-sm font-medium text-fg">{o.nickname}</span>
+                      <span className="text-sm text-fg-muted">&middot;</span>
+                      <span className="cursor-help truncate text-sm text-fg hover:text-accent-fg" title={displayName}>
+                        {displayName}
+                      </span>
+                      {o.notes && (
+                        <span className="cursor-help truncate text-xs text-fg-muted hover:text-accent-fg" title={o.notes}>
+                          ({o.notes})
+                        </span>
+                      )}
+                    </div>
+                    {isOrderOwnedByCurrentUser(o) && (
+                      <div className="mt-1 flex items-center gap-2">
+                        <select
+                          value={ratingValues[o.id] ?? o.rating ?? ''}
+                          onChange={(e) => {
+                            const parsed = Number.parseInt(e.target.value, 10);
+                            setRatingValues((prev) => ({ ...prev, [o.id]: Number.isNaN(parsed) ? 0 : parsed }));
+                          }}
+                          className="rounded border border-border px-2 py-1 text-xs"
+                          aria-label={`Rating for ${o.itemName}`}
+                        >
+                          <option value="">Rate meal</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                        <input
+                          type="text"
+                          value={feedbackValues[o.id] ?? o.feedbackComment ?? ''}
+                          onChange={(e) => {
+                            setFeedbackValues((prev) => ({ ...prev, [o.id]: e.target.value }));
+                          }}
+                          className="min-w-0 flex-1 rounded border border-border px-2 py-1 text-xs"
+                          maxLength={300}
+                          placeholder="Remark about food or delivery"
+                          aria-label={`Feedback remark for ${o.itemName}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => void handleSaveRating(o.id, o.rating)}
+                          disabled={savingRatingId === o.id}
+                          className="rounded border border-accent bg-accent-soft px-2 py-1 text-xs font-medium text-accent-fg hover:bg-accent-soft disabled:opacity-50"
+                        >
+                          Save feedback
+                        </button>
+                      </div>
+                    )}
+                    {isOrderOwnedByCurrentUser(o) && (o.rating || o.feedbackComment) ? (
+                      <div className="mt-1 text-xs text-fg-muted">
+                        {o.rating ? <span>Current rating: {o.rating}/5</span> : null}
+                        {o.feedbackComment ? (
+                          <span className={o.rating ? 'ml-2' : ''}>Remark: {o.feedbackComment}</span>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
-                  {isOrderOwnedByCurrentUser(o) && (
-                    <div className="mt-1 flex items-center gap-2">
-                      <select
-                        value={ratingValues[o.id] ?? o.rating ?? ''}
-                        onChange={(e) => {
-                          const parsed = Number.parseInt(e.target.value, 10);
-                          setRatingValues((prev) => ({ ...prev, [o.id]: Number.isNaN(parsed) ? 0 : parsed }));
-                        }}
-                        className="rounded border border-border px-2 py-1 text-xs"
-                        aria-label={`Rating for ${o.itemName}`}
-                      >
-                        <option value="">Rate meal</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </select>
-                      <input
-                        type="text"
-                        value={feedbackValues[o.id] ?? o.feedbackComment ?? ''}
-                        onChange={(e) => {
-                          setFeedbackValues((prev) => ({ ...prev, [o.id]: e.target.value }));
-                        }}
-                        className="min-w-0 flex-1 rounded border border-border px-2 py-1 text-xs"
-                        maxLength={300}
-                        placeholder="Remark about food or delivery"
-                        aria-label={`Feedback remark for ${o.itemName}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => void handleSaveRating(o.id, o.rating)}
-                        disabled={savingRatingId === o.id}
-                        className="rounded border border-accent bg-accent-soft px-2 py-1 text-xs font-medium text-accent-fg hover:bg-accent-soft disabled:opacity-50"
-                      >
-                        Save feedback
-                      </button>
-                    </div>
-                  )}
-                  {isOrderOwnedByCurrentUser(o) && (o.rating || o.feedbackComment) ? (
-                    <div className="mt-1 text-xs text-fg-muted">
-                      {o.rating ? <span>Current rating: {o.rating}/5</span> : null}
-                      {o.feedbackComment ? (
-                        <span className={o.rating ? 'ml-2' : ''}>Remark: {o.feedbackComment}</span>
-                      ) : null}
-                    </div>
-                  ) : null}
+                  <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+                    {(() => {
+                      const resolvedPrice = resolveOrderPrice(o, priceByItemId, priceByItemName);
+                      return resolvedPrice === null ? '-' : formatPrice(resolvedPrice);
+                    })()}
+                  </span>
                 </div>
-                <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
-                  {(() => {
-                    const resolvedPrice = resolveOrderPrice(o, priceByItemId, priceByItemName);
-                    return resolvedPrice === null ? '-' : formatPrice(resolvedPrice);
-                  })()}
-                </span>
-              </div>
-            ))}
+              );
+            })}
             {ratingError && <p className="mt-1 text-xs text-danger-fg">{ratingError}</p>}
             <div className="mt-2 flex justify-end border-t border-border pt-2">
               <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
