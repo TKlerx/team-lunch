@@ -191,4 +191,30 @@ describe('Meal recommendation explore service', () => {
     expect(impression?.source).toBe('explore');
     expect(Array.isArray(impression?.itemsJson)).toBe(true);
   });
+
+  it('uses the actor exploration rate in the persisted explore decision summary', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await prisma.userPreference.create({
+      data: {
+        userKey: ACTOR.actorKey,
+        allergiesJson: [],
+        dislikesJson: [],
+        explorationRate: 0.9,
+      },
+    });
+
+    const result = await generateExploreRecommendations(selection.id, office.id, ACTOR, 'seed-rate');
+
+    const impression = await prisma.mealRecommendationImpression.findUnique({
+      where: { id: result.impressionId },
+    });
+    expect(impression?.inputSummaryJson).toMatchObject({
+      explorationRate: 0.9,
+    });
+  });
 });

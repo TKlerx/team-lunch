@@ -29,6 +29,7 @@ const EMPTY_PREFERENCES: UserPreferences = {
   userKey: "",
   allergies: [],
   dislikes: [],
+  explorationRate: 0.5,
   updatedAt: new Date(0).toISOString(),
 };
 

@@ -81,6 +81,7 @@ describe('User preferences routes (integration)', () => {
     expect(res.body.userKey).toBe('alice@example.com');
     expect(res.body.allergies).toEqual([]);
     expect(res.body.dislikes).toEqual([]);
+    expect(res.body.explorationRate).toBe(0.5);
   });
 
   it('saves and returns preferences for the signed-in user', async () => {
@@ -92,12 +93,14 @@ describe('User preferences routes (integration)', () => {
         nickname: 'ignored@example.com',
         allergies: ['peanuts', 'shrimp', 'peanuts'],
         dislikes: ['onions'],
+        explorationRate: 0.85,
       })
       .expect(200);
 
     expect(save.body.userKey).toBe('alice@example.com');
     expect(save.body.allergies).toEqual(['peanuts', 'shrimp']);
     expect(save.body.dislikes).toEqual(['onions']);
+    expect(save.body.explorationRate).toBe(0.85);
 
     const fetch = await supertest(app.server)
       .get('/api/user/preferences')
@@ -107,6 +110,7 @@ describe('User preferences routes (integration)', () => {
 
     expect(fetch.body.allergies).toEqual(['peanuts', 'shrimp']);
     expect(fetch.body.dislikes).toEqual(['onions']);
+    expect(fetch.body.explorationRate).toBe(0.85);
   });
 
   it('rejects invalid payload types', async () => {
@@ -122,6 +126,22 @@ describe('User preferences routes (integration)', () => {
       .expect(400);
 
     expect(res.body.error).toContain('allergies must be an array');
+  });
+
+  it('rejects invalid exploration rate values', async () => {
+    const cookie = await authCookie();
+    const res = await supertest(app.server)
+      .put('/api/user/preferences')
+      .set('Cookie', cookie)
+      .send({
+        nickname: 'alice@example.com',
+        allergies: [],
+        dislikes: [],
+        explorationRate: 1.5,
+      })
+      .expect(400);
+
+    expect(res.body.error).toContain('explorationRate must be a number from 0 to 1');
   });
 
   it('returns empty menu-default preferences for the signed-in user', async () => {

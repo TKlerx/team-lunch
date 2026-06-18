@@ -31,6 +31,7 @@ const HISTORY_LOOKBACK_LIMIT = 300;
 const EPSILON_NO_HISTORY = 1;
 const EPSILON_SPARSE_HISTORY = 0.3;
 const EPSILON_ESTABLISHED_HISTORY = 0.12;
+const DEFAULT_EXPLORATION_RATE = 0.5;
 const NOVELTY_BONUS_PER_UNSEEN_FEATURE = 18;
 const SAMPLING_SCALE = 40;
 const UNCERTAINTY_SCALE = 8;
@@ -42,6 +43,17 @@ function normalizeForMatch(value: string): string {
 function normalizePreferenceTerm(term: string): string {
   const normalized = normalizeForMatch(term);
   return normalized.startsWith('ingredient:') ? normalized.slice('ingredient:'.length) : normalized;
+}
+
+function normalizeExplorationRate(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_EXPLORATION_RATE;
+  }
+  return Math.max(0, Math.min(1, value));
+}
+
+function scaleForExplorationRate(explorationRate: number): number {
+  return 0.5 + explorationRate;
 }
 
 function findMatchingTerm(haystack: string, terms: string[]): string | null {
@@ -296,6 +308,7 @@ function scoreExploreItem(
   item: { id: string; name: string; description: string | null },
   features: string[],
   counts: Map<string, FeatureCounts>,
+  explorationRate: number,
   rngSeed: SeededRngSeed,
 ): ExploreMenuItem {
   const rng = createSeededRng(rngSeed);
@@ -329,10 +342,11 @@ function scoreExploreItem(
 
   const sampledAverage = sampledTotal / featureEvaluations.length;
   const uncertaintyAverage = uncertaintyTotal / featureEvaluations.length;
+  const noveltyBonus = NOVELTY_BONUS_PER_UNSEEN_FEATURE * scaleForExplorationRate(explorationRate);
   const score =
     50 +
     (sampledAverage - 0.5) * SAMPLING_SCALE +
-    unseenCount * NOVELTY_BONUS_PER_UNSEEN_FEATURE +
+    unseenCount * noveltyBonus +
     uncertaintyAverage * UNCERTAINTY_SCALE;
 
   return {
@@ -365,16 +379,21 @@ export async function generateExploreRecommendations(
   const dislikes = Array.isArray(userPreference?.dislikesJson)
     ? (userPreference!.dislikesJson as unknown[]).filter((entry): entry is string => typeof entry === 'string')
     : [];
+  const explorationRate = normalizeExplorationRate(userPreference?.explorationRate);
 
   const featureCounts = buildFeatureCounts(history, anticipatedLikes);
   const observedFeatureCount = countObservedFeatures(featureCounts);
   const exploreRng = createSeededRng(seed);
-  const epsilon =
+  const baseEpsilon =
     observedFeatureCount === 0
       ? EPSILON_NO_HISTORY
       : observedFeatureCount < 5
         ? EPSILON_SPARSE_HISTORY
         : EPSILON_ESTABLISHED_HISTORY;
+  const epsilon =
+    observedFeatureCount === 0
+      ? baseEpsilon
+      : Math.max(0.02, Math.min(0.95, baseEpsilon * scaleForExplorationRate(explorationRate)));
   const useFallback = observedFeatureCount === 0 || exploreRng.next() < epsilon;
 
   const menuItemFeatures = await Promise.all(
@@ -412,14 +431,17 @@ export async function generateExploreRecommendations(
         itemId: item.id,
         itemName: item.name,
         description: item.description,
-        score: 50 + unseenCount * NOVELTY_BONUS_PER_UNSEEN_FEATURE + exploreRng.nextBetween(0, 5),
+        score:
+          50
+          + unseenCount * NOVELTY_BONUS_PER_UNSEEN_FEATURE * scaleForExplorationRate(explorationRate)
+          + exploreRng.nextBetween(0, 5),
         signals: new Set(),
         reason: buildExploreReason([], [], unseenCount, observedFeatureCount),
       };
     });
   } else {
     scoredItems = menuItems.map((item, index) =>
-      scoreExploreItem(item, menuItemFeatures[index] ?? [], featureCounts, `${seed}:${item.id}`),
+      scoreExploreItem(item, menuItemFeatures[index] ?? [], featureCounts, explorationRate, `${seed}:${item.id}`),
     );
   }
 
@@ -436,6 +458,7 @@ export async function generateExploreRecommendations(
     anticipatedLikeCount: anticipatedLikes.length,
     observedFeatureCount,
     epsilon,
+    explorationRate,
     fallbackUsed: useFallback,
     allergyCount: allergies.length,
     dislikeCount: dislikes.length,
