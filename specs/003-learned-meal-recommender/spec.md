@@ -285,7 +285,7 @@ preferences.
 - **FR-008**: System MUST persist item features so they are computed once at import rather than recomputed on every recommendation, while keeping live keyword extraction as a fallback for items lacking stored features.
 - **FR-009**: System MUST maintain a stable identity for menu items across re-imports and renames so a user's learned preferences are not reset by menu changes.
 - **FR-010**: System MUST provide an offline evaluation that compares the safe learned path against the deterministic baseline on held-out historical data using top-3 hit rate (whether the actually-ordered item appears in the shown top 3).
-- **FR-011**: System MUST prevent the safe learned path from being enabled for an office unless its top-3 hit rate exceeds the baseline's by at least 5 percentage points for that office.
+- **FR-011**: System MUST allow admins to pilot a trained safe learned model before enough office evaluation data exists, but the recommendation response MUST warn users that unevaluated suggestions may be premature. Once an office has an evaluation for that model, the system MUST prevent enabling it if its top-3 hit rate does not exceed the baseline's by at least 5 percentage points.
 - **FR-012**: System MUST let an administrator enable or disable the learned model per office, defaulting to off (baseline) until explicitly enabled.
 - **FR-013**: System MUST keep all recommendation requests office-scoped and personal, matching the access and office-resolution rules of the existing recommendation feature.
 - **FR-014**: System MUST exclude personal identifiers (names, emails, actor keys, order notes, feedback remarks) from any payload sent to an external AI tagging or recommendation service, matching the existing feature's privacy rules.

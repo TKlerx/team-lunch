@@ -17,8 +17,10 @@ How the pieces fit and how to exercise them locally. Builds on feature 002
 - **Learn from everything already captured.** Orders (implicit), ratings
   (explicit), impression non-clicks (weak negative), and the new anticipated-like
   marks. No new feedback prompt.
-- **Prove before rollout.** A model is only enabled for an office when offline
-  top-3 hit rate beats the baseline by ≥5 points there. Admin flips it; revert is
+- **Pilot before proof, warn until proven.** Admins may enable a trained model
+  before an office has enough evaluation data; learned recommendations then warn
+  users that the model may be premature. Once evaluation data exists, enabling is
+  blocked if top-3 hit rate does not beat the baseline by ≥5 points. Revert is
   instant (office → `baseline`).
 
 ## Local flow
@@ -32,9 +34,10 @@ How the pieces fit and how to exercise them locally. Builds on feature 002
    row. Training is deterministic (seeded) for reproducible tests.
 4. **Evaluate** → `POST /api/admin/recommender/evaluate` replays impressions per
    office and writes `model_evaluation_results` (baseline vs model top-3 hit rate).
-5. **Enable** → `PUT …/offices/:id/mode {safeMode:"learned"}` (blocked unless the
-   office's margin ≥5pt). Now `POST …/recommendations` returns `source:
-   "safe_learned"`.
+5. **Enable** → `PUT …/offices/:id/mode {safeMode:"learned"}`. If no office
+   evaluation exists yet, `POST …/recommendations` returns `source:
+   "safe_learned"` with a premature-model warning. If evaluation exists, the
+   office's margin must be ≥5pt.
 6. **Explore** → `POST …/recommendations/explore` returns labelled exploratory
    items differing from the safe ranking.
 7. **Onboard a new user** → `GET …/onboarding/candidates` returns a flavor-diverse
@@ -51,8 +54,9 @@ How the pieces fit and how to exercise them locally. Builds on feature 002
 - Anticipated-like seeds cold-start; a later real rating supersedes the mark.
 - Stable identity: re-import changing item records keeps a user's signal.
 - Tagging: keyword path offline; AI gap-fill mocked; untagged items don't block.
-- Eval: top-3 hit rate computed per office on a held-out split; enable blocked
-  below margin; revert restores baseline instantly.
+- Eval: top-3 hit rate computed per office on a held-out split; unevaluated
+  pilots warn users, evaluated models are blocked below margin, and revert
+  restores baseline instantly.
 - Privacy: payloads to the AI provider contain no identifiers.
 
 ## Known limitations (v1)

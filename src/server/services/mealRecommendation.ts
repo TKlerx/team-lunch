@@ -86,6 +86,8 @@ const TASTE_PROFILE_MIN_ORDERS = 4;
 const LEARNED_RECENCY_WINDOW_DAYS = 21;
 const LEARNED_RECENCY_PENALTY_MAX = 10;
 const LEARNED_REPEAT_PENALTY = 100;
+const UNEVALUATED_LEARNED_MODEL_WARNING =
+  'This learned recommendation model has not been evaluated for your office yet, so these suggestions may be premature.';
 
 const DISLIKE_DEMOTION_FACTOR = 0.5;
 
@@ -592,6 +594,32 @@ export async function persistMealRecommendationImpression(
   return { impressionId: impression.id, recommendedAt: recommendedAt.toISOString() };
 }
 
+async function getLearnedModelEvaluationWarning(
+  officeLocationId: string,
+  recommenderModelId: string | null,
+): Promise<string | null> {
+  if (!recommenderModelId) {
+    return null;
+  }
+
+  const latestResult = await prisma.modelEvaluationResult.findFirst({
+    where: { officeLocationId, recommenderModelId },
+    orderBy: { evaluatedAt: 'desc' },
+    select: { marginPoints: true },
+  });
+
+  if (!latestResult) {
+    return UNEVALUATED_LEARNED_MODEL_WARNING;
+  }
+
+  const margin = Number(latestResult.marginPoints);
+  if (!Number.isFinite(margin) || margin < 5) {
+    return 'This learned recommendation model has not beaten the baseline for your office yet, so these suggestions may be experimental.';
+  }
+
+  return null;
+}
+
 export async function generateRecommendations(
   selectionId: string,
   officeLocationId: string,
@@ -718,6 +746,12 @@ export async function generateRecommendations(
   const items = rankItems(constrainedItems).slice(0, recommendationCount);
 
   const warnings: string[] = [];
+  if (source === 'safe_learned') {
+    const learnedWarning = await getLearnedModelEvaluationWarning(officeLocationId, learnedModelId);
+    if (learnedWarning) {
+      warnings.push(learnedWarning);
+    }
+  }
 
   if (useAi) {
     if (!isAiRecommendationConfigured()) {

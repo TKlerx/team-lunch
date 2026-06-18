@@ -45,14 +45,14 @@ async function getOrCreateSetting(officeLocationId: string) {
   });
 }
 
-async function assertModelBeatsBaseline(officeLocationId: string, modelId: string): Promise<void> {
+async function assertModelHasNotFailedBaseline(officeLocationId: string, modelId: string): Promise<void> {
   const latestResult = await prisma.modelEvaluationResult.findFirst({
     where: { officeLocationId, recommenderModelId: modelId },
     orderBy: { evaluatedAt: 'desc' },
   });
 
   if (!latestResult) {
-    throw serviceError('Model has not been evaluated for this office', 409);
+    return;
   }
 
   const margin = Number(latestResult.marginPoints);
@@ -107,7 +107,7 @@ export async function setOfficeRecommenderSafeMode(
     throw serviceError('Model not found', 404);
   }
 
-  await assertModelBeatsBaseline(officeLocationId, loaded.id ? loaded.id : String(candidateVersion));
+  await assertModelHasNotFailedBaseline(officeLocationId, loaded.id ? loaded.id : String(candidateVersion));
 
   const updated = await prisma.officeRecommenderSetting.update({
     where: { officeLocationId },
