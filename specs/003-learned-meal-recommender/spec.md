@@ -268,7 +268,7 @@ preferences.
 - A user has an allergy the FM would otherwise rank highly (e.g. learned love of peanut dishes) → the allergy hard-excludes the item regardless of learned score; the model never overrides safety.
 - An allergy/dislike term is outside the ingredient taxonomy (free-text) → substring matching against item text still applies, so the constraint is not silently dropped.
 - A user has one strongly-rated favorite that recurs on the menu → the safe path must not recommend that identical dish every single time (apply diversity/recency), while still respecting the strong preference.
-- A user regularly orders/rates a shared side dish (for example extra naan) → the side dish may still contribute flavor signal, but it must not be surfaced as a primary safe, explore, or pre-vote recommendation candidate unless the whole menu only contains side-dish candidates.
+- A user regularly orders/rates a shared side dish or drink (for example extra naan or mango lassi) → that item may still contribute flavor signal, but it must not be surfaced as a primary safe, explore, or pre-vote recommendation candidate unless the whole menu only contains non-meal candidates.
 - The user asks for pre-vote guidance before any poll exists → rank across current office menus with clear "pre-vote" labelling; never cross into another office's menus.
 - The active poll contains candidate menus with no tagged items → pre-vote recommendations fall back to deterministic/current-menu signals for those items and surface admin feature-coverage warnings separately.
 
@@ -311,12 +311,12 @@ preferences.
 - **FR-033**: When no poll is active, the pre-vote cross-menu endpoint MAY rank items across all current menus in the user's office. It MUST remain office-scoped and MUST NOT use menus from other offices.
 - **FR-034**: Pre-vote recommendation impressions MUST be persisted separately from food-selection-bound impressions so later orders/ratings can be joined for learning/evaluation without inventing a fake food selection.
 - **FR-035**: System MUST let each user configure how many safe/explore ordering recommendations are shown, defaulting to 3 and bounded to 1–10 items.
-- **FR-036**: System MUST tag obvious side dishes with a course-level feature (for example `course:side`) and exclude those items from normal safe, explore, and pre-vote recommendation candidate lists while still allowing their order/rating history to inform learned flavor preferences. If filtering would remove every candidate, the endpoint MAY fall back to the unfiltered menu rather than returning no recommendations.
+- **FR-036**: System MUST tag obvious side dishes and drinks with course-level features (for example `course:side` and `course:drink`) and exclude those items from normal safe, explore, and pre-vote recommendation candidate lists while still allowing their order/rating history to inform learned flavor preferences. If filtering would remove every candidate, the endpoint MAY fall back to the unfiltered menu rather than returning no recommendations.
 
 ### Key Entities *(include if feature involves data)*
 
 - **Item Feature Set**: the ingredient/style tags associated with a menu item, with provenance (keyword vs AI tagged); basis for all feature-space reasoning.
-- **Course Feature**: a coarse item role tag such as `course:side` used for recommendation eligibility decisions separately from flavor learning.
+- **Course Feature**: a coarse item role tag such as `course:side` or `course:drink` used for recommendation eligibility decisions separately from flavor learning.
 - **Stable Item Identity**: a durable key linking item records that represent the same dish across menu re-imports/renames, so history and learning persist.
 - **User Preference Model**: a single shared learned model of flavor-feature importance conditioned on user and office context; pools non-identifying flavor signal across offices while producing per-user, office-scoped recommendations.
 - **Model Evaluation Result**: a per-office comparison of learned model vs baseline on historical data (relevance metric, sample size, timestamp) used to gate rollout.

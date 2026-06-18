@@ -46,8 +46,9 @@ const AZURE_SYSTEM_PROMPT =
 
 const AZURE_TAGGING_SYSTEM_PROMPT =
   'You assign canonical flavor feature tags to menu items. Use only strict JSON in this exact shape: ' +
-  '{"taggings":[{"itemName":"...","tags":["ingredient:...","style:..."]}]}. ' +
-  'Only return tags in ingredient:* or style:* format. If nothing fits, return an empty tags array.';
+  '{"taggings":[{"itemName":"...","tags":["ingredient:...","style:...","course:side"]}]}. ' +
+  'Return ingredient:* tags for ingredients, style:* tags for cuisine/preparation, and only course:side or course:drink for obvious side dishes or drinks. ' +
+  'If nothing fits, return an empty tags array.';
 
 let cachedConfig: AiRecommendationConfig | null | undefined;
 
@@ -115,12 +116,40 @@ async function parseAzureChatTaggings(response: Response): Promise<{ taggings?: 
   }
 }
 
+function buildAiHeaders(config: AiRecommendationConfig, isAzure: boolean): Record<string, string> {
+  return isAzure
+    ? { 'Content-Type': 'application/json', 'api-key': config.apiKey }
+    : { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` };
+}
+
+function buildExplanationRequestBody(
+  config: AiRecommendationConfig,
+  payload: AiRecommendationPayload,
+  isAzure: boolean,
+): string {
+  return JSON.stringify(isAzure
+    ? {
+        messages: [
+          { role: 'system', content: AZURE_SYSTEM_PROMPT },
+          { role: 'user', content: JSON.stringify(payload) },
+        ],
+        response_format: { type: 'json_object' },
+      }
+    : {
+        model: config.model,
+        items: payload.items,
+        preferences: payload.preferences,
+      });
+}
+
 function normalizeFeatureTag(tag: string): string {
   return tag.trim().toLowerCase();
 }
 
 function isConstrainedFeatureTag(tag: string): boolean {
-  return /^(ingredient|style):[a-z0-9][a-z0-9_-]*$/.test(tag);
+  return /^(ingredient|style):[a-z0-9][a-z0-9_-]*$/.test(tag) ||
+    tag === 'course:side' ||
+    tag === 'course:drink';
 }
 
 /**
@@ -218,24 +247,8 @@ export async function requestAiExplanations(
   try {
     const response = await getFetch()(config.endpoint, {
       method: 'POST',
-      headers: isAzure
-        ? { 'Content-Type': 'application/json', 'api-key': config.apiKey }
-        : { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-      body: JSON.stringify(
-        isAzure
-          ? {
-              messages: [
-                { role: 'system', content: AZURE_SYSTEM_PROMPT },
-                { role: 'user', content: JSON.stringify(payload) },
-              ],
-              response_format: { type: 'json_object' },
-            }
-          : {
-              model: config.model,
-              items: payload.items,
-              preferences: payload.preferences,
-            },
-      ),
+      headers: buildAiHeaders(config, isAzure),
+      body: buildExplanationRequestBody(config, payload, isAzure),
       signal: controller.signal,
     });
 
@@ -293,9 +306,7 @@ export async function requestAiFeatureTags(
   try {
     const response = await getFetch()(config.endpoint, {
       method: 'POST',
-      headers: isAzure
-        ? { 'Content-Type': 'application/json', 'api-key': config.apiKey }
-        : { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
+      headers: buildAiHeaders(config, isAzure),
       body: JSON.stringify(
         isAzure
           ? {

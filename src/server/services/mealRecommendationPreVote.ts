@@ -20,7 +20,7 @@ import {
   type ScoredItem,
   type ScoringContext,
 } from './mealRecommendation.js';
-import { buildTasteProfile, hasSideDishFeature, loadMenuItemFeatures } from './mealFeatures.js';
+import { buildTasteProfile, hasNonMealCourseFeature, loadMenuItemFeatures } from './mealFeatures.js';
 import {
   explainMealRecommendationModel,
   loadMealRecommendationModelForOffice,
@@ -188,7 +188,7 @@ async function filterSideDishPreVoteCandidates(
       name: item.itemName,
       description: item.description,
     });
-    if (!hasSideDishFeature(features)) {
+    if (!hasNonMealCourseFeature(features)) {
       filteredItems.push(item);
     }
   }

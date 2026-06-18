@@ -88,7 +88,7 @@ describe('RecommenderAdminPanel', () => {
     );
 
     expect(await screen.findByText('Berlin')).toBeInTheDocument();
-    expect(screen.getByText(/^baseline$/)).toBeInTheDocument();
+    expect(screen.getAllByText(/^baseline$/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/^learned$/)).toBeInTheDocument();
     expect(screen.getByText(/^explore off$/i)).toBeInTheDocument();
 

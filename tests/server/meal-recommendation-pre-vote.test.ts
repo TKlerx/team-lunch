@@ -141,17 +141,20 @@ describe('pre-vote recommendation service', () => {
     const office = await ensureDefaultOfficeLocation();
     const curryMenu = await createMenuWithItems(office.id, 'Curry House', [
       'Garlic Naan',
+      'Mango Lassi',
       'Chicken Curry',
       'Paneer Tikka',
     ]);
     const poll = await pollService.startPoll('Lunch poll', 60, [], office.id, ACTOR.actorKey);
 
     await seedHistoricalOrder(office.id, poll.id, curryMenu.id, curryMenu.name, 'Garlic Naan', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, curryMenu.id, curryMenu.name, 'Mango Lassi', { rating: 5 });
     await seedHistoricalOrder(office.id, poll.id, curryMenu.id, curryMenu.name, 'Chicken Curry', { rating: 4 });
 
     const result = await generatePreVoteRecommendations(office.id, ACTOR, { pollId: poll.id, limit: 5 });
 
     expect(result.items.map((item) => item.itemName)).not.toContain('Garlic Naan');
+    expect(result.items.map((item) => item.itemName)).not.toContain('Mango Lassi');
     expect(result.items.map((item) => item.itemName)).toEqual(['Chicken Curry', 'Paneer Tikka']);
   });
 

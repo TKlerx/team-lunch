@@ -145,6 +145,7 @@ describe('ManageMenus', () => {
 
     await user.click(screen.getByRole('button', { name: /copy ai prompt/i }));
     expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Return JSON only.'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('course:side or course:drink'));
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument();
   });
 

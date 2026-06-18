@@ -196,15 +196,18 @@ describe('Meal recommendation service', () => {
   it('keeps side dishes out of safe recommendations even when they were rated highly', async () => {
     const { office, selection, menu, poll } = await setupActiveSelection([
       'Garlic Naan',
+      'Mango Lassi',
       'Chicken Curry',
       'Paneer Tikka',
     ]);
     await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Garlic Naan', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Mango Lassi', { rating: 5 });
     await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Curry', { rating: 4 });
 
     const result = await generateRecommendations(selection.id, office.id, ACTOR);
 
     expect(result.items.map((item) => item.itemName)).not.toContain('Garlic Naan');
+    expect(result.items.map((item) => item.itemName)).not.toContain('Mango Lassi');
     expect(result.items.map((item) => item.itemName)).toEqual(['Chicken Curry', 'Paneer Tikka']);
   });
 

@@ -17,7 +17,7 @@ import {
   buildTasteProfile,
   extractFeatures,
   featureLabel,
-  hasSideDishFeature,
+  hasNonMealCourseFeature,
   loadMenuItemFeatures,
   scoreTasteMatch,
   type TasteProfile,
@@ -573,7 +573,7 @@ async function filterSideDishRecommendationCandidates<
       name: item.name,
       description: item.description,
     });
-    if (!hasSideDishFeature(features)) {
+    if (!hasNonMealCourseFeature(features)) {
       filteredItems.push(item);
     }
   }
