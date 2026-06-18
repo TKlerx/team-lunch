@@ -56,7 +56,18 @@ if (!isWindowsLockFailure) {
 }
 
 console.warn(
-  'Prisma engine file is locked on Windows; retrying with --no-engine to refresh the client without replacing the native DLL.',
+  'Prisma engine file is locked on Windows. Stop the process using src/server/generated/client/query_engine-windows.dll.node, then rerun Prisma generate.',
+);
+
+if (process.env.PRISMA_GENERATE_ALLOW_NO_ENGINE !== '1') {
+  console.warn(
+    'Refusing to fall back to --no-engine because engine-less clients break server tests and runtime database access. Set PRISMA_GENERATE_ALLOW_NO_ENGINE=1 only for type-only generation while a local service is running.',
+  );
+  process.exit(firstAttempt.status ?? 1);
+}
+
+console.warn(
+  'PRISMA_GENERATE_ALLOW_NO_ENGINE=1 is set; retrying with --no-engine for type-only client refresh.',
 );
 
 const fallbackAttempt = runPrismaGenerate(['--no-engine']);
