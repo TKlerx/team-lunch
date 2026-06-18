@@ -9,6 +9,7 @@
       all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + tests w/ coverage (default, pre-commit)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
+      precommit  - typecheck + lint + architecture + complexity + function-size + duplication (fast-ish pre-commit hook)
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only (no coverage)
       e2e        - Playwright E2E tests only
@@ -24,7 +25,7 @@
 #>
 
 param(
-    [ValidateSet("all", "full", "continuity", "quick", "test", "e2e", "quality", "commit")]
+    [ValidateSet("all", "full", "continuity", "precommit", "quick", "test", "e2e", "quality", "commit")]
     [string]$Phase = "all"
 )
 
@@ -309,34 +310,34 @@ function Invoke-TrivyImageScan {
 
 $failures = @()
 
-if ($Phase -in "all", "full", "quick", "commit") {
+if ($Phase -in "all", "full", "precommit", "quick", "commit") {
     Invoke-ValidationStep "Typecheck (tsc --noEmit)" "pnpm run typecheck" "typecheck" "typecheck failed" { "typecheck passed" }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Lint (eslint)" "pnpm run lint" "lint" "lint failed" { "lint passed" }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Architecture (dependency-cruiser)" "pnpm run architecture" "architecture" "architecture check failed" {
         param($result)
         Get-ArchitectureSummary $result
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Complexity ratchet" "pnpm run complexity" "complexity" "complexity baseline failed" {
         "complexity baseline passed"
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Function size cap" "pnpm run function-size" "function-size" "function size cap failed" {
         "function size cap passed"
     }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Duplication (jscpd)" "pnpm run duplication" "duplication" "duplication check failed" {
         param($result)
         Get-DuplicationSummary $result

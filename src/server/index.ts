@@ -16,6 +16,7 @@ import { register, sendInitialState } from './sse.js';
 import menuRoutes from './routes/menus.js';
 import pollRoutes from './routes/polls.js';
 import foodSelectionRoutes from './routes/foodSelections.js';
+import recommenderAdminRoutes from './routes/recommenderAdmin.js';
 import authRoutes from './routes/auth.js';
 import userPreferencesRoutes from './routes/userPreferences.js';
 import shoppingListRoutes from './routes/shoppingList.js';
@@ -118,6 +119,7 @@ export async function buildApp() {
   await app.register(menuRoutes);
   await app.register(pollRoutes);
   await app.register(foodSelectionRoutes);
+  await app.register(recommenderAdminRoutes);
 
   app.setErrorHandler((err, request, reply) => {
     request.log.error(

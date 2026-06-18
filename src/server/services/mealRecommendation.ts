@@ -13,13 +13,49 @@ import {
   isAiRecommendationConfigured,
   requestAiExplanations,
 } from './mealRecommendationAi.js';
-import { buildTasteProfile, extractFeatures, scoreTasteMatch, type TasteProfile } from './mealFeatures.js';
+import {
+  buildTasteProfile,
+  extractFeatures,
+  featureLabel,
+  loadMenuItemFeatures,
+  scoreTasteMatch,
+  type TasteProfile,
+} from './mealFeatures.js';
+import {
+  loadMealRecommendationModelForOffice,
+  explainMealRecommendationModel,
+  scoreMealRecommendationModel,
+  type MealRecommendationModelInput,
+  type MealRecommendationFeatureContribution,
+} from './mealRecommendationModel.js';
+import { normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
 
 export interface RecommendationActor {
   actorKey: string;
   actorEmail: string | null;
   displayNameSnapshot: string | null;
 }
+
+export interface RecommendationImpressionInput {
+  foodSelectionId: string | null;
+  pollId?: string | null;
+  officeLocationId: string;
+  actor: RecommendationActor;
+  source: MealRecommendationSource;
+  provider: string | null;
+  recommenderModelId?: string | null;
+  items: Prisma.InputJsonValue;
+  warnings: string[];
+  inputSummaryJson: Prisma.InputJsonValue;
+  recommendedAt?: Date;
+}
+
+type ActorHistoryEntry = {
+  itemName: string;
+  itemIdentityKey: string | null;
+  rating: number | null;
+  orderedAt: Date;
+};
 
 // ─── Scoring constants ──────────────────────────────────────
 
@@ -46,14 +82,16 @@ const SCORE_TASTE_MAX = 40;
 // explicit ratings, or enough orders for implicit signal to be meaningful.
 const TASTE_PROFILE_MIN_RATINGS = 2;
 const TASTE_PROFILE_MIN_ORDERS = 4;
+const LEARNED_RECENCY_WINDOW_DAYS = 21;
+const LEARNED_RECENCY_PENALTY_MAX = 10;
+const LEARNED_REPEAT_PENALTY = 100;
 
-const ALLERGY_DEMOTION_FACTOR = 0.2;
 const DISLIKE_DEMOTION_FACTOR = 0.5;
 
 const COLD_START_SCORE = 50;
 const HISTORY_LOOKBACK_LIMIT = 300;
 
-type ScoredItem = {
+export type ScoredItem = {
   itemId: string;
   itemName: string;
   description: string | null;
@@ -86,19 +124,62 @@ function findMatchingTerm(haystack: string, terms: string[]): string | null {
   return null;
 }
 
-async function fetchActorHistory(
-  actorKey: string,
-  officeLocationId: string,
-): Promise<{ itemName: string; rating: number | null; orderedAt: Date }[]> {
-  return prisma.foodOrder.findMany({
-    where: { actorKey, selection: { officeLocationId } },
-    select: { itemName: true, rating: true, orderedAt: true },
-    orderBy: { orderedAt: 'desc' },
-    take: HISTORY_LOOKBACK_LIMIT,
-  });
+function normalizePreferenceTerm(term: string): string {
+  const normalized = normalizeForMatch(term);
+  return normalized.startsWith('ingredient:') ? normalized.slice('ingredient:'.length) : normalized;
 }
 
-async function fetchOfficePopularity(officeLocationId: string): Promise<Map<string, number>> {
+function findStructuredIngredientMatch(itemFeatures: string[], terms: string[]): string | null {
+  const featureSet = new Set(itemFeatures);
+  for (const term of terms) {
+    const normalized = normalizePreferenceTerm(term);
+    if (normalized.length === 0) {
+      continue;
+    }
+
+    if (featureSet.has(`ingredient:${normalized}`)) {
+      return term;
+    }
+  }
+
+  return null;
+}
+
+function resolveHistoryIdentityKey(entry: { itemName: string; itemIdentityKey?: string | null }): string {
+  return entry.itemIdentityKey?.trim().length
+    ? entry.itemIdentityKey.trim()
+    : normalizeMenuItemIdentityKey(entry.itemName);
+}
+
+export async function fetchActorHistory(
+  actorKey: string,
+  officeLocationId: string,
+): Promise<ActorHistoryEntry[]> {
+  return prisma.foodOrder.findMany({
+    where: { actorKey, selection: { officeLocationId } },
+    select: {
+      itemName: true,
+      rating: true,
+      orderedAt: true,
+      item: {
+        select: {
+          itemIdentityKey: true,
+        },
+      },
+    },
+    orderBy: { orderedAt: 'desc' },
+    take: HISTORY_LOOKBACK_LIMIT,
+  }).then((orders) =>
+    orders.map((order) => ({
+      itemName: order.itemName,
+      itemIdentityKey: order.item?.itemIdentityKey ?? null,
+      rating: order.rating,
+      orderedAt: order.orderedAt,
+    })),
+  );
+}
+
+export async function fetchOfficePopularity(officeLocationId: string): Promise<Map<string, number>> {
   const grouped = await prisma.foodOrder.groupBy({
     by: ['itemName'],
     where: { selection: { officeLocationId } },
@@ -108,7 +189,7 @@ async function fetchOfficePopularity(officeLocationId: string): Promise<Map<stri
   return new Map(grouped.map((entry) => [entry.itemName, entry._count.itemName]));
 }
 
-function buildReason(scored: ScoredItem): string {
+export function buildReason(scored: ScoredItem): string {
   const parts: string[] = [];
   for (const signal of REASON_PRIORITY) {
     if (scored.signals.has(signal)) {
@@ -125,7 +206,7 @@ function buildReason(scored: ScoredItem): string {
   return `Recommended because ${parts.join(', and ')}.`;
 }
 
-interface ScoringContext {
+export interface ScoringContext {
   ratingsByItemName: Map<string, { sum: number; count: number }>;
   lastOrderedByItemName: Map<string, Date>;
   popularityByItemName: Map<string, number>;
@@ -133,7 +214,14 @@ interface ScoringContext {
   allergies: string[];
   dislikes: string[];
   tasteProfile: TasteProfile;
+  tasteProfileReady: boolean;
 }
+
+type AnticipatedLikeSeed = {
+  itemNameSnapshot: string;
+  itemIdentityKey: string;
+  sentiment: 'like' | 'dislike';
+};
 
 function buildTasteReason(likedLabels: string[], dislikedLabels: string[]): string {
   if (likedLabels.length > 0) {
@@ -142,10 +230,168 @@ function buildTasteReason(likedLabels: string[], dislikedLabels: string[]): stri
   return `it leans toward flavors you've rated lower (${dislikedLabels.slice(0, 3).join(', ')})`;
 }
 
-function scoreMenuItem(
+function joinFeatureLabels(labels: string[]): string {
+  if (labels.length <= 1) {
+    return labels[0] ?? '';
+  }
+  if (labels.length === 2) {
+    return `${labels[0]} and ${labels[1]}`;
+  }
+  return `${labels.slice(0, -1).join(', ')}, and ${labels[labels.length - 1]}`;
+}
+
+export function buildLearnedTasteReason(contributions: MealRecommendationFeatureContribution[]): string {
+  const flavorContributions = contributions.filter(({ feature }) => {
+    return !feature.startsWith('user:') && !feature.startsWith('office:');
+  });
+
+  const positiveLabels = flavorContributions
+    .filter(({ contribution }) => contribution > 0)
+    .sort((a, b) => b.contribution - a.contribution)
+    .slice(0, 2)
+    .map(({ feature }) => featureLabel(feature));
+
+  const negativeLabels = flavorContributions
+    .filter(({ contribution }) => contribution < 0)
+    .sort((a, b) => a.contribution - b.contribution)
+    .slice(0, 2)
+    .map(({ feature }) => featureLabel(feature));
+
+  if (positiveLabels.length > 0 && negativeLabels.length > 0) {
+    return `it lines up with ${joinFeatureLabels(positiveLabels)}, but ${joinFeatureLabels(negativeLabels)} pulls it down`;
+  }
+
+  if (positiveLabels.length > 0) {
+    return `it lines up with ${joinFeatureLabels(positiveLabels)}`;
+  }
+
+  if (negativeLabels.length > 0) {
+    return `it is held back by ${joinFeatureLabels(negativeLabels)}`;
+  }
+
+  return 'it fits the learned taste profile';
+}
+
+export function mergeTasteProfiles(base: TasteProfile, seed: TasteProfile | null): TasteProfile {
+  if (!seed) {
+    return base;
+  }
+
+  const weights = new Map(base.weights);
+  for (const [feature, seedWeight] of seed.weights) {
+    const currentWeight = weights.get(feature);
+    const blendedWeight = currentWeight === undefined ? seedWeight * 0.35 : currentWeight + seedWeight * 0.25;
+    weights.set(feature, blendedWeight);
+  }
+
+  return {
+    weights,
+    ratedCount: base.ratedCount + seed.ratedCount,
+    orderCount: base.orderCount + seed.orderCount,
+  };
+}
+
+export async function buildAnticipatedLikeSeed(
+  officeLocationId: string,
+  actorKey: string,
+  history: { itemName: string; itemIdentityKey?: string | null }[],
+): Promise<TasteProfile | null> {
+  const marks = (await prisma.userAnticipatedLike.findMany({
+    where: { officeLocationId, actorKey },
+    orderBy: { createdAt: 'asc' },
+    select: {
+      itemIdentityKey: true,
+      itemNameSnapshot: true,
+      sentiment: true,
+    },
+  })) as AnticipatedLikeSeed[];
+
+  if (marks.length === 0) {
+    return null;
+  }
+
+  const ratedIdentityKeys = new Set(history.map((order) => resolveHistoryIdentityKey(order)));
+  const syntheticHistory: Array<{ itemName: string; rating: number }> = [];
+
+  for (const mark of marks) {
+    if (ratedIdentityKeys.has(mark.itemIdentityKey)) {
+      continue;
+    }
+
+    syntheticHistory.push({
+      itemName: mark.itemNameSnapshot,
+      rating: mark.sentiment === 'like' ? 4 : 2,
+    });
+  }
+
+  if (syntheticHistory.length === 0) {
+    return null;
+  }
+
+  return buildTasteProfile(syntheticHistory);
+}
+
+function getLatestRecommendedTopItemName(itemsJson: unknown): string | null {
+  if (!Array.isArray(itemsJson) || itemsJson.length === 0) {
+    return null;
+  }
+
+  const first = itemsJson[0];
+  if (!first || typeof first !== 'object') {
+    return null;
+  }
+
+  const record = first as { itemName?: unknown };
+  return typeof record.itemName === 'string' && record.itemName.trim().length > 0
+    ? record.itemName
+    : null;
+}
+
+function applyLearnedSafePathAdjustments(
+  scoredItems: ScoredItem[],
+  history: ActorHistoryEntry[],
+  latestRecommendedTopItemName: string | null,
+): void {
+  const latestRecommendedTopItemIdentityKey = latestRecommendedTopItemName
+    ? normalizeMenuItemIdentityKey(latestRecommendedTopItemName)
+    : null;
+  const orderedAtByIdentityKey = new Map<string, Date>();
+  for (const order of history) {
+    const identityKey = resolveHistoryIdentityKey(order);
+    if (!orderedAtByIdentityKey.has(identityKey)) {
+      orderedAtByIdentityKey.set(identityKey, order.orderedAt);
+    }
+  }
+
+  for (const item of scoredItems) {
+    const itemIdentityKey = normalizeMenuItemIdentityKey(item.itemName);
+    const lastOrdered = orderedAtByIdentityKey.get(itemIdentityKey);
+    if (lastOrdered) {
+      const daysAgo = (Date.now() - lastOrdered.getTime()) / (24 * 60 * 60 * 1000);
+      if (daysAgo < LEARNED_RECENCY_WINDOW_DAYS) {
+        const recencyScale = (LEARNED_RECENCY_WINDOW_DAYS - daysAgo) / LEARNED_RECENCY_WINDOW_DAYS;
+        const penalty = Math.round(LEARNED_RECENCY_PENALTY_MAX * recencyScale);
+        if (penalty > 0) {
+          item.score -= penalty;
+          item.signals.add('recency');
+          item.reasonTexts.set('recency', "it's been a while since you had this");
+        }
+      }
+    }
+
+    if (latestRecommendedTopItemIdentityKey && normalizeMenuItemIdentityKey(item.itemName) === latestRecommendedTopItemIdentityKey) {
+      item.score -= LEARNED_REPEAT_PENALTY;
+      item.signals.add('recency');
+      item.reasonTexts.set('recency', 'it was your recent top pick, so this run keeps some variety');
+    }
+  }
+}
+
+export function scoreMenuItem(
   item: { id: string; name: string; description: string | null },
   context: ScoringContext,
 ): ScoredItem {
+  const itemIdentityKey = normalizeMenuItemIdentityKey(item.name);
   const scored: ScoredItem = {
     itemId: item.id,
     itemName: item.name,
@@ -155,7 +401,7 @@ function scoreMenuItem(
     reasonTexts: new Map(),
   };
 
-  const ratingInfo = context.ratingsByItemName.get(item.name);
+  const ratingInfo = context.ratingsByItemName.get(itemIdentityKey);
   if (ratingInfo) {
     const avgRating = ratingInfo.sum / ratingInfo.count;
     if (avgRating >= RATING_HIGH_THRESHOLD) {
@@ -173,10 +419,7 @@ function scoreMenuItem(
     }
   }
 
-  if (
-    context.tasteProfile.ratedCount >= TASTE_PROFILE_MIN_RATINGS ||
-    context.tasteProfile.orderCount >= TASTE_PROFILE_MIN_ORDERS
-  ) {
+  if (context.tasteProfileReady) {
     const features = extractFeatures(item.name, item.description);
     const match = scoreTasteMatch(features, context.tasteProfile);
     if (match.score !== 0) {
@@ -203,7 +446,7 @@ function scoreMenuItem(
     scored.reasonTexts.set('office_popularity', 'it is popular with your team');
   }
 
-  const lastOrdered = context.lastOrderedByItemName.get(item.name);
+  const lastOrdered = context.lastOrderedByItemName.get(itemIdentityKey);
   if (lastOrdered) {
     const daysAgo = (Date.now() - lastOrdered.getTime()) / (24 * 60 * 60 * 1000);
     const avgRating = ratingInfo ? ratingInfo.sum / ratingInfo.count : null;
@@ -214,32 +457,52 @@ function scoreMenuItem(
     }
   }
 
-  const haystack = `${item.name} ${item.description ?? ''}`.toLocaleLowerCase();
-  const allergyHit = findMatchingTerm(haystack, context.allergies);
-  const dislikeHit = allergyHit ? null : findMatchingTerm(haystack, context.dislikes);
-  if (allergyHit) {
-    scored.score *= ALLERGY_DEMOTION_FACTOR;
-    scored.signals.add('preference_warning');
-    scored.reasonTexts.set(
-      'preference_warning',
-      `it may contain ${allergyHit}, which you marked as an allergy`,
-    );
-  } else if (dislikeHit) {
-    scored.score *= DISLIKE_DEMOTION_FACTOR;
-    scored.signals.add('preference_warning');
-    scored.reasonTexts.set(
-      'preference_warning',
-      `it contains ${dislikeHit}, which you marked as a dislike`,
-    );
-  } else if (scored.signals.size > 0) {
-    scored.signals.add('preference_match');
-    scored.reasonTexts.set('preference_match', 'it does not conflict with your ingredient preferences');
-  }
-
   return scored;
 }
 
-function rankItems(scoredItems: ScoredItem[]): MealRecommendationItem[] {
+export function applyPreferenceConstraints(
+  scoredItems: ScoredItem[],
+  items: Array<{ name: string; description: string | null }>,
+  preferences: { allergies: string[]; dislikes: string[] },
+): ScoredItem[] {
+  const constrainedItems: ScoredItem[] = [];
+
+  for (let index = 0; index < scoredItems.length; index += 1) {
+    const item = scoredItems[index];
+    const sourceItem = items[index];
+    const itemFeatures = extractFeatures(sourceItem.name, sourceItem.description);
+    const haystack = `${sourceItem.name} ${sourceItem.description ?? ''}`.toLocaleLowerCase();
+    const allergyHit =
+      findStructuredIngredientMatch(itemFeatures, preferences.allergies) ??
+      findMatchingTerm(haystack, preferences.allergies);
+    const dislikeHit = allergyHit
+      ? null
+      : findStructuredIngredientMatch(itemFeatures, preferences.dislikes) ??
+        findMatchingTerm(haystack, preferences.dislikes);
+
+    if (allergyHit) {
+      continue;
+    }
+
+    if (dislikeHit) {
+      item.score *= DISLIKE_DEMOTION_FACTOR;
+      item.signals.add('preference_warning');
+      item.reasonTexts.set(
+        'preference_warning',
+        `it contains ${dislikeHit}, which you marked as a dislike`,
+      );
+    } else if (item.signals.size > 0) {
+      item.signals.add('preference_match');
+      item.reasonTexts.set('preference_match', 'it does not conflict with your ingredient preferences');
+    }
+
+    constrainedItems.push(item);
+  }
+
+  return constrainedItems;
+}
+
+export function applyColdStartFallback(scoredItems: ScoredItem[]): void {
   const allZero = scoredItems.every((item) => item.score === 0);
   if (allZero && scoredItems.length > 0) {
     for (const item of scoredItems) {
@@ -251,6 +514,34 @@ function rankItems(scoredItems: ScoredItem[]): MealRecommendationItem[] {
       );
     }
   }
+}
+
+export async function loadRecommendationMenuItems(selectionId: string, officeLocationId: string) {
+  const selection = await prisma.foodSelection.findFirst({
+    where: { id: selectionId, officeLocationId },
+  });
+  if (!selection) {
+    throw serviceError('Food selection not found', 404);
+  }
+  if (selection.status !== 'active' || !selection.menuId) {
+    throw serviceError('Food selection is not orderable', 400);
+  }
+
+  const menuItems = await prisma.menuItem.findMany({
+    where: { menuId: selection.menuId },
+    orderBy: { name: 'asc' },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      itemIdentityKey: true,
+    },
+  });
+
+  return { selection, menuItems };
+}
+
+export function rankItems(scoredItems: ScoredItem[]): MealRecommendationItem[] {
 
   const sorted = [...scoredItems].sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
@@ -268,49 +559,65 @@ function rankItems(scoredItems: ScoredItem[]): MealRecommendationItem[] {
   }));
 }
 
+export async function persistMealRecommendationImpression(
+  input: RecommendationImpressionInput,
+): Promise<{ impressionId: string; recommendedAt: string }> {
+  const recommendedAt = input.recommendedAt ?? new Date();
+  const impression = await prisma.mealRecommendationImpression.create({
+    data: {
+      foodSelectionId: input.foodSelectionId,
+      pollId: input.pollId ?? null,
+      officeLocationId: input.officeLocationId,
+      actorKey: input.actor.actorKey,
+      actorEmail: input.actor.actorEmail,
+      displayNameSnapshot: input.actor.displayNameSnapshot,
+      source: input.source,
+      provider: input.provider,
+      recommenderModelId: input.recommenderModelId ?? null,
+      recommendedAt,
+      inputSummaryJson: input.inputSummaryJson,
+      itemsJson: input.items as unknown as Prisma.InputJsonValue,
+    },
+  });
+
+  return { impressionId: impression.id, recommendedAt: recommendedAt.toISOString() };
+}
+
 export async function generateRecommendations(
   selectionId: string,
   officeLocationId: string,
   actor: RecommendationActor,
   useAi?: boolean,
 ): Promise<MealRecommendationResponse> {
-  const selection = await prisma.foodSelection.findFirst({
-    where: { id: selectionId, officeLocationId },
-  });
-  if (!selection) {
-    throw serviceError('Food selection not found', 404);
-  }
-  if (selection.status !== 'active' || !selection.menuId) {
+  const { selection, menuItems } = await loadRecommendationMenuItems(selectionId, officeLocationId);
+  const menuId = selection.menuId;
+  if (!menuId) {
     throw serviceError('Food selection is not orderable', 400);
   }
-
-  const menuItems = await prisma.menuItem.findMany({
-    where: { menuId: selection.menuId },
-    orderBy: { name: 'asc' },
-  });
 
   const [history, popularityByItemName, defaultPreference, userPreference] = await Promise.all([
     fetchActorHistory(actor.actorKey, officeLocationId),
     fetchOfficePopularity(officeLocationId),
     prisma.userMenuDefaultPreference.findUnique({
-      where: { userKey_menuId: { userKey: actor.actorKey, menuId: selection.menuId } },
+      where: { userKey_menuId: { userKey: actor.actorKey, menuId } },
     }),
     prisma.userPreference.findUnique({ where: { userKey: actor.actorKey } }),
   ]);
 
-  const ratingsByItemName = new Map<string, { sum: number; count: number }>();
-  const lastOrderedByItemName = new Map<string, Date>();
+  const ratingsByItemIdentityKey = new Map<string, { sum: number; count: number }>();
+  const lastOrderedByItemIdentityKey = new Map<string, Date>();
   for (const order of history) {
-    if (!lastOrderedByItemName.has(order.itemName)) {
-      lastOrderedByItemName.set(order.itemName, order.orderedAt);
+    const identityKey = resolveHistoryIdentityKey(order);
+    if (!lastOrderedByItemIdentityKey.has(identityKey)) {
+      lastOrderedByItemIdentityKey.set(identityKey, order.orderedAt);
     }
     if (order.rating !== null) {
-      const existing = ratingsByItemName.get(order.itemName);
+      const existing = ratingsByItemIdentityKey.get(identityKey);
       if (existing) {
         existing.sum += order.rating;
         existing.count += 1;
       } else {
-        ratingsByItemName.set(order.itemName, { sum: order.rating, count: 1 });
+        ratingsByItemIdentityKey.set(identityKey, { sum: order.rating, count: 1 });
       }
     }
   }
@@ -323,22 +630,83 @@ export async function generateRecommendations(
     : [];
 
   const tasteProfile = buildTasteProfile(history);
+  const anticipatedLikeProfile = await buildAnticipatedLikeSeed(officeLocationId, actor.actorKey, history);
+  const resolvedTasteProfile = mergeTasteProfiles(tasteProfile, anticipatedLikeProfile);
 
   const context: ScoringContext = {
-    ratingsByItemName,
-    lastOrderedByItemName,
+    ratingsByItemName: ratingsByItemIdentityKey,
+    lastOrderedByItemName: lastOrderedByItemIdentityKey,
     popularityByItemName,
     defaultItemId: defaultPreference?.itemId ?? null,
     allergies,
     dislikes,
-    tasteProfile,
+    tasteProfile: resolvedTasteProfile,
+    tasteProfileReady:
+      tasteProfile.ratedCount >= TASTE_PROFILE_MIN_RATINGS ||
+      tasteProfile.orderCount >= TASTE_PROFILE_MIN_ORDERS ||
+      anticipatedLikeProfile !== null,
   };
 
   const scoredItems = menuItems.map((item) => scoreMenuItem(item, context));
-  const items = rankItems(scoredItems);
+  const learnedModel = await loadMealRecommendationModelForOffice(officeLocationId);
+  const hasEnoughData = context.tasteProfileReady;
+  const latestImpression = await prisma.mealRecommendationImpression.findFirst({
+    where: {
+      officeLocationId,
+      actorKey: actor.actorKey,
+      foodSelectionId: selection.id,
+    },
+    orderBy: { recommendedAt: 'desc' },
+    select: { itemsJson: true },
+  });
 
   let source: MealRecommendationSource = 'deterministic';
   let provider: string | null = null;
+  let learnedModelId: string | null = null;
+
+  if (learnedModel && hasEnoughData) {
+    const learnedFeatureSets = await Promise.all(
+      menuItems.map((item) =>
+        loadMenuItemFeatures({
+          menuItemId: item.id,
+          officeLocationId,
+          itemIdentityKey: item.itemIdentityKey ?? null,
+          name: item.name,
+          description: item.description,
+        }),
+      ),
+    );
+
+    for (let index = 0; index < scoredItems.length; index += 1) {
+      const learnedInput: MealRecommendationModelInput = {
+        features: [`user:${actor.actorKey}`, `office:${officeLocationId}`, ...learnedFeatureSets[index]],
+      };
+      const learnedScore = scoreMealRecommendationModel(learnedModel, learnedInput);
+      const learnedReason = buildLearnedTasteReason(
+        explainMealRecommendationModel(learnedModel, learnedInput),
+      );
+      scoredItems[index].score = learnedScore * 100;
+      scoredItems[index].signals.add('taste_match');
+      scoredItems[index].reasonTexts.set('taste_match', learnedReason);
+    }
+
+    applyLearnedSafePathAdjustments(
+      scoredItems,
+      history,
+      getLatestRecommendedTopItemName(latestImpression?.itemsJson ?? null),
+    );
+
+    source = 'safe_learned';
+    learnedModelId = learnedModel.id;
+  }
+
+  applyColdStartFallback(scoredItems);
+  const constrainedItems = applyPreferenceConstraints(scoredItems, menuItems, {
+    allergies,
+    dislikes,
+  });
+  const items = rankItems(constrainedItems);
+
   const warnings: string[] = [];
 
   if (useAi) {
@@ -376,38 +744,39 @@ export async function generateRecommendations(
   }
 
   const recommendedAt = new Date();
-  const inputSummaryJson = {
+  const inputSummaryJson: Prisma.InputJsonValue = {
     useAi: Boolean(useAi),
     historicalOrderCount: history.length,
-    ratedItemCount: ratingsByItemName.size,
+    ratedItemCount: ratingsByItemIdentityKey.size,
+    anticipatedLikeCount: anticipatedLikeProfile?.ratedCount ?? 0,
     hasDefaultMeal: context.defaultItemId !== null,
     allergyCount: allergies.length,
     dislikeCount: dislikes.length,
     officePopularityItemCount: popularityByItemName.size,
     tasteProfileFeatureCount: tasteProfile.weights.size,
     tasteProfileRatedCount: tasteProfile.ratedCount,
-  };
+    seedTasteProfileFeatureCount: anticipatedLikeProfile?.weights.size ?? 0,
+  } as Prisma.InputJsonValue;
 
-  const impression = await prisma.mealRecommendationImpression.create({
-    data: {
-      foodSelectionId: selection.id,
-      officeLocationId,
-      actorKey: actor.actorKey,
-      actorEmail: actor.actorEmail,
-      displayNameSnapshot: actor.displayNameSnapshot,
-      source,
-      provider,
-      recommendedAt,
-      inputSummaryJson,
-      itemsJson: items as unknown as Prisma.InputJsonValue,
-    },
+  const impression = await persistMealRecommendationImpression({
+    foodSelectionId: selection.id,
+    pollId: null,
+    officeLocationId,
+    actor,
+    source,
+    provider,
+    recommenderModelId: learnedModelId,
+    items: items as unknown as Prisma.InputJsonValue,
+    warnings,
+    inputSummaryJson,
+    recommendedAt,
   });
 
   return {
-    impressionId: impression.id,
+    impressionId: impression.impressionId,
     foodSelectionId: selection.id,
     source,
-    generatedAt: recommendedAt.toISOString(),
+    generatedAt: impression.recommendedAt,
     items,
     warnings,
   };

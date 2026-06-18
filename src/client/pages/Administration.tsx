@@ -5,32 +5,36 @@ import {
   type Dispatch,
   type FormEvent,
   type SetStateAction,
-} from 'react';
-import { Link } from 'react-router-dom';
-import { getAuthenticatedActorKey, setAuthenticatedDisplayName } from '../auth.js';
-import { withBasePath } from '../config.js';
-import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
+} from "react";
+import { Link } from "react-router-dom";
+import {
+  getAuthenticatedActorKey,
+  setAuthenticatedDisplayName,
+} from "../auth.js";
+import RecommenderAdminPanel from "../components/RecommenderAdminPanel.js";
+import { withBasePath } from "../config.js";
+import { useAdminOfficeContext } from "../context/AdminOfficeContext.js";
 import {
   LOCAL_PASSWORD_MAX_LENGTH,
   LOCAL_PASSWORD_MIN_LENGTH,
   type AuthConfigResponse,
   type OfficeLocation,
   type OfficeWeekday,
-} from '../../lib/types.js';
+} from "../../lib/types.js";
 
 const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
-  { value: 'monday', label: 'Mon' },
-  { value: 'tuesday', label: 'Tue' },
-  { value: 'wednesday', label: 'Wed' },
-  { value: 'thursday', label: 'Thu' },
-  { value: 'friday', label: 'Fri' },
-  { value: 'saturday', label: 'Sat' },
-  { value: 'sunday', label: 'Sun' },
+  { value: "monday", label: "Mon" },
+  { value: "tuesday", label: "Tue" },
+  { value: "wednesday", label: "Wed" },
+  { value: "thursday", label: "Thu" },
+  { value: "friday", label: "Fri" },
+  { value: "saturday", label: "Sat" },
+  { value: "sunday", label: "Sun" },
 ];
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
 
-type AdminAuth = AuthConfigResponse['auth'];
-type AdminUser = AdminAuth['users'][number];
+type AdminAuth = AuthConfigResponse["auth"];
+type AdminUser = AdminAuth["users"][number];
 
 type OfficeSettingsDraft = {
   autoStartPollEnabled: boolean;
@@ -45,7 +49,9 @@ type AdminDrafts = {
   selectedUserOffices: Record<string, string>;
   setSelectedUserOffices: Dispatch<SetStateAction<Record<string, string>>>;
   selectedUserOfficeMemberships: Record<string, string[]>;
-  setSelectedUserOfficeMemberships: Dispatch<SetStateAction<Record<string, string[]>>>;
+  setSelectedUserOfficeMemberships: Dispatch<
+    SetStateAction<Record<string, string[]>>
+  >;
   displayNameDrafts: Record<string, string>;
   setDisplayNameDrafts: Dispatch<SetStateAction<Record<string, string>>>;
   emailDrafts: Record<string, string>;
@@ -53,25 +59,37 @@ type AdminDrafts = {
   officeNameDrafts: Record<string, string>;
   setOfficeNameDrafts: Dispatch<SetStateAction<Record<string, string>>>;
   officeSettingsDrafts: Record<string, OfficeSettingsDraft>;
-  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
+  setOfficeSettingsDrafts: Dispatch<
+    SetStateAction<Record<string, OfficeSettingsDraft>>
+  >;
 };
 
 async function fetchAdminConfig(): Promise<AuthConfigResponse> {
-  const response = await fetch(withBasePath('/api/auth/config'), { credentials: 'include' });
+  const response = await fetch(withBasePath("/api/auth/config"), {
+    credentials: "include",
+  });
   if (!response.ok) {
-    throw new Error('Failed to load admin config');
+    throw new Error("Failed to load admin config");
   }
   return response.json() as Promise<AuthConfigResponse>;
 }
 
-async function requestAdmin(path: string, init: RequestInit, fallback: string): Promise<Response> {
+async function requestAdmin(
+  path: string,
+  init: RequestInit,
+  fallback: string,
+): Promise<Response> {
   const response = await fetch(withBasePath(path), {
-    credentials: 'include',
+    credentials: "include",
     ...init,
-    headers: init.body ? { 'Content-Type': 'application/json', ...init.headers } : init.headers,
+    headers: init.body
+      ? { "Content-Type": "application/json", ...init.headers }
+      : init.headers,
   });
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    const payload = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
     throw new Error(payload?.error || fallback);
   }
   return response;
@@ -81,25 +99,35 @@ function getPreferredOfficeLocationId(
   officeLocations: OfficeLocation[],
   current?: string | null,
 ): string {
-  if (current && officeLocations.some((location) => location.id === current && location.isActive)) {
+  if (
+    current &&
+    officeLocations.some(
+      (location) => location.id === current && location.isActive,
+    )
+  ) {
     return current;
   }
-  return officeLocations.find((location) => location.isActive)?.id ?? '';
+  return officeLocations.find((location) => location.isActive)?.id ?? "";
 }
 
 function getSelectedUserOfficeLocationId(
   officeLocations: OfficeLocation[],
   current?: string | null,
 ): string {
-  if (current && officeLocations.some((location) => location.id === current && location.isActive)) {
+  if (
+    current &&
+    officeLocations.some(
+      (location) => location.id === current && location.isActive,
+    )
+  ) {
     return current;
   }
-  return '';
+  return "";
 }
 
 function orderWeekdays(weekdays: OfficeWeekday[]): OfficeWeekday[] {
-  return OFFICE_WEEKDAY_OPTIONS.map((option) => option.value).filter((weekday) =>
-    weekdays.includes(weekday),
+  return OFFICE_WEEKDAY_OPTIONS.map((option) => option.value).filter(
+    (weekday) => weekdays.includes(weekday),
   );
 }
 
@@ -107,53 +135,74 @@ function initialOfficeSettings(location: OfficeLocation): OfficeSettingsDraft {
   return {
     autoStartPollEnabled: location.autoStartPollEnabled,
     autoStartPollWeekdays: orderWeekdays(location.autoStartPollWeekdays),
-    autoStartPollFinishTime: location.autoStartPollFinishTime ?? '',
-    defaultFoodSelectionDurationMinutes: location.defaultFoodSelectionDurationMinutes,
+    autoStartPollFinishTime: location.autoStartPollFinishTime ?? "",
+    defaultFoodSelectionDurationMinutes:
+      location.defaultFoodSelectionDurationMinutes,
   };
 }
 
-function settingsChanged(location: OfficeLocation, draft: OfficeSettingsDraft): boolean {
+function settingsChanged(
+  location: OfficeLocation,
+  draft: OfficeSettingsDraft,
+): boolean {
   return (
     draft.autoStartPollEnabled !== location.autoStartPollEnabled ||
-    draft.autoStartPollFinishTime !== (location.autoStartPollFinishTime ?? '') ||
-    draft.defaultFoodSelectionDurationMinutes !== location.defaultFoodSelectionDurationMinutes ||
-    draft.autoStartPollWeekdays.join('|') !== location.autoStartPollWeekdays.join('|')
+    draft.autoStartPollFinishTime !==
+      (location.autoStartPollFinishTime ?? "") ||
+    draft.defaultFoodSelectionDurationMinutes !==
+      location.defaultFoodSelectionDurationMinutes ||
+    draft.autoStartPollWeekdays.join("|") !==
+      location.autoStartPollWeekdays.join("|")
   );
 }
 
 function useAdminDrafts(): AdminDrafts {
-  const [selectedApprovalOffices, setSelectedApprovalOffices] = useState<Record<string, string>>({});
-  const [selectedUserOffices, setSelectedUserOffices] = useState<Record<string, string>>({});
-  const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] = useState<Record<string, string[]>>({});
-  const [displayNameDrafts, setDisplayNameDrafts] = useState<Record<string, string>>({});
+  const [selectedApprovalOffices, setSelectedApprovalOffices] = useState<
+    Record<string, string>
+  >({});
+  const [selectedUserOffices, setSelectedUserOffices] = useState<
+    Record<string, string>
+  >({});
+  const [selectedUserOfficeMemberships, setSelectedUserOfficeMemberships] =
+    useState<Record<string, string[]>>({});
+  const [displayNameDrafts, setDisplayNameDrafts] = useState<
+    Record<string, string>
+  >({});
   const [emailDrafts, setEmailDrafts] = useState<Record<string, string>>({});
-  const [officeNameDrafts, setOfficeNameDrafts] = useState<Record<string, string>>({});
-  const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<Record<string, OfficeSettingsDraft>>({});
+  const [officeNameDrafts, setOfficeNameDrafts] = useState<
+    Record<string, string>
+  >({});
+  const [officeSettingsDrafts, setOfficeSettingsDrafts] = useState<
+    Record<string, OfficeSettingsDraft>
+  >({});
 
-  return useMemo(() => ({
-    selectedApprovalOffices,
-    setSelectedApprovalOffices,
-    selectedUserOffices,
-    setSelectedUserOffices,
-    selectedUserOfficeMemberships,
-    setSelectedUserOfficeMemberships,
-    displayNameDrafts,
-    setDisplayNameDrafts,
-    emailDrafts,
-    setEmailDrafts,
-    officeNameDrafts,
-    setOfficeNameDrafts,
-    officeSettingsDrafts,
-    setOfficeSettingsDrafts,
-  }), [
-    displayNameDrafts,
-    emailDrafts,
-    officeNameDrafts,
-    officeSettingsDrafts,
-    selectedApprovalOffices,
-    selectedUserOfficeMemberships,
-    selectedUserOffices,
-  ]);
+  return useMemo(
+    () => ({
+      selectedApprovalOffices,
+      setSelectedApprovalOffices,
+      selectedUserOffices,
+      setSelectedUserOffices,
+      selectedUserOfficeMemberships,
+      setSelectedUserOfficeMemberships,
+      displayNameDrafts,
+      setDisplayNameDrafts,
+      emailDrafts,
+      setEmailDrafts,
+      officeNameDrafts,
+      setOfficeNameDrafts,
+      officeSettingsDrafts,
+      setOfficeSettingsDrafts,
+    }),
+    [
+      displayNameDrafts,
+      emailDrafts,
+      officeNameDrafts,
+      officeSettingsDrafts,
+      selectedApprovalOffices,
+      selectedUserOfficeMemberships,
+      selectedUserOffices,
+    ],
+  );
 }
 
 function syncUserDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
@@ -162,7 +211,10 @@ function syncUserDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
       auth.users.map((entry) => [
         entry.email,
         current[entry.email] ||
-          getSelectedUserOfficeLocationId(auth.officeLocations, entry.officeLocationId),
+          getSelectedUserOfficeLocationId(
+            auth.officeLocations,
+            entry.officeLocationId,
+          ),
       ]),
     ),
   );
@@ -178,12 +230,19 @@ function syncUserDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
     Object.fromEntries(
       auth.users.map((entry) => [
         entry.email,
-        entry.email in current ? current[entry.email] : (entry.displayName ?? ''),
+        entry.email in current
+          ? current[entry.email]
+          : (entry.displayName ?? ""),
       ]),
     ),
   );
   drafts.setEmailDrafts((current) =>
-    Object.fromEntries(auth.users.map((entry) => [entry.email, current[entry.email] || entry.email])),
+    Object.fromEntries(
+      auth.users.map((entry) => [
+        entry.email,
+        current[entry.email] || entry.email,
+      ]),
+    ),
   );
 }
 
@@ -192,7 +251,8 @@ function syncOfficeDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
     Object.fromEntries(
       auth.pendingApprovals.map((entry) => [
         entry.email,
-        current[entry.email] || getPreferredOfficeLocationId(auth.officeLocations),
+        current[entry.email] ||
+          getPreferredOfficeLocationId(auth.officeLocations),
       ]),
     ),
   );
@@ -218,8 +278,9 @@ function useAdminConfig() {
   const { setPendingApprovalCount } = useAdminOfficeContext();
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState<AdminAuth | null>(null);
-  const [error, setError] = useState('');
-  const [newLocalUserOfficeLocationId, setNewLocalUserOfficeLocationId] = useState('');
+  const [error, setError] = useState("");
+  const [newLocalUserOfficeLocationId, setNewLocalUserOfficeLocationId] =
+    useState("");
   const drafts = useAdminDrafts();
 
   const applyConfig = (auth: AdminAuth) => {
@@ -240,11 +301,15 @@ function useAdminConfig() {
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      setError('');
+      setError("");
       try {
         await refreshConfig();
       } catch (loadError) {
-        setError(loadError instanceof Error ? loadError.message : 'Failed to load admin data');
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Failed to load admin data",
+        );
       } finally {
         setLoading(false);
       }
@@ -268,21 +333,35 @@ function useApprovalActions(
   refreshConfig: () => Promise<void>,
   setError: (error: string) => void,
 ) {
-  const [updatingApprovalEmail, setUpdatingApprovalEmail] = useState<string | null>(null);
+  const [updatingApprovalEmail, setUpdatingApprovalEmail] = useState<
+    string | null
+  >(null);
 
-  const mutateApproval = async (email: string, action: 'approve' | 'decline') => {
+  const mutateApproval = async (
+    email: string,
+    action: "approve" | "decline",
+  ) => {
     setUpdatingApprovalEmail(email);
-    setError('');
+    setError("");
     try {
       const officeLocationId = selectedApprovalOffices[email];
-      if (action === 'approve' && !officeLocationId) throw new Error('Office location is required');
-      await requestAdmin(`/api/auth/users/${action}`, {
-        method: 'POST',
-        body: JSON.stringify({ email, officeLocationId }),
-      }, `Failed to ${action} user`);
+      if (action === "approve" && !officeLocationId)
+        throw new Error("Office location is required");
+      await requestAdmin(
+        `/api/auth/users/${action}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ email, officeLocationId }),
+        },
+        `Failed to ${action} user`,
+      );
       await refreshConfig();
     } catch (approvalError) {
-      setError(approvalError instanceof Error ? approvalError.message : 'Approval update failed');
+      setError(
+        approvalError instanceof Error
+          ? approvalError.message
+          : "Approval update failed",
+      );
     } finally {
       setUpdatingApprovalEmail(null);
     }
@@ -290,8 +369,8 @@ function useApprovalActions(
 
   return {
     updatingApprovalEmail,
-    approveUser: (email: string) => mutateApproval(email, 'approve'),
-    declineUser: (email: string) => mutateApproval(email, 'decline'),
+    approveUser: (email: string) => mutateApproval(email, "approve"),
+    declineUser: (email: string) => mutateApproval(email, "decline"),
   };
 }
 
@@ -300,8 +379,8 @@ function useLocalUserActions(
   setError: (error: string) => void,
   officeLocationId: string,
 ) {
-  const [newLocalUserEmail, setNewLocalUserEmail] = useState('');
-  const [newLocalUserPassword, setNewLocalUserPassword] = useState('');
+  const [newLocalUserEmail, setNewLocalUserEmail] = useState("");
+  const [newLocalUserPassword, setNewLocalUserPassword] = useState("");
   const [creatingLocalUser, setCreatingLocalUser] = useState(false);
   const [createdLocalUser, setCreatedLocalUser] = useState<{
     email: string;
@@ -311,14 +390,14 @@ function useLocalUserActions(
 
   const passwordValidationError = useMemo(() => {
     const trimmed = newLocalUserPassword.trim();
-    if (!trimmed) return '';
+    if (!trimmed) return "";
     if (trimmed.length < LOCAL_PASSWORD_MIN_LENGTH) {
       return `Password must be at least ${LOCAL_PASSWORD_MIN_LENGTH} characters.`;
     }
     if (trimmed.length > LOCAL_PASSWORD_MAX_LENGTH) {
       return `Password must be at most ${LOCAL_PASSWORD_MAX_LENGTH} characters.`;
     }
-    return '';
+    return "";
   }, [newLocalUserPassword]);
 
   const createLocalUser = async (event: FormEvent) => {
@@ -329,26 +408,41 @@ function useLocalUserActions(
     }
     setCreatingLocalUser(true);
     setCreatedLocalUser(null);
-    setError('');
+    setError("");
     try {
-      const response = await requestAdmin('/api/auth/local/users/generate', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: newLocalUserEmail.trim(),
-          password: newLocalUserPassword.trim() || undefined,
-          officeLocationId: officeLocationId || undefined,
-        }),
-      }, 'Failed to create local user');
-      const payload = (await response.json().catch(() => null)) as
-        | { email?: string; password?: string; generated?: boolean }
-        | null;
-      if (!payload?.email || !payload.password) throw new Error('Failed to create local user');
-      setCreatedLocalUser({ email: payload.email, password: payload.password, generated: !!payload.generated });
-      setNewLocalUserPassword('');
-      setNewLocalUserEmail('');
+      const response = await requestAdmin(
+        "/api/auth/local/users/generate",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: newLocalUserEmail.trim(),
+            password: newLocalUserPassword.trim() || undefined,
+            officeLocationId: officeLocationId || undefined,
+          }),
+        },
+        "Failed to create local user",
+      );
+      const payload = (await response.json().catch(() => null)) as {
+        email?: string;
+        password?: string;
+        generated?: boolean;
+      } | null;
+      if (!payload?.email || !payload.password)
+        throw new Error("Failed to create local user");
+      setCreatedLocalUser({
+        email: payload.email,
+        password: payload.password,
+        generated: !!payload.generated,
+      });
+      setNewLocalUserPassword("");
+      setNewLocalUserEmail("");
       await refreshConfig();
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : 'Failed to create local user');
+      setError(
+        createError instanceof Error
+          ? createError.message
+          : "Failed to create local user",
+      );
     } finally {
       setCreatingLocalUser(false);
     }
@@ -367,17 +461,21 @@ function useLocalUserActions(
 }
 
 function useOfficeActions(
-  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'officeSettingsDrafts'>,
+  drafts: Pick<AdminDrafts, "officeNameDrafts" | "officeSettingsDrafts">,
   refreshConfig: () => Promise<void>,
   setError: (error: string) => void,
 ) {
-  const [newOfficeName, setNewOfficeName] = useState('');
+  const [newOfficeName, setNewOfficeName] = useState("");
   const [creatingOffice, setCreatingOffice] = useState(false);
   const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
 
-  const runOfficeAction = async (officeId: string, action: () => Promise<void>, fallback: string) => {
+  const runOfficeAction = async (
+    officeId: string,
+    action: () => Promise<void>,
+    fallback: string,
+  ) => {
     setUpdatingOfficeId(officeId);
-    setError('');
+    setError("");
     try {
       await action();
       await refreshConfig();
@@ -391,48 +489,81 @@ function useOfficeActions(
   const createOffice = async (event: FormEvent) => {
     event.preventDefault();
     setCreatingOffice(true);
-    setError('');
+    setError("");
     try {
-      await requestAdmin('/api/auth/offices', {
-        method: 'POST',
-        body: JSON.stringify({ name: newOfficeName.trim() }),
-      }, 'Failed to create office');
-      setNewOfficeName('');
+      await requestAdmin(
+        "/api/auth/offices",
+        {
+          method: "POST",
+          body: JSON.stringify({ name: newOfficeName.trim() }),
+        },
+        "Failed to create office",
+      );
+      setNewOfficeName("");
       await refreshConfig();
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : 'Office creation failed');
+      setError(
+        createError instanceof Error
+          ? createError.message
+          : "Office creation failed",
+      );
     } finally {
       setCreatingOffice(false);
     }
   };
 
   const renameOffice = (officeId: string) =>
-    runOfficeAction(officeId, () =>
-      requestAdmin(`/api/auth/offices/${officeId}/rename`, {
-        method: 'POST',
-        body: JSON.stringify({ name: drafts.officeNameDrafts[officeId]?.trim() ?? '' }),
-      }, 'Failed to rename office').then(() => undefined),
-    'Office rename failed');
+    runOfficeAction(
+      officeId,
+      () =>
+        requestAdmin(
+          `/api/auth/offices/${officeId}/rename`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name: drafts.officeNameDrafts[officeId]?.trim() ?? "",
+            }),
+          },
+          "Failed to rename office",
+        ).then(() => undefined),
+      "Office rename failed",
+    );
 
   const deactivateOffice = (officeId: string) =>
-    runOfficeAction(officeId, () =>
-      requestAdmin(`/api/auth/offices/${officeId}/deactivate`, { method: 'POST' }, 'Failed to deactivate office')
-        .then(() => undefined),
-    'Office deactivation failed');
+    runOfficeAction(
+      officeId,
+      () =>
+        requestAdmin(
+          `/api/auth/offices/${officeId}/deactivate`,
+          { method: "POST" },
+          "Failed to deactivate office",
+        ).then(() => undefined),
+      "Office deactivation failed",
+    );
 
   const updateOfficeSettings = (officeId: string) =>
-    runOfficeAction(officeId, () => {
-      const draft = drafts.officeSettingsDrafts[officeId];
-      return requestAdmin(`/api/auth/offices/${officeId}/settings`, {
-        method: 'POST',
-        body: JSON.stringify({
-          autoStartPollEnabled: draft?.autoStartPollEnabled ?? false,
-          autoStartPollWeekdays: draft?.autoStartPollWeekdays ?? [],
-          autoStartPollFinishTime: draft?.autoStartPollFinishTime?.trim() || null,
-          defaultFoodSelectionDurationMinutes: draft?.defaultFoodSelectionDurationMinutes ?? 30,
-        }),
-      }, 'Failed to update office settings').then(() => undefined);
-    }, 'Office settings update failed');
+    runOfficeAction(
+      officeId,
+      () => {
+        const draft = drafts.officeSettingsDrafts[officeId];
+        return requestAdmin(
+          `/api/auth/offices/${officeId}/settings`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              autoStartPollEnabled: draft?.autoStartPollEnabled ?? false,
+              autoStartPollWeekdays: draft?.autoStartPollWeekdays ?? [],
+              autoStartPollFinishTime:
+                draft?.autoStartPollFinishTime?.trim() || null,
+              defaultFoodSelectionDurationMinutes:
+                draft?.defaultFoodSelectionDurationMinutes ?? 30,
+            }),
+          },
+          "Failed to update office settings",
+        ).then(() => undefined);
+      },
+      "Office settings update failed",
+    );
 
   return {
     newOfficeName,
@@ -454,78 +585,155 @@ type UserActionRunner = (
 
 type UserActionDrafts = Pick<
   AdminDrafts,
-  'selectedUserOffices' | 'selectedUserOfficeMemberships' | 'displayNameDrafts' | 'emailDrafts'
+  | "selectedUserOffices"
+  | "selectedUserOfficeMemberships"
+  | "displayNameDrafts"
+  | "emailDrafts"
 >;
 
-function simpleUserPost(runUserAction: UserActionRunner, email: string, action: 'promote' | 'block' | 'unblock') {
-  return runUserAction(email, () =>
-    requestAdmin(`/api/auth/users/${action}`, {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    }, `Failed to ${action} user`).then(() => undefined),
-  action === 'promote' ? 'Role update failed' : 'User status update failed');
+function simpleUserPost(
+  runUserAction: UserActionRunner,
+  email: string,
+  action: "promote" | "block" | "unblock",
+) {
+  return runUserAction(
+    email,
+    () =>
+      requestAdmin(
+        `/api/auth/users/${action}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        },
+        `Failed to ${action} user`,
+      ).then(() => undefined),
+    action === "promote" ? "Role update failed" : "User status update failed",
+  );
 }
 
-function demoteUser(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
-  return runUserAction(email, () =>
-    requestAdmin('/api/auth/users/demote', {
-      method: 'POST',
-      body: JSON.stringify({
-        email,
-        officeLocationId: drafts.selectedUserOffices[email] || undefined,
-      }),
-    }, 'Failed to demote user').then(() => undefined),
-  'Role update failed');
+function demoteUser(
+  runUserAction: UserActionRunner,
+  email: string,
+  drafts: UserActionDrafts,
+) {
+  return runUserAction(
+    email,
+    () =>
+      requestAdmin(
+        "/api/auth/users/demote",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            officeLocationId: drafts.selectedUserOffices[email] || undefined,
+          }),
+        },
+        "Failed to demote user",
+      ).then(() => undefined),
+    "Role update failed",
+  );
 }
 
-function assignOffice(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
-  return runUserAction(email, () =>
-    requestAdmin('/api/auth/users/assign-offices', {
-      method: 'POST',
-      body: JSON.stringify({
-        email,
-        officeLocationIds: drafts.selectedUserOfficeMemberships[email] ?? [],
-        preferredOfficeLocationId: drafts.selectedUserOffices[email] || undefined,
-      }),
-    }, 'Failed to assign offices').then(() => undefined),
-  'Office assignment failed');
+function assignOffice(
+  runUserAction: UserActionRunner,
+  email: string,
+  drafts: UserActionDrafts,
+) {
+  return runUserAction(
+    email,
+    () =>
+      requestAdmin(
+        "/api/auth/users/assign-offices",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            officeLocationIds:
+              drafts.selectedUserOfficeMemberships[email] ?? [],
+            preferredOfficeLocationId:
+              drafts.selectedUserOffices[email] || undefined,
+          }),
+        },
+        "Failed to assign offices",
+      ).then(() => undefined),
+    "Office assignment failed",
+  );
 }
 
-function saveDisplayName(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
-  return runUserAction(email, async () => {
-    const response = await requestAdmin('/api/auth/users/display-name', {
-      method: 'PUT',
-      body: JSON.stringify({
-        email,
-        displayName: drafts.displayNameDrafts[email]?.trim() || null,
-      }),
-    }, 'Failed to update display name');
-    const payload = (await response.json().catch(() => null)) as { displayName?: string | null } | null;
-    if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
-      setAuthenticatedDisplayName(payload?.displayName ?? null);
-    }
-  }, 'Display name update failed');
+function saveDisplayName(
+  runUserAction: UserActionRunner,
+  email: string,
+  drafts: UserActionDrafts,
+) {
+  return runUserAction(
+    email,
+    async () => {
+      const response = await requestAdmin(
+        "/api/auth/users/display-name",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            email,
+            displayName: drafts.displayNameDrafts[email]?.trim() || null,
+          }),
+        },
+        "Failed to update display name",
+      );
+      const payload = (await response.json().catch(() => null)) as {
+        displayName?: string | null;
+      } | null;
+      if (email.trim().toLowerCase() === getAuthenticatedActorKey()) {
+        setAuthenticatedDisplayName(payload?.displayName ?? null);
+      }
+    },
+    "Display name update failed",
+  );
 }
 
-function saveEmail(runUserAction: UserActionRunner, email: string, drafts: UserActionDrafts) {
-  return runUserAction(email, () =>
-    requestAdmin('/api/auth/users/email', {
-      method: 'PUT',
-      body: JSON.stringify({ email, newEmail: drafts.emailDrafts[email]?.trim() ?? '' }),
-    }, 'Failed to update email').then(() => undefined),
-  'Email update failed');
+function saveEmail(
+  runUserAction: UserActionRunner,
+  email: string,
+  drafts: UserActionDrafts,
+) {
+  return runUserAction(
+    email,
+    () =>
+      requestAdmin(
+        "/api/auth/users/email",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            email,
+            newEmail: drafts.emailDrafts[email]?.trim() ?? "",
+          }),
+        },
+        "Failed to update email",
+      ).then(() => undefined),
+    "Email update failed",
+  );
 }
 
 function deleteUser(runUserAction: UserActionRunner, email: string) {
-  if (!window.confirm(`Delete local account ${email}? Historical votes and orders stay unchanged.`)) {
+  if (
+    !window.confirm(
+      `Delete local account ${email}? Historical votes and orders stay unchanged.`,
+    )
+  ) {
     return Promise.resolve();
   }
-  return runUserAction(email, () =>
-    requestAdmin('/api/auth/users', {
-      method: 'DELETE',
-      body: JSON.stringify({ email }),
-    }, 'Failed to delete user').then(() => undefined),
-  'User deletion failed');
+  return runUserAction(
+    email,
+    () =>
+      requestAdmin(
+        "/api/auth/users",
+        {
+          method: "DELETE",
+          body: JSON.stringify({ email }),
+        },
+        "Failed to delete user",
+      ).then(() => undefined),
+    "User deletion failed",
+  );
 }
 
 function useUserActions(
@@ -533,11 +741,13 @@ function useUserActions(
   refreshConfig: () => Promise<void>,
   setError: (error: string) => void,
 ) {
-  const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<string | null>(null);
+  const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<
+    string | null
+  >(null);
 
   const runUserAction: UserActionRunner = async (email, action, fallback) => {
     setUpdatingUserRoleEmail(email);
-    setError('');
+    setError("");
     try {
       await action();
       await refreshConfig();
@@ -550,12 +760,15 @@ function useUserActions(
 
   return {
     updatingUserRoleEmail,
-    promoteUser: (email: string) => simpleUserPost(runUserAction, email, 'promote'),
+    promoteUser: (email: string) =>
+      simpleUserPost(runUserAction, email, "promote"),
     demoteUser: (email: string) => demoteUser(runUserAction, email, drafts),
-    blockUser: (email: string) => simpleUserPost(runUserAction, email, 'block'),
-    unblockUser: (email: string) => simpleUserPost(runUserAction, email, 'unblock'),
+    blockUser: (email: string) => simpleUserPost(runUserAction, email, "block"),
+    unblockUser: (email: string) =>
+      simpleUserPost(runUserAction, email, "unblock"),
     assignOffice: (email: string) => assignOffice(runUserAction, email, drafts),
-    saveDisplayName: (email: string) => saveDisplayName(runUserAction, email, drafts),
+    saveDisplayName: (email: string) =>
+      saveDisplayName(runUserAction, email, drafts),
     saveEmail: (email: string) => saveEmail(runUserAction, email, drafts),
     deleteUser: (email: string) => deleteUser(runUserAction, email),
   };
@@ -573,8 +786,16 @@ export default function Administration() {
     admin.setError,
     admin.newLocalUserOfficeLocationId,
   );
-  const officeActions = useOfficeActions(admin.drafts, admin.refreshConfig, admin.setError);
-  const userActions = useUserActions(admin.drafts, admin.refreshConfig, admin.setError);
+  const officeActions = useOfficeActions(
+    admin.drafts,
+    admin.refreshConfig,
+    admin.setError,
+  );
+  const userActions = useUserActions(
+    admin.drafts,
+    admin.refreshConfig,
+    admin.setError,
+  );
 
   if (admin.loading) return <LoadingView />;
   if (admin.error && !admin.config) return <ErrorView error={admin.error} />;
@@ -584,6 +805,7 @@ export default function Administration() {
     <div className="w-full p-6">
       <AdminHeader error={admin.error} />
       <div className="space-y-4">
+        <RecommenderAdminPanel officeLocations={admin.config.officeLocations} />
         <PendingApprovalsSection
           config={admin.config}
           drafts={admin.drafts}
@@ -611,13 +833,19 @@ export default function Administration() {
 }
 
 function LoadingView() {
-  return <div className="flex flex-1 items-center justify-center text-sm text-fg-muted">Loading...</div>;
+  return (
+    <div className="flex flex-1 items-center justify-center text-sm text-fg-muted">
+      Loading...
+    </div>
+  );
 }
 
 function ErrorView({ error }: { error: string }) {
   return (
     <div className="w-full p-6">
-      <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">{error}</div>
+      <div className="rounded border border-danger bg-danger-soft p-4 text-sm text-danger-fg">
+        {error}
+      </div>
     </div>
   );
 }
@@ -639,7 +867,9 @@ function AdminHeader({ error }: { error: string }) {
   return (
     <div className="mb-6">
       <h1 className="text-2xl font-bold text-fg">Administration</h1>
-      <p className="mt-2 text-sm text-fg-muted">Approve access requests and manage users and offices.</p>
+      <p className="mt-2 text-sm text-fg-muted">
+        Approve access requests and manage users and offices.
+      </p>
       {error && (
         <div className="mt-3 rounded border border-danger bg-danger-soft p-3 text-sm text-danger-fg">
           {error}
@@ -655,7 +885,10 @@ function PendingApprovalsSection({
   actions,
 }: {
   config: AdminAuth;
-  drafts: Pick<AdminDrafts, 'selectedApprovalOffices' | 'setSelectedApprovalOffices'>;
+  drafts: Pick<
+    AdminDrafts,
+    "selectedApprovalOffices" | "setSelectedApprovalOffices"
+  >;
   actions: ReturnType<typeof useApprovalActions>;
 }) {
   return (
@@ -666,13 +899,18 @@ function PendingApprovalsSection({
       ) : (
         <ul className="space-y-2">
           {config.pendingApprovals.map((entry) => (
-            <li key={entry.email} className="rounded border border-border bg-surface px-3 py-2 text-sm">
+            <li
+              key={entry.email}
+              className="rounded border border-border bg-surface px-3 py-2 text-sm"
+            >
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <span className="text-fg">{entry.email}</span>
                 <ApprovalControls
                   email={entry.email}
                   officeLocations={config.officeLocations}
-                  selectedOfficeId={drafts.selectedApprovalOffices[entry.email] ?? ''}
+                  selectedOfficeId={
+                    drafts.selectedApprovalOffices[entry.email] ?? ""
+                  }
                   setSelectedApprovalOffices={drafts.setSelectedApprovalOffices}
                   actions={actions}
                 />
@@ -704,14 +942,21 @@ function ApprovalControls({
       <select
         value={selectedOfficeId}
         onChange={(event) =>
-          setSelectedApprovalOffices((current) => ({ ...current, [email]: event.target.value }))
+          setSelectedApprovalOffices((current) => ({
+            ...current,
+            [email]: event.target.value,
+          }))
         }
         className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
       >
         <option value="">Select office</option>
-        {officeLocations.filter((location) => location.isActive).map((location) => (
-          <option key={location.id} value={location.id}>{location.name}</option>
-        ))}
+        {officeLocations
+          .filter((location) => location.isActive)
+          .map((location) => (
+            <option key={location.id} value={location.id}>
+              {location.name}
+            </option>
+          ))}
       </select>
       <button
         type="button"
@@ -719,7 +964,7 @@ function ApprovalControls({
         onClick={() => void actions.approveUser(email)}
         className="rounded bg-success-solid px-3 py-1 text-xs font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Approve'}
+        {updating ? "Updating..." : "Approve"}
       </button>
       <button
         type="button"
@@ -727,7 +972,7 @@ function ApprovalControls({
         onClick={() => void actions.declineUser(email)}
         className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Decline'}
+        {updating ? "Updating..." : "Decline"}
       </button>
     </div>
   );
@@ -747,11 +992,16 @@ function LocalUserSection({
   return (
     <div className="rounded border border-border bg-surface-muted p-4">
       <h2 className="mb-3 text-sm font-semibold text-fg">Create local user</h2>
-      <form onSubmit={(event) => void localUser.createLocalUser(event)} className="space-y-3">
+      <form
+        onSubmit={(event) => void localUser.createLocalUser(event)}
+        className="space-y-3"
+      >
         <input
           type="email"
           value={localUser.newLocalUserEmail}
-          onChange={(event) => localUser.setNewLocalUserEmail(event.target.value)}
+          onChange={(event) =>
+            localUser.setNewLocalUserEmail(event.target.value)
+          }
           placeholder="Email"
           required
           className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
@@ -765,13 +1015,17 @@ function LocalUserSection({
         <input
           type="text"
           value={localUser.newLocalUserPassword}
-          onChange={(event) => localUser.setNewLocalUserPassword(event.target.value)}
+          onChange={(event) =>
+            localUser.setNewLocalUserPassword(event.target.value)
+          }
           placeholder="Password (leave empty to auto-generate)"
           aria-invalid={!!localUser.passwordValidationError}
           className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
         />
         {localUser.passwordValidationError && (
-          <p className="text-xs text-danger-fg">{localUser.passwordValidationError}</p>
+          <p className="text-xs text-danger-fg">
+            {localUser.passwordValidationError}
+          </p>
         )}
         <button
           type="submit"
@@ -782,10 +1036,12 @@ function LocalUserSection({
           }
           className="w-full rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
         >
-          {localUser.creatingLocalUser ? 'Creating...' : 'Create local user'}
+          {localUser.creatingLocalUser ? "Creating..." : "Create local user"}
         </button>
       </form>
-      {localUser.createdLocalUser && <CreatedLocalUserNotice user={localUser.createdLocalUser} />}
+      {localUser.createdLocalUser && (
+        <CreatedLocalUserNotice user={localUser.createdLocalUser} />
+      )}
     </div>
   );
 }
@@ -823,7 +1079,9 @@ function OfficeSelect({
   label: string;
   enabledOnly?: boolean;
 }) {
-  const locations = enabledOnly ? officeLocations.filter((location) => location.isActive) : officeLocations;
+  const locations = enabledOnly
+    ? officeLocations.filter((location) => location.isActive)
+    : officeLocations;
   return (
     <select
       aria-label={label}
@@ -833,7 +1091,9 @@ function OfficeSelect({
     >
       <option value="">Select office location</option>
       {locations.map((location) => (
-        <option key={location.id} value={location.id}>{location.name}</option>
+        <option key={location.id} value={location.id}>
+          {location.name}
+        </option>
       ))}
     </select>
   );
@@ -845,13 +1105,22 @@ function OfficeLocationsSection({
   actions,
 }: {
   config: AdminAuth;
-  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'setOfficeNameDrafts' | 'officeSettingsDrafts' | 'setOfficeSettingsDrafts'>;
+  drafts: Pick<
+    AdminDrafts,
+    | "officeNameDrafts"
+    | "setOfficeNameDrafts"
+    | "officeSettingsDrafts"
+    | "setOfficeSettingsDrafts"
+  >;
   actions: ReturnType<typeof useOfficeActions>;
 }) {
   return (
     <div className="rounded border border-border bg-surface-muted p-4">
       <h2 className="mb-3 text-sm font-semibold text-fg">Office locations</h2>
-      <form onSubmit={(event) => void actions.createOffice(event)} className="mb-3 flex gap-2">
+      <form
+        onSubmit={(event) => void actions.createOffice(event)}
+        className="mb-3 flex gap-2"
+      >
         <input
           type="text"
           value={actions.newOfficeName}
@@ -864,7 +1133,7 @@ function OfficeLocationsSection({
           disabled={actions.creatingOffice || !actions.newOfficeName.trim()}
           className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
         >
-          {actions.creatingOffice ? 'Creating...' : 'Add office'}
+          {actions.creatingOffice ? "Creating..." : "Add office"}
         </button>
       </form>
       <ul className="space-y-2">
@@ -887,10 +1156,17 @@ function OfficeLocationRow({
   actions,
 }: {
   location: OfficeLocation;
-  drafts: Pick<AdminDrafts, 'officeNameDrafts' | 'setOfficeNameDrafts' | 'officeSettingsDrafts' | 'setOfficeSettingsDrafts'>;
+  drafts: Pick<
+    AdminDrafts,
+    | "officeNameDrafts"
+    | "setOfficeNameDrafts"
+    | "officeSettingsDrafts"
+    | "setOfficeSettingsDrafts"
+  >;
   actions: ReturnType<typeof useOfficeActions>;
 }) {
-  const settingsDraft = drafts.officeSettingsDrafts[location.id] ?? initialOfficeSettings(location);
+  const settingsDraft =
+    drafts.officeSettingsDrafts[location.id] ?? initialOfficeSettings(location);
   const updating = actions.updatingOfficeId === location.id;
   const changed = settingsChanged(location, settingsDraft);
 
@@ -900,20 +1176,28 @@ function OfficeLocationRow({
         <div className="min-w-0">
           <p className="font-medium text-fg">{location.name}</p>
           <p className="text-xs text-fg-muted">
-            Key: {location.key} · {location.isActive ? 'Active' : 'Inactive'}
+            Key: {location.key} · {location.isActive ? "Active" : "Inactive"}
           </p>
         </div>
         <div className="flex flex-col gap-2 md:flex-row">
           <input
             type="text"
             aria-label={`Office name for ${location.key}`}
-            value={drafts.officeNameDrafts[location.id] ?? ''}
+            value={drafts.officeNameDrafts[location.id] ?? ""}
             onChange={(event) =>
-              drafts.setOfficeNameDrafts((current) => ({ ...current, [location.id]: event.target.value }))
+              drafts.setOfficeNameDrafts((current) => ({
+                ...current,
+                [location.id]: event.target.value,
+              }))
             }
             className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
           />
-          <OfficeRowActions location={location} updating={updating} drafts={drafts} actions={actions} />
+          <OfficeRowActions
+            location={location}
+            updating={updating}
+            drafts={drafts}
+            actions={actions}
+          />
         </div>
         <OfficeSettingsEditor
           location={location}
@@ -936,7 +1220,7 @@ function OfficeRowActions({
 }: {
   location: OfficeLocation;
   updating: boolean;
-  drafts: Pick<AdminDrafts, 'officeNameDrafts'>;
+  drafts: Pick<AdminDrafts, "officeNameDrafts">;
   actions: ReturnType<typeof useOfficeActions>;
 }) {
   const draftName = drafts.officeNameDrafts[location.id]?.trim();
@@ -949,16 +1233,16 @@ function OfficeRowActions({
         onClick={() => void actions.renameOffice(location.id)}
         className="rounded border border-border bg-surface-muted px-3 py-2 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Rename'}
+        {updating ? "Updating..." : "Rename"}
       </button>
       <button
         type="button"
         aria-label={`Deactivate office ${location.key}`}
-        disabled={updating || !location.isActive || location.key === 'default'}
+        disabled={updating || !location.isActive || location.key === "default"}
         onClick={() => void actions.deactivateOffice(location.id)}
         className="rounded border border-danger bg-danger-soft px-3 py-2 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Deactivate'}
+        {updating ? "Updating..." : "Deactivate"}
       </button>
     </div>
   );
@@ -976,7 +1260,9 @@ function OfficeSettingsEditor({
   settingsDraft: OfficeSettingsDraft;
   updating: boolean;
   changed: boolean;
-  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
+  setOfficeSettingsDrafts: Dispatch<
+    SetStateAction<Record<string, OfficeSettingsDraft>>
+  >;
   onSave: () => void;
 }) {
   const patchDraft = (patch: Partial<OfficeSettingsDraft>) =>
@@ -994,7 +1280,9 @@ function OfficeSettingsEditor({
             aria-label={`Enable scheduled poll for ${location.key}`}
             checked={settingsDraft.autoStartPollEnabled}
             disabled={updating || !location.isActive}
-            onChange={(event) => patchDraft({ autoStartPollEnabled: event.target.checked })}
+            onChange={(event) =>
+              patchDraft({ autoStartPollEnabled: event.target.checked })
+            }
           />
           Auto-start lunch poll
         </label>
@@ -1013,8 +1301,14 @@ function OfficeSettingsEditor({
               type="time"
               aria-label={`Auto-start finish time for ${location.key}`}
               value={settingsDraft.autoStartPollFinishTime}
-              disabled={updating || !location.isActive || !settingsDraft.autoStartPollEnabled}
-              onChange={(event) => patchDraft({ autoStartPollFinishTime: event.target.value })}
+              disabled={
+                updating ||
+                !location.isActive ||
+                !settingsDraft.autoStartPollEnabled
+              }
+              onChange={(event) =>
+                patchDraft({ autoStartPollFinishTime: event.target.value })
+              }
               className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted"
             />
           </label>
@@ -1033,7 +1327,7 @@ function OfficeSettingsEditor({
             onClick={onSave}
             className="rounded border border-success bg-success-soft px-3 py-2 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
           >
-            {updating ? 'Updating...' : 'Save settings'}
+            {updating ? "Updating..." : "Save settings"}
           </button>
         </div>
       </div>
@@ -1050,30 +1344,51 @@ function WeekdaySelector({
   location: OfficeLocation;
   settingsDraft: OfficeSettingsDraft;
   updating: boolean;
-  setOfficeSettingsDrafts: Dispatch<SetStateAction<Record<string, OfficeSettingsDraft>>>;
+  setOfficeSettingsDrafts: Dispatch<
+    SetStateAction<Record<string, OfficeSettingsDraft>>
+  >;
 }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Weekdays</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+        Weekdays
+      </p>
       <div className="flex flex-wrap gap-2">
         {OFFICE_WEEKDAY_OPTIONS.map((weekday) => {
-          const checked = settingsDraft.autoStartPollWeekdays.includes(weekday.value);
+          const checked = settingsDraft.autoStartPollWeekdays.includes(
+            weekday.value,
+          );
           return (
-            <label key={weekday.value} className="flex items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg">
+            <label
+              key={weekday.value}
+              className="flex items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
+            >
               <input
                 type="checkbox"
                 aria-label={`${weekday.label} auto poll for ${location.key}`}
                 checked={checked}
-                disabled={updating || !location.isActive || !settingsDraft.autoStartPollEnabled}
+                disabled={
+                  updating ||
+                  !location.isActive ||
+                  !settingsDraft.autoStartPollEnabled
+                }
                 onChange={(event) =>
                   setOfficeSettingsDrafts((current) => {
                     const currentDraft = current[location.id] ?? settingsDraft;
                     const nextWeekdays = orderWeekdays(
                       event.target.checked
                         ? [...currentDraft.autoStartPollWeekdays, weekday.value]
-                        : currentDraft.autoStartPollWeekdays.filter((value) => value !== weekday.value),
+                        : currentDraft.autoStartPollWeekdays.filter(
+                            (value) => value !== weekday.value,
+                          ),
                     );
-                    return { ...current, [location.id]: { ...currentDraft, autoStartPollWeekdays: nextWeekdays } };
+                    return {
+                      ...current,
+                      [location.id]: {
+                        ...currentDraft,
+                        autoStartPollWeekdays: nextWeekdays,
+                      },
+                    };
                   })
                 }
               />
@@ -1106,11 +1421,17 @@ function FoodDurationSelect({
         aria-label={`Default food selection duration for ${location.key}`}
         value={settingsDraft.defaultFoodSelectionDurationMinutes}
         disabled={updating}
-        onChange={(event) => patchDraft({ defaultFoodSelectionDurationMinutes: Number(event.target.value) })}
+        onChange={(event) =>
+          patchDraft({
+            defaultFoodSelectionDurationMinutes: Number(event.target.value),
+          })
+        }
         className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
       >
         {FOOD_DURATIONS.map((duration) => (
-          <option key={duration} value={duration}>{duration} min</option>
+          <option key={duration} value={duration}>
+            {duration} min
+          </option>
         ))}
       </select>
     </label>
@@ -1123,7 +1444,17 @@ function UsersSection({
   actions,
 }: {
   config: AdminAuth;
-  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships' | 'displayNameDrafts' | 'setDisplayNameDrafts' | 'emailDrafts' | 'setEmailDrafts'>;
+  drafts: Pick<
+    AdminDrafts,
+    | "selectedUserOffices"
+    | "setSelectedUserOffices"
+    | "selectedUserOfficeMemberships"
+    | "setSelectedUserOfficeMemberships"
+    | "displayNameDrafts"
+    | "setDisplayNameDrafts"
+    | "emailDrafts"
+    | "setEmailDrafts"
+  >;
   actions: ReturnType<typeof useUserActions>;
 }) {
   return (
@@ -1134,7 +1465,13 @@ function UsersSection({
       ) : (
         <ul className="space-y-2">
           {config.users.map((entry) => (
-            <UserRow key={entry.email} entry={entry} config={config} drafts={drafts} actions={actions} />
+            <UserRow
+              key={entry.email}
+              entry={entry}
+              config={config}
+              drafts={drafts}
+              actions={actions}
+            />
           ))}
         </ul>
       )}
@@ -1150,13 +1487,26 @@ function UserRow({
 }: {
   entry: AdminUser;
   config: AdminAuth;
-  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships' | 'displayNameDrafts' | 'setDisplayNameDrafts' | 'emailDrafts' | 'setEmailDrafts'>;
+  drafts: Pick<
+    AdminDrafts,
+    | "selectedUserOffices"
+    | "setSelectedUserOffices"
+    | "selectedUserOfficeMemberships"
+    | "setSelectedUserOfficeMemberships"
+    | "displayNameDrafts"
+    | "setDisplayNameDrafts"
+    | "emailDrafts"
+    | "setEmailDrafts"
+  >;
   actions: ReturnType<typeof useUserActions>;
 }) {
   const isCurrentUser = config.user?.username === entry.email;
   const canManageLocalAccount =
-    entry.localAccount && !entry.protectedBootstrapAdmin && entry.displayNameSource !== 'entra';
-  const canEditDisplayName = entry.localAccount && entry.displayNameSource !== 'entra';
+    entry.localAccount &&
+    !entry.protectedBootstrapAdmin &&
+    entry.displayNameSource !== "entra";
+  const canEditDisplayName =
+    entry.localAccount && entry.displayNameSource !== "entra";
 
   return (
     <li className="rounded border border-border bg-surface px-3 py-2 text-sm">
@@ -1169,17 +1519,26 @@ function UserRow({
             actions={actions}
             canManageLocalAccount={canManageLocalAccount}
           />
-          {!entry.localAccount ? <p className="text-xs text-fg-muted">External account email is read-only</p> : null}
+          {!entry.localAccount ? (
+            <p className="text-xs text-fg-muted">
+              External account email is read-only
+            </p>
+          ) : null}
           <DisplayNameEditor
             entry={entry}
             drafts={drafts}
             actions={actions}
             canEditDisplayName={canEditDisplayName}
           />
-          {entry.displayNameSource === 'entra' ? (
+          {entry.displayNameSource === "entra" ? (
             <p className="text-xs text-fg-muted">Managed by Microsoft Entra</p>
           ) : null}
-          <OfficeMembershipEditor entry={entry} config={config} drafts={drafts} actions={actions} />
+          <OfficeMembershipEditor
+            entry={entry}
+            config={config}
+            drafts={drafts}
+            actions={actions}
+          />
           <UserRoleActions
             entry={entry}
             isCurrentUser={isCurrentUser}
@@ -1197,17 +1556,23 @@ function UserSummary({ entry }: { entry: AdminUser }) {
     <div className="min-w-0">
       <p className="truncate font-medium text-fg">{entry.email}</p>
       <p className="text-xs text-fg-muted">
-        {entry.blocked ? 'Blocked' : entry.approved ? 'Approved' : 'Pending'} ·{' '}
-        {entry.isAdmin ? 'Admin' : 'User'}
+        {entry.blocked ? "Blocked" : entry.approved ? "Approved" : "Pending"} ·{" "}
+        {entry.isAdmin ? "Admin" : "User"}
       </p>
-      <p className="text-xs text-fg-muted">Preferred office: {entry.officeLocationName ?? 'Unassigned'}</p>
       <p className="text-xs text-fg-muted">
-        Assigned offices:{' '}
-        {entry.assignedOfficeLocations.length > 0
-          ? entry.assignedOfficeLocations.map((location) => location.name).join(', ')
-          : 'None'}
+        Preferred office: {entry.officeLocationName ?? "Unassigned"}
       </p>
-      <p className="text-xs text-fg-muted">Display name: {entry.displayName || 'Email fallback'}</p>
+      <p className="text-xs text-fg-muted">
+        Assigned offices:{" "}
+        {entry.assignedOfficeLocations.length > 0
+          ? entry.assignedOfficeLocations
+              .map((location) => location.name)
+              .join(", ")
+          : "None"}
+      </p>
+      <p className="text-xs text-fg-muted">
+        Display name: {entry.displayName || "Email fallback"}
+      </p>
     </div>
   );
 }
@@ -1219,12 +1584,14 @@ function AccountEmailEditor({
   canManageLocalAccount,
 }: {
   entry: AdminUser;
-  drafts: Pick<AdminDrafts, 'emailDrafts' | 'setEmailDrafts'>;
+  drafts: Pick<AdminDrafts, "emailDrafts" | "setEmailDrafts">;
   actions: ReturnType<typeof useUserActions>;
   canManageLocalAccount: boolean;
 }) {
   const updating = actions.updatingUserRoleEmail === entry.email;
-  const unchanged = (drafts.emailDrafts[entry.email] ?? entry.email).trim().toLowerCase() === entry.email.toLowerCase();
+  const unchanged =
+    (drafts.emailDrafts[entry.email] ?? entry.email).trim().toLowerCase() ===
+    entry.email.toLowerCase();
   return (
     <div className="flex flex-col gap-1 sm:flex-row">
       <input
@@ -1233,7 +1600,10 @@ function AccountEmailEditor({
         value={drafts.emailDrafts[entry.email] ?? entry.email}
         disabled={!canManageLocalAccount || updating}
         onChange={(event) =>
-          drafts.setEmailDrafts((current) => ({ ...current, [entry.email]: event.target.value }))
+          drafts.setEmailDrafts((current) => ({
+            ...current,
+            [entry.email]: event.target.value,
+          }))
         }
         className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
       />
@@ -1243,7 +1613,7 @@ function AccountEmailEditor({
         onClick={() => void actions.saveEmail(entry.email)}
         className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Save email'}
+        {updating ? "Updating..." : "Save email"}
       </button>
     </div>
   );
@@ -1256,21 +1626,26 @@ function DisplayNameEditor({
   canEditDisplayName,
 }: {
   entry: AdminUser;
-  drafts: Pick<AdminDrafts, 'displayNameDrafts' | 'setDisplayNameDrafts'>;
+  drafts: Pick<AdminDrafts, "displayNameDrafts" | "setDisplayNameDrafts">;
   actions: ReturnType<typeof useUserActions>;
   canEditDisplayName: boolean;
 }) {
   const updating = actions.updatingUserRoleEmail === entry.email;
-  const unchanged = (drafts.displayNameDrafts[entry.email] ?? '').trim() === (entry.displayName ?? '');
+  const unchanged =
+    (drafts.displayNameDrafts[entry.email] ?? "").trim() ===
+    (entry.displayName ?? "");
   return (
     <div className="flex flex-col gap-1 sm:flex-row">
       <input
         type="text"
         aria-label={`Display name for ${entry.email}`}
-        value={drafts.displayNameDrafts[entry.email] ?? ''}
+        value={drafts.displayNameDrafts[entry.email] ?? ""}
         disabled={!canEditDisplayName || updating}
         onChange={(event) =>
-          drafts.setDisplayNameDrafts((current) => ({ ...current, [entry.email]: event.target.value }))
+          drafts.setDisplayNameDrafts((current) => ({
+            ...current,
+            [entry.email]: event.target.value,
+          }))
         }
         className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1 text-xs text-fg disabled:bg-surface-muted disabled:text-fg-muted"
         placeholder="Display name"
@@ -1281,7 +1656,7 @@ function DisplayNameEditor({
         onClick={() => void actions.saveDisplayName(entry.email)}
         className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Save name'}
+        {updating ? "Updating..." : "Save name"}
       </button>
     </div>
   );
@@ -1295,34 +1670,46 @@ function OfficeMembershipEditor({
 }: {
   entry: AdminUser;
   config: AdminAuth;
-  drafts: Pick<AdminDrafts, 'selectedUserOffices' | 'setSelectedUserOffices' | 'selectedUserOfficeMemberships' | 'setSelectedUserOfficeMemberships'>;
+  drafts: Pick<
+    AdminDrafts,
+    | "selectedUserOffices"
+    | "setSelectedUserOffices"
+    | "selectedUserOfficeMemberships"
+    | "setSelectedUserOfficeMemberships"
+  >;
   actions: ReturnType<typeof useUserActions>;
 }) {
   const memberships = drafts.selectedUserOfficeMemberships[entry.email] ?? [];
   const officesUnchanged =
-    memberships.join('|') === entry.assignedOfficeLocationIds.join('|') &&
-    (drafts.selectedUserOffices[entry.email] ?? '') === (entry.officeLocationId ?? '');
+    memberships.join("|") === entry.assignedOfficeLocationIds.join("|") &&
+    (drafts.selectedUserOffices[entry.email] ?? "") ===
+      (entry.officeLocationId ?? "");
   const updating = actions.updatingUserRoleEmail === entry.email;
 
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {config.officeLocations.filter((location) => location.isActive).map((location) => (
-          <OfficeMembershipCheckbox
-            key={location.id}
-            entry={entry}
-            location={location}
-            checked={memberships.includes(location.id)}
-            disabled={updating}
-            drafts={drafts}
-          />
-        ))}
+        {config.officeLocations
+          .filter((location) => location.isActive)
+          .map((location) => (
+            <OfficeMembershipCheckbox
+              key={location.id}
+              entry={entry}
+              location={location}
+              checked={memberships.includes(location.id)}
+              disabled={updating}
+              drafts={drafts}
+            />
+          ))}
       </div>
       <select
         aria-label={`Preferred office for ${entry.email}`}
-        value={drafts.selectedUserOffices[entry.email] ?? ''}
+        value={drafts.selectedUserOffices[entry.email] ?? ""}
         onChange={(event) =>
-          drafts.setSelectedUserOffices((current) => ({ ...current, [entry.email]: event.target.value }))
+          drafts.setSelectedUserOffices((current) => ({
+            ...current,
+            [entry.email]: event.target.value,
+          }))
         }
         disabled={updating || memberships.length === 0}
         className="rounded border border-border bg-surface px-2 py-1 text-xs text-fg"
@@ -1331,16 +1718,22 @@ function OfficeMembershipEditor({
         {config.officeLocations
           .filter((location) => memberships.includes(location.id))
           .map((location) => (
-            <option key={location.id} value={location.id}>{location.name}</option>
+            <option key={location.id} value={location.id}>
+              {location.name}
+            </option>
           ))}
       </select>
       <button
         type="button"
-        disabled={updating || (memberships.length === 0 && !entry.isAdmin) || officesUnchanged}
+        disabled={
+          updating ||
+          (memberships.length === 0 && !entry.isAdmin) ||
+          officesUnchanged
+        }
         onClick={() => void actions.assignOffice(entry.email)}
         className="rounded border border-border bg-surface-muted px-3 py-1 text-xs font-medium text-fg hover:bg-surface disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Save offices'}
+        {updating ? "Updating..." : "Save offices"}
       </button>
     </>
   );
@@ -1357,7 +1750,10 @@ function OfficeMembershipCheckbox({
   location: OfficeLocation;
   checked: boolean;
   disabled: boolean;
-  drafts: Pick<AdminDrafts, 'setSelectedUserOffices' | 'setSelectedUserOfficeMemberships'>;
+  drafts: Pick<
+    AdminDrafts,
+    "setSelectedUserOffices" | "setSelectedUserOfficeMemberships"
+  >;
 }) {
   return (
     <label className="flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-fg">
@@ -1372,7 +1768,13 @@ function OfficeMembershipCheckbox({
             const nextMemberships = event.target.checked
               ? [...currentMemberships, location.id]
               : currentMemberships.filter((id) => id !== location.id);
-            updatePreferredOffice(entry.email, location.id, event.target.checked, nextMemberships, drafts);
+            updatePreferredOffice(
+              entry.email,
+              location.id,
+              event.target.checked,
+              nextMemberships,
+              drafts,
+            );
             return { ...current, [entry.email]: nextMemberships };
           })
         }
@@ -1387,7 +1789,7 @@ function updatePreferredOffice(
   locationId: string,
   checked: boolean,
   nextMemberships: string[],
-  drafts: Pick<AdminDrafts, 'setSelectedUserOffices'>,
+  drafts: Pick<AdminDrafts, "setSelectedUserOffices">,
 ) {
   drafts.setSelectedUserOffices((currentPreferred) => {
     const currentOffice = currentPreferred[email];
@@ -1395,7 +1797,7 @@ function updatePreferredOffice(
       return { ...currentPreferred, [email]: currentOffice || locationId };
     }
     if (currentOffice === locationId) {
-      return { ...currentPreferred, [email]: nextMemberships[0] ?? '' };
+      return { ...currentPreferred, [email]: nextMemberships[0] ?? "" };
     }
     return currentPreferred;
   });
@@ -1422,7 +1824,7 @@ function UserRoleActions({
           onClick={() => void actions.demoteUser(entry.email)}
           className="rounded border border-warning bg-warning-soft px-3 py-1 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-60"
         >
-          {updating ? 'Updating...' : 'Demote'}
+          {updating ? "Updating..." : "Demote"}
         </button>
       ) : (
         <button
@@ -1431,17 +1833,22 @@ function UserRoleActions({
           onClick={() => void actions.promoteUser(entry.email)}
           className="rounded bg-accent-solid px-3 py-1 text-xs font-medium text-accent-on transition-colors hover:opacity-90 disabled:opacity-60"
         >
-          {updating ? 'Updating...' : 'Promote'}
+          {updating ? "Updating..." : "Promote"}
         </button>
       )}
-      <BlockToggle entry={entry} isCurrentUser={isCurrentUser} updating={updating} actions={actions} />
+      <BlockToggle
+        entry={entry}
+        isCurrentUser={isCurrentUser}
+        updating={updating}
+        actions={actions}
+      />
       <button
         type="button"
         disabled={!canManageLocalAccount || updating || isCurrentUser}
         onClick={() => void actions.deleteUser(entry.email)}
         className="rounded border border-danger bg-danger-soft px-3 py-1 text-xs font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Delete local account'}
+        {updating ? "Updating..." : "Delete local account"}
       </button>
     </div>
   );
@@ -1466,7 +1873,7 @@ function BlockToggle({
         onClick={() => void actions.unblockUser(entry.email)}
         className="rounded border border-success bg-success-soft px-3 py-1 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
       >
-        {updating ? 'Updating...' : 'Unblock'}
+        {updating ? "Updating..." : "Unblock"}
       </button>
     );
   }
@@ -1477,7 +1884,7 @@ function BlockToggle({
       onClick={() => void actions.blockUser(entry.email)}
       className="rounded bg-danger-solid px-3 py-1 text-xs font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-60"
     >
-      {updating ? 'Updating...' : 'Block'}
+      {updating ? "Updating..." : "Block"}
     </button>
   );
 }

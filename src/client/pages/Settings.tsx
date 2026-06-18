@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
 import { withBasePath } from '../config.js';
 import { Section } from '../components/ui/Section.js';
@@ -7,6 +7,7 @@ import { Select } from '../components/ui/Select.js';
 import { Button } from '../components/ui/Button.js';
 import * as api from '../api.js';
 import type { AppVersionResponse, UserPreferences } from '../../lib/types.js';
+import { INGREDIENT_PREFERENCE_OPTIONS } from '../../lib/ingredientVocabulary.js';
 import {
   ACTOR_KEY_STORAGE_KEY,
   AUTH_METHOD_STORAGE_KEY,
@@ -28,6 +29,39 @@ function parsePreferenceTerms(value: string): string[] {
     .split(/[,\n;]/)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
+}
+
+function dedupePreferenceTerms(terms: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const term of terms) {
+    const normalized = term.trim();
+    if (!normalized) {
+      continue;
+    }
+
+    const key = normalized.toLocaleLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    result.push(normalized);
+  }
+
+  return result;
+}
+
+function togglePreferenceTerm(value: string, term: string): string {
+  const normalizedTerm = term.toLocaleLowerCase().trim();
+  const currentTerms = parsePreferenceTerms(value);
+  const nextTerms = currentTerms.filter((entry) => entry.toLocaleLowerCase().trim() !== normalizedTerm);
+
+  if (nextTerms.length === currentTerms.length) {
+    nextTerms.push(term);
+  }
+
+  return dedupePreferenceTerms(nextTerms).join(', ');
 }
 
 function countGraphemes(value: string): number {
@@ -135,6 +169,52 @@ function OfficeSettingsSection({
   );
 }
 
+function IngredientQuickPickGroup({
+  title,
+  draft,
+  onDraftChange,
+  disabled,
+}: {
+  title: string;
+  draft: string;
+  onDraftChange: (value: string) => void;
+  disabled: boolean;
+}) {
+  const selectedTerms = useMemo(
+    () => new Set(parsePreferenceTerms(draft).map((term) => term.toLocaleLowerCase().trim())),
+    [draft],
+  );
+
+  return (
+    <div role="group" aria-label={title} className="space-y-2">
+      <p className="text-xs font-medium text-fg-muted">{title}</p>
+      <div className="flex flex-wrap gap-2">
+        {INGREDIENT_PREFERENCE_OPTIONS.map((option) => {
+          const pressed = selectedTerms.has(option.tag);
+          return (
+            <button
+              key={option.tag}
+              type="button"
+              aria-pressed={pressed}
+              onClick={() => onDraftChange(togglePreferenceTerm(draft, option.tag))}
+              disabled={disabled}
+              className={[
+                'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                pressed
+                  ? 'border-accent bg-accent-solid text-white'
+                  : 'border-border bg-surface text-fg-muted hover:bg-surface-muted hover:text-fg',
+                disabled ? 'cursor-not-allowed opacity-50' : '',
+              ].join(' ')}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function IngredientPreferencesSection({
   foodAlertsDescription,
   allergiesDraft,
@@ -183,6 +263,20 @@ function IngredientPreferencesSection({
               disabled={inputDisabled}
             />
           </label>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <IngredientQuickPickGroup
+            title="Quick picks for ingredients to avoid"
+            draft={allergiesDraft}
+            onDraftChange={onAllergiesChange}
+            disabled={inputDisabled}
+          />
+          <IngredientQuickPickGroup
+            title="Quick picks for less preferred ingredients"
+            draft={dislikesDraft}
+            onDraftChange={onDislikesChange}
+            disabled={inputDisabled}
+          />
         </div>
         <p className="text-xs text-fg-muted">Separate terms with commas, semicolons, or new lines.</p>
       </div>

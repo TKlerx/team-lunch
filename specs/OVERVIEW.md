@@ -1,6 +1,6 @@
 # Specs Overview
 
-**Last Updated**: 2026-06-15
+**Last Updated**: 2026-06-18
 
 This overview tracks spec completeness and implementation status for epics in
 `specs/`.
@@ -62,15 +62,14 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **64.3 Meal recommender foundation + feedback loop**: Planned. Promoted as [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md). Define recommendation signals from historical orders, ratings, feedback remarks, and preferences; add a per-user recommendation endpoint; and learn from order/rating outcomes instead of a separate feedback layer.
-2. **77 Responsive / Mobile-Friendly UI**: Planned backlog. Audit critical flows, improve small-screen behavior, and add regression coverage.
-3. **78.2 Ordering-claim timeout and recovery**: Planned. Needs product decisions around ownership handoff and late order recovery.
-4. **78.3 Late meal selection until ordering is explicitly claimed**: Planned. Related to ordering cutoff semantics.
-5. **79 Office-Scoped Admin Roles**: Planned backlog. Needs role and authorization model design.
-6. **80 Poll Concurrency**: Planned backlog. Needs explicit office + poll identity handling before implementation.
+1. **003 Learned meal recommender**: Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
+2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
+3. **Office-scoped admin roles**: Backlog idea. Needs role and authorization model design before promotion.
+4. **Poll concurrency inside one office**: Backlog idea. Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
 
 ## Notes
 
 - `001-canonical-routes` is implemented in `IMPLEMENTATION_PLAN.md` item 89.1; the spec status is marked `Done`.
 - `food-selection` is marked `Mostly Done` because its migrated task list still calls out verification gaps around pruning-era tests and timer edge assertions, even though the feature is broadly shipped.
+- `IMPLEMENTATION_PLAN.md` is legacy tracking. New product truth should live in a numbered spec or `specs/BACKLOG.md`.
 - `old/` contains pre-migration notes and is intentionally excluded from the epic table.

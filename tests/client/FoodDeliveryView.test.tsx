@@ -165,6 +165,37 @@ describe('FoodDeliveryView', () => {
     expect(screen.getByRole('link', { name: /https:\/\/pizza-pronto\.example\/…/i })).toBeInTheDocument();
   });
 
+  it('renders restaurant contacts as a list instead of a table', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [
+        {
+          id: 'menu-1',
+          name: 'Pizza Place',
+          location: 'Frankfurter Weg 11, Paderborn',
+          phone: '+49 5251 6862323',
+          url: 'https://pizza-pronto.example',
+          orderUrl: null,
+          sourceDateCreated: null,
+          createdAt: '2026-01-01T00:00:00Z',
+          itemCount: 0,
+          items: [],
+        },
+      ],
+      activeFoodSelection: makeFoodSelection({
+        id: 'fs-1',
+        status: 'delivering',
+        menuId: 'menu-1',
+        menuName: 'Pizza Place',
+      }),
+    });
+
+    renderView();
+    expect(screen.getByRole('list', { name: /restaurant contact links/i })).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  });
+
   it('copies current order list during delivery', async () => {
     const user = userEvent.setup();
     const writeTextMock = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);

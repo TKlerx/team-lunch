@@ -3,6 +3,7 @@ import { useAppState } from '../context/AppContext.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import type { MealRecommendationPreVoteResponse } from '../../lib/types.js';
 import {
   getAuthenticatedActorKey,
   getAuthenticatedDisplayLabel,
@@ -213,6 +214,78 @@ function PublicVotesBoard({
             </li>
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+function PreVotePanel({ pollId }: { pollId: string }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<MealRecommendationPreVoteResponse | null>(null);
+
+  const handleLoadRecommendations = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.recommendPreVote(pollId, 5);
+      setResult(response);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold text-fg">Pre-vote recommendations</h3>
+          <p className="mt-1 text-sm text-fg-muted">
+            See what dishes look strongest across the current candidate menus before you vote.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void handleLoadRecommendations()}
+          disabled={loading}
+          className="rounded border border-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-soft disabled:opacity-60"
+        >
+          {loading ? 'Loading...' : result ? 'Refresh suggestions' : 'Show suggestions'}
+        </button>
+      </div>
+
+      {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
+
+      {result && (
+        <div className="mt-4 space-y-3">
+          {result.warnings.length > 0 && (
+            <div className="rounded border border-warning bg-warning-soft px-3 py-2 text-sm text-warning-fg">
+              {result.warnings.join(' ')}
+            </div>
+          )}
+          {result.items.length === 0 ? (
+            <p className="text-sm text-fg-muted">No pre-vote suggestions available yet.</p>
+          ) : (
+            <ol className="space-y-2">
+              {result.items.map((item) => (
+                <li key={`${item.menuId}:${item.itemId}`} className="rounded border border-border p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-fg">
+                        {item.rank}. {item.itemName}
+                      </p>
+                      <p className="text-xs text-fg-muted">{item.menuName}</p>
+                    </div>
+                    <span className="text-xs font-medium text-fg-muted">{item.score}</span>
+                  </div>
+                  <p className="mt-2 text-sm text-fg-muted">{item.reason}</p>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
       )}
     </div>
   );
@@ -434,6 +507,10 @@ export default function PollActiveView() {
           votes={activePoll.votes}
           disabled={pollExpired}
         />
+      </div>
+
+      <div className="mt-4">
+        <PreVotePanel pollId={activePoll.id} />
       </div>
 
       <div className="mt-4">

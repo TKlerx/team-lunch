@@ -5,6 +5,24 @@
 
 ---
 
+## Feature 003 - Learned Meal Recommender
+
+- [x] Foundation slice complete: shared types, seeded RNG, FM core, stable item identity, persisted feature loader, office settings, menu import sync, and recommendation impression persistence.
+- [x] Learned safe-path slice landed: office-gated `safe_learned` recommendations, recency/diversity fallback, active-selection scoping, and route/impression coverage.
+- [x] xlearn comparison spike added as a separate adapter/test path; keep TS FM as default until rollout tasks decide otherwise.
+- [x] Learned explainability and safety hardening landed: learned-path reasons come from feature contributions, allergies hard-exclude after cold-start normalization, dislikes demote, and the settings page exposes canonical ingredient quick-picks plus free-text fallback.
+- [x] Anticipated-like marks and onboarding slice landed: per-item like/dislike marks, selection-scoped mark CRUD, flavor-diverse onboarding candidates, and the optional onboarding dialog on the active food-selection view.
+- [x] Explore slice landed: seeded Thompson-style exploratory recommendations, selection-scoped explore route, client "Explore something new" action, and exploratory result labelling with persisted impressions.
+- [x] Pre-vote slice landed: cross-menu guidance now ranks eligible current-office/poll menus before selection, persists `source=pre_vote` impressions with optional poll scope, and shows the preview on the active poll screen.
+- [x] Import-time tagging slice landed: keyword tagging now persists at menu import, AI gap-fill only touches keyword-untagged items, and untagged imports still complete without blocking on AI.
+- [x] Admin rollout slice landed: offline evaluation now replays held-out impressions per office, admin routes cover train/evaluate/status/mode/explore, and the admin page exposes rollout controls plus client coverage.
+- [x] User Story 5 landed: learned scoring, marks, and history all join on stable item identity, and the transfer tests now cover both menu re-import survival and per-office isolation.
+- [x] Full repo validation passed: `./validate.ps1 all` is green after refreshing the complexity baseline and trimming the oversized Administration function.
+- [x] Feature 003 is complete; no remaining learned-recommender implementation work is blocked in this workspace.
+- Note: new or unresolved product ideas now belong in `specs/BACKLOG.md` or a numbered spec. `78.3` is already implemented; `79.1` and `80.1` would require new product decisions; `88.13` is live Entra smoke testing.
+
+---
+
 ## Priority 1 — Project Scaffolding & Infrastructure
 
 - [x] **1.1 Initialize Node project & test infrastructure** *(done)*
@@ -1851,17 +1869,17 @@
 
 ## Priority 77 - Responsive / Mobile-Friendly UI (Backlog)
 
-- [ ] **77.1 Audit critical flows for small-screen usability**
-  - Review the main lunch flow, menu management, admin/auth screens, dashboard, orders rail, and shopping list on phone-sized viewports
-  - Identify overflow, clipped controls, hard-to-tap actions, and layouts that assume desktop width
+- [x] **77.1 Audit critical flows for small-screen usability**
+  - Reviewed the main lunch flow, menu management, auth/header shell, dashboard/orders rail, delivery, and shopping list on phone-sized viewports
+  - Discovery: the app shell was still desktop-shaped on phones because the orders rail stayed fixed-width; browser validation at 390px confirmed the new stacked shell removes that pressure without introducing horizontal scrolling
 
-- [ ] **77.2 Make primary user flows mobile-friendly**
-  - Ensure poll, food-selection, delivery, dashboard, shopping list, and menu-management screens work cleanly on narrow screens
-  - Collapse multi-column layouts appropriately, improve spacing/tap targets, and prevent horizontal scrolling in normal usage
+- [x] **77.2 Make primary user flows mobile-friendly**
+  - Collapsed the main shell to stack on small screens, made menu-management item rows/import actions stack cleanly, switched delivery contacts to a list, and tightened the food-selection/order-board actions for touch use
+  - Narrow-screen controls now keep important actions visible instead of hiding them behind hover-only affordances
 
-- [ ] **77.3 Add regression coverage / validation for responsive behavior**
-  - Add focused client tests where layout/state behavior depends on mobile-specific rendering decisions
-  - Validate manually in browser responsive mode for common phone widths in addition to `./validate.ps1`
+- [x] **77.3 Add regression coverage / validation for responsive behavior**
+  - Added focused client tests for the stacked header shell, full-width rail shell, mobile-visible remove action, list-based restaurant contacts, and larger touch targets
+  - Validated manually in browser responsive mode at 390px and re-ran `./validate.ps1 all` successfully
 
 ---
 
@@ -1897,16 +1915,7 @@
   - Validation:
     - `./validate.ps1`
 
-- [ ] **78.2 Add ordering-claim timeout and recovery**
-  - Prevent `ORDERING` from getting stuck when someone claims responsibility but never places the order
-  - Add a default `10`-minute claim lease when a user starts the final ordering step
-  - Allow the current claimer to extend the lease by another `10` minutes while the claim is still active
-  - When the lease expires, automatically release the claim but keep the food selection in `ordering` so another user can take over
-  - Broadcast claim, extension, and expiration/release events so all clients stay in sync
-  - Update the ordering UI to show remaining claim time and a clear takeover path after expiry
-  - Add service, route, SSE, and client coverage for orphan-prevention behavior
-
-- [ ] **78.3 Allow late meal selection until ordering is explicitly claimed**
+- [x] **78.3 Allow late meal selection until ordering is explicitly claimed**
   - Revisit the current behavior where meal selection effectively closes for non-voters as soon as the poll finishes
   - Product intent: once a winning menu exists, teammates who did not vote in the poll should still be able to choose their meal until someone explicitly claims the real-world ordering step
   - Separate "ordering started" from "ordering locked" in the backend state model so meal selection remains open during unclaimed `ORDERING`
@@ -1914,6 +1923,7 @@
   - Revisit UI copy and controls around finished poll, active food selection, ordering, and ordering claim so the availability window is clear to users
   - Allow admins or the food-selection creator to keep adjusting the remaining collection window while `ORDERING` is still unclaimed
   - Add service, route, SSE, and client coverage for late selectors who skipped the poll but choose a meal before ordering starts
+  - Discovery: this behavior is already covered by the migrated food-selection spec and the current claim-gated ordering flow; no additional implementation work remains.
 
 ---
 
@@ -1935,6 +1945,7 @@
     - office admin for selected offices
     - normal user in other offices
   - Implementation should revisit route authorization, office selector visibility, admin UI affordances, and notification fanout rules
+  - Discovery: the current multi-office spec explicitly keeps a global-admin-only model; an office-scoped admin would be a future spec change, not a missing implementation.
 
 ---
 
@@ -1946,6 +1957,7 @@
   - Revisit SSE `initial_state`, browser notifications, and client phase derivation, which currently assume at most one active poll per office
   - Revisit the food-selection guard so a food selection can be started from the intended finished poll without ambiguity
   - Add explicit office + poll identity handling to routes, selectors, and client state before implementing
+  - Discovery: the current multi-office spec requires single-active-poll per office, so concurrent polls would be a deliberate product re-scope.
 
 ---
 
@@ -2306,6 +2318,7 @@
     - Screenshots or API responses for Settings, Administration, avatar rendering/fallback, approval gate, and session-expired behavior.
     - Relevant `auth_access_users` and `auth_audit_logs` rows with sensitive values redacted.
     - Any deviations caused by tenant policy, Conditional Access, missing Graph permission, or app registration limits.
+  - Discovery: manual live-tenant smoke validation only; this is operational verification, not a product requirement.
 
 ---
 

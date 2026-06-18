@@ -13,8 +13,26 @@ Shared request/response types live in `src/lib/types.ts`.
   produced by the learned model (with recency/diversity); otherwise the
   deterministic baseline. Response `source` may now be `safe_learned` (in
   addition to existing `deterministic`/`ai_assisted`/`deterministic_fallback`).
+- Candidate scope is intentionally narrow: this endpoint only scores items from
+  the active food selection's selected/winning `menuId`.
 - Response items unchanged shape: `{ itemId, itemName, rank, score, reason,
   sourceSignals, aiAssisted }`; reasons remain human-readable flavor features.
+
+## Pre-vote cross-menu recommendations
+
+`POST /api/recommender/pre-vote`
+- Request: `{ pollId?: string, limit?: number }`.
+- If `pollId` is provided, the route ranks items only from menus eligible in
+  that active poll, excluding poll-excluded menus. If omitted and no active poll
+  exists, it may rank items across all current menus in the user's office.
+- Response: `{ source: "pre_vote", pollId?: string, items: {
+  menuId, menuName, itemId, itemName, rank, score, reason, sourceSignals,
+  aiAssisted
+}[], warnings?: string[] }`.
+- The result is personal and office-scoped. It must never include menus from
+  another office.
+- Persists an impression with `source = pre_vote`; the impression is not bound
+  to a food selection and may reference `pollId` when present.
 
 ## Explore
 
@@ -23,6 +41,8 @@ Shared request/response types live in `src/lib/types.ts`.
 - Response: `MealRecommendationResponse` with `source: "explore"`, items flagged
   exploratory, plus `warnings` when falling back to varied baseline options.
 - 200 even when the user has no history (varied current-menu spread).
+- Candidate scope is intentionally narrow: this endpoint only scores items from
+  the active food selection's selected/winning `menuId`.
 - Persists an impression with `source = explore`.
 
 ## Anticipated-like marks

@@ -7,6 +7,14 @@ import * as userPreferencesService from '../../src/server/services/userPreferenc
 import * as userMenuDefaultsService from '../../src/server/services/userMenuDefaults.js';
 import { ensureDefaultOfficeLocation } from '../../src/server/services/officeLocation.js';
 import { generateRecommendations, type RecommendationActor } from '../../src/server/services/mealRecommendation.js';
+import { extractFeatures } from '../../src/server/services/mealFeatures.js';
+import { normalizeMenuItemIdentityKey } from '../../src/server/services/mealItemIdentity.js';
+import {
+  clearMealRecommendationModelCache,
+  saveMealRecommendationModel,
+  trainMealRecommendationModel,
+  type MealRecommendationModel,
+} from '../../src/server/services/mealRecommendationModel.js';
 import prisma from '../../src/server/db.js';
 
 // Suppress SSE broadcasts during tests
@@ -83,12 +91,14 @@ describe('Meal recommendation service', () => {
   beforeEach(async () => {
     foodSelectionService.clearAllTimers();
     pollService.clearAllTimers();
+    clearMealRecommendationModelCache();
     await cleanDatabase();
   });
 
   afterAll(async () => {
     foodSelectionService.clearAllTimers();
     pollService.clearAllTimers();
+    clearMealRecommendationModelCache();
     await cleanDatabase();
     await disconnectDatabase();
   });
@@ -254,18 +264,45 @@ describe('Meal recommendation service', () => {
 
   // ─── Preference warnings ─────────────────────────────────
 
-  it('demotes and warns about items matching an allergy', async () => {
-    const { office, selection, menu, poll } = await setupActiveSelection(['Peanut Noodles', 'Green Curry']);
-    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Peanut Noodles', { rating: 5 });
-    await userPreferencesService.upsertUserPreferences(ACTOR.actorKey, ['peanut'], []);
+  it('hard-excludes allergies and demotes dislikes using ingredient tags and text fallback', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Peanut Noodles',
+      'Sesame Chicken',
+      'Mushroom Pasta',
+      'Ginger Noodles',
+      'Green Curry',
+    ]);
+    await userPreferencesService.upsertUserPreferences(
+      ACTOR.actorKey,
+      ['peanut', 'sesame'],
+      ['mushroom', 'ginger'],
+    );
 
-    const result = await generateRecommendations(selection.id, office.id, ACTOR);
+    const baselineResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(baselineResult.items.map((item) => item.itemName)).not.toContain('Peanut Noodles');
+    expect(baselineResult.items.map((item) => item.itemName)).not.toContain('Sesame Chicken');
 
-    const peanutNoodles = result.items.find((i) => i.itemName === 'Peanut Noodles')!;
-    expect(peanutNoodles.sourceSignals).toContain('preference_warning');
-    expect(peanutNoodles.reason).toContain('allergy');
-    // 40 (personal_rating high) * 0.2 allergy demotion factor = 8
-    expect(peanutNoodles.score).toBe(8);
+    const mushroom = baselineResult.items.find((item) => item.itemName === 'Mushroom Pasta')!;
+    const ginger = baselineResult.items.find((item) => item.itemName === 'Ginger Noodles')!;
+    const greenCurry = baselineResult.items.find((item) => item.itemName === 'Green Curry')!;
+    expect(mushroom.sourceSignals).toContain('preference_warning');
+    expect(ginger.sourceSignals).toContain('preference_warning');
+    expect(mushroom.reason).toContain('dislike');
+    expect(ginger.reason).toContain('dislike');
+    expect(mushroom.score).toBeLessThan(greenCurry.score);
+    expect(ginger.score).toBeLessThan(greenCurry.score);
+
+    await persistLearnedOfficeModel(office.id);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Thai Green Curry', { rating: 5 });
+
+    const learnedResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(learnedResult.source).toBe('safe_learned');
+    expect(learnedResult.items.map((item) => item.itemName)).not.toContain('Peanut Noodles');
+    expect(learnedResult.items.map((item) => item.itemName)).not.toContain('Sesame Chicken');
+    expect(learnedResult.items.find((item) => item.itemName === 'Mushroom Pasta')?.sourceSignals).toContain(
+      'preference_warning',
+    );
   });
 
   // ─── Impression persistence ──────────────────────────────
@@ -386,6 +423,30 @@ describe('Meal recommendation service', () => {
     expect(satay.sourceSignals).not.toContain('taste_match');
   });
 
+  it('seeds cold-start taste from anticipated-like marks even before real orders exist', async () => {
+    const { office, selection } = await setupActiveSelection(['Thai Chicken Satay', 'Plain Bread Roll']);
+
+    await prisma.userAnticipatedLike.create({
+      data: {
+        actorKey: ACTOR.actorKey,
+        actorEmail: ACTOR.actorEmail,
+        displayNameSnapshot: ACTOR.displayNameSnapshot,
+        officeLocationId: office.id,
+        itemIdentityKey: normalizeMenuItemIdentityKey('Chicken Pad Thai'),
+        itemNameSnapshot: 'Chicken Pad Thai',
+        sentiment: 'like',
+      },
+    });
+
+    const result = await generateRecommendations(selection.id, office.id, ACTOR);
+
+    const satay = result.items.find((i) => i.itemName === 'Thai Chicken Satay')!;
+    expect(result.source).toBe('deterministic');
+    expect(satay.sourceSignals).toContain('taste_match');
+    expect(satay.score).toBeGreaterThan(0);
+    expect(satay.rank).toBe(1);
+  });
+
   // ─── Validation ──────────────────────────────────────────
 
   it('rejects recommendations for an unknown food selection', async () => {
@@ -429,5 +490,233 @@ describe('Meal recommendation service', () => {
 
     expect(result.items).toHaveLength(2);
     expect(durationMs).toBeLessThan(1000);
+  });
+
+  it('scopes safe recommendations to the active food selection menu only', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection(['Pad Thai', 'Green Curry']);
+    const otherMenu = await menuService.createMenu('Dinner Menu');
+    await menuService.createItem(otherMenu.id, 'Ramen', 'Noodles');
+    await menuService.createItem(otherMenu.id, 'Sushi', 'Fish');
+
+    const result = await generateRecommendations(selection.id, office.id, ACTOR);
+
+    expect(result.items).toHaveLength(2);
+    expect(result.items.map((item) => item.itemName)).toEqual(expect.arrayContaining(['Pad Thai', 'Green Curry']));
+    expect(result.items.map((item) => item.itemName)).not.toContain('Ramen');
+    expect(result.items.map((item) => item.itemName)).not.toContain('Sushi');
+
+    await persistLearnedOfficeModel(office.id);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Pad Thai', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Green Curry', { rating: 5 });
+    const learnedResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(learnedResult.source).toBe('safe_learned');
+    expect(learnedResult.items).toHaveLength(2);
+    expect(learnedResult.items.map((item) => item.itemName)).not.toContain('Ramen');
+    expect(learnedResult.items.map((item) => item.itemName)).not.toContain('Sushi');
+  });
+
+  // ─── Learned safe path ──────────────────────────────────
+
+  async function persistLearnedOfficeModel(officeLocationId: string) {
+    const trained = trainMealRecommendationModel(
+      [
+        {
+          features: [
+            `user:${ACTOR.actorKey}`,
+            `office:${officeLocationId}`,
+            'ingredient:chicken',
+            'style:thai',
+            'style:curry',
+          ],
+          label: 1,
+          weight: 2,
+        },
+        {
+          features: [
+            `user:${ACTOR.actorKey}`,
+            `office:${officeLocationId}`,
+            'ingredient:fish',
+            'style:fried',
+          ],
+          label: 0,
+          weight: 2,
+        },
+        {
+          features: [
+            `user:${ACTOR.actorKey}`,
+            `office:${officeLocationId}`,
+            'ingredient:beef',
+            'style:burger',
+          ],
+          label: 0,
+          weight: 2,
+        },
+      ],
+      { seed: 99, factorDim: 4, epochs: 30 },
+    );
+
+    const saved = await saveMealRecommendationModel(trained, 3);
+    await prisma.officeRecommenderSetting.upsert({
+      where: { officeLocationId },
+      update: {
+        safeMode: 'learned',
+        activeModelId: saved.id,
+        exploreEnabled: true,
+      },
+      create: {
+        officeLocationId,
+        safeMode: 'learned',
+        activeModelId: saved.id,
+        exploreEnabled: true,
+      },
+    });
+
+    return saved;
+  }
+
+  async function persistVariedLearnedOfficeModel(
+    officeLocationId: string,
+    itemNames: string[],
+  ) {
+    const featureIndex: Record<string, number> = {};
+    const linearWeights: number[] = [];
+
+    const tagWeights = new Map<string, number>();
+    for (const [index, itemName] of itemNames.entries()) {
+      const baseWeight = index === 0 ? 0.6 : index === 1 ? 0.56 : 0.2;
+      for (const tag of extractFeatures(itemName)) {
+        if (featureIndex[tag] === undefined) {
+          featureIndex[tag] = Object.keys(featureIndex).length;
+        }
+        tagWeights.set(tag, baseWeight);
+      }
+    }
+
+    for (const tag of Object.keys(featureIndex)) {
+      linearWeights[featureIndex[tag]] = tagWeights.get(tag) ?? 0;
+    }
+
+    const model: MealRecommendationModel = {
+      seed: 7,
+      factorDim: 1,
+      featureIndex,
+      bias: 0,
+      linearWeights,
+      factorWeights: Array.from({ length: Object.keys(featureIndex).length }, () => [0]),
+    };
+
+    const saved = await saveMealRecommendationModel(model, 2);
+    await prisma.officeRecommenderSetting.upsert({
+      where: { officeLocationId },
+      update: {
+        safeMode: 'learned',
+        activeModelId: saved.id,
+        exploreEnabled: true,
+      },
+      create: {
+        officeLocationId,
+        safeMode: 'learned',
+        activeModelId: saved.id,
+        exploreEnabled: true,
+      },
+    });
+
+    return saved;
+  }
+
+  it('uses the learned model when safe mode is learned and enough data exists', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await persistLearnedOfficeModel(office.id);
+
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Thai Green Curry', { rating: 5 });
+
+    const result = await generateRecommendations(selection.id, office.id, ACTOR);
+
+    expect(result.source).toBe('safe_learned');
+    expect(result.items[0].itemName).toBe('Thai Chicken Curry');
+    expect(result.items[0].sourceSignals).toContain('taste_match');
+    expect(result.items[0].score).toBeGreaterThan(result.items[1].score);
+  });
+
+  it('explains learned safe recommendations with feature names and keeps AI fallback safe', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await persistLearnedOfficeModel(office.id);
+
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Thai Green Curry', { rating: 5 });
+
+    const result = await generateRecommendations(selection.id, office.id, ACTOR, true);
+
+    expect(result.source).toBe('deterministic_fallback');
+    expect(result.warnings).toContain('AI assistance is not configured; showing standard recommendations.');
+
+    const topItem = result.items[0];
+    expect(topItem.itemName).toBe('Thai Chicken Curry');
+    expect(topItem.reason.toLowerCase()).toContain('thai');
+    expect(topItem.reason.toLowerCase()).toContain('chicken');
+    expect(topItem.reason).not.toMatch(/\d/);
+    expect(topItem.reason).not.toContain('bias');
+    expect(topItem.reason).not.toContain('factor');
+  });
+
+  it('applies a repeat penalty so the learned safe path does not pin the same #1 item every time', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await persistVariedLearnedOfficeModel(office.id, [
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Thai Green Curry', { rating: 5 });
+
+    const firstResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(firstResult.source).toBe('safe_learned');
+    expect(firstResult.items[0].itemName).toBe('Thai Chicken Curry');
+
+    const secondResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(secondResult.source).toBe('safe_learned');
+    expect(secondResult.items[0].itemName).not.toBe(firstResult.items[0].itemName);
+    expect(secondResult.items[0].itemName).toBe('Fish and Chips');
+  });
+
+  it('falls back to the deterministic baseline when the learned model is disabled or the user is too sparse', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await persistLearnedOfficeModel(office.id);
+
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Chicken Pad Thai', { rating: null });
+
+    await prisma.officeRecommenderSetting.update({
+      where: { officeLocationId: office.id },
+      data: { safeMode: 'baseline' },
+    });
+
+    const disabledResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(disabledResult.source).toBe('deterministic');
+
+    await prisma.officeRecommenderSetting.update({
+      where: { officeLocationId: office.id },
+      data: { safeMode: 'learned' },
+    });
+
+    const sparseResult = await generateRecommendations(selection.id, office.id, ACTOR);
+    expect(sparseResult.source).toBe('deterministic');
   });
 });

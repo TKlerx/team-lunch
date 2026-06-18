@@ -187,23 +187,23 @@ export default function Header({
   }, [menuOpen]);
 
   return (
-    <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 shadow-sm">
-      {/* Left: App title */}
-      <Link
-        to="/"
-        className="flex items-center gap-2 text-xl font-bold text-fg hover:text-accent"
-      >
-        <img src={pizzaLogo} alt="Pizza logo" className="h-8 w-8" />
-        <img
-          src={exampleCompanyLogoSmall}
-          alt="Example company logo"
-          className="relative top-[3px] block h-7 w-auto self-center"
-        />
-        <span>Team Lunch</span>
-      </Link>
+    <header className="border-b border-border bg-surface px-4 py-3 shadow-sm">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <Link
+          to="/"
+          className="flex min-w-0 items-center gap-2 text-lg font-bold text-fg hover:text-accent sm:text-xl"
+        >
+          <img src={pizzaLogo} alt="Pizza logo" className="h-8 w-8" />
+          <img
+            src={exampleCompanyLogoSmall}
+            alt="Example company logo"
+            className="relative top-[3px] block h-7 w-auto self-center"
+          />
+          <span className="truncate">Team Lunch</span>
+        </Link>
 
-      {/* Right: nav + account */}
-      <div className="flex items-center gap-4">
+        {/* Right: nav + account */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 lg:justify-end">
         <Link
           to="/menus"
           className={`flex items-center gap-1.5 text-sm font-medium ${
@@ -318,6 +318,7 @@ export default function Header({
             )}
           </div>
         )}
+      </div>
       </div>
     </header>
   );

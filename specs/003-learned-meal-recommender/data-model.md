@@ -76,9 +76,14 @@ Per-office mode + which model serves the safe path.
 ## Changed models
 
 ### meal_recommendation_impressions (from feature 002)
-- `source` widened to: `deterministic | ai_assisted | deterministic_fallback | safe_learned | explore`
-  (keep existing values; add `safe_learned`, `explore`).
+- `source` widened to: `deterministic | ai_assisted | deterministic_fallback | safe_learned | explore | pre_vote`
+  (keep existing values; add `safe_learned`, `explore`, `pre_vote`).
 - add `recommender_model_id` UUID FK -> recommender_models nullable (which model produced a learned/explore impression).
+- allow impressions that are not bound to a food selection for pre-vote
+  recommendations (`food_selection_id` nullable, or a sibling nullable
+  `poll_id`/scope field if the existing migration strategy prefers keeping the
+  original FK required for ordering impressions).
+- pre-vote item snapshots include `menuId` and `menuName` for every ranked item.
 
 ### menu_items (from feature 002)
 - add `item_identity_key` VARCHAR(120) nullable — set at import; backfilled.
@@ -97,6 +102,10 @@ Per-office mode + which model serves the safe path.
   recency/diversity → else baseline. Persist impression with source + model id.
 - Explore → Thompson policy over per-user feature counts → labelled results →
   persist impression `source=explore`.
+- Pre-vote → score eligible candidate items across an active poll's menus (or
+  all current office menus when no poll is active) → labelled cross-menu results
+  with menu context → persist impression `source=pre_vote` without requiring a
+  food selection.
 - Mark → upsert `user_anticipated_likes`; feeds next training + immediate
   cold-start seeding at scoring time.
 

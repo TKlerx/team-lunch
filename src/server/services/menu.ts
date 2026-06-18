@@ -2,6 +2,9 @@ import prisma from '../db.js';
 import { broadcast } from '../sse.js';
 import type { Prisma } from '../generated/client/client.js';
 import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
+import { ensureMenuItemIdentity, normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
+import { extractFeatures } from './mealFeatures.js';
+import { buildSanitizedTaggingPayload, requestAiFeatureTags } from './mealRecommendationAi.js';
 import type {
   Menu,
   MenuItem,
@@ -281,6 +284,67 @@ function formatMenuItem(i: {
     price: i.price === null ? null : Number(i.price.toString()),
     createdAt: i.createdAt.toISOString(),
   };
+}
+
+type MenuItemDerivedDataDb = Pick<Prisma.TransactionClient, 'menuItem' | 'menuItemIdentity' | 'menuItemFeature'>;
+
+type MenuItemGapFillTarget = {
+  menuItemId: string;
+  itemName: string;
+  description: string | null;
+};
+
+async function syncMenuItemDerivedData(
+  db: MenuItemDerivedDataDb,
+  menuItem: { id: string; name: string; description: string | null },
+  officeLocationId: string,
+): Promise<MenuItemGapFillTarget | null> {
+  const identity = await ensureMenuItemIdentity(menuItem.id, officeLocationId, db);
+  const tags = extractFeatures(menuItem.name, menuItem.description);
+
+  await db.menuItemFeature.deleteMany({ where: { menuItemId: menuItem.id } });
+
+  if (tags.length === 0) {
+    return {
+      menuItemId: menuItem.id,
+      itemName: menuItem.name,
+      description: menuItem.description,
+    };
+  }
+
+  await db.menuItemFeature.createMany({
+    data: tags.map((tag) => ({
+      menuItemId: menuItem.id,
+      itemIdentityKey: identity.itemIdentityKey,
+      officeLocationId,
+      tag,
+      provenance: 'keyword',
+    })),
+  });
+
+  return null;
+}
+
+async function syncMenuItemsDerivedData(
+  db: MenuItemDerivedDataDb,
+  menuId: string,
+  officeLocationId: string,
+): Promise<MenuItemGapFillTarget[]> {
+  const items = await db.menuItem.findMany({
+    where: { menuId },
+    select: { id: true, name: true, description: true },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  const gapFillTargets: MenuItemGapFillTarget[] = [];
+  for (const item of items) {
+    const gapFillTarget = await syncMenuItemDerivedData(db, item, officeLocationId);
+    if (gapFillTarget) {
+      gapFillTargets.push(gapFillTarget);
+    }
+  }
+
+  return gapFillTargets;
 }
 
 function parseMenuImportPayload(payload: unknown): {
@@ -775,6 +839,7 @@ export async function createItem(
   });
 
   const formatted = formatMenuItem(item);
+  await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
   broadcast('item_created', { item: formatted }, resolvedOfficeLocationId);
   return formatted;
 }
@@ -818,6 +883,7 @@ export async function updateItem(
     },
   });
 
+  await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
   const formatted = formatMenuItem(item);
   broadcast('item_updated', { item: formatted }, resolvedOfficeLocationId);
   return formatted;
@@ -844,7 +910,7 @@ export async function importMenuFromJson(
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const { parsed } = await previewImport(payload, resolvedOfficeLocationId);
 
-  const { menu, created } = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const { menu, created, gapFillTargets } = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existing = await findMenuByName(tx.menu, resolvedOfficeLocationId, parsed.name);
 
     if (existing) {
@@ -872,12 +938,14 @@ export async function importMenuFromJson(
         })),
       });
 
+      const gapFillTargets = await syncMenuItemsDerivedData(tx, existing.id, resolvedOfficeLocationId);
+
       const updated = await tx.menu.findUniqueOrThrow({
         where: { id: existing.id },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       });
 
-      return { menu: formatMenu(updated), created: false };
+      return { menu: formatMenu(updated), created: false, gapFillTargets };
     }
 
     const createdMenu = await tx.menu.create({
@@ -902,13 +970,47 @@ export async function importMenuFromJson(
       })),
     });
 
+    const gapFillTargets = await syncMenuItemsDerivedData(tx, createdMenu.id, resolvedOfficeLocationId);
+
     const createdWithItems = await tx.menu.findUniqueOrThrow({
       where: { id: createdMenu.id },
       include: { items: { orderBy: { createdAt: 'asc' } } },
     });
 
-    return { menu: formatMenu(createdWithItems), created: true };
+    return { menu: formatMenu(createdWithItems), created: true, gapFillTargets };
   });
+
+  if (gapFillTargets.length > 0) {
+    const aiFeatureTags = await requestAiFeatureTags(
+      buildSanitizedTaggingPayload(
+        gapFillTargets.map((item) => ({
+          itemName: item.itemName,
+          description: item.description,
+        })),
+      ),
+    );
+
+    if (aiFeatureTags) {
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        for (const target of gapFillTargets) {
+          const tags = aiFeatureTags.get(target.itemName) ?? [];
+          if (tags.length === 0) {
+            continue;
+          }
+
+          await tx.menuItemFeature.createMany({
+            data: tags.map((tag) => ({
+              menuItemId: target.menuItemId,
+              itemIdentityKey: normalizeMenuItemIdentityKey(target.itemName),
+              officeLocationId: resolvedOfficeLocationId,
+              tag,
+              provenance: 'ai',
+            })),
+          });
+        }
+      });
+    }
+  }
 
   if (created) {
     broadcast('menu_created', { menu }, resolvedOfficeLocationId);

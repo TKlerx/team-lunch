@@ -1,4 +1,5 @@
 import prisma from '../../../src/server/db.js';
+import { clearMealRecommendationModelCache } from '../../../src/server/services/mealRecommendationModel.js';
 
 let availabilityChecked = false;
 let availabilityError: Error | null = null;
@@ -38,12 +39,24 @@ async function assertSafeCleanupTarget(): Promise<void> {
     return;
   }
 
-  if (process.env.SERVER_TEST_RUNTIME !== 'true') {
-    throw new Error(
-      'Server test cleanup aborted: deleteMany cleanup is only allowed in server test runtime.',
-    );
+  assertServerTestRuntime();
+  const { provider, databaseUrl } = getCleanupDatabaseDetails();
+  validateCleanupDatabaseTarget(provider, databaseUrl);
+
+  cleanupTargetChecked = true;
+}
+
+function assertServerTestRuntime(): void {
+  if (process.env.SERVER_TEST_RUNTIME === 'true') {
+    return;
   }
 
+  throw new Error(
+    'Server test cleanup aborted: deleteMany cleanup is only allowed in server test runtime.',
+  );
+}
+
+function getCleanupDatabaseDetails(): { provider: string; databaseUrl: string } {
   const provider = (process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql').trim();
   const databaseUrl = (
     process.env.TEST_DATABASE_URL_EFFECTIVE ??
@@ -55,26 +68,28 @@ async function assertSafeCleanupTarget(): Promise<void> {
     throw new Error('Server test cleanup aborted: DATABASE_URL is missing.');
   }
 
+  return { provider, databaseUrl };
+}
+
+function validateCleanupDatabaseTarget(provider: string, databaseUrl: string): void {
   if (provider === 'postgresql' || provider === 'postgres') {
     // PostgreSQL schema safety is asserted centrally in tests/server/setup.ts.
     // Cleanup helper enforces test runtime guard and relies on setup precondition.
-    cleanupTargetChecked = true;
     return;
   }
 
-  if (provider === 'sqlite') {
-    const normalizedUrl = databaseUrl.toLowerCase();
-    const isInMemory = normalizedUrl.includes(':memory:');
-    const looksLikeTestDb = normalizedUrl.includes('test');
-
-    if (!isInMemory && !looksLikeTestDb) {
-      throw new Error(
-        `Server test cleanup aborted: SQLite DATABASE_URL must target a test DB (current: "${databaseUrl}").`,
-      );
-    }
+  if (provider !== 'sqlite' || isSafeSqliteTestDatabaseUrl(databaseUrl)) {
+    return;
   }
 
-  cleanupTargetChecked = true;
+  throw new Error(
+    `Server test cleanup aborted: SQLite DATABASE_URL must target a test DB (current: "${databaseUrl}").`,
+  );
+}
+
+function isSafeSqliteTestDatabaseUrl(databaseUrl: string): boolean {
+  const normalizedUrl = databaseUrl.toLowerCase();
+  return normalizedUrl.includes(':memory:') || normalizedUrl.includes('test');
 }
 
 /**
@@ -84,6 +99,7 @@ async function assertSafeCleanupTarget(): Promise<void> {
 export async function cleanDatabase(): Promise<void> {
   await ensureDatabaseAvailable();
   await assertSafeCleanupTarget();
+  clearMealRecommendationModelCache();
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
@@ -91,6 +107,11 @@ export async function cleanDatabase(): Promise<void> {
       await prisma.shoppingListItem.deleteMany();
       await prisma.mealRecommendationImpression.deleteMany();
       await prisma.foodOrder.deleteMany();
+      await prisma.userAnticipatedLike.deleteMany();
+      await prisma.modelEvaluationResult.deleteMany();
+      await prisma.officeRecommenderSetting.deleteMany();
+      await prisma.menuItemFeature.deleteMany();
+      await prisma.menuItemIdentity.deleteMany();
       await prisma.foodSelection.deleteMany();
       await prisma.pollExcludedMenu.deleteMany();
       await prisma.pollVote.deleteMany();
@@ -105,6 +126,8 @@ export async function cleanDatabase(): Promise<void> {
       await prisma.userPreference.deleteMany();
       await prisma.authAuditLog.deleteMany();
       await prisma.auditLog.deleteMany();
+      await prisma.recommenderModel.deleteMany();
+      clearMealRecommendationModelCache();
       return;
     } catch (error) {
       if (attempt === 2) {

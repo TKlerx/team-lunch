@@ -2,6 +2,9 @@ import type { FastifyInstance } from 'fastify';
 import * as foodSelectionService from '../services/foodSelection.js';
 import * as pollService from '../services/poll.js';
 import * as mealRecommendationService from '../services/mealRecommendation.js';
+import * as mealRecommendationExploreService from '../services/mealRecommendationExplore.js';
+import * as mealRecommendationPreVoteService from '../services/mealRecommendationPreVote.js';
+import * as mealAnticipatedLikesService from '../services/mealAnticipatedLikes.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { isApprovalWorkflowEnabled } from '../services/authAccess.js';
@@ -27,6 +30,8 @@ import type {
   PlaceFallbackOrderRequest,
   PingFallbackCandidateRequest,
   MealRecommendationRequest,
+  MealRecommendationPreVoteRequest,
+  MealRecommendationMarkRequest,
 } from '../../lib/types.js';
 
 async function requireAdminIfApprovalWorkflowEnabled(cookieHeader: string | undefined): Promise<void> {
@@ -308,6 +313,28 @@ function registerRecommendationAndFallbackRoutes(app: FastifyInstance) {
     },
   );
 
+  // POST /api/food-selections/:id/recommendations/explore — generate an exploratory recommendation set
+  app.post<{ Params: { id: string } }>(
+    '/api/food-selections/:id/recommendations/explore',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealRecommendationExploreService.generateExploreRecommendations(
+          req.params.id,
+          officeLocationId,
+          actor,
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
   // POST /api/food-selections/:id/orders/:orderId/rating — rate completed meal
   app.post<{ Params: { id: string; orderId: string }; Body: RateFoodOrderRequest }>(
     '/api/food-selections/:id/orders/:orderId/rating',
@@ -334,6 +361,123 @@ function registerRecommendationAndFallbackRoutes(app: FastifyInstance) {
     },
   );
 
+}
+
+function registerRecommendationMarkRoutes(app: FastifyInstance) {
+  // PUT /api/food-selections/:id/marks/:itemId — upsert a personal anticipated-like mark
+  app.put<{ Params: { id: string; itemId: string }; Body: MealRecommendationMarkRequest }>(
+    '/api/food-selections/:id/marks/:itemId',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        if (!req.body || (req.body.sentiment !== 'like' && req.body.sentiment !== 'dislike')) {
+          throw serviceError('Sentiment must be like or dislike', 400);
+        }
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealAnticipatedLikesService.upsertMealAnticipatedLike(
+          req.params.id,
+          req.params.itemId,
+          req.body.sentiment,
+          officeLocationId,
+          actor,
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  // DELETE /api/food-selections/:id/marks/:itemId — remove a personal anticipated-like mark
+  app.delete<{ Params: { id: string; itemId: string } }>(
+    '/api/food-selections/:id/marks/:itemId',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealAnticipatedLikesService.deleteMealAnticipatedLike(
+          req.params.id,
+          req.params.itemId,
+          officeLocationId,
+          actor,
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  // GET /api/food-selections/:id/marks — list this user's marks on the current selection menu
+  app.get<{ Params: { id: string } }>(
+    '/api/food-selections/:id/marks',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealAnticipatedLikesService.listMealAnticipatedLikes(
+          req.params.id,
+          officeLocationId,
+          actor,
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
+
+  // GET /api/recommender/onboarding/candidates — office-scoped diverse onboarding picks
+  app.get('/api/recommender/onboarding/candidates', async (req, reply) => {
+    try {
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      const result = await mealAnticipatedLikesService.listMealRecommendationOnboardingCandidates(
+        officeLocationId,
+        actor,
+      );
+      return reply.send(result);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  // POST /api/recommender/pre-vote — preview likely dishes before the poll resolves
+  app.post<{ Body: MealRecommendationPreVoteRequest }>(
+    '/api/recommender/pre-vote',
+    async (req, reply) => {
+      try {
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
+        const officeLocationId = await resolveOfficeLocationIdFromCookie(
+          req.headers.cookie,
+          readRequestedOfficeLocationId(req.query),
+        );
+        const result = await mealRecommendationPreVoteService.generatePreVoteRecommendations(
+          officeLocationId,
+          actor,
+          {
+            pollId: req.body?.pollId,
+            limit: req.body?.limit,
+          },
+        );
+        return reply.send(result);
+      } catch (err) {
+        return sendServiceError(reply, err);
+      }
+    },
+  );
 }
 
 function registerFallbackRoutes(app: FastifyInstance) {
@@ -672,6 +816,7 @@ export default async function foodSelectionRoutes(app: FastifyInstance) {
   registerSelectionLifecycleRoutes(app);
   registerSelectionCompletionRoutes(app);
   registerRecommendationAndFallbackRoutes(app);
+  registerRecommendationMarkRoutes(app);
   registerFallbackRoutes(app);
   registerFallbackReminderRoutes(app);
   registerOrderStateRoutes(app);

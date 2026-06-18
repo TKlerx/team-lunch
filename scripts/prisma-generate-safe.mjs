@@ -9,18 +9,24 @@
 // locking `query_engine-windows.dll.node`. Prisma 7 is engine-free (driver
 // adapters), so there is no native DLL to lock and the workaround is gone.
 
-import { spawnSync } from 'node:child_process';
-import path from 'node:path';
+import { spawnSync } from "node:child_process";
+import path from "node:path";
 
-const prismaCli = path.join(process.cwd(), 'node_modules', 'prisma', 'build', 'index.js');
+const prismaCli = path.join(
+  process.cwd(),
+  "node_modules",
+  "prisma",
+  "build",
+  "index.js",
+);
 const generateCommands = [
-  ['generate'],
-  ['generate', '--schema', 'prisma/schema.sqlite.prisma'],
+  ["generate"],
+  ["generate", "--schema", "prisma/schema.sqlite.prisma"],
 ];
 
 for (const args of generateCommands) {
   const result = spawnSync(process.execPath, [prismaCli, ...args], {
-    stdio: 'inherit',
+    stdio: "inherit",
     env: process.env,
   });
 

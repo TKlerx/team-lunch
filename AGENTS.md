@@ -10,7 +10,7 @@ Each task follows this cycle — AI agent execute steps 1–7, user observes and
 2. **Read plan** — check `IMPLEMENTATION_PLAN.md` for the next highest-priority unchecked item
 3. **Investigate** — search `src/` to confirm what exists (don't assume not implemented)
 4. **Implement** — complete the task fully (no stubs or placeholders) including tests in `tests/`
-5. **Validate** — run `./validate.ps1` (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test); fix all failures
+5. **Validate** — run `./validate.ps1` (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test); fix all failures before shipping
 6. **Update plan** — mark task `[x]` in `IMPLEMENTATION_PLAN.md`, note any discoveries
 7. **Commit** — `git add -A && git commit -m "<description>"`
 
@@ -19,7 +19,8 @@ User can steer between tasks or say "continue" to proceed to the next item.
 ### Backpressure Commands
 
 ```powershell
-./validate.ps1              # pre-commit default: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test
+./validate.ps1              # local/CI quality gate: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + audit + test
+./validate.ps1 precommit    # pre-commit default: typecheck + lint + architecture + complexity + function-size + duplication
 ./validate.ps1 full         # pre-push / before merge: all quality checks + tests + pinned Trivy image scan + Playwright E2E
 ./validate.ps1 continuity   # optional: refresh CURRENT-WORK/RECONCILIATION and fail if they changed
 ./validate.ps1 quick        # typecheck only (scaffolding phase)
@@ -56,6 +57,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Server test table cleanup (`deleteMany` via `tests/server/helpers/db.ts`) is now guarded by a setup runtime flag (`SERVER_TEST_RUNTIME=true`), so cleanup cannot run outside server test runtime.
 - When adding a new persisted Prisma model used by server tests, extend `tests/server/helpers/db.ts` cleanup immediately; otherwise integration tests can leak rows between cases and fail non-deterministically.
 - Local `npm run dev` can fail with `EADDRINUSE :3000` (and client-side Vite proxy `ECONNREFUSED`) if a stale `tsx watch src/server/index.ts` process is still listening; run `npm run ports:check` to terminate blockers before restarting.
+- `validate.ps1 all` refuses to fall back to a Prisma client without the query engine; stop the live `tsx watch src/server/index.ts` process if Windows reports the query-engine DLL is locked.
 - Background DB connectivity monitors should be disabled in test runtime (`NODE_ENV=test`) to avoid long-running/unstable server suites from persistent probe intervals.
 - Server DB tests now enforce short DB connect/pool timeouts and cache unavailable-DB preflight failures, so when Postgres is down tests fail fast instead of timing out test-by-test.
 - For Prisma migrations that replace an old unique key with a new one, include both `ALTER TABLE ... DROP CONSTRAINT` and `DROP INDEX IF EXISTS` for the legacy key name; some historical schemas may retain the old unique index and still enforce stale uniqueness.
@@ -85,6 +87,12 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - `pnpm function-size` blocks any non-test source function above 300 lines with no allowlist exceptions.
 - Duplication follows the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes the duplication threshold advisory, but lint correctness, complexity, function-size, tests, and security checks still block.
 - `pnpm architecture` runs dependency-cruiser with `.dependency-cruiser.cjs`; keep circular runtime dependencies out of `src/`.
+- `@wlearn/xlearn` 0.2.0 is available for the recommendation-model spike; import it as a CommonJS default/dynamic import, use `XLearnFM.create({ task: 'classification', ... })`, and always call `.dispose()` after tests or benchmarks because the WASM heap is not GC-managed.
+- Learned-safe recommendations now derive `taste_match` copy from model feature contributions, not opaque model internals, and the AI overlay still reuses the same shared fallback path.
+- Learned recommender server tests rely on a shared model cache; `tests/server/helpers/db.ts` now clears that cache during cleanup so model-id lookups do not go stale after DB resets.
+- User Story 5 coverage now keys learned scoring, marks, and repeat-history checks on `item_identity_key`, which lets re-imported menu items keep their learned signal across renamed records.
+- Allergy handling is a post-score filter: cold-start normalization happens first, then allergies are hard-excluded and dislikes are demoted on every recommendation path.
+- Settings now offers canonical ingredient quick-picks plus free-text fallback; the saved payload still uses the existing `updateUserPreferences` API contract.
 - Prettier config and ignores are present, but `pnpm format:check` is intentionally not part of `validate.ps1` until the existing formatting baseline is cleaned up.
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
 - Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`, SQLite → `@prisma/adapter-better-sqlite3`), selected by `DB_PROVIDER`.
@@ -95,9 +103,9 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - During server test runtime, real Graph delivery is suppressed for all recipients except the explicit `GRAPH_MAIL_TEST_RECIPIENT` smoke-test target, so normal tests never fan out real emails.
 - `validate.ps1` should run native commands directly; piping npm/vitest stderr through PowerShell (`2>&1 | Out-String`) can surface warning output as `NativeCommandError` and falsely fail validation even when `npm test` exits `0`.
 - `validate.ps1` now buffers stdout/stderr per step and only prints the full command log when that step fails; successful steps stay concise with `[OK]` summaries.
-- `validate.ps1 all` is the commit-time validation gate; continuity is no longer part of the default pre-commit path.
+- `validate.ps1 precommit` is the commit-time fast gate (`typecheck`, `lint`, architecture, complexity, function-size, duplication); `validate.ps1 all` remains the local/CI quality gate with tests/security, and continuity is still explicit/manual.
 - Continuity snapshots are generated by `npm run continuity:update` into `specs/CURRENT-WORK.md` and `specs/RECONCILIATION.md`; use `./validate.ps1 continuity` only when you intentionally want to refresh/review those files.
-- Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit runs `./validate.ps1 all` and pre-push runs `./validate.ps1 full`.
+- Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit runs `./validate.ps1 precommit` and pre-push runs `./validate.ps1 full`.
 - Semgrep runs from a project-local Python venv (`.venv/Scripts/semgrep`); run `./setup.ps1` to create the venv and install semgrep alongside npm dependencies.
 - `validate.ps1` now runs `npm audit --omit=dev`, so the dependency gate tracks production/runtime vulnerabilities without failing on dev-only tooling advisories such as `sharp-cli`.
 - `validate.ps1 full` builds `team-lunch:trivy-scan` and scans it with the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500`, Trivy `0.71.0` manifest list). Use `TRIVY_IMAGE` only for deliberate scanner updates.
@@ -111,7 +119,10 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Production-style Docker deploys can use `pnpm deploy` / `scripts/deploy.sh`; it exports and prints `APP_VERSION`, `GIT_SHA`, `GIT_BRANCH`, `GIT_DIRTY`, and `BUILD_TIME`, lists Compose data volumes, builds app + migrate images, starts the DB, runs production data safety checks, creates a pre-deploy PostgreSQL backup, verifies Prisma migration status, runs `prisma migrate deploy`, restarts `app`, and checks data safety again. For intentional fresh installs, use `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
 - `POST /api/food-selections/:id/recommendations` persists a `MealRecommendationImpression` row per request (office/actor-scoped, ranked items + reasons snapshot) for audit/outcome-learning; no separate helpful/not-helpful feedback endpoint exists by design — order/rating history alone drives future ranking (`personal_rating` signal).
 - AI-assisted recommendation explanations require all four `AI_RECOMMENDATION_ENDPOINT`/`AI_RECOMMENDATION_API_KEY`/`AI_RECOMMENDATION_MODEL`/`AI_RECOMMENDATION_PROVIDER` env vars; if any are missing, the provider errors, returns malformed output, or the 2s timeout elapses, the response falls back to `source: "deterministic_fallback"` with a warning instead of failing the request. Set `AI_RECOMMENDATION_PROVIDER="azure-openai"` to call an Azure OpenAI chat-completions deployment directly (`api-key` header, `response_format: json_object`, parses `choices[0].message.content`); any other provider value uses the generic `Authorization: Bearer` + `{model,items,preferences}` → `{explanations:[...]}` contract. The AI never ranks items, only rewrites reason text.
+- Import-time feature gap-filling reuses the same `AI_RECOMMENDATION_*` env boundary and 2s timeout as recommendation explanations, but only for keyword-untagged imported items; the payload carries just item name + description, and imports still complete if AI is unavailable or malformed.
+- If `pnpm exec prisma migrate dev` fails with a blank schema-engine error against the local dev database, double-check the dev Postgres at `DATABASE_URL`; `pnpm exec prisma generate` can still succeed, but the migration SQL may need to be added manually when the database is unavailable.
 - `src/server/services/mealFeatures.ts` adds content-based per-person ranking: a curated ingredient/style keyword taxonomy (EN+DE) tags each item, a per-user `TasteProfile` is learned from order history, and the new `taste_match` signal scores unrated current-menu items by feature overlap with the profile (`SCORE_TASTE_PER_POINT=8`, clamped ±`SCORE_TASTE_MAX=40`). The profile blends explicit ratings (`rating-3`, confidence 1) with **implicit feedback** — every order is a mild positive vote for its features (`IMPLICIT_ORDER_VALUE=1`, confidence `0.4`) via a confidence-weighted mean, so the sparse weekly-ordering / rarely-rated regime still produces signal. Activates when `ratedCount >= TASTE_PROFILE_MIN_RATINGS(2)` OR `orderCount >= TASTE_PROFILE_MIN_ORDERS(4)`; below that, ranking keeps the exact-item-name behavior. Profile features come from item *name* only (history retains no description), so the taxonomy vocabulary is the shared space between history and current items. Modeling in feature space (not item space) is deliberate: menus churn weekly so classic user×item CF hits item cold-start on exactly today's menu; features stay dense and stable. Next candidate upgrades: persisted/AI-tagged item features at import, factorization machines, or a contextual bandit over features.
+- Menu item writes now sync stable identity plus keyword feature tags immediately in `src/server/services/menu.ts`, so tests and downstream services can assume `menu_items.item_identity_key`, `menu_item_identities`, and `menu_item_features` are populated after manual create/update/import flows.
 
 ---
 

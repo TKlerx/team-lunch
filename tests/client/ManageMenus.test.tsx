@@ -576,6 +576,7 @@ describe('ManageMenus', () => {
     expect(screen.getByText('Margherita')).toBeInTheDocument();
     expect(screen.getByText('€9.50')).toBeInTheDocument();
     expect(screen.getByText('+ Add item')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /\+ add item/i })).toHaveClass('min-h-9');
   });
 
   it('opens add item form and calls createMenuItem', async () => {

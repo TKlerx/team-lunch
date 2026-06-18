@@ -27,12 +27,30 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 ### menu_items
 - `id` UUID PK
 - `menu_id` UUID FK -> menus
+- `item_identity_key` stable identity key for re-import matching
 - `item_number` VARCHAR(40) nullable
 - `name` VARCHAR(80)
 - `description` VARCHAR(200) nullable
 - `price` NUMERIC(8,2) nullable
 - `created_at` TIMESTAMPTZ default now
 - unique (`menu_id`, `name`)
+
+### menu_item_identities
+- `id` UUID PK
+- `office_location_id` UUID FK -> office_locations
+- `identity_key` VARCHAR(120)
+- `display_name_snapshot` VARCHAR(80)
+- unique (`office_location_id`, `identity_key`)
+
+### menu_item_features
+- `id` UUID PK
+- `menu_item_id` UUID FK -> menu_items
+- `item_identity_key` VARCHAR(120)
+- `office_location_id` UUID FK -> office_locations
+- `tag` VARCHAR(60)
+- `provenance` VARCHAR(10)
+- unique (`menu_item_id`, `tag`)
+- index (`item_identity_key`, `office_location_id`)
 
 ### polls
 - `office_location_id` UUID FK -> office_locations
@@ -65,6 +83,17 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 - `feedback_comment` VARCHAR(300) nullable
 - `ordered_at` TIMESTAMPTZ
 
+### user_anticipated_likes
+- `id` UUID PK
+- `actor_key` VARCHAR(255)
+- `actor_email` VARCHAR(255) nullable
+- `display_name_snapshot` VARCHAR(255) nullable
+- `office_location_id` UUID FK -> office_locations
+- `item_identity_key` VARCHAR(120)
+- `item_name_snapshot` VARCHAR(80)
+- `sentiment` VARCHAR(10)
+- unique (`actor_key`, `office_location_id`, `item_identity_key`)
+
 ### user_menu_default_preferences
 - per-user, per-menu default meal selection
 - `user_key` VARCHAR(255)
@@ -94,15 +123,44 @@ PostgreSQL schema for menus, polling, food selection lifecycle, and order tracki
 ### meal_recommendation_impressions
 - `id` UUID PK
 - `food_selection_id` UUID FK -> food_selections (cascade delete)
+- `poll_id` UUID FK -> polls (set null)
 - `office_location_id` UUID FK -> office_locations (cascade delete)
 - `actor_key` VARCHAR(255), `actor_email` VARCHAR(255) nullable, `display_name_snapshot` VARCHAR(255) nullable
-- `source` VARCHAR(30): `deterministic | ai_assisted | deterministic_fallback`
+- `source` VARCHAR(40): `deterministic | ai_assisted | deterministic_fallback | pre_vote`
 - `provider` VARCHAR(60) nullable (AI provider name when `source = ai_assisted`)
+- `recommender_model_id` UUID FK -> recommender_models nullable
 - `recommended_at` TIMESTAMPTZ
 - `input_summary_json` JSON: privacy-safe aggregate counts (history/rating/preference/popularity counts), no raw history
 - `items_json` JSON: snapshot of the displayed ranked items (item id/name, rank, score, reason, source signals, AI-assisted flag)
 - `created_at` TIMESTAMPTZ default now
 - index (`food_selection_id`, `actor_key`); index (`office_location_id`, `actor_key`, `recommended_at`)
+
+### recommender_models
+- `id` UUID PK
+- `version` INT unique
+- `status` VARCHAR(12)
+- `params_json` JSON
+- `factor_dim` INT
+- `trained_at` TIMESTAMPTZ
+- `training_sample_count` INT
+
+### model_evaluation_results
+- `id` UUID PK
+- `recommender_model_id` UUID FK -> recommender_models
+- `office_location_id` UUID FK -> office_locations
+- `baseline_top3_hit_rate` DECIMAL(5,4)
+- `model_top3_hit_rate` DECIMAL(5,4)
+- `margin_points` DECIMAL(6,4)
+- `sample_count` INT
+- `evaluated_at` TIMESTAMPTZ
+
+### office_recommender_settings
+- `id` UUID PK
+- `office_location_id` UUID FK -> office_locations
+- `safe_mode` VARCHAR(10) default `baseline`
+- `active_model_id` UUID FK -> recommender_models nullable
+- `explore_enabled` BOOLEAN default true
+- `updated_at` TIMESTAMPTZ
 
 ### auth_audit_logs
 - `event` VARCHAR(80)
