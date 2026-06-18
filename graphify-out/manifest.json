@@ -595,7 +595,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\.specify\\feature.json": {
-    "mtime": 1781571550.642259,
+    "mtime": 1781631190.6506627,
     "ast_hash": "edb98fbaf01257bea3517c8d3ed646c6",
     "semantic_hash": ""
   },
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\package.json": {
-    "mtime": 1781604745.573326,
-    "ast_hash": "1e47359ee5e2872db1aca8c5d187b57d",
+    "mtime": 1781648796.702752,
+    "ast_hash": "62e46ffb102c6cc00884154036557b50",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\playwright.config.ts": {
@@ -955,13 +955,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\App.tsx": {
-    "mtime": 1781623149.6011858,
-    "ast_hash": "ae760bedfe7789bb6314183e83f3dd07",
+    "mtime": 1781644121.285711,
+    "ast_hash": "19cde3a401b04fe3ac23b948ebd37cb4",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\api.ts": {
-    "mtime": 1781622884.2925467,
-    "ast_hash": "15ac3217ef628c5f78597d69f1bfc752",
+    "mtime": 1781705064.1366663,
+    "ast_hash": "6ee7023f1a7af76f825cd53222c202e5",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\auth.ts": {
@@ -970,8 +970,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\AuthGate.tsx": {
-    "mtime": 1781608268.0868888,
-    "ast_hash": "fc020955f4f7e7868738f771f5181dbe",
+    "mtime": 1781631190.7660508,
+    "ast_hash": "b746af25a3688e1526336167271f680e",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\DatabaseConnectionModal.tsx": {
@@ -980,8 +980,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodDeliveryView.tsx": {
-    "mtime": 1781607560.269251,
-    "ast_hash": "0c0ed5e67e691a3a56b77ce9db2a73e4",
+    "mtime": 1781644121.2877479,
+    "ast_hash": "3b1ba6b7017d42549cad76021bddab56",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionAbortControl.tsx": {
@@ -990,23 +990,23 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionActiveView.tsx": {
-    "mtime": 1781607119.1651313,
-    "ast_hash": "2f5e2ac67a6b17296b6dfb261efcabb1",
+    "mtime": 1781684704.2709174,
+    "ast_hash": "f5b68b1c36bb35959511f95d3a8b1be9",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionCompletedView.tsx": {
-    "mtime": 1781348687.7739465,
+    "mtime": 1781644121.290341,
     "ast_hash": "bdf6cc6c0f58f8acd501ff9a6616b24c",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionOrderBoard.tsx": {
-    "mtime": 1781124820.7598112,
+    "mtime": 1781644121.290877,
     "ast_hash": "fdb97d83e914f50f699b5dd76703434e",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionOrderingView.tsx": {
-    "mtime": 1781607816.464028,
-    "ast_hash": "6d7b8cf8cb093d7dbb7209bca3aa11ab",
+    "mtime": 1781631190.7711973,
+    "ast_hash": "50ee951a693416c15d32d3523e32f190",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\FoodSelectionOvertimeView.tsx": {
@@ -1015,7 +1015,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\Header.tsx": {
-    "mtime": 1781526038.7139304,
+    "mtime": 1781644121.291911,
     "ast_hash": "fe032af48f87269f2956ee38a2c5e4b6",
     "semantic_hash": ""
   },
@@ -1040,17 +1040,17 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\PollActiveView.tsx": {
-    "mtime": 1781348687.778903,
-    "ast_hash": "45db93e273c7c1b01a359c37e50b36b7",
+    "mtime": 1781700584.3621297,
+    "ast_hash": "ab307f71cc28923235bdc14e13a6de7e",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\PollFinishedView.tsx": {
-    "mtime": 1781623093.2242842,
-    "ast_hash": "de82b9dbae5216aeeec9465f3e278928",
+    "mtime": 1781631190.7722101,
+    "ast_hash": "dab0135eb7bc57998d21b40c59cffa7b",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\components\\PollIdleView.tsx": {
-    "mtime": 1781348687.7794466,
+    "mtime": 1781644121.2929256,
     "ast_hash": "774eaff9d3837a780bb0ab819a463aea",
     "semantic_hash": ""
   },
@@ -1145,8 +1145,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\context\\AppContext.tsx": {
-    "mtime": 1781605562.9342234,
-    "ast_hash": "40fd418c44efe909b0b2412f03e8fb7c",
+    "mtime": 1781631190.7742672,
+    "ast_hash": "8e7eaa3afd0ca1713d388bec7866ec49",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\context\\ThemeContext.tsx": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\pages\\Administration.tsx": {
-    "mtime": 1781348687.7863688,
-    "ast_hash": "55a932e23e9d633eb8ffe2eb7c867457",
+    "mtime": 1781705122.669864,
+    "ast_hash": "5b6e5826ebb1495a4525db8dba81768f",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\pages\\MainView.tsx": {
@@ -1200,13 +1200,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\pages\\ManageMenus.tsx": {
-    "mtime": 1781606202.96532,
-    "ast_hash": "b552bac79ce8ce39340e9edfa58d8338",
+    "mtime": 1781644121.2939537,
+    "ast_hash": "f718f63428f3d633ac0e8edf853a1ace",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\pages\\Settings.tsx": {
-    "mtime": 1781606571.5653925,
-    "ast_hash": "3442de37307ddaef53a1f80c98538e21",
+    "mtime": 1781652384.9461195,
+    "ast_hash": "e06ed9dc5f1d8a309676eebe1b1dea6e",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\pages\\ShoppingList.tsx": {
@@ -1215,7 +1215,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\client\\utils\\dashboard.ts": {
-    "mtime": 1775208839.0461235,
+    "mtime": 1781644121.2939537,
     "ast_hash": "03316b172390588fedbfd6e41e38892a",
     "semantic_hash": ""
   },
@@ -1230,8 +1230,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\lib\\types.ts": {
-    "mtime": 1781608268.0838883,
-    "ast_hash": "cbe96acf002e87bd0c40f55a228a823b",
+    "mtime": 1781700996.5022123,
+    "ast_hash": "69804a339e4c0b555f7d3ddbb55870c0",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\buildInfo.ts": {
@@ -1245,13 +1245,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\index.ts": {
-    "mtime": 1781179762.7092948,
-    "ast_hash": "da7ee0efca2200df5e66e73b9781f87b",
+    "mtime": 1781704371.6069589,
+    "ast_hash": "c820a7af393e7e95e988d7c4d074caa8",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\auth.ts": {
-    "mtime": 1781620176.452407,
-    "ast_hash": "474d75512001db4f03f7104f529746bd",
+    "mtime": 1781631190.7835371,
+    "ast_hash": "4e78a0dc54e648ccddae1951488aee12",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\authIdentity.ts": {
@@ -1260,8 +1260,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\foodSelections.ts": {
-    "mtime": 1781621569.1682622,
-    "ast_hash": "a7cf9d01cfb9a14be298a84615f6bb3c",
+    "mtime": 1781700359.3769276,
+    "ast_hash": "b494c580711c02e6490f96fa74fa3c95",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\menus.ts": {
@@ -1270,8 +1270,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\polls.ts": {
-    "mtime": 1781622878.3234253,
-    "ast_hash": "2571aea29387f37e681a55523a92ac12",
+    "mtime": 1781631190.8043277,
+    "ast_hash": "0a91f21d55a3a3155e572a146ff7f171",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\routes\\routeUtils.ts": {
@@ -1290,8 +1290,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\authAccess.ts": {
-    "mtime": 1781609023.979916,
-    "ast_hash": "8171248d18932470b452925f36175362",
+    "mtime": 1781631190.8140473,
+    "ast_hash": "7c2ed58a672a5e3310ecd4f1c8ac2921",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\authAudit.ts": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\menu.ts": {
-    "mtime": 1781348687.809426,
-    "ast_hash": "23e7755990dee1b68c14b9d963b58b07",
+    "mtime": 1781703110.1505132,
+    "ast_hash": "36a3bc7610411792dacbdc48dee79dd0",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\notificationEmail.ts": {
@@ -1365,8 +1365,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\poll.ts": {
-    "mtime": 1781622871.970327,
-    "ast_hash": "17599fe2d3de771619a480eba18560d1",
+    "mtime": 1781631190.831654,
+    "ast_hash": "0b7860be99f576506dfa215c7b3128d3",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\shoppingList.ts": {
@@ -1400,13 +1400,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\App.test.tsx": {
-    "mtime": 1781622927.0689325,
-    "ast_hash": "90b9cef8cc95426a95a7f4ad4e63dc8d",
+    "mtime": 1781644121.2939537,
+    "ast_hash": "21fd242f0a88281e3e646656e68a158e",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\AuthGate.test.tsx": {
-    "mtime": 1781608542.0185542,
-    "ast_hash": "554c7fb0c35b726cfe845edd59b4c2a8",
+    "mtime": 1781631190.8394294,
+    "ast_hash": "5db5658abecd12bcefcf0250a7b47ee9",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\FoodDeliveryView.test.tsx": {
@@ -1415,12 +1415,12 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\FoodSelectionActiveView.test.tsx": {
-    "mtime": 1781543512.3359642,
-    "ast_hash": "444fe85714e6f20c4e6deb3139635b75",
+    "mtime": 1781684791.373332,
+    "ast_hash": "81c4a173af7040c36427c7e939b1ea91",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\FoodSelectionCompletedView.test.tsx": {
-    "mtime": 1781348687.8195271,
+    "mtime": 1781644121.2939537,
     "ast_hash": "b3014260cc673d92759d81390d1c4524",
     "semantic_hash": ""
   },
@@ -1460,8 +1460,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\PollActiveView.test.tsx": {
-    "mtime": 1781348687.8254864,
-    "ast_hash": "97af18f9a29e7054df5a875f2a7c4bdb",
+    "mtime": 1781701180.0598314,
+    "ast_hash": "ec589ae08976e7e41942bfecb2790f20",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\PollFinishedView.test.tsx": {
@@ -1480,8 +1480,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\Settings.test.tsx": {
-    "mtime": 1781348687.827666,
-    "ast_hash": "1de4c9d71bb6f0fbbb2688203b71bef9",
+    "mtime": 1781652436.0096302,
+    "ast_hash": "3a18d9da4857219b38a39b5b32100812",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\ShoppingList.test.tsx": {
@@ -1500,7 +1500,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\client\\dashboard-utils.test.ts": {
-    "mtime": 1775208839.1729338,
+    "mtime": 1781644121.2984118,
     "ast_hash": "79ecda6456b23ea1b01cdcc6b93df149",
     "semantic_hash": ""
   },
@@ -1555,13 +1555,13 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\auth-hardening.test.ts": {
-    "mtime": 1781609090.4675336,
-    "ast_hash": "79340605d20635050b2c9daab4513648",
+    "mtime": 1781631190.8569157,
+    "ast_hash": "680c1ab3c6c2a5df5aa50aa1dc984968",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\auth-routes-config.test.ts": {
-    "mtime": 1781608268.0878885,
-    "ast_hash": "134bcdbcb4b8ebd2fec4356a3733b4f5",
+    "mtime": 1781631190.8584516,
+    "ast_hash": "9d8c779a1ea28186d47e69ffd925b232",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\auth-session.test.ts": {
@@ -1615,8 +1615,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\helpers\\db.ts": {
-    "mtime": 1781541590.7203937,
-    "ast_hash": "ae11f9420c4947e51dd4682793d95449",
+    "mtime": 1781728310.238198,
+    "ast_hash": "972616b37e4ea68ecd53678ea98a3d36",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\local-auth.test.ts": {
@@ -1660,8 +1660,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\poll-routes.test.ts": {
-    "mtime": 1781622943.7450838,
-    "ast_hash": "a1cba53766b4b483b814d8ebe4d3ac7d",
+    "mtime": 1781631190.8895178,
+    "ast_hash": "07dd46ed87c93f46c25379d1a2fa6971",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\poll-service.test.ts": {
@@ -1735,8 +1735,8 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\validate.ps1": {
-    "mtime": 1781604745.581027,
-    "ast_hash": "7fc5db461705bf6fcfa4dbe069b182d3",
+    "mtime": 1781632130.6272519,
+    "ast_hash": "81ba78aa289f9c91ec18d81140f9027d",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\vite.config.ts": {
@@ -4210,22 +4210,22 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\AGENTS.md": {
-    "mtime": 1781604745.581027,
-    "ast_hash": "45ffd4afc82762a5d33b571dcb1de6fe",
+    "mtime": 1781703422.5532029,
+    "ast_hash": "449627f1a1b9bc7e04225f518dea1c35",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\CLAUDE.md": {
-    "mtime": 1781573150.4273567,
+    "mtime": 1781631190.6538844,
     "ast_hash": "05e984e625049ef78ec58b6ca01e9b8b",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\IMPLEMENTATION_PLAN.md": {
-    "mtime": 1781544229.095635,
-    "ast_hash": "b4826782b37c857ff38d71743d567314",
+    "mtime": 1781728520.457106,
+    "ast_hash": "e9dab795de92d6282e05b3bc8554618f",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\README.md": {
-    "mtime": 1781568753.2744162,
+    "mtime": 1781631190.657437,
     "ast_hash": "5012be9f8d90b9482807c65af64dc411",
     "semantic_hash": ""
   },
@@ -4275,7 +4275,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\BACKLOG.md": {
-    "mtime": 1781571541.5444975,
+    "mtime": 1781631190.7582026,
     "ast_hash": "5c12b678c56f2dc4fa6b2ba66e8be166",
     "semantic_hash": ""
   },
@@ -4310,7 +4310,7 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\data-model.md": {
-    "mtime": 1781543776.853137,
+    "mtime": 1781631190.7582026,
     "ast_hash": "247e3a0402f30d9bb7b5c4dd4e46f59c",
     "semantic_hash": ""
   },
@@ -4495,33 +4495,33 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\prisma\\migrations\\20260615120000_add_meal_recommendation_impressions\\migration.sql": {
-    "mtime": 1781541580.0932522,
+    "mtime": 1781631190.7319937,
     "ast_hash": "66eb91e82b9ff35a539d354d05397f71",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendation.ts": {
-    "mtime": 1781568678.4645162,
-    "ast_hash": "27b5c89e01b95ab48422691601939efd",
+    "mtime": 1781728133.0810971,
+    "ast_hash": "029700bdb2858ddfff7bb003fc017e74",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationAi.ts": {
-    "mtime": 1781545456.1559093,
-    "ast_hash": "e518c2a2cc6e13f0a0b2412da10b5cee",
+    "mtime": 1781703284.4675908,
+    "ast_hash": "11f3019319406420390dbbdee6daf789",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-ai.test.ts": {
-    "mtime": 1781545463.8858178,
-    "ast_hash": "81bf1017912f3191885216ee2b3482cc",
+    "mtime": 1781631190.870001,
+    "ast_hash": "a4c3f437fe89cab97707b55b2f96c2a5",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-routes.test.ts": {
-    "mtime": 1781543504.7556734,
-    "ast_hash": "5ae086b5551730749b006c868d84b9f8",
+    "mtime": 1781700872.5975235,
+    "ast_hash": "c287d4bb1d13b489b982e0f78a7c6ead",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-service.test.ts": {
-    "mtime": 1781568706.154818,
-    "ast_hash": "7d3d8e021ac8c56030c9056701b0b973",
+    "mtime": 1781682051.163338,
+    "ast_hash": "71f68dbae5c5ff7683431aa54daf632f",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\001-canonical-routes\\contracts\\ui-routes.md": {
@@ -4580,88 +4580,233 @@
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\002-ai-meal-recommendations\\tasks.md": {
-    "mtime": 1781544233.2966824,
+    "mtime": 1781631190.7402852,
     "ast_hash": "871700e80d17d682430c202dba5d3d9c",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\src\\server\\services\\mealFeatures.ts": {
-    "mtime": 1781568667.6004436,
-    "ast_hash": "01aaa506f8956f098e10ee30a4e77490",
+    "mtime": 1781727854.4706478,
+    "ast_hash": "73c39f051db550a9d9056370be6d3729",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\tests\\server\\meal-features.test.ts": {
-    "mtime": 1781568691.879391,
-    "ast_hash": "30ffbf5e0f0bef17c32dd596cdf2e7b8",
+    "mtime": 1781631190.8658729,
+    "ast_hash": "cd0a19fdbd39ab4e77b90932c97509e0",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\complexity-baseline.json": {
-    "mtime": 1781623187.0858033,
-    "ast_hash": "9ac762da4797ecf598cf9b9433058729",
+    "mtime": 1781644121.2323353,
+    "ast_hash": "e6ad7a8356df36af8412ddc6ac11e4e9",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-complexity-baseline.mjs": {
-    "mtime": 1781601404.8279903,
-    "ast_hash": "b911827fcfb38c7fdb5cefbe25350c38",
+    "mtime": 1781644121.275717,
+    "ast_hash": "f315fd709425c881e61d4282b898dfe7",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-duplication.mjs": {
-    "mtime": 1781601404.8263404,
-    "ast_hash": "ca58c00e966e12934f94717c088eac5f",
+    "mtime": 1781631190.7366486,
+    "ast_hash": "96f73508de247009f18ad1ed361490fa",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\checklists\\requirements.md": {
-    "mtime": 1781571539.5892684,
-    "ast_hash": "fe745f5492376524ea467f52ac7afc27",
+    "mtime": 1781631190.7417974,
+    "ast_hash": "6e241750a5dd8e2a6706ef549a2a0e79",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\contracts\\api.md": {
-    "mtime": 1781573112.9126983,
-    "ast_hash": "535e20331c6b36ed45fb496ed82a71c6",
+    "mtime": 1781646898.6699512,
+    "ast_hash": "9899250bcdab267ab9b7d5bb3f3d9eff",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\data-model.md": {
-    "mtime": 1781573083.170076,
-    "ast_hash": "b0486fc4655b70fe4b909917ef1c489d",
+    "mtime": 1781646908.0409102,
+    "ast_hash": "50384a2788619ddcbeca9b8453788644",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\plan.md": {
-    "mtime": 1781572983.5472648,
-    "ast_hash": "03d7b97f0a534779f83525274c689337",
+    "mtime": 1781644121.279508,
+    "ast_hash": "017ca198c408002b5d23d576010d0932",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\quickstart.md": {
-    "mtime": 1781573134.3086545,
-    "ast_hash": "f923ae0149e61a7c3938ab8094da823a",
+    "mtime": 1781644121.279508,
+    "ast_hash": "fbcd4c4d11a1f8470dd0d882a36b63fe",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\research.md": {
-    "mtime": 1781573046.3962982,
-    "ast_hash": "39ac650d5b6522c8cde49edd30e13d7f",
+    "mtime": 1781647705.0194383,
+    "ast_hash": "9bb20567845f32843f8fbf0e33ed40c2",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\spec.md": {
-    "mtime": 1781573563.395793,
-    "ast_hash": "13f627b8e809e0def175bf28a8c29aac",
+    "mtime": 1781646885.909629,
+    "ast_hash": "51067454e87a10dc225a44a95bad1108",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\specs\\003-learned-meal-recommender\\tasks.md": {
-    "mtime": 1781573446.069616,
-    "ast_hash": "b5a6fe37864ec0cbcc38020fe7917699",
+    "mtime": 1781728507.4821322,
+    "ast_hash": "430d16a42d05e712f2219f4994b5e3c6",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\function-size-allowlist.json": {
-    "mtime": 1781620210.2367644,
-    "ast_hash": "eb2dbe1acf87bf34ca9c00ca944a2a08",
+    "mtime": 1781644121.233884,
+    "ast_hash": "8d4da0f1764c125da7094a88bbf52262",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\scripts\\check-function-size.mjs": {
-    "mtime": 1781604745.573326,
-    "ast_hash": "f4be6030a314dfcf7c5c3b4eac93e089",
+    "mtime": 1781644121.275717,
+    "ast_hash": "fb532145e92a74fa3f1058a7552a5ffb",
     "semantic_hash": ""
   },
   "D:\\dev\\team-lunch\\.github\\workflows\\ci.yml": {
-    "mtime": 1781608268.0888877,
-    "ast_hash": "e5f29eeaa28a59d0e8d4f373149c2107",
+    "mtime": 1781631190.646978,
+    "ast_hash": "2e1d5555a2fc34999f04a4581b5ab7ad",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\prisma\\migrations\\20260616211312_add_learned_recommender\\migration.sql": {
+    "mtime": 1781644392.331316,
+    "ast_hash": "472b79fa102b245597080b6eb389c524",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealItemIdentity.ts": {
+    "mtime": 1781646974.7734227,
+    "ast_hash": "c724edebc48d1d7a11e513f1d3302966",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationModel.ts": {
+    "mtime": 1781728146.9081078,
+    "ast_hash": "c8a1a114d2ff200ed93ba2305b064dcc",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\officeRecommenderSettings.ts": {
+    "mtime": 1781647428.1542702,
+    "ast_hash": "e5ef740e357ab813c2b9ba74833dac13",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\seededRng.ts": {
+    "mtime": 1781646738.8806627,
+    "ast_hash": "1a8bce70002f79593e628d087611fffe",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-features-persistence.test.ts": {
+    "mtime": 1781647377.873392,
+    "ast_hash": "091d30e5dfd828d3fc83fbebb688be66",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-item-identity.test.ts": {
+    "mtime": 1781646906.4784765,
+    "ast_hash": "91743fd6c179a01dae2e9aea86540cc3",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-model.test.ts": {
+    "mtime": 1781646882.2299433,
+    "ast_hash": "88bc9398e4cfbc859f8fecf6ac345b3d",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationModelXlearn.ts": {
+    "mtime": 1781648958.4506288,
+    "ast_hash": "e4cfaa5cdd7220d8838d71f011194b33",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\types\\wlearn-xlearn.d.ts": {
+    "mtime": 1781648942.312196,
+    "ast_hash": "3da8316189bc89bbae4a593c33e021d5",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-model-xlearn.test.ts": {
+    "mtime": 1781649009.030135,
+    "ast_hash": "44b1d369dd3c27900d986fb0aa1ce33a",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\lib\\ingredientVocabulary.ts": {
+    "mtime": 1781652298.5844524,
+    "ast_hash": "267e85563489537e9501ddc63ab42cc4",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\client\\components\\MealOnboardingDialog.tsx": {
+    "mtime": 1781683018.3687766,
+    "ast_hash": "361377e98ab73631b76b24d3f16fba66",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealAnticipatedLikes.ts": {
+    "mtime": 1781682964.3781972,
+    "ast_hash": "fc233e33280d05e95494f8827347d7fa",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\client\\MealOnboardingDialog.test.tsx": {
+    "mtime": 1781683259.6718724,
+    "ast_hash": "f2ec744dc97d43dca177afdca71cad43",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-anticipated-likes.test.ts": {
+    "mtime": 1781683644.8023186,
+    "ast_hash": "db8b559b386905d84343c8dd18218372",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationExplore.ts": {
+    "mtime": 1781701078.7954144,
+    "ast_hash": "d8b3a235be5b3767be3dd776a23db1f6",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-explore.test.ts": {
+    "mtime": 1781684761.554466,
+    "ast_hash": "6be7a5069217db66e7bbd1ca405b3380",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\prisma\\migrations\\20260617120000_add_pre_vote_impressions\\migration.sql": {
+    "mtime": 1781700842.2416823,
+    "ast_hash": "5528943ab9ca5c1509763a485e0bd20e",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationPreVote.ts": {
+    "mtime": 1781728135.631035,
+    "ast_hash": "a550cfc0e84974455f5f9f91e17d82c9",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-pre-vote.test.ts": {
+    "mtime": 1781701166.7210941,
+    "ast_hash": "342c8fac1a81856f00421e105d565623",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-features-tagging.test.ts": {
+    "mtime": 1781703207.3770533,
+    "ast_hash": "92d17419c244566895f3951c3d649a4a",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\client\\components\\RecommenderAdminPanel.tsx": {
+    "mtime": 1781705664.537566,
+    "ast_hash": "a4063f3c2e0f651108cdb049203e98f8",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\routes\\recommenderAdmin.ts": {
+    "mtime": 1781704367.4379146,
+    "ast_hash": "790eecbc8bcdf042157985a7cfad7ddb",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\src\\server\\services\\mealRecommendationEval.ts": {
+    "mtime": 1781704271.029529,
+    "ast_hash": "4fafa560815a1cb89e5587fe4627d88f",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\client\\RecommenderAdminPanel.test.tsx": {
+    "mtime": 1781705234.3711078,
+    "ast_hash": "65eb3c11555e2934dea629b5d5bb81dd",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-eval.test.ts": {
+    "mtime": 1781704743.4881828,
+    "ast_hash": "fc19d9197eb081b083c5762d300675b7",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\recommender-admin-routes.test.ts": {
+    "mtime": 1781704683.7196631,
+    "ast_hash": "0fec4f5f4dac1f6d0b52dbd7e0c61e2c",
+    "semantic_hash": ""
+  },
+  "D:\\dev\\team-lunch\\tests\\server\\meal-recommendation-transfer.test.ts": {
+    "mtime": 1781728458.5110724,
+    "ast_hash": "9c75c5f84d5af0a56aa5d57ade1a98c9",
     "semantic_hash": ""
   }
 }
