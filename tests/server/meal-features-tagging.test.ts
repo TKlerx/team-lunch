@@ -95,7 +95,7 @@ describe('meal feature tagging at import', () => {
         taggings: [
           {
             itemName: 'Chef Special',
-            tags: ['ingredient:tofu', 'style:japanese'],
+            tags: ['ingredient:tofu', 'style:japanese', 'course:side', 'course:dessert'],
           },
         ],
       }),
@@ -131,6 +131,12 @@ describe('meal feature tagging at import', () => {
       expect.arrayContaining([
         expect.objectContaining({ menuItemId: result.menu.items[1].id, tag: 'ingredient:tofu' }),
         expect.objectContaining({ menuItemId: result.menu.items[1].id, tag: 'style:japanese' }),
+        expect.objectContaining({ menuItemId: result.menu.items[1].id, tag: 'course:side' }),
+      ]),
+    );
+    expect(aiRows).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ menuItemId: result.menu.items[1].id, tag: 'course:dessert' }),
       ]),
     );
     expect(

@@ -26,6 +26,7 @@ const MENU_IMPORT_LLM_PROMPT = [
   '- item-number, if provided, must be a string with max 40 characters.',
   '- price must be a number between 0 and 9999.99 with max 2 decimal places.',
   '- Item names must be unique across all sections (case-insensitive).',
+  '- Keep side dishes and drinks as menu items when present; make their item name/category clear (for example "Garlic Naan", "Mango Lassi", or a "Drinks" section) so the app can tag them as course:side or course:drink after import.',
   '- If a value is unknown, use empty string for optional strings or omit optional fields.',
   'Output only one JSON object, no surrounding text.',
 ].join('\n');

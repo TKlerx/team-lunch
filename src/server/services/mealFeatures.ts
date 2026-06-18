@@ -13,7 +13,10 @@
 
 import prisma from '../db.js';
 
-export type FeatureTag = string; // e.g. "ingredient:chicken", "style:thai"
+export type FeatureTag = string; // e.g. "ingredient:chicken", "style:thai", "course:side"
+
+export const SIDE_DISH_FEATURE_TAG: FeatureTag = 'course:side';
+export const DRINK_FEATURE_TAG: FeatureTag = 'course:drink';
 
 // Curated synonym taxonomy. Keys are canonical feature names; values are
 // substring terms (lowercased) matched against item name + description.
@@ -62,6 +65,51 @@ const STYLE_TERMS: Record<string, string[]> = {
 
 const NEUTRAL_RATING = 3;
 
+const SIDE_DISH_EXACT_NAMES = new Set([
+  'rice',
+  'plain rice',
+  'basmati rice',
+  'jasmine rice',
+  'reis',
+  'basmatireis',
+  'jasminreis',
+  'pommes',
+  'fries',
+]);
+
+const SIDE_DISH_NAME_PATTERNS: RegExp[] = [
+  /\b(extra\s+)?(garlic\s+|butter\s+|cheese\s+)?naan\b/,
+  /\b(roti|chapati|paratha|papadum?|poppadom)\b/,
+  /\b(side dish|side order|beilage[n]?)\b/,
+];
+
+const DRINK_EXACT_NAMES = new Set([
+  'cola',
+  'coke',
+  'fanta',
+  'sprite',
+  'water',
+  'wasser',
+  'still water',
+  'sparkling water',
+  'mineral water',
+  'mineralwasser',
+  'stilles wasser',
+  'sprudelwasser',
+  'beer',
+  'bier',
+  'coffee',
+  'kaffee',
+  'tea',
+  'tee',
+]);
+
+const DRINK_NAME_PATTERNS: RegExp[] = [
+  /\b(soft\s+drink|softdrink|drink|drinks|getraenk|getränk|getraenke|getränke)\b/,
+  /\b(lassi|mango\s+lassi|ayran)\b/,
+  /\b(cola|coke|fanta|sprite)\b/,
+];
+
 function normalize(value: string): string {
   return value.toLocaleLowerCase();
 }
@@ -76,8 +124,34 @@ function extractFromTaxonomy(text: string, prefix: string, taxonomy: Record<stri
   return tags;
 }
 
+function extractCourseFeatures(name: string): FeatureTag[] {
+  const normalizedName = normalize(name).trim();
+  const tags: FeatureTag[] = [];
+  if (
+    SIDE_DISH_EXACT_NAMES.has(normalizedName) ||
+    SIDE_DISH_NAME_PATTERNS.some((pattern) => pattern.test(normalizedName))
+  ) {
+    tags.push(SIDE_DISH_FEATURE_TAG);
+  }
+  if (
+    DRINK_EXACT_NAMES.has(normalizedName) ||
+    DRINK_NAME_PATTERNS.some((pattern) => pattern.test(normalizedName))
+  ) {
+    tags.push(DRINK_FEATURE_TAG);
+  }
+  return tags;
+}
+
+export function hasSideDishFeature(tags: FeatureTag[]): boolean {
+  return tags.includes(SIDE_DISH_FEATURE_TAG);
+}
+
+export function hasNonMealCourseFeature(tags: FeatureTag[]): boolean {
+  return tags.includes(SIDE_DISH_FEATURE_TAG) || tags.includes(DRINK_FEATURE_TAG);
+}
+
 /**
- * Extracts ingredient + style feature tags from an item's text. Operates on
+ * Extracts ingredient, style, and course feature tags from an item's text. Operates on
  * `name` alone or `name + description`; historical orders only retain the
  * name snapshot, so name-derived features are the shared vocabulary between
  * the learned profile and current menu items.
@@ -87,6 +161,7 @@ export function extractFeatures(name: string, description?: string | null): Feat
   return [
     ...extractFromTaxonomy(text, 'ingredient', INGREDIENT_TERMS),
     ...extractFromTaxonomy(text, 'style', STYLE_TERMS),
+    ...extractCourseFeatures(name),
   ];
 }
 

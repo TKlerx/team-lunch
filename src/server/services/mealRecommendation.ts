@@ -17,6 +17,7 @@ import {
   buildTasteProfile,
   extractFeatures,
   featureLabel,
+  hasNonMealCourseFeature,
   loadMenuItemFeatures,
   scoreTasteMatch,
   type TasteProfile,
@@ -549,7 +550,35 @@ export async function loadRecommendationMenuItems(selectionId: string, officeLoc
     },
   });
 
-  return { selection, menuItems };
+  const mainDishItems = await filterSideDishRecommendationCandidates(menuItems, officeLocationId);
+
+  return { selection, menuItems: mainDishItems };
+}
+
+async function filterSideDishRecommendationCandidates<
+  TItem extends {
+    id: string;
+    name: string;
+    description: string | null;
+    itemIdentityKey: string | null;
+  },
+>(items: TItem[], officeLocationId: string): Promise<TItem[]> {
+  const filteredItems: TItem[] = [];
+
+  for (const item of items) {
+    const features = await loadMenuItemFeatures({
+      menuItemId: item.id,
+      officeLocationId,
+      itemIdentityKey: item.itemIdentityKey,
+      name: item.name,
+      description: item.description,
+    });
+    if (!hasNonMealCourseFeature(features)) {
+      filteredItems.push(item);
+    }
+  }
+
+  return filteredItems.length > 0 ? filteredItems : items;
 }
 
 export function rankItems(scoredItems: ScoredItem[]): MealRecommendationItem[] {

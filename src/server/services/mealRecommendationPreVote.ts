@@ -20,7 +20,7 @@ import {
   type ScoredItem,
   type ScoringContext,
 } from './mealRecommendation.js';
-import { buildTasteProfile, loadMenuItemFeatures } from './mealFeatures.js';
+import { buildTasteProfile, hasNonMealCourseFeature, loadMenuItemFeatures } from './mealFeatures.js';
 import {
   explainMealRecommendationModel,
   loadMealRecommendationModelForOffice,
@@ -174,6 +174,28 @@ async function resolvePreVoteScope(
   };
 }
 
+async function filterSideDishPreVoteCandidates(
+  items: PreVoteCandidateItem[],
+  officeLocationId: string,
+): Promise<PreVoteCandidateItem[]> {
+  const filteredItems: PreVoteCandidateItem[] = [];
+
+  for (const item of items) {
+    const features = await loadMenuItemFeatures({
+      menuItemId: item.itemId,
+      officeLocationId,
+      itemIdentityKey: item.itemIdentityKey,
+      name: item.itemName,
+      description: item.description,
+    });
+    if (!hasNonMealCourseFeature(features)) {
+      filteredItems.push(item);
+    }
+  }
+
+  return filteredItems.length > 0 ? filteredItems : items;
+}
+
 function buildDefaultItemIdsByMenuId(
   defaults: Array<{ menuId: string; itemId: string | null }>,
 ): Map<string, string | null> {
@@ -210,7 +232,11 @@ export async function generatePreVoteRecommendations(
   options: { pollId?: string; limit?: number } = {},
 ): Promise<MealRecommendationPreVoteResponse> {
   const limit = parseLimit(options.limit);
-  const scope = await resolvePreVoteScope(officeLocationId, options.pollId);
+  const resolvedScope = await resolvePreVoteScope(officeLocationId, options.pollId);
+  const scope = {
+    ...resolvedScope,
+    items: await filterSideDishPreVoteCandidates(resolvedScope.items, officeLocationId),
+  };
 
   if (scope.items.length === 0) {
     return {

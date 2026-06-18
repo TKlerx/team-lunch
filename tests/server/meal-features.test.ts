@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTasteProfile,
+  DRINK_FEATURE_TAG,
   extractFeatures,
   featureLabel,
+  hasSideDishFeature,
+  hasNonMealCourseFeature,
+  SIDE_DISH_FEATURE_TAG,
   scoreTasteMatch,
 } from '../../src/server/services/mealFeatures.js';
 
@@ -25,6 +29,24 @@ describe('mealFeatures', () => {
 
     it('returns no tags for an item with no recognized terms', () => {
       expect(extractFeatures('Mystery Plate')).toEqual([]);
+    });
+
+    it('tags obvious side dishes by item name', () => {
+      const features = extractFeatures('Garlic Naan');
+      expect(features).toContain(SIDE_DISH_FEATURE_TAG);
+      expect(hasSideDishFeature(features)).toBe(true);
+      expect(hasNonMealCourseFeature(features)).toBe(true);
+    });
+
+    it('tags obvious drinks by item name', () => {
+      const features = extractFeatures('Mango Lassi');
+      expect(features).toContain(DRINK_FEATURE_TAG);
+      expect(hasNonMealCourseFeature(features)).toBe(true);
+    });
+
+    it('does not treat a main dish as a side dish just because the description mentions rice', () => {
+      const features = extractFeatures('Green Chicken Curry', 'Served with rice');
+      expect(features).not.toContain(SIDE_DISH_FEATURE_TAG);
     });
   });
 

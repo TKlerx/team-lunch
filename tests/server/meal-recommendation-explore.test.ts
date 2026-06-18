@@ -169,6 +169,25 @@ describe('Meal recommendation explore service', () => {
     expect(exploreResult.items[0].reason).toMatch(/exploratory/i);
   });
 
+  it('keeps side dishes out of explore recommendations', async () => {
+    const { office, selection, menu, poll } = await setupActiveSelection([
+      'Garlic Naan',
+      'Mango Lassi',
+      'Thai Chicken Curry',
+      'Fish and Chips',
+      'Beef Burger',
+    ]);
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Garlic Naan', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Mango Lassi', { rating: 5 });
+    await seedHistoricalOrder(office.id, poll.id, menu.id, menu.name, 'Thai Green Curry', { rating: 5 });
+
+    const result = await generateExploreRecommendations(selection.id, office.id, ACTOR, 'seed-side');
+
+    expect(result.items.map((item) => item.itemName)).not.toContain('Garlic Naan');
+    expect(result.items.map((item) => item.itemName)).not.toContain('Mango Lassi');
+    expect(result.items.length).toBeGreaterThan(0);
+  });
+
   it('persists an explore impression scoped to the actor and office', async () => {
     const { office, selection, menu, poll } = await setupActiveSelection([
       'Thai Chicken Curry',

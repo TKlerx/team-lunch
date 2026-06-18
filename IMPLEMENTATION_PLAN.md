@@ -17,6 +17,7 @@
 - [x] Import-time tagging slice landed: keyword tagging now persists at menu import, AI gap-fill only touches keyword-untagged items, and untagged imports still complete without blocking on AI.
 - [x] Admin rollout slice landed: offline evaluation now replays held-out impressions per office, admin routes cover train/evaluate/status/mode/explore, and the admin page exposes rollout controls plus client coverage.
 - [x] User Story 5 landed: learned scoring, marks, and history all join on stable item identity, and the transfer tests now cover both menu re-import survival and per-office isolation.
+- [x] Non-meal course eligibility landed: obvious side items and drinks such as naan or lassi are tagged as `course:side`/`course:drink` and filtered out of safe, explore, and pre-vote recommendation candidates while their ratings/order history still contribute flavor signal.
 - [x] Full repo validation passed: `./validate.ps1 all` is green after refreshing the complexity baseline and trimming the oversized Administration function.
 - [x] Feature 003 is complete; no remaining learned-recommender implementation work is blocked in this workspace.
 - Note: new or unresolved product ideas now belong in `specs/BACKLOG.md` or a numbered spec. `78.3` is already implemented; `79.1` and `80.1` would require new product decisions; `88.13` is live Entra smoke testing.
