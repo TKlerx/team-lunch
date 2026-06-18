@@ -6,9 +6,10 @@
 .DESCRIPTION
     Usage: ./validate.ps1 [phase]
     Phases:
-      all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + test (default, pre-commit)
+      all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + test (default, local/CI gate)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (pre-push / before merge)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
+      precommit  - typecheck + lint (fast pre-commit hook)
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only
       e2e        - Playwright E2E tests only
@@ -21,7 +22,7 @@
 #>
 
 param(
-    [ValidateSet("all", "full", "continuity", "quick", "test", "e2e", "quality", "commit")]
+    [ValidateSet("all", "full", "continuity", "precommit", "quick", "test", "e2e", "quality", "commit")]
     [string]$Phase = "all"
 )
 
@@ -288,11 +289,11 @@ function Invoke-TrivyImageScan {
 
 $failures = @()
 
-if ($Phase -in "all", "full", "quick", "commit") {
+if ($Phase -in "all", "full", "precommit", "quick", "commit") {
     Invoke-ValidationStep "Typecheck (tsc --noEmit)" "pnpm run typecheck" "typecheck" "typecheck failed" { "typecheck passed" }
 }
 
-if ($Phase -in "all", "full", "quality", "commit") {
+if ($Phase -in "all", "full", "precommit", "quality", "commit") {
     Invoke-ValidationStep "Lint (eslint)" "pnpm run lint" "lint" "lint failed" { "lint passed" }
 }
 

@@ -315,6 +315,7 @@ Useful validation modes:
 
 ```powershell
 ./validate.ps1 quick
+./validate.ps1 precommit
 ./validate.ps1 test
 ./validate.ps1 quality
 ./validate.ps1 full
