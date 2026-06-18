@@ -1,6 +1,6 @@
 import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
-import type { Prisma } from '../generated/client/index.js';
+import type { Prisma } from '../generated/client/client.js';
 import { createSeededRng, type SeededRng } from './seededRng.js';
 import { extractFeatures, loadMenuItemFeatures } from './mealFeatures.js';
 import { normalizeMenuItemIdentityKey } from './mealItemIdentity.js';

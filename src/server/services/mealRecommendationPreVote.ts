@@ -1,4 +1,4 @@
-import type { Prisma } from '../generated/client/index.js';
+import type { Prisma } from '../generated/client/client.js';
 import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
 import type {
