@@ -9,7 +9,7 @@ dist/
 *.sqlite
 *.sqlite-journal
 .DS_Store
-coverage/
+reports/
 .prisma/
 # Playwright e2e artifacts
 test-results/
@@ -26,3 +26,4 @@ graphify-out/*
 .claude/settings.local.json
 backups/
 package-lock.json
+.zed/settings.json

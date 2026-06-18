@@ -1,11 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/server/generated/sqlite-client"
+  provider            = "prisma-client"
+  output              = "../src/server/generated/sqlite-client"
+  runtime             = "nodejs"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model OfficeLocation {

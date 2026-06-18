@@ -1,8 +1,3 @@
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const { PrismaClient } = require('../dist/server/generated/client/index.js');
-
 const allowEmpty = (process.env.ALLOW_EMPTY_DATABASE_DEPLOY ?? 'false').toLowerCase() === 'true';
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -43,7 +38,13 @@ const countRaw = async (prisma, table) => {
   return Number(countRows[0]?.count ?? 0);
 };
 
-const prisma = new PrismaClient();
+// Prisma 7: ESM client (entry is `client.js`, not `index.js`) constructed with
+// a driver adapter. This script only runs against PostgreSQL (SQLite is skipped
+// above), so the pg adapter is always the right one here.
+const { PrismaClient } = await import('../dist/server/generated/client/client.js');
+const { PrismaPg } = await import('@prisma/adapter-pg');
+const adapter = new PrismaPg({ connectionString: databaseUrl });
+const prisma = new PrismaClient({ adapter });
 
 try {
   const target = describeTarget(databaseUrl);
