@@ -35,19 +35,21 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 
 - React 18 + Vite + TypeScript
 - Fastify + TypeScript
-- Prisma ORM
+- Prisma 7 ORM (driver adapters, engine-free)
 - PostgreSQL by default
 - SQLite option for lightweight local server/testing flows
 - Vitest, Testing Library, Supertest, Playwright
+- pnpm as the package manager (npm/yarn are blocked via `only-allow`)
 
 ## Prerequisites
 
 - **Node.js** (v24 LTS recommended; v20+ for local tooling)
+- **pnpm** (v11+) — this repo enforces pnpm; npm/yarn are blocked by `only-allow`. The pinned version is managed by Corepack: run `corepack enable`.
 - **Python** (v3.10+) — used only for the semgrep security scanner
 - **PowerShell** (v7+) — `pwsh` is used for setup and validation scripts ([install guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
 - **Docker** — for PostgreSQL (unless using SQLite)
 
-Run `pwsh -File ./setup.ps1` to install all project dependencies automatically (npm packages, Prisma client, Python venv with semgrep).
+Run `pwsh -File ./setup.ps1` to install all project dependencies automatically (pnpm packages, Prisma client, Python venv with semgrep).
 
 ## Quick Start
 
@@ -61,7 +63,7 @@ cd team-lunch
 pwsh -File ./setup.ps1
 ```
 
-This installs npm packages, generates the Prisma client, and creates a Python venv with semgrep.
+This installs pnpm packages, generates the Prisma client, and creates a Python venv with semgrep.
 
 2. Create your local env file:
 
@@ -78,13 +80,13 @@ docker compose up db -d
 4. Apply migrations:
 
 ```bash
-npx prisma migrate dev
+pnpm prisma migrate dev
 ```
 
 5. Start the app:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 6. Open the app:
@@ -101,7 +103,7 @@ git clone https://github.com/TKlerx/team-lunch.git
 cd team-lunch
 pwsh -File ./setup.ps1
 cp .env.example .env
-npm run dev:server:sqlite
+pnpm dev:server:sqlite
 ```
 
 ### Option C: Full Stack in Docker
@@ -179,7 +181,7 @@ AUTH_ADMIN_PASSWORD="change-me-please"
 Then seed the admin:
 
 ```bash
-npm run auth:seed
+pnpm auth:seed
 ```
 
 ## Environment Variables
@@ -296,34 +298,37 @@ only on the sanitized item/preference data above. Any other
 ## Development Commands
 
 ```bash
-npm run dev                 # server + client
-npm run dev:server          # backend only
-npm run dev:client          # frontend only
-npm run dev:server:sqlite   # backend with SQLite
-npm run build               # production build
-npm start                   # run built app
+pnpm dev                 # server + client
+pnpm dev:server          # backend only
+pnpm dev:client          # frontend only
+pnpm dev:server:sqlite   # backend with SQLite
+pnpm build               # production build (tsc + vite build -> dist/)
+pnpm start               # run built app (node dist/server/index.js)
 ```
 
 ## Validation
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-./validate.ps1
+pnpm typecheck
+pnpm lint
+pnpm test
+pwsh -File ./validate.ps1
 ```
 
-Useful validation modes:
+`validate.ps1` is the aggregate gate. With no argument it runs the `all` phase
+(typecheck + lint + architecture + complexity + function-size + duplication +
+semgrep + production audit + tests with coverage). Useful phases:
 
 ```powershell
-./validate.ps1 quick
-./validate.ps1 precommit
-./validate.ps1 test
-./validate.ps1 quality
-./validate.ps1 full
+pwsh -File ./validate.ps1 quick       # typecheck only
+pwsh -File ./validate.ps1 precommit   # fast quality checks, no tests
+pwsh -File ./validate.ps1 test        # tests only, no coverage
+pwsh -File ./validate.ps1 e2e         # Playwright E2E tests only
+pwsh -File ./validate.ps1 quality     # lint + architecture + complexity + size + duplication + semgrep
+pwsh -File ./validate.ps1 full        # all + Trivy image scan + Playwright E2E
 ```
 
-`./validate.ps1 full` builds a local `team-lunch:trivy-scan` image and scans it
+`pwsh -File ./validate.ps1 full` builds a local `team-lunch:trivy-scan` image and scans it
 with the official Trivy container image pinned by digest. Override the scanner
 image with `TRIVY_IMAGE` only when intentionally updating the pinned scanner, and
 override the scan target with `TRIVY_SCAN_IMAGE` if needed.
@@ -347,7 +352,7 @@ AUTH_ADMIN_PASSWORD="change-me-please"
 Then run:
 
 ```bash
-npm run auth:seed
+pnpm auth:seed
 ```
 
 ### Entra SSO

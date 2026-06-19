@@ -4,7 +4,7 @@
     One-time setup for Team Lunch development environment.
 .DESCRIPTION
     Installs all prerequisites:
-    - Node.js dependencies (npm install)
+    - Node.js dependencies (pnpm install)
     - Prisma client generation
     - Python virtual environment with semgrep (security scanner)
 #>
@@ -18,12 +18,13 @@ function Write-Step([string]$message) {
 
 # --- Node.js dependencies ---
 Write-Step "Installing Node.js dependencies"
-npm install
-if ($LASTEXITCODE -ne 0) { Write-Error "npm install failed"; exit 1 }
+corepack enable
+pnpm install
+if ($LASTEXITCODE -ne 0) { Write-Error "pnpm install failed"; exit 1 }
 
 # --- Prisma client ---
 Write-Step "Generating Prisma client"
-npx prisma generate
+pnpm exec prisma generate
 if ($LASTEXITCODE -ne 0) { Write-Error "prisma generate failed"; exit 1 }
 
 # --- Python venv + semgrep ---
@@ -54,5 +55,5 @@ Write-Host "Setup complete!" -ForegroundColor Green
 Write-Host "Next steps:"
 Write-Host "  1. Copy .env.example to .env and edit as needed"
 Write-Host "  2. Start PostgreSQL:  docker compose up db -d"
-Write-Host "  3. Run migrations:    npx prisma migrate dev"
-Write-Host "  4. Start the app:     npm run dev"
+Write-Host "  3. Run migrations:    pnpm prisma migrate dev"
+Write-Host "  4. Start the app:     pnpm dev"
