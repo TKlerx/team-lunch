@@ -1,6 +1,6 @@
 # Specs Backlog
 
-**Last Updated**: 2026-06-18
+**Last Updated**: 2026-06-19
 
 This backlog is the canonical intake list for unstructured feature wishes before
 they become numbered specs.
@@ -20,6 +20,47 @@ they become numbered specs.
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Matches `IMPLEMENTATION_PLAN.md` item 64.3. Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
 | BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Delivered | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md); successor to BACKLOG-001's deterministic feature scorer. See notes below. |
 | BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Former `IMPLEMENTATION_PLAN.md` item 78.2. Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |
+| BACKLOG-004 | Office-scoped admin roles | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 79.1. Add office-location admins who can manage assigned offices without global admin powers. |
+| BACKLOG-005 | Multiple concurrent polls per office | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 80.1. Requires product model redesign because current phase/SSE semantics assume at most one active poll per office. |
+| BACKLOG-006 | Live Entra account verification | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 88.13. Manual tenant/app-registration validation that mocked tests cannot cover. |
+| BACKLOG-007 | Prisma 7 production verification | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` items 89.P1–89.P6. Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
+
+## BACKLOG-007 notes — Prisma 7 production verification
+
+Manual production checks after the Prisma 7 driver-adapter migration:
+
+- Confirm TLS/SSL connectivity to production Postgres for both `app` and `migrate`; add `sslmode=require` or `NODE_EXTRA_CA_CERTS` if cert handling requires it.
+- Run the full `docker compose up` stack against the target environment: `db` healthy, `migrate` completes `prisma migrate deploy`, and `app` serves traffic.
+- Smoke-test read/write queries against the intended schema; runtime schema selection depends on `src/server/db.ts` parsing `?schema=` and passing it to `PrismaPg`.
+- Watch connection-pool behavior under real traffic; configure pool size/timeouts in `PrismaPg` options if defaults are insufficient.
+- Confirm `scripts/prisma-production-data-check.mjs` reports live row counts and blocks unintended empty-DB deploys.
+- Smoke-test auth login (Entra + local), poll lifecycle, food-selection/order flow, and Excel export after deploy.
+
+## BACKLOG-006 notes — Live Entra account verification
+
+Verify against a real Entra tenant and app registration:
+
+- Redirect URI matches `${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`.
+- First login creates/syncs the approved access user as expected.
+- Entra display-name changes sync into account display-name cache.
+- Disabled/removed accounts fail safely on protected routes.
+- Logout/session expiry behavior matches production expectations.
+
+## BACKLOG-005 notes — Multiple concurrent polls per office
+
+Current behavior intentionally enforces one active poll per office. Before building,
+define how users distinguish polls and how voting, tie handling, timers,
+notifications, dashboard summaries, and start-food-selection targeting work when
+multiple polls coexist. Revisit SSE `initial_state`, browser notifications, client
+phase derivation, and the food-selection guard.
+
+## BACKLOG-004 notes — Office-scoped admin roles
+
+Introduce office-scoped admins who can manage one or more assigned offices without
+global powers. Likely permissions: menu and shopping-list management, poll and
+food-selection lifecycle actions, office user management, and office settings.
+Define how office roles interact with the global bootstrap admin and any future
+organization model before implementation.
 
 ## BACKLOG-003 notes — Ordering claim timeout and recovery
 

@@ -211,15 +211,15 @@ function Get-PlaywrightSummary($result) {
     return "playwright tests passed"
 }
 
-function Get-NpmAuditSummary($result) {
+function Get-DependencyAuditSummary($result) {
     $output = Remove-Ansi (Get-CombinedOutput $result)
     $cleanOutput = $output.Trim()
 
     if ($cleanOutput -match 'found 0 vulnerabilities') {
-        return "production npm audit passed (0 vulnerabilities)"
+        return "production dependency audit passed (0 vulnerabilities)"
     }
 
-    return "production npm audit passed"
+    return "production dependency audit passed"
 }
 
 function Invoke-ValidationStep(
@@ -248,7 +248,7 @@ function Invoke-ValidationStep(
 function Invoke-ContinuityValidation {
     Write-Step "Continuity snapshot (CURRENT-WORK / RECONCILIATION)"
     try {
-        $result = Invoke-NativeCommand "pnpm run continuity:update"
+        $result = Invoke-NativeCommand "node scripts/update-continuity.js"
         if ($result.ExitCode -ne 0) {
             Write-CommandLog $result
             throw "continuity updater failed"
@@ -362,9 +362,9 @@ if ($Phase -in "all", "full", "quality", "commit") {
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Dependency audit (pnpm audit --prod)" "pnpm audit --prod" "npm-audit" "production dependency audit failed" {
+    Invoke-ValidationStep "Dependency audit (pnpm audit --prod)" "pnpm audit --prod" "dependency-audit" "production dependency audit failed" {
         param($result)
-        Get-NpmAuditSummary $result
+        Get-DependencyAuditSummary $result
     }
 }
 

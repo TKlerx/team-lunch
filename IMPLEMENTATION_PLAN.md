@@ -1,5 +1,10 @@
 # Implementation Plan
 
+> **Frozen legacy ledger.** This file records the earlier Ralph-loop plan history.
+> Do not use it as the continuation source for new work. New product truth lives
+> in numbered specs under `specs/` and in `specs/BACKLOG.md`; current priorities
+> are summarized in `specs/OVERVIEW.md`.
+
 > Tests are first-class citizens — each feature task includes its corresponding tests.
 > **Testing policy:** No task is complete until its unit/integration tests pass. Write tests alongside (or before) implementation, never deferred to a later task.
 

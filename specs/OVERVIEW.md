@@ -1,6 +1,6 @@
 # Specs Overview
 
-**Last Updated**: 2026-06-18
+**Last Updated**: 2026-06-19
 
 This overview tracks spec completeness and implementation status for epics in
 `specs/`.
@@ -42,7 +42,8 @@ This overview tracks spec completeness and implementation status for epics in
 | # | Name | Impl Status | spec | plan | tasks | data | contracts | research | checklist |
 |---|------|-------------|------|------|-------|------|-----------|----------|-----------|
 | 001 | canonical-routes | Done | Y | - | - | - | - | - | Y |
-| 002 | ai-meal-recommendations | Planned | Y | Y | Y | Y | Y | Y | - |
+| 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
+| 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
@@ -62,14 +63,16 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **003 Learned meal recommender**: Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
-2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
-3. **Office-scoped admin roles**: Backlog idea. Needs role and authorization model design before promotion.
-4. **Poll concurrency inside one office**: Backlog idea. Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
+1. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
+2. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
+3. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
+4. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
+5. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
 
 ## Notes
 
-- `001-canonical-routes` is implemented in `IMPLEMENTATION_PLAN.md` item 89.1; the spec status is marked `Done`.
+- `001-canonical-routes` is implemented; the spec status is marked `Done`.
+- `002-ai-meal-recommendations` is marked `Delegated` because its intent was superseded and delivered by [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
 - `food-selection` is marked `Mostly Done` because its migrated task list still calls out verification gaps around pruning-era tests and timer edge assertions, even though the feature is broadly shipped.
-- `IMPLEMENTATION_PLAN.md` is legacy tracking. New product truth should live in a numbered spec or `specs/BACKLOG.md`.
+- `IMPLEMENTATION_PLAN.md` is a frozen legacy ledger. New product truth lives in a numbered spec or `specs/BACKLOG.md`.
 - `old/` contains pre-migration notes and is intentionally excluded from the epic table.

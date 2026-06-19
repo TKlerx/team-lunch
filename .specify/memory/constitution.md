@@ -8,7 +8,7 @@ browsers via Server-Sent Events (SSE).
 - **Primary language**: TypeScript (ESM, `"type": "module"`)
 - **Architecture**: Single-package full-stack app — React 18 + Vite client and a
   Fastify backend in one repository (one `package.json`), with shared types.
-- **Storage**: PostgreSQL (default) or SQLite (local/test) via Prisma ORM.
+- **Storage**: PostgreSQL (default) or SQLite (local/test) via Prisma 7 ORM with driver adapters.
 
 ## Core Principles
 
@@ -25,10 +25,11 @@ Never instantiate `PrismaClient` anywhere else. Generated client output
 ### III. Shared Types, No Duplication
 Request/response shapes and domain enums live in `src/lib/` and are imported by
 both server and client. Do not redefine the same type on each side. Persisted
-records MUST store a name snapshot alongside any FK (e.g. `menu_name`,
-`item_name`) because the source row can be deleted. Nickname is never a user
-entity — it is passed in request bodies and stored as a plain `VARCHAR`; the
-client reads it from the `team_lunch_nickname` localStorage key.
+records MUST store a name/display snapshot alongside any FK or actor reference
+(e.g. `menu_name`, `item_name`, `display_name_snapshot`) because source rows or
+profile display names can change. User-attributed writes resolve stable identity
+from the signed auth session (`actor_key` / `actor_email`); display names are
+optional, non-unique labels, not identity.
 
 ### IV. Realtime via SSE
 After any state change, services broadcast through the SSE manager
@@ -41,29 +42,33 @@ Every feature ships its tests in the same change — never a follow-up. No stubs
 placeholders in delivered code. Server logic + routes are tested with Vitest +
 Supertest in `tests/server/`; client components/hooks with Vitest +
 Testing Library in `tests/client/`. Critical business paths (poll vote/winner/tie,
-food-selection duration/one-order-per-nickname/overtime, SSE broadcast/cleanup)
-MUST stay covered.
+food-selection duration/session-attributed ordering/overtime, SSE
+broadcast/cleanup) MUST stay covered.
 
 ## Quality Gates
 
-All of the following MUST pass before commit. Run `./validate.ps1 all`:
+All of the following MUST pass before commit. Run `pwsh -File ./validate.ps1 all`:
 
-- `npm run typecheck` — `tsc --noEmit` across server + client + lib
-- `npm run lint` — ESLint (`.ts`/`.tsx`), includes sonarjs rules
-- `npm run duplication` — jscpd, fails over 5% copy-paste in `src/`
-- `npm run semgrep` — Semgrep auto ruleset security scan
-- `npm test` — Vitest (server + client projects)
-- `npm audit --omit=dev` — production/runtime dependency vulnerabilities
-- continuity freshness — `specs/CURRENT-WORK.md` + `specs/RECONCILIATION.md`
+- `pnpm typecheck` — `tsc --noEmit` across server + client + lib
+- `pnpm lint` — ESLint (`.ts`/`.tsx`), includes sonarjs rules
+- `pnpm architecture` — dependency-cruiser architecture guard
+- `pnpm complexity` — ESLint complexity ratchet
+- `pnpm function-size` — non-test source function-size cap
+- `pnpm duplication` — jscpd, fails over configured copy-paste threshold in `src/`
+- `pnpm semgrep` — Semgrep auto ruleset security scan
+- `pnpm audit --prod` — production/runtime dependency vulnerabilities
+- `pnpm coverage` — Vitest with coverage (server + client projects)
 
-Before push / before merge: `./validate.ps1 full` (adds Playwright E2E, skips
-continuity freshness).
+Before push / before merge: `pwsh -File ./validate.ps1 full` (adds Playwright E2E
+and pinned Trivy image scan). When changing workflow state or continuity docs,
+run `pnpm continuity:update` or `pwsh -File ./validate.ps1 continuity` and commit
+the resulting `specs/CURRENT-WORK.md` / `specs/RECONCILIATION.md` if changed.
 
 ## Database Rules
 
 - Two Prisma schemas: `prisma/schema.prisma` (Postgres) and
   `prisma/schema.sqlite.prisma` (SQLite). Keep model changes in sync.
-- After any schema change, run `npx prisma migrate dev` before server tests.
+- After any schema change, run `pnpm prisma migrate dev` before server tests.
 - Applied migration SQL is immutable — never edit an applied migration; force LF
   for `prisma/migrations/**/*.sql`. Use `prisma migrate resolve` to repair history.
 - When adding a persisted model used by server tests, extend the cleanup list in
@@ -89,10 +94,13 @@ continuity freshness).
 This constitution reflects conventions already practiced in the codebase and
 documented in `AGENTS.md`; `AGENTS.md` remains the operational runbook (task loop,
 backpressure commands, discoveries). Where the two overlap, this file states the
-durable principle and `AGENTS.md` states the how-to.
+durable principle and `AGENTS.md` states the how-to. Spec-kit artifacts under
+`specs/` are the planning source of truth; `IMPLEMENTATION_PLAN.md` is a frozen
+legacy ledger.
 
 Amendments require updating this file plus any dependent template, and a note in
 the change description. All feature work MUST pass the Quality Gates above before
-merge; deviations MUST be justified in the plan's Complexity Tracking section.
+merge; deviations MUST be justified in the active spec plan's Complexity Tracking
+section.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-03 | **Last Amended**: 2026-06-03
+**Version**: 1.1.0 | **Ratified**: 2026-06-03 | **Last Amended**: 2026-06-19
