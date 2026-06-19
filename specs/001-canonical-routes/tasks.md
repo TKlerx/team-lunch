@@ -105,7 +105,7 @@
 
 - [x] T028 [P] Add Spec Kit route contract documentation in `specs/001-canonical-routes/contracts/ui-routes.md`
 - [x] T029 [P] Add quickstart validation notes in `specs/001-canonical-routes/quickstart.md`
-- [x] T030 [P] Update implementation-plan tracking in `IMPLEMENTATION_PLAN.md`
+- [x] T030 [P] Update spec tracking in `specs/OVERVIEW.md`
 - [x] T031 Run client route tests with `pnpm exec vitest run --project client tests/client/App.test.tsx tests/client/Header.test.tsx`
 - [x] T032 Run client project tests with `pnpm exec vitest run --project client`
 - [x] T033 Run Playwright e2e smoke tests with `pnpm exec playwright test --project=chromium`

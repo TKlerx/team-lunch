@@ -26,7 +26,7 @@ RTK resolves external programs from PATH. PowerShell cmdlets/builtins are not
 PATH executables, so run them through `pwsh -Command`.
 
 ```powershell
-rtk pwsh -NoProfile -Command "Get-Content IMPLEMENTATION_PLAN.md"
+rtk pwsh -NoProfile -Command "Get-Content specs/OVERVIEW.md"
 rtk pwsh -NoProfile -Command "Get-ChildItem specs | Select-Object -ExpandProperty Name"
 rtk pwsh -NoProfile -Command "rg -n 'displayName|actor_key' src tests prisma"
 ```
@@ -45,7 +45,7 @@ External executables can still run directly:
 
 ```powershell
 rtk git status --short
-rtk git add AGENTS.md IMPLEMENTATION_PLAN.md
+rtk git add AGENTS.md specs/OVERVIEW.md
 rtk git commit -m "test: reconcile display name identity validation"
 rtk pnpm lint
 rtk pnpm test

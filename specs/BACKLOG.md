@@ -17,13 +17,13 @@ they become numbered specs.
 
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
-| BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Matches `IMPLEMENTATION_PLAN.md` item 64.3. Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
+| BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
 | BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Delivered | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md); successor to BACKLOG-001's deterministic feature scorer. See notes below. |
-| BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Former `IMPLEMENTATION_PLAN.md` item 78.2. Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |
-| BACKLOG-004 | Office-scoped admin roles | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 79.1. Add office-location admins who can manage assigned offices without global admin powers. |
-| BACKLOG-005 | Multiple concurrent polls per office | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 80.1. Requires product model redesign because current phase/SSE semantics assume at most one active poll per office. |
-| BACKLOG-006 | Live Entra account verification | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` item 88.13. Manual tenant/app-registration validation that mocked tests cannot cover. |
-| BACKLOG-007 | Prisma 7 production verification | Backlog | - | Migrated from frozen `IMPLEMENTATION_PLAN.md` items 89.P1–89.P6. Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
+| BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |
+| BACKLOG-004 | Office-scoped admin roles | Backlog | - | Add office-location admins who can manage assigned offices without global admin powers. |
+| BACKLOG-005 | Multiple concurrent polls per office | Backlog | - | Requires product model redesign because current phase/SSE semantics assume at most one active poll per office. |
+| BACKLOG-006 | Live Entra account verification | Backlog | - | Manual tenant/app-registration validation that mocked tests cannot cover. |
+| BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
 
 ## BACKLOG-007 notes — Prisma 7 production verification
 

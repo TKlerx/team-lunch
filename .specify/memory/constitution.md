@@ -95,8 +95,7 @@ This constitution reflects conventions already practiced in the codebase and
 documented in `AGENTS.md`; `AGENTS.md` remains the operational runbook (task loop,
 backpressure commands, discoveries). Where the two overlap, this file states the
 durable principle and `AGENTS.md` states the how-to. Spec-kit artifacts under
-`specs/` are the planning source of truth; `IMPLEMENTATION_PLAN.md` is a frozen
-legacy ledger.
+`specs/` are the planning source of truth.
 
 Amendments require updating this file plus any dependent template, and a note in
 the change description. All feature work MUST pass the Quality Gates above before

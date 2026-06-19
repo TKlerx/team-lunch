@@ -8,7 +8,6 @@
 
 **Backlog Link**: `BACKLOG-001`
 
-**Implementation Plan Link**: `IMPLEMENTATION_PLAN.md` item 64.3
 
 **Input**: User description: "Recommend meals using AI based on your previous ratings."
 

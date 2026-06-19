@@ -146,7 +146,7 @@ description: "Task list — AI Meal Recommendations"
 - [X] T046 Run focused server/client suites from `specs/002-ai-meal-recommendations/quickstart.md`
 - [X] T047 Run `rtk pwsh -NoLogo -NoProfile -File ./validate.ps1 all`
 - [X] T048 Run `rtk graphify update . --no-cluster` and stage updated `graphify-out/graph.json`
-- [X] T049 Mark `IMPLEMENTATION_PLAN.md` item 64.3 complete only after implementation and validation pass
+- [X] T049 Mark `BACKLOG-001` promoted only after implementation and validation pass
 
 ---
 

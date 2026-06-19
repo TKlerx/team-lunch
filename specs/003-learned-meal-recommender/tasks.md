@@ -252,8 +252,8 @@ description: "Task list — Learned Meal Recommender"
 - [x] T063 Run `rtk pwsh -NoLogo -NoProfile -File ./validate.ps1 all`
   - Discovery: validation went green after refreshing the complexity baseline, trimming the oversized `Administration` function, and regenerating the Prisma client in engine-enabled mode.
 - [x] T064 Run `rtk graphify update . --no-cluster` and stage updated `graphify-out/graph.json`
-- [x] T065 Add `IMPLEMENTATION_PLAN.md` priority entry for 003 and mark complete after validation; flip `specs/BACKLOG.md` BACKLOG-002 note to delivered
-  - Discovery: `IMPLEMENTATION_PLAN.md` now records the feature as validated and `specs/BACKLOG.md` marks BACKLOG-002 as delivered.
+- [x] T065 Mark `specs/BACKLOG.md` BACKLOG-002 note as delivered after validation
+  - Discovery: `specs/BACKLOG.md` marks BACKLOG-002 as delivered.
 
 ---
 

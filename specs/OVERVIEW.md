@@ -74,5 +74,4 @@ This overview tracks spec completeness and implementation status for epics in
 - `001-canonical-routes` is implemented; the spec status is marked `Done`.
 - `002-ai-meal-recommendations` is marked `Delegated` because its intent was superseded and delivered by [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
 - `food-selection` is marked `Mostly Done` because its migrated task list still calls out verification gaps around pruning-era tests and timer edge assertions, even though the feature is broadly shipped.
-- `IMPLEMENTATION_PLAN.md` is a frozen legacy ledger. New product truth lives in a numbered spec or `specs/BACKLOG.md`.
 - `old/` contains pre-migration notes and is intentionally excluded from the epic table.
