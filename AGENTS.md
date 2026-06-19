@@ -3,20 +3,29 @@
 This project follows a spec-driven (SDD) workflow on top of spec-kit
 (`.specify/`, `specs/`). Work is interactive — the AI agent executes the cycle,
 the user observes and steers. For new features, run the spec-kit phases
-(`specify → plan → tasks → implement`); the per-task loop below applies while
-implementing a spec.
+(`specify → plan → tasks → implement`); implementation then proceeds one checked
+task at a time from `tasks.md`.
+
+### Typical Development Workflow
+
+1. **Intake** — review `specs/BACKLOG.md`; add new unstructured requests there before promoting them.
+2. **Specify** — create or update a numbered spec in `specs/NNN-*` (`spec.md`).
+3. **Plan** — create/update design artifacts (`plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md` as needed).
+4. **Task** — generate/update `tasks.md` with concrete, ordered implementation tasks.
+5. **Implement** — use the task loop below, one unchecked task at a time.
+6. **Continue** — when no unchecked tasks remain, follow `specs/OVERVIEW.md` Current Priority and `specs/CURRENT-WORK.md`.
 
 ### Task Loop
 
-Each task follows this cycle — AI agent execute steps 1–7, user observes and steers:
+Each task follows this cycle — AI agent executes steps 1–7, user observes and steers:
 
 1. **Orient** — read the active spec in `specs/NNN-*/` (`spec.md`, `plan.md`) relevant to the task
 2. **Pick next task** — take the next unchecked item from the active spec's `tasks.md`; use `specs/OVERVIEW.md` (Current Priority) and `specs/BACKLOG.md` for cross-feature prioritization
 3. **Investigate** — search `src/` to confirm what exists (don't assume not implemented)
 4. **Implement** — complete the task fully (no stubs or placeholders) including tests in `tests/`
-5. **Validate** — run `./validate.ps1` (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test); fix all failures before shipping
+5. **Validate** — run focused tests while iterating, then `pwsh -File ./validate.ps1 all` before marking the task shipped; fix all failures
 6. **Update spec** — mark the task done in the active spec's `tasks.md`; record any operational discoveries in the Discoveries section below
-7. **Commit** — `git add -A && git commit -m "<description>"`
+7. **Commit** — `git add -A && git commit -m "<description>"`; the pre-commit hook runs `pwsh -File ./validate.ps1 precommit` as a fast safety net
 
 User can steer between tasks or say "continue" to proceed to the next item.
 
@@ -24,15 +33,15 @@ User can steer between tasks or say "continue" to proceed to the next item.
 ### Backpressure Commands
 
 ```powershell
-pwsh -File ./validate.ps1              # local/CI quality gate: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + audit + test
-pwsh -File ./validate.ps1 precommit    # pre-commit default: typecheck + lint + architecture + complexity + function-size + duplication
-pwsh -File ./validate.ps1 full         # pre-push / before merge: all quality checks + tests + pinned Trivy image scan + Playwright E2E
+pwsh -File ./validate.ps1              # local/CI quality gate: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + audit + coverage
+pwsh -File ./validate.ps1 precommit    # git pre-commit hook: typecheck + lint + architecture + complexity + function-size + duplication
+pwsh -File ./validate.ps1 full         # pre-push / before merge: all + pinned Trivy image scan + Playwright E2E
 pwsh -File ./validate.ps1 continuity   # optional: refresh CURRENT-WORK/RECONCILIATION and fail if they changed
 pwsh -File ./validate.ps1 quick        # typecheck only (scaffolding phase)
 pwsh -File ./validate.ps1 test         # tests only
 pwsh -File ./validate.ps1 e2e          # Playwright E2E only
 pwsh -File ./validate.ps1 quality      # lint + architecture + complexity + function-size + duplication + semgrep
-pwsh -File ./validate.ps1 commit       # validate all, then git commit + push
+pwsh -File ./validate.ps1 commit       # validate all, then git add + commit + push
 pnpm duplication            # jscpd copy-paste detection (src/, 5% threshold; QUALITY_THRESHOLDS_BYPASS=1 makes threshold advisory)
 pnpm architecture           # dependency-cruiser architecture check; currently guards against circular runtime dependencies
 pnpm complexity             # ESLint complexity ratchet; fails if complexity warning counts/worst metrics exceed complexity-baseline.json
@@ -175,7 +184,7 @@ docker compose up --build          # full stack in Docker (preferred for product
 
 ## Validation
 
-Run ALL of these after any implementation. Fix every failure before committing.
+Run the aggregate gate after any implementation before marking the task shipped. Use focused commands while iterating.
 
 ```bash
 pnpm typecheck         # tsc --noEmit across server + client + lib
@@ -187,7 +196,7 @@ pnpm test:client       # vitest run --project client (component + hook tests)
 
 Full one-liner (same as CI):
 ```bash
-pnpm validate          # runs pwsh -File ./validate.ps1 all (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + test + audit)
+pnpm validate          # runs pwsh -File ./validate.ps1 all (typecheck + lint + architecture + complexity + function-size + duplication + semgrep + audit + coverage)
 ```
 
 ## Test Database (dedicated Postgres)

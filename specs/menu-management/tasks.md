@@ -53,5 +53,5 @@ description: "Migrated task list — Menu Management (already implemented)"
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit.
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped.
 - Keep name snapshots when adding any new FK to menus/items.

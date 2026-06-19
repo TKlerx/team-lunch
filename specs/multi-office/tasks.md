@@ -58,5 +58,5 @@ flagged in Gaps.
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit.
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped.
 - Office context is resolved once and passed explicitly — keep it out of route glue.

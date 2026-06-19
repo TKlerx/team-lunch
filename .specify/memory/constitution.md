@@ -47,7 +47,7 @@ broadcast/cleanup) MUST stay covered.
 
 ## Quality Gates
 
-All of the following MUST pass before commit. Run `pwsh -File ./validate.ps1 all`:
+All of the following MUST pass before a task or feature is marked shipped. Run `pwsh -File ./validate.ps1 all`:
 
 - `pnpm typecheck` — `tsc --noEmit` across server + client + lib
 - `pnpm lint` — ESLint (`.ts`/`.tsx`), includes sonarjs rules
@@ -59,6 +59,7 @@ All of the following MUST pass before commit. Run `pwsh -File ./validate.ps1 all
 - `pnpm audit --prod` — production/runtime dependency vulnerabilities
 - `pnpm coverage` — Vitest with coverage (server + client projects)
 
+Git pre-commit runs `pwsh -File ./validate.ps1 precommit` as a fast safety net.
 Before push / before merge: `pwsh -File ./validate.ps1 full` (adds Playwright E2E
 and pinned Trivy image scan). When changing workflow state or continuity docs,
 run `pnpm continuity:update` or `pwsh -File ./validate.ps1 continuity` and commit

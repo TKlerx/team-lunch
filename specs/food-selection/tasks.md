@@ -76,5 +76,5 @@ description: "Migrated task list — Food Selection Lifecycle (already implement
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit; `full` adds Playwright E2E.
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped; `full` adds Playwright E2E.
 - Claim is the hard mutation cutoff — keep that invariant when extending.

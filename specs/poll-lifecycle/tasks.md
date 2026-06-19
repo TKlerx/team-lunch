@@ -64,5 +64,5 @@ description: "Migrated task list — Poll Lifecycle (already implemented)"
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit; `full` adds Playwright E2E.
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped; `full` adds Playwright E2E.
 - Service logic precedes routes; routes stay thin and own authz.

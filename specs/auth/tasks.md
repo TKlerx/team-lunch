@@ -66,5 +66,5 @@ description: "Migrated task list — Authentication & Access Control (already im
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit (includes semgrep + `npm audit --omit=dev`).
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped (includes semgrep + production audit + coverage).
 - Never trust the cookie alone — keep DB re-check on protected flows.

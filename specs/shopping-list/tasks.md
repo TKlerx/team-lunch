@@ -33,4 +33,4 @@ description: "Migrated task list — Shared Shopping List (already implemented)"
 
 ## Notes
 
-- Run `./validate.ps1 all` before commit.
+- Run `pwsh -File ./validate.ps1 all` before marking the task shipped.
