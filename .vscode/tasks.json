@@ -1,14 +1,4 @@
 {
   "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Graphify: Update",
-      "type": "shell",
-      "command": "graphify update .",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    }
-  ]
+  "tasks": []
 }

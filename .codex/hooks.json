@@ -1,15 +1,5 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "C:\\Users\\J\u00fcrgenWall\\.local\\bin\\graphify.EXE hook-check"
-          }
-        ]
-      }
-    ]
+    "PreToolUse": []
   }
 }
