@@ -321,12 +321,19 @@ semgrep + production audit + tests with coverage). Useful phases:
 
 ```powershell
 pwsh -File ./validate.ps1 quick       # typecheck only
-pwsh -File ./validate.ps1 precommit   # fast quality checks, no tests
+pwsh -File ./validate.ps1 precommit   # typecheck + architecture + duplication
+pwsh -File ./validate.ps1 prepush     # lint + complexity + function-size
 pwsh -File ./validate.ps1 test        # tests only, no coverage
 pwsh -File ./validate.ps1 e2e         # Playwright E2E tests only
 pwsh -File ./validate.ps1 quality     # lint + architecture + complexity + size + duplication + semgrep
 pwsh -File ./validate.ps1 full        # all + Trivy image scan + Playwright E2E
 ```
+
+The Git hooks keep local commits quick: pre-commit runs `precommit` (typecheck,
+architecture, duplication), and pre-push runs `prepush` (lint, complexity,
+function-size). Set `RUN_FULL_VALIDATION_ON_PUSH=1` when you want pre-push to run
+`pwsh -File ./validate.ps1 full` locally. CI and `pre-merge-commit` run the full
+merge gate.
 
 `pwsh -File ./validate.ps1 full` builds a local `team-lunch:trivy-scan` image and scans it
 with the official Trivy container image pinned by digest. Override the scanner

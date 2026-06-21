@@ -1,4 +1,4 @@
-name: CI
+name: Validate
 
 on:
   pull_request:
@@ -22,9 +22,9 @@ env:
   APP_PUBLIC_URL: ""
 
 jobs:
-  quality:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -55,19 +55,14 @@ jobs:
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/pip install semgrep
 
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Start test database
         run: pnpm db:test:up
 
-      - name: Run validation
-        run: pwsh -NoProfile -File ./validate.ps1 all
-
-      - name: Install Playwright Chromium
-        if: github.event_name == 'push'
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Run E2E tests
-        if: github.event_name == 'push'
-        run: pnpm run test:e2e
+      - name: Run full merge validation
+        run: bash ./validate.sh full
 
       - name: Stop test database
         if: always()

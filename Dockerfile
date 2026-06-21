@@ -36,7 +36,7 @@ RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
-RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /root/.npm
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /root/.npm /root/.cache/node
 
 # Prisma 7 is engine-free (driver adapters), and its generated client is plain
 # TypeScript that tsc compiles straight into dist during the build — so the

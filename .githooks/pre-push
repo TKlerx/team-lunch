@@ -1,4 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
-pwsh -NoProfile -File ./validate.ps1 full
+hook_dir=${0%/*}
+
+if [ "${RUN_FULL_VALIDATION_ON_PUSH:-0}" = "1" ]; then
+  exec "$hook_dir/run-validate.sh" full
+else
+  exec "$hook_dir/run-validate.sh" prepush
+fi

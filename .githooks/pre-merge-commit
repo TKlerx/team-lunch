@@ -3,4 +3,4 @@ set -eu
 
 hook_dir=${0%/*}
 
-exec "$hook_dir/run-validate.sh" precommit
+exec "$hook_dir/run-validate.sh" full
