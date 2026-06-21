@@ -43,7 +43,7 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 
 ## Prerequisites
 
-- **Node.js** (v24 LTS recommended; v20+ for local tooling)
+- **Node.js** (v24 LTS)
 - **pnpm** (v11+) — this repo enforces pnpm; npm/yarn are blocked by `only-allow`. The pinned version is managed by Corepack: run `corepack enable`.
 - **Python** (v3.10+) — used only for the semgrep security scanner
 - **PowerShell** (v7+) — `pwsh` is used for setup and validation scripts ([install guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
