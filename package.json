@@ -24,6 +24,7 @@
     "complexity": "node scripts/check-complexity-baseline.mjs",
     "complexity:update": "node scripts/check-complexity-baseline.mjs --update",
     "function-size": "node scripts/check-function-size.mjs",
+    "text-format": "node scripts/check-text-format.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "continuity:update": "node scripts/update-continuity.js",

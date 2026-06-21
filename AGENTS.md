@@ -34,7 +34,7 @@ User can steer between tasks or say "continue" to proceed to the next item.
 
 ```powershell
 pwsh -File ./validate.ps1              # local quality gate: typecheck + lint + architecture + complexity + function-size + duplication + semgrep + audit + coverage
-pwsh -File ./validate.ps1 precommit    # fast local hook phase: typecheck + architecture + duplication
+pwsh -File ./validate.ps1 precommit    # fast local hook phase: text-format + typecheck + architecture + duplication
 pwsh -File ./validate.ps1 prepush      # medium local hook phase: lint + complexity + function-size
 pwsh -File ./validate.ps1 full         # CI merge gate / optional pre-push: all + pinned Trivy image scan + Playwright E2E
 pwsh -File ./validate.ps1 continuity   # optional: refresh CURRENT-WORK/RECONCILIATION and fail if they changed
@@ -48,6 +48,7 @@ pnpm architecture           # dependency-cruiser architecture check; currently g
 pnpm complexity             # ESLint complexity ratchet; fails if complexity warning counts/worst metrics exceed complexity-baseline.json
 pnpm complexity:update      # intentionally lower/update complexity-baseline.json after refactors improve the baseline
 pnpm function-size          # hard non-test source function cap: 300 lines, no allowlist exceptions
+pnpm text-format            # staged text-file check: UTF-8 without BOM and LF line endings
 pnpm format:check           # Prettier check with repo/tooling ignores; not part of validate until the formatting baseline is clean
 pnpm semgrep                # Semgrep auto ruleset security scan
 pnpm test:e2e               # Playwright E2E tests (skips in validate when no e2e specs exist)
@@ -61,6 +62,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - **One task at a time** — finish and validate before moving on
 - **Tests are mandatory** — every feature includes its tests in the same task
 - **No stubs** — implement completely; placeholders waste future iterations
+- **Text encoding** — keep text files UTF-8 encoded with LF (`\n`) line endings; do not introduce UTF-8 BOMs or CRLF unless a tool-specific format explicitly requires it
 - **Update AGENTS.md** — when learning something new about running the project
 - **Update the active spec** — after every task, mark progress in `specs/NNN-*/tasks.md`; log operational discoveries in the Discoveries section below
 

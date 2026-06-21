@@ -9,7 +9,7 @@
       all        - typecheck + lint + architecture + complexity + function-size + duplication + semgrep + production audit + tests w/ coverage (default)
       full       - all quality checks + production audit + pinned Trivy image scan + Playwright E2E tests (CI merge gate / optional pre-push)
       continuity - refresh CURRENT-WORK/RECONCILIATION and fail if that created uncommitted changes
-      precommit  - fast local sanity: typecheck + architecture + duplication
+      precommit  - fast local sanity: text format + typecheck + architecture + duplication
       prepush    - medium local gate: lint + complexity + function-size
       quick      - typecheck only (use during scaffolding before tests exist)
       test       - tests only (no coverage)
@@ -310,6 +310,12 @@ function Invoke-TrivyImageScan {
 }
 
 $failures = @()
+
+if ($Phase -eq "precommit") {
+    Invoke-ValidationStep "Text format (UTF-8, LF)" "pnpm run text-format" "text-format" "text format check failed" {
+        "text format check passed"
+    }
+}
 
 if ($Phase -in "all", "full", "precommit", "quick", "commit") {
     Invoke-ValidationStep "Typecheck (tsc --noEmit)" "pnpm run typecheck" "typecheck" "typecheck failed" { "typecheck passed" }
