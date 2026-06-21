@@ -333,7 +333,7 @@ async function syncMenuItemsDerivedData(
   const items = await db.menuItem.findMany({
     where: { menuId },
     select: { id: true, name: true, description: true },
-    orderBy: { createdAt: 'asc' },
+    orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
   });
 
   const gapFillTargets: MenuItemGapFillTarget[] = [];
@@ -686,7 +686,7 @@ export async function listMenus(officeLocationId?: string): Promise<Menu[]> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const menus = await prisma.menu.findMany({
     where: { officeLocationId: resolvedOfficeLocationId },
-    include: { items: { orderBy: { createdAt: 'asc' } } },
+    include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
     orderBy: { name: 'asc' },
   });
   return menus.map(formatMenu);
@@ -765,7 +765,7 @@ export async function updateMenu(
   const menu = await prisma.menu.update({
     where: { id },
     data: updates,
-    include: { items: { orderBy: { createdAt: 'asc' } } },
+    include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
   });
 
   const formatted = formatMenu(menu);
@@ -795,7 +795,7 @@ export async function listItems(menuId: string, officeLocationId?: string): Prom
 
   const items = await prisma.menuItem.findMany({
     where: { menuId },
-    orderBy: { createdAt: 'asc' },
+    orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
   });
   return items.map(formatMenuItem);
 }
@@ -942,7 +942,7 @@ export async function importMenuFromJson(
 
       const updated = await tx.menu.findUniqueOrThrow({
         where: { id: existing.id },
-        include: { items: { orderBy: { createdAt: 'asc' } } },
+        include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
       });
 
       return { menu: formatMenu(updated), created: false, gapFillTargets };
@@ -974,7 +974,7 @@ export async function importMenuFromJson(
 
     const createdWithItems = await tx.menu.findUniqueOrThrow({
       where: { id: createdMenu.id },
-      include: { items: { orderBy: { createdAt: 'asc' } } },
+      include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
     });
 
     return { menu: formatMenu(createdWithItems), created: true, gapFillTargets };
