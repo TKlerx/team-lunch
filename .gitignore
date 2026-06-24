@@ -27,3 +27,4 @@ graphify-out/*
 backups/
 package-lock.json
 .zed/settings.json
+.faim/faim.log

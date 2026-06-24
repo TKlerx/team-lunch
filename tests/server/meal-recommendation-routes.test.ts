@@ -153,13 +153,18 @@ describe('Meal recommendation routes (integration)', () => {
   }
 
   async function createMenu(name: string) {
-    const res = await supertest(app.server).post('/api/menus').send({ name }).expect(201);
+    const res = await supertest(app.server)
+      .post('/api/menus')
+      .set(await approvedAuthHeaders())
+      .send({ name })
+      .expect(201);
     return res.body;
   }
 
   async function createMenuItem(menuId: string, name: string, description?: string) {
     const res = await supertest(app.server)
       .post(`/api/menus/${menuId}/items`)
+      .set(await approvedAuthHeaders())
       .send({ name, description })
       .expect(201);
     return res.body;

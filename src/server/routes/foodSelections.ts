@@ -107,6 +107,7 @@ function registerSelectionOverviewRoutes(app: FastifyInstance) {
 
   // GET /api/food-selections/active — get active/overtime food selection with orders
   app.get('/api/food-selections/active', async (req, reply) => {
+    await requireAuthenticatedActor(req.headers.cookie);
     const officeLocationId = await resolveOfficeLocationIdFromCookie(
       req.headers.cookie,
       readRequestedOfficeLocationId(req.query),
@@ -121,6 +122,7 @@ function registerSelectionOverviewRoutes(app: FastifyInstance) {
   // GET /api/food-selections/history — latest completed selections (most recent first)
   app.get('/api/food-selections/history', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -486,6 +488,7 @@ function registerFallbackRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/fallback-candidates',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),

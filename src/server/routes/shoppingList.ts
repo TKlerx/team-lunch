@@ -14,6 +14,7 @@ import type {
 export default async function shoppingListRoutes(app: FastifyInstance) {
   app.get('/api/shopping-list', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),

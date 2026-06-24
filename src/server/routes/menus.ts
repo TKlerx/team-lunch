@@ -5,6 +5,7 @@ import {
   readRequestedOfficeLocationId,
   resolveOfficeLocationIdFromCookie,
 } from '../services/officeContext.js';
+import { requireAuthenticatedActor } from './authIdentity.js';
 import type {
   CreateMenuRequest,
   UpdateMenuRequest,
@@ -16,6 +17,7 @@ import type {
 export default async function menuRoutes(app: FastifyInstance) {
   // GET /api/menus — list all menus with items
   app.get('/api/menus', async (req, reply) => {
+    await requireAuthenticatedActor(req.headers.cookie);
     const officeLocationId = await resolveOfficeLocationIdFromCookie(
       req.headers.cookie,
       readRequestedOfficeLocationId(req.query),
@@ -27,6 +29,7 @@ export default async function menuRoutes(app: FastifyInstance) {
   // POST /api/menus — create menu
   app.post<{ Body: CreateMenuRequest }>('/api/menus', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -41,6 +44,7 @@ export default async function menuRoutes(app: FastifyInstance) {
   // POST /api/menus/import — import menu JSON payload (all-or-nothing)
   app.post<{ Body: ImportMenuRequest }>('/api/menus/import', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -57,6 +61,7 @@ export default async function menuRoutes(app: FastifyInstance) {
     '/api/menus/import/preview',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -74,6 +79,7 @@ export default async function menuRoutes(app: FastifyInstance) {
     '/api/menus/:id',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -89,6 +95,7 @@ export default async function menuRoutes(app: FastifyInstance) {
   // DELETE /api/menus/:id — delete menu
   app.delete<{ Params: { id: string } }>('/api/menus/:id', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -105,6 +112,7 @@ export default async function menuRoutes(app: FastifyInstance) {
     '/api/menus/:menuId/items',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -129,6 +137,7 @@ export default async function menuRoutes(app: FastifyInstance) {
     '/api/menus/:menuId/items/:id',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -153,6 +162,7 @@ export default async function menuRoutes(app: FastifyInstance) {
     '/api/menus/:menuId/items/:id',
     async (req, reply) => {
       try {
+        await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),

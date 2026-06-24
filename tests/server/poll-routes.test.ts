@@ -65,7 +65,11 @@ describe('Poll routes (integration)', () => {
 
   // Helper: create a menu for voting
   async function createMenu(name: string) {
-    const res = await supertest(app.server).post('/api/menus').send({ name }).expect(201);
+    const res = await supertest(app.server)
+      .post('/api/menus')
+      .set(await approvedAuthHeaders())
+      .send({ name })
+      .expect(201);
     return res.body;
   }
 
@@ -223,12 +227,18 @@ describe('Poll routes (integration)', () => {
 
   it('returns active poll', async () => {
     const poll = await startPoll();
-    const res = await supertest(app.server).get('/api/polls/active').expect(200);
+    const res = await supertest(app.server)
+      .get('/api/polls/active')
+      .set(await approvedAuthHeaders())
+      .expect(200);
     expect(res.body.id).toBe(poll.id);
   });
 
   it('returns 404 when no active poll', async () => {
-    await supertest(app.server).get('/api/polls/active').expect(404);
+    await supertest(app.server)
+      .get('/api/polls/active')
+      .set(await approvedAuthHeaders())
+      .expect(404);
   });
 
   // ─── GET /api/polls/:id ─────────────────────────────────
@@ -236,7 +246,10 @@ describe('Poll routes (integration)', () => {
   it('returns a poll by id for direct links', async () => {
     const poll = await startPoll();
 
-    const res = await supertest(app.server).get(`/api/polls/${poll.id}`).expect(200);
+    const res = await supertest(app.server)
+      .get(`/api/polls/${poll.id}`)
+      .set(await approvedAuthHeaders())
+      .expect(200);
 
     expect(res.body.id).toBe(poll.id);
     expect(res.body.description).toBe(poll.description);

@@ -88,6 +88,7 @@ export default async function pollRoutes(app: FastifyInstance) {
 
   // GET /api/polls/active — get current active/tied poll
   app.get('/api/polls/active', async (req, reply) => {
+    await requireAuthenticatedActor(req.headers.cookie);
     const officeLocationId = await resolveOfficeLocationIdFromCookie(
       req.headers.cookie,
       readRequestedOfficeLocationId(req.query),
@@ -100,6 +101,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // GET /api/polls/:id — get a specific poll for direct/historical URLs
   app.get<{ Params: { id: string } }>('/api/polls/:id', async (req, reply) => {
     try {
+      await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
