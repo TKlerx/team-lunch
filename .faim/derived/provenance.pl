@@ -1,7 +1,7 @@
 % provenance.pl — Tier 2 trust layer. One group per derived fact.
 % Kept separate so structure.pl stays readable.
 %
-% derived_from(Fact, Source).        Source: tool_scan | agent_scan | user_attested
+% derived_from(Fact, Source).        Source: scanner_scan | agent_scan | user_attested
 % source_files(Fact, [Path, ...]).   EVERY file consulted — completeness = trust.
 % source_hash(Fact, Sha256).         content hash for cheap staleness detection
 % derivation_query(Fact, Question).  the question answered (re-derivation key)
