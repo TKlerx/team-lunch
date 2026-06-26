@@ -492,3 +492,7 @@ source_files(prop('GET:/api/shopping-list',requires_auth,true), ['src/server/rou
 source_hash(prop('GET:/api/shopping-list',requires_auth,true), 'sha256:8e0759fe8617f71de66d92554c380d1358bcbad1797e430322e6beb54e77230e').
 derivation_query(prop('GET:/api/shopping-list',requires_auth,true), "security audit: all data-read endpoints now require auth").
 derived_at(prop('GET:/api/shopping-list',requires_auth,true), '2026-06-24T06:04:24Z', agent).
+derived_from(entity(faim,tool), scanner_scan).
+derived_at(entity(faim,tool), '2026-06-26T11:46:43Z', agent).
+derived_from(prop(faim,version,'0.3.0'), scanner_scan).
+derived_at(prop(faim,version,'0.3.0'), '2026-06-26T11:46:43Z', agent).

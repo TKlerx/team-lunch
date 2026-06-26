@@ -101,3 +101,5 @@ prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true).
 prop('GET:/api/polls/active',requires_auth,true).
 prop('GET:/api/polls/:id',requires_auth,true).
 prop('GET:/api/shopping-list',requires_auth,true).
+entity(faim,tool).
+prop(faim,version,'0.3.0').
