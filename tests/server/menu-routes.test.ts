@@ -278,10 +278,8 @@ describe('Menu routes (integration)', () => {
       .set('Cookie', berlinCookie)
       .expect(403);
 
-    expect(attemptedOverride.body).toMatchObject({
-      error: 'Forbidden',
-      message: 'Requested office is not assigned to the user',
-      statusCode: 403,
+    expect(attemptedOverride.body).toEqual({
+      error: 'Requested office is not assigned to the user',
     });
   });
 
@@ -555,4 +553,3 @@ describe('Menu routes (integration)', () => {
     expect(Array.isArray(res.body.violations)).toBe(true);
   });
 });
-

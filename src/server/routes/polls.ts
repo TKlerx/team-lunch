@@ -88,14 +88,18 @@ export default async function pollRoutes(app: FastifyInstance) {
 
   // GET /api/polls/active — get current active/tied poll
   app.get('/api/polls/active', async (req, reply) => {
-    await requireAuthenticatedActor(req.headers.cookie);
-    const officeLocationId = await resolveOfficeLocationIdFromCookie(
-      req.headers.cookie,
-      readRequestedOfficeLocationId(req.query),
-    );
-    const poll = await pollService.getActivePoll(officeLocationId);
-    if (!poll) return reply.status(404).send({ error: 'No active poll' });
-    return reply.send(poll);
+    try {
+      await requireAuthenticatedActor(req.headers.cookie);
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      const poll = await pollService.getActivePoll(officeLocationId);
+      if (!poll) return reply.status(404).send({ error: 'No active poll' });
+      return reply.send(poll);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
   });
 
   // GET /api/polls/:id — get a specific poll for direct/historical URLs

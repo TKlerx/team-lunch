@@ -17,13 +17,17 @@ import type {
 export default async function menuRoutes(app: FastifyInstance) {
   // GET /api/menus — list all menus with items
   app.get('/api/menus', async (req, reply) => {
-    await requireAuthenticatedActor(req.headers.cookie);
-    const officeLocationId = await resolveOfficeLocationIdFromCookie(
-      req.headers.cookie,
-      readRequestedOfficeLocationId(req.query),
-    );
-    const menus = await menuService.listMenus(officeLocationId);
-    return reply.send(menus);
+    try {
+      await requireAuthenticatedActor(req.headers.cookie);
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      const menus = await menuService.listMenus(officeLocationId);
+      return reply.send(menus);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
   });
 
   // POST /api/menus — create menu

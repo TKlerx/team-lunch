@@ -98,11 +98,7 @@ describe('Food selection routes (integration)', () => {
   // ─── Helpers ─────────────────────────────────────────────
 
   async function createMenu(name: string) {
-    const res = await supertest(app.server)
-      .post('/api/menus')
-      .set(await approvedAuthHeaders())
-      .send({ name })
-      .expect(201);
+    const res = await supertest(app.server).post('/api/menus').set(await approvedAuthHeaders()).send({ name }).expect(201);
     return res.body;
   }
 
@@ -502,10 +498,7 @@ describe('Food selection routes (integration)', () => {
     const { poll } = await createFinishedPoll();
     const selection = await startFoodSelection(poll.id);
 
-    const res = await supertest(app.server)
-      .get('/api/food-selections/active')
-      .set(await approvedAuthHeaders())
-      .expect(200);
+    const res = await supertest(app.server).get('/api/food-selections/active').set(await approvedAuthHeaders()).expect(200);
 
     expect(res.body.id).toBe(selection.id);
     expect(res.body.status).toBe('active');
@@ -569,10 +562,7 @@ describe('Food selection routes (integration)', () => {
   });
 
   it('returns 404 when no active food selection', async () => {
-    await supertest(app.server)
-      .get('/api/food-selections/active')
-      .set(await approvedAuthHeaders())
-      .expect(404);
+    await supertest(app.server).get('/api/food-selections/active').set(await approvedAuthHeaders()).expect(404);
   });
 
   // ─── POST /api/food-selections/:id/timer ───────────────
@@ -652,10 +642,7 @@ describe('Food selection routes (integration)', () => {
     await supertest(app.server).post(`/api/food-selections/${second.id}/place-order`).set(organizerHeaders).send({ etaMinutes: 20, nickname: 'admin@example.com' }).expect(200);
     await supertest(app.server).post(`/api/food-selections/${second.id}/confirm-arrival`).set(organizerHeaders).expect(200);
 
-    const res = await supertest(app.server)
-      .get('/api/food-selections/history')
-      .set(await approvedAuthHeaders())
-      .expect(200);
+    const res = await supertest(app.server).get('/api/food-selections/history').set(await approvedAuthHeaders()).expect(200);
     expect(res.body).toHaveLength(2);
     expect(res.body[0].id).toBe(second.id);
     expect(res.body[1].id).toBe(first.id);
@@ -1312,7 +1299,6 @@ describe('Food selection routes (integration)', () => {
     });
   });
 });
-
 
 
 
