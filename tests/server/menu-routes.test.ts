@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { buildApp } from '../../src/server/index.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import type { FastifyInstance } from 'fastify';
-import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
+import { createOfficeLocation, ensureDefaultOfficeLocation } from '../../src/server/services/officeLocation.js';
 import { createSessionCookieValue } from '../../src/server/services/authSession.js';
 import prisma from '../../src/server/db.js';
 
@@ -16,6 +16,25 @@ vi.mock('../../src/server/sse.js', () => ({
 
 let app: FastifyInstance;
 
+// Menu mutations now require an authenticated session. The basic CRUD tests run
+// as a default approved user (approval workflow is off in tests, so any valid
+// entra session auto-approves); office-context tests below use their own cookies.
+const defaultCookie = `team_lunch_auth_session=${createSessionCookieValue({
+  username: 'tester@company.com',
+  method: 'entra',
+  iat: Math.floor(Date.now() / 1000),
+})}`;
+
+function agent(server: FastifyInstance['server']) {
+  const st = supertest(server);
+  return {
+    get: (url: string) => st.get(url).set('Cookie', defaultCookie),
+    post: (url: string) => st.post(url).set('Cookie', defaultCookie),
+    put: (url: string) => st.put(url).set('Cookie', defaultCookie),
+    delete: (url: string) => st.delete(url).set('Cookie', defaultCookie),
+  };
+}
+
 describe('Menu routes (integration)', () => {
   beforeAll(async () => {
     app = await buildApp();
@@ -24,6 +43,18 @@ describe('Menu routes (integration)', () => {
 
   beforeEach(async () => {
     await cleanDatabase();
+    // Seed the default-office user that `agent()`/`defaultCookie` authenticate as,
+    // so menu mutations resolve an office instead of 403-ing on "no assignment".
+    const office = await ensureDefaultOfficeLocation();
+    await prisma.authAccessUser.create({
+      data: {
+        email: 'tester@company.com',
+        approved: true,
+        blocked: false,
+        isAdmin: false,
+        officeLocationId: office.id,
+      },
+    });
   });
 
   afterAll(async () => {
@@ -38,7 +69,7 @@ describe('Menu routes (integration)', () => {
     const server = app.server;
 
     // Create
-    const createRes = await supertest(server)
+    const createRes = await agent(server)
       .post('/api/menus')
       .send({ name: 'Italian' })
       .expect(201);
@@ -46,33 +77,33 @@ describe('Menu routes (integration)', () => {
     const menuId = createRes.body.id;
 
     // List
-    const listRes = await supertest(server).get('/api/menus').expect(200);
+    const listRes = await agent(server).get('/api/menus').expect(200);
     expect(listRes.body).toHaveLength(1);
     expect(listRes.body[0].name).toBe('Italian');
 
     // Update
-    const updateRes = await supertest(server)
+    const updateRes = await agent(server)
       .put(`/api/menus/${menuId}`)
       .send({ name: 'Mediterranean' })
       .expect(200);
     expect(updateRes.body.name).toBe('Mediterranean');
 
     // Delete
-    await supertest(server).delete(`/api/menus/${menuId}`).expect(204);
+    await agent(server).delete(`/api/menus/${menuId}`).expect(204);
 
     // Verify deleted
-    const listRes2 = await supertest(server).get('/api/menus').expect(200);
+    const listRes2 = await agent(server).get('/api/menus').expect(200);
     expect(listRes2.body).toHaveLength(0);
   });
 
   it('updates menu contact fields', async () => {
     const server = app.server;
-    const createRes = await supertest(server)
+    const createRes = await agent(server)
       .post('/api/menus')
       .send({ name: 'Italian' })
       .expect(201);
 
-    const updatedRes = await supertest(server)
+    const updatedRes = await agent(server)
       .put(`/api/menus/${createRes.body.id}`)
       .send({
         name: 'Italian',
@@ -93,14 +124,14 @@ describe('Menu routes (integration)', () => {
     const server = app.server;
 
     // Create menu first
-    const menuRes = await supertest(server)
+    const menuRes = await agent(server)
       .post('/api/menus')
       .send({ name: 'Italian' })
       .expect(201);
     const menuId = menuRes.body.id;
 
     // Create item
-    const createRes = await supertest(server)
+    const createRes = await agent(server)
       .post(`/api/menus/${menuId}/items`)
       .send({ name: 'Margherita Pizza', description: 'Classic', itemNumber: '12', price: 9.5 })
       .expect(201);
@@ -111,7 +142,7 @@ describe('Menu routes (integration)', () => {
     const itemId = createRes.body.id;
 
     // Update item
-    const updateRes = await supertest(server)
+    const updateRes = await agent(server)
       .put(`/api/menus/${menuId}/items/${itemId}`)
       .send({ name: 'Neapolitan Pizza', description: 'From Naples', itemNumber: '21', price: 10.5 })
       .expect(200);
@@ -120,10 +151,10 @@ describe('Menu routes (integration)', () => {
     expect(updateRes.body.price).toBe(10.5);
 
     // Delete item
-    await supertest(server).delete(`/api/menus/${menuId}/items/${itemId}`).expect(204);
+    await agent(server).delete(`/api/menus/${menuId}/items/${itemId}`).expect(204);
 
     // Verify menu still exists with 0 items
-    const listRes = await supertest(server).get('/api/menus').expect(200);
+    const listRes = await agent(server).get('/api/menus').expect(200);
     expect(listRes.body[0].itemCount).toBe(0);
   });
 
@@ -131,9 +162,9 @@ describe('Menu routes (integration)', () => {
 
   it('duplicate menu name returns 409', async () => {
     const server = app.server;
-    await supertest(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
+    await agent(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus')
       .send({ name: 'italian' })
       .expect(409);
@@ -247,10 +278,8 @@ describe('Menu routes (integration)', () => {
       .set('Cookie', berlinCookie)
       .expect(403);
 
-    expect(attemptedOverride.body).toMatchObject({
-      error: 'Forbidden',
-      message: 'Requested office is not assigned to the user',
-      statusCode: 403,
+    expect(attemptedOverride.body).toEqual({
+      error: 'Requested office is not assigned to the user',
     });
   });
 
@@ -297,15 +326,15 @@ describe('Menu routes (integration)', () => {
 
   it('duplicate item name within same menu returns 409', async () => {
     const server = app.server;
-    const menuRes = await supertest(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
+    const menuRes = await agent(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
     const menuId = menuRes.body.id;
 
-    await supertest(server)
+    await agent(server)
       .post(`/api/menus/${menuId}/items`)
       .send({ name: 'Pizza' })
       .expect(201);
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post(`/api/menus/${menuId}/items`)
       .send({ name: 'pizza' })
       .expect(409);
@@ -316,7 +345,7 @@ describe('Menu routes (integration)', () => {
 
   it('empty menu name returns 400', async () => {
     const server = app.server;
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus')
       .send({ name: '' })
       .expect(400);
@@ -325,8 +354,8 @@ describe('Menu routes (integration)', () => {
 
   it('empty item name returns 400', async () => {
     const server = app.server;
-    const menuRes = await supertest(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
-    const res = await supertest(server)
+    const menuRes = await agent(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
+    const res = await agent(server)
       .post(`/api/menus/${menuRes.body.id}/items`)
       .send({ name: '' })
       .expect(400);
@@ -335,8 +364,8 @@ describe('Menu routes (integration)', () => {
 
   it('rejects invalid item price on create', async () => {
     const server = app.server;
-    const menuRes = await supertest(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
-    const res = await supertest(server)
+    const menuRes = await agent(server).post('/api/menus').send({ name: 'Italian' }).expect(201);
+    const res = await agent(server)
       .post(`/api/menus/${menuRes.body.id}/items`)
       .send({ name: 'Pizza', price: -1 })
       .expect(400);
@@ -347,7 +376,7 @@ describe('Menu routes (integration)', () => {
 
   it('updating non-existent menu returns 404', async () => {
     const server = app.server;
-    await supertest(server)
+    await agent(server)
       .put('/api/menus/00000000-0000-0000-0000-000000000000')
       .send({ name: 'Test' })
       .expect(404);
@@ -355,7 +384,7 @@ describe('Menu routes (integration)', () => {
 
   it('deleting non-existent menu returns 404', async () => {
     const server = app.server;
-    await supertest(server)
+    await agent(server)
       .delete('/api/menus/00000000-0000-0000-0000-000000000000')
       .expect(404);
   });
@@ -380,7 +409,7 @@ describe('Menu routes (integration)', () => {
       ],
     };
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus/import')
       .send({ payload })
       .expect(200);
@@ -409,7 +438,7 @@ describe('Menu routes (integration)', () => {
       ],
     };
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus/import')
       .send({ payload })
       .expect(200);
@@ -439,7 +468,7 @@ describe('Menu routes (integration)', () => {
       ],
     };
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus/import')
       .send({ payload })
       .expect(400);
@@ -454,19 +483,19 @@ describe('Menu routes (integration)', () => {
       ]),
     );
 
-    const listRes = await supertest(server).get('/api/menus').expect(200);
+    const listRes = await agent(server).get('/api/menus').expect(200);
     expect(listRes.body).toHaveLength(0);
   });
 
   it('previews import with item summary counts', async () => {
     const server = app.server;
 
-    const menuRes = await supertest(server)
+    const menuRes = await agent(server)
       .post('/api/menus')
       .send({ name: 'Pizza Pronto' })
       .expect(201);
 
-    await supertest(server)
+    await agent(server)
       .post(`/api/menus/${menuRes.body.id}/items`)
       .send({ name: 'Will Delete', description: 'gone' })
       .expect(201);
@@ -487,7 +516,7 @@ describe('Menu routes (integration)', () => {
       ],
     };
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus/import/preview')
       .send({ payload })
       .expect(200);
@@ -496,7 +525,7 @@ describe('Menu routes (integration)', () => {
     expect(res.body.menuExists).toBe(true);
     expect(res.body.itemSummary).toEqual({ created: 1, updated: 0, deleted: 1 });
 
-    const listRes = await supertest(server).get('/api/menus').expect(200);
+    const listRes = await agent(server).get('/api/menus').expect(200);
     expect(listRes.body[0].items).toHaveLength(1);
     expect(listRes.body[0].items[0].name).toBe('Will Delete');
   });
@@ -515,7 +544,7 @@ describe('Menu routes (integration)', () => {
       ],
     };
 
-    const res = await supertest(server)
+    const res = await agent(server)
       .post('/api/menus/import/preview')
       .send({ payload })
       .expect(400);
@@ -524,4 +553,3 @@ describe('Menu routes (integration)', () => {
     expect(Array.isArray(res.body.violations)).toBe(true);
   });
 });
-

@@ -34,6 +34,8 @@ import {
   resolveOfficeLocationIdFromCookie,
 } from './services/officeContext.js';
 import { getAppVersion } from './buildInfo.js';
+import { requireAuthenticatedActor } from './routes/authIdentity.js';
+import { sendServiceError } from './routes/routeUtils.js';
 
 if (typeof process.loadEnvFile === 'function') {
   try {
@@ -140,17 +142,22 @@ export async function buildApp() {
 
   // SSE endpoint
   app.get('/api/events', async (request, reply) => {
-    const raw = reply.raw;
-    const officeLocationId = await resolveOfficeLocationIdFromCookie(
-      request.headers.cookie,
-      readRequestedOfficeLocationId(request.query),
-    );
+    try {
+      await requireAuthenticatedActor(request.headers.cookie);
+      const raw = reply.raw;
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        request.headers.cookie,
+        readRequestedOfficeLocationId(request.query),
+      );
 
-    // Prevent Fastify from automatically sending a response
-    reply.hijack();
+      // Prevent Fastify from automatically sending a response
+      reply.hijack();
 
-    register(raw, officeLocationId);
-    await sendInitialState(raw, officeLocationId);
+      register(raw, officeLocationId);
+      await sendInitialState(raw, officeLocationId);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
   });
 
   // Health check
