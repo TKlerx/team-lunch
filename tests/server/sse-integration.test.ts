@@ -203,7 +203,7 @@ describe('SSE end-to-end integration', () => {
   }
 
   it('sends initial_state on connection with empty DB', async () => {
-    const sse = await connectSSE(port);
+    const sse = await connectSSE(port, defaultHeaders);
     try {
       await waitForEvents(sse.events, 1);
 
@@ -235,7 +235,7 @@ describe('SSE end-to-end integration', () => {
       headers,
     );
 
-    const sse = await connectSSE(port);
+    const sse = await connectSSE(port, defaultHeaders);
     try {
       await waitForEvents(sse.events, 1);
 

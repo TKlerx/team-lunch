@@ -23,6 +23,7 @@ describe('Authenticated GET route guards', () => {
   });
 
   const guardedGets = [
+    '/api/events',
     '/api/menus',
     '/api/polls/active',
     '/api/polls/00000000-0000-0000-0000-000000000000',
