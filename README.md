@@ -36,8 +36,7 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 - React 18 + Vite + TypeScript
 - Fastify + TypeScript
 - Prisma 7 ORM (driver adapters, engine-free)
-- PostgreSQL by default
-- SQLite option for lightweight local server/testing flows
+- PostgreSQL
 - Vitest, Testing Library, Supertest, Playwright
 - pnpm as the package manager (npm/yarn are blocked via `only-allow`)
 
@@ -47,7 +46,7 @@ Everything stays synced across connected browsers through Server-Sent Events (SS
 - **pnpm** (v11+) — this repo enforces pnpm; npm/yarn are blocked by `only-allow`. The pinned version is managed by Corepack: run `corepack enable`.
 - **Python** (v3.10+) — used only for the semgrep security scanner
 - **PowerShell** (v7+) — `pwsh` is used for setup and validation scripts ([install guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
-- **Docker** — for PostgreSQL (unless using SQLite)
+- **Docker** — for PostgreSQL
 
 Run `pwsh -File ./setup.ps1` to install all project dependencies automatically (pnpm packages, Prisma client, Python venv with semgrep).
 
@@ -94,19 +93,7 @@ pnpm dev
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3000`
 
-### Option B: Backend-Only with SQLite
-
-This is useful if you want to explore the backend quickly without running PostgreSQL.
-
-```bash
-git clone https://github.com/TKlerx/team-lunch.git
-cd team-lunch
-pwsh -File ./setup.ps1
-cp .env.example .env
-pnpm dev:server:sqlite
-```
-
-### Option C: Full Stack in Docker
+### Option B: Full Stack in Docker
 
 ```bash
 git clone https://github.com/TKlerx/team-lunch.git
@@ -301,7 +288,6 @@ only on the sanitized item/preference data above. Any other
 pnpm dev                 # server + client
 pnpm dev:server          # backend only
 pnpm dev:client          # frontend only
-pnpm dev:server:sqlite   # backend with SQLite
 pnpm build               # production build (tsc + vite build -> dist/)
 pnpm start               # run built app (node dist/server/index.js)
 ```
@@ -418,5 +404,4 @@ specs/      planning docs and optional continuity snapshots
 ## Notes
 
 - Server tests use a separate schema by default via `TEST_DATABASE_SCHEMA`.
-- If PostgreSQL is unavailable, some local flows can use SQLite instead.
 - Browser sessions and local storage keys were renamed during open-source cleanup, so older local sessions may need a fresh login.

@@ -26,7 +26,7 @@ client-side initials/generic fallback.
 
 **Primary Dependencies**: Fastify 5, `@fastify/cors`, Prisma 6 (`AuthAccessUser`, `LocalAuthUser`), `jose` (JWT/OIDC verify), Microsoft Entra OIDC
 
-**Storage**: PostgreSQL / SQLite — dual Prisma schema
+**Storage**: PostgreSQL — PostgreSQL Prisma schema
 
 **Testing**: Vitest + Supertest — `tests/server/auth-{approval-gate,approval-reminder,hardening,routes-config,session}.test.ts`, `local-auth.test.ts`, `local-user-management-authz.test.ts`
 
@@ -56,7 +56,7 @@ src/server/services/authAvatar.ts               # Graph photo fetch + bounded me
 src/server/services/localAuth.ts                # local credential verify + admin mgmt
 src/server/services/localLoginProtection.ts     # per-IP/username rate limit + lockout
 src/client/auth.ts, src/client/components/AuthGate.tsx
-prisma/schema.prisma | schema.sqlite.prisma     # AuthAccessUser display names/session version, LocalAuthUser, AuthAuditLog
+prisma/schema.prisma     # AuthAccessUser display names/session version, LocalAuthUser, AuthAuditLog
 tests/server/auth-*.test.ts, local-auth.test.ts, local-user-management-authz.test.ts
 ```
 

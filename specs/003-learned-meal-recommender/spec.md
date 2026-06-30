@@ -333,7 +333,7 @@ preferences.
 ### Data / Migration Impact *(include if feature touches persisted data)*
 
 - New/changed models or columns: persisted item features (with provenance), stable item-identity key, learned per-user preference model storage, per-office model-evaluation results, per-office recommendation-mode setting, per-user anticipated-like marks (item + like/dislike, with item-name snapshot); the existing recommendation-impression record gains a safe-baseline / safe-learned / explore / pre-vote source marker and can persist impressions not bound to a food selection.
-- Both Postgres and SQLite schemas updated: yes (dual schema must change together).
+- PostgreSQL schema and migration updated: yes (dual schema must change together).
 - Name-snapshot column needed alongside any FK: yes where new references to menu items/offices are added, following the existing snapshot convention so history survives source-row deletion.
 - `tests/server/helpers/db.ts` cleanup extended for new persisted models: yes.
 

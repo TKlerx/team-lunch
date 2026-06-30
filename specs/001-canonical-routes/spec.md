@@ -91,7 +91,7 @@ A user can open a completed meal by URL from history. The URL can be refreshed o
 ### Data / Migration Impact *(include if feature touches persisted data)*
 
 - New/changed models or columns: none
-- Both Postgres and SQLite schemas updated: no
+- PostgreSQL schema and migration updated: no
 - Name-snapshot column needed alongside any FK: no
 - `tests/server/helpers/db.ts` cleanup extended for new persisted models: no
 

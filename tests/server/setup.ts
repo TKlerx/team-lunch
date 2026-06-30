@@ -3,7 +3,6 @@
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdirSync, rmSync } from 'node:fs';
-import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -33,12 +32,10 @@ loadEnvFileIfPresent();
 // When a dedicated test database is configured (see docker-compose `db-test`),
 // route the whole suite at it instead of the dev/app DATABASE_URL. This keeps
 // tests fully isolated from real data. Falls back to DATABASE_URL when unset.
-// A dedicated test DB is authoritative: do NOT silently fall back to SQLite if
-// it is unreachable — fail loud so the misconfiguration is visible instead of
-// poisoning the run with a provider mismatch.
+// A dedicated test DB is authoritative: if it is unreachable, fail loud so the
+// misconfiguration is visible instead of poisoning the run.
 if (process.env.TEST_DATABASE_URL?.trim()) {
 	process.env.DATABASE_URL = process.env.TEST_DATABASE_URL.trim();
-	process.env.FORCE_POSTGRES_TESTS = 'true';
 }
 
 function withTestDbTimeouts(databaseUrl: string): string {
@@ -74,60 +71,6 @@ function withTestSchema(databaseUrl: string): string {
 	} catch {
 		return databaseUrl;
 	}
-}
-
-function getDatabaseReachabilityTarget(databaseUrl: string): { host: string; port: number } | null {
-	if (!databaseUrl.startsWith('postgres://') && !databaseUrl.startsWith('postgresql://')) {
-		return null;
-	}
-
-	try {
-		const parsed = new URL(databaseUrl);
-		const host = parsed.hostname.trim();
-		const port = parsed.port.trim() ? Number(parsed.port) : 5432;
-		if (!host || !Number.isInteger(port) || port <= 0) {
-			return null;
-		}
-		return { host, port };
-	} catch {
-		return null;
-	}
-}
-
-async function canReachPostgres(databaseUrl: string): Promise<boolean> {
-	const target = getDatabaseReachabilityTarget(databaseUrl);
-	if (!target) {
-		return true;
-	}
-
-	return await new Promise<boolean>((resolve) => {
-		const socket = net.createConnection(target);
-		const finish = (reachable: boolean): void => {
-			socket.removeAllListeners();
-			socket.destroy();
-			resolve(reachable);
-		};
-
-		socket.setTimeout(2_000);
-		socket.once('connect', () => finish(true));
-		socket.once('timeout', () => finish(false));
-		socket.once('error', () => finish(false));
-	});
-}
-
-function switchToSqliteServerTests(): void {
-	process.env.DB_PROVIDER = 'sqlite';
-	process.env.DATABASE_URL = 'file:./prisma/test.sqlite';
-	process.env.TEST_DATABASE_URL_EFFECTIVE = process.env.DATABASE_URL;
-
-	execSync('npx prisma generate --schema prisma/schema.sqlite.prisma', {
-		stdio: 'pipe',
-		env: process.env as NodeJS.ProcessEnv,
-	});
-	execSync('npx prisma db push --schema prisma/schema.sqlite.prisma', {
-		stdio: 'pipe',
-		env: process.env as NodeJS.ProcessEnv,
-	});
 }
 
 function getExecErrorOutput(error: unknown): string {
@@ -190,10 +133,6 @@ function withMigrationLock(action: () => void): void {
 }
 
 function ensureTestSchemaMigrated(): void {
-	const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
-	if (provider !== 'postgresql') {
-		return;
-	}
 	if (!process.env.DATABASE_URL) {
 		return;
 	}
@@ -207,15 +146,15 @@ function ensureTestSchemaMigrated(): void {
 		});
 	} catch (error) {
 		const output = getExecErrorOutput(error);
-		const allowFallback = process.env.FORCE_POSTGRES_TESTS !== 'true';
 		const looksUnavailable =
 			output.includes("Can't reach database server") ||
 			output.includes('P1001') ||
 			output.includes('Schema engine error');
 
-		if (allowFallback && looksUnavailable) {
-			switchToSqliteServerTests();
-			return;
+		if (looksUnavailable) {
+			throw new Error(
+				`Server tests aborted: PostgreSQL is unreachable (${process.env.DATABASE_URL}). Start it with \`pnpm db:test:up\`.`,
+			);
 		}
 
 		throw error;
@@ -223,47 +162,32 @@ function ensureTestSchemaMigrated(): void {
 }
 
 function assertSafeTestDatabaseTarget(): void {
-	const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
 	const url = process.env.DATABASE_URL;
 	if (!url) {
 		return;
 	}
 
-	if (provider === 'postgresql') {
-		let schema = 'public';
-		try {
-			const parsed = new URL(url);
-			schema = (parsed.searchParams.get('schema') ?? 'public').trim() || 'public';
-		} catch {
-			throw new Error(
-				'Server tests aborted: DATABASE_URL is not parseable, so test schema safety cannot be verified.',
-			);
-		}
+	let schema = 'public';
+	try {
+		const parsed = new URL(url);
+		schema = (parsed.searchParams.get('schema') ?? 'public').trim() || 'public';
+	} catch {
+		throw new Error(
+			'Server tests aborted: DATABASE_URL is not parseable, so test schema safety cannot be verified.',
+		);
+	}
 
-		const allowDangerous = process.env.ALLOW_DANGEROUS_TEST_SCHEMA === 'true';
-		if (!allowDangerous && schema.toLowerCase() === 'public') {
-			throw new Error(
-				'Server tests aborted: refusing to run against schema "public". Configure TEST_DATABASE_SCHEMA (for example "team_lunch_test").',
-			);
-		}
+	const allowDangerous = process.env.ALLOW_DANGEROUS_TEST_SCHEMA === 'true';
+	if (!allowDangerous && schema.toLowerCase() === 'public') {
+		throw new Error(
+			'Server tests aborted: refusing to run against schema "public". Configure TEST_DATABASE_SCHEMA (for example "team_lunch_test").',
+		);
 	}
 }
 
 if (process.env.DATABASE_URL) {
 	process.env.DATABASE_URL = withTestSchema(process.env.DATABASE_URL);
 	process.env.TEST_DATABASE_URL_EFFECTIVE = process.env.DATABASE_URL;
-}
-if ((process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql') === 'postgresql' && process.env.DATABASE_URL) {
-	const postgresReachable = await canReachPostgres(process.env.DATABASE_URL);
-	if (!postgresReachable) {
-		if (process.env.FORCE_POSTGRES_TESTS === 'true') {
-			throw new Error(
-				`Server tests aborted: dedicated test database is unreachable (${process.env.DATABASE_URL}). ` +
-					'Start it with `pnpm db:test:up`, or unset TEST_DATABASE_URL to use the SQLite fallback.',
-			);
-		}
-		switchToSqliteServerTests();
-	}
 }
 assertSafeTestDatabaseTarget();
 ensureTestSchemaMigrated();

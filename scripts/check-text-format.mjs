@@ -16,7 +16,6 @@ const binaryExtensions = new Set([
   '.node',
   '.pdf',
   '.png',
-  '.sqlite',
   '.webp',
   '.zip',
 ]);

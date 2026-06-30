@@ -1,31 +1,10 @@
 import type { PrismaClient as PostgresPrismaClient } from './generated/client/client.js';
 
-// Prisma 7 has no built-in query engine: every connection goes through a driver
-// adapter passed to the client constructor. We pick the adapter (and matching
-// generated client) by DB_PROVIDER, defaulting to PostgreSQL. SQLite remains a
-// local-testing-only path (see Priority 26).
 async function createPrismaClient(): Promise<PostgresPrismaClient> {
-  const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is not set; cannot create the Prisma driver adapter.');
-  }
-
-  if (provider === 'sqlite') {
-    try {
-      const sqliteClientModule = await import('./generated/sqlite-client/client.js');
-      const { PrismaBetterSqlite3 } = await import('@prisma/adapter-better-sqlite3');
-      const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
-      // The SQLite client is structurally identical to the Postgres one (same
-      // models) but generated under a different path, so cast to the shared type.
-      return new sqliteClientModule.PrismaClient({ adapter }) as unknown as PostgresPrismaClient;
-    } catch (error) {
-      const details = error instanceof Error ? error.message : 'Unknown SQLite client load error';
-      throw new Error(
-        `Failed to load SQLite Prisma client. Run "npm run prisma:generate:sqlite" first. Details: ${details}`,
-      );
-    }
   }
 
   const postgresClientModule = await import('./generated/client/client.js');

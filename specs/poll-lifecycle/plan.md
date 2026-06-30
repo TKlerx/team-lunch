@@ -16,7 +16,7 @@ over SSE; expiry is driven by an in-process timer keyed by poll id.
 
 **Primary Dependencies**: Fastify 5 (routes), Prisma 6 (Poll/PollVote/PollExcludedMenu/AuditLog), SSE manager (`src/server/sse.ts`)
 
-**Storage**: PostgreSQL (default) / SQLite — dual Prisma schema
+**Storage**: PostgreSQL — PostgreSQL Prisma schema
 
 **Testing**: Vitest + Supertest — `tests/server/poll-*.test.ts`, `office-poll-schedule.test.ts`
 
@@ -44,7 +44,7 @@ src/server/routes/polls.ts            # thin HTTP handlers + authz gating
 src/server/sse.ts                     # broadcast(event, payload, officeLocationId)
 src/lib/types.ts                      # Poll type (shared client/server)
 src/client/components/Poll{Idle,Active,Tied,Finished}View.tsx
-prisma/schema.prisma | schema.sqlite.prisma   # Poll, PollVote, PollExcludedMenu, AuditLog
+prisma/schema.prisma   # Poll, PollVote, PollExcludedMenu, AuditLog
 tests/server/poll-{service,routes,authz,timer}.test.ts
 tests/server/office-poll-schedule.test.ts
 tests/client/Poll*.test.tsx

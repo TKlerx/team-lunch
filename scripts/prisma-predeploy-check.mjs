@@ -8,10 +8,7 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-if (process.env.DATABASE_URL.startsWith('file:')) {
-  console.log('SQLite database URL detected; skipping PostgreSQL Prisma drift verification.');
-  process.exit(0);
-}
+
 
 const statusResult = spawnSync('pnpm', ['exec', 'prisma', 'migrate', 'status'], {
   cwd: repoRoot,

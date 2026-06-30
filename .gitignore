@@ -5,9 +5,6 @@ dist/
 .env.test
 .env.*.local
 *.tsbuildinfo
-# SQLite test-fallback artifacts (created by tests/server/setup.ts)
-*.sqlite
-*.sqlite-journal
 .DS_Store
 reports/
 .prisma/
@@ -16,7 +13,6 @@ test-results/
 playwright-report/
 playwright/.cache/
 src/server/generated/
-src/server/generated/sqlite-client/
 playwright-report/
 test-results/
 graphify-out/*

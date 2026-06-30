@@ -22,11 +22,7 @@ async function ensureDatabaseAvailable(): Promise<void> {
       err instanceof Error
         ? err.message
         : 'Database unavailable during server test setup';
-    const provider = process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql';
-    const startupHint =
-      provider === 'sqlite'
-        ? 'Run "npm run test:server:sqlite" or ensure DATABASE_URL points to a writable sqlite file.'
-        : 'Start PostgreSQL and retry.';
+    const startupHint = 'Start PostgreSQL and retry.';
     availabilityError = new Error(
       `Server test database is unavailable. ${startupHint} Original error: ${message}`,
     );
@@ -40,8 +36,8 @@ async function assertSafeCleanupTarget(): Promise<void> {
   }
 
   assertServerTestRuntime();
-  const { provider, databaseUrl } = getCleanupDatabaseDetails();
-  validateCleanupDatabaseTarget(provider, databaseUrl);
+  const { databaseUrl } = getCleanupDatabaseDetails();
+  validateCleanupDatabaseTarget(databaseUrl);
 
   cleanupTargetChecked = true;
 }
@@ -56,8 +52,7 @@ function assertServerTestRuntime(): void {
   );
 }
 
-function getCleanupDatabaseDetails(): { provider: string; databaseUrl: string } {
-  const provider = (process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql').trim();
+function getCleanupDatabaseDetails(): { databaseUrl: string } {
   const databaseUrl = (
     process.env.TEST_DATABASE_URL_EFFECTIVE ??
     process.env.DATABASE_URL ??
@@ -68,28 +63,17 @@ function getCleanupDatabaseDetails(): { provider: string; databaseUrl: string } 
     throw new Error('Server test cleanup aborted: DATABASE_URL is missing.');
   }
 
-  return { provider, databaseUrl };
+  return { databaseUrl };
 }
 
-function validateCleanupDatabaseTarget(provider: string, databaseUrl: string): void {
-  if (provider === 'postgresql' || provider === 'postgres') {
+function validateCleanupDatabaseTarget(databaseUrl: string): void {
+  if (databaseUrl.startsWith('postgres://') || databaseUrl.startsWith('postgresql://')) {
     // PostgreSQL schema safety is asserted centrally in tests/server/setup.ts.
     // Cleanup helper enforces test runtime guard and relies on setup precondition.
     return;
   }
 
-  if (provider !== 'sqlite' || isSafeSqliteTestDatabaseUrl(databaseUrl)) {
-    return;
-  }
-
-  throw new Error(
-    `Server test cleanup aborted: SQLite DATABASE_URL must target a test DB (current: "${databaseUrl}").`,
-  );
-}
-
-function isSafeSqliteTestDatabaseUrl(databaseUrl: string): boolean {
-  const normalizedUrl = databaseUrl.toLowerCase();
-  return normalizedUrl.includes(':memory:') || normalizedUrl.includes('test');
+  throw new Error('Server test cleanup aborted: DATABASE_URL must point to PostgreSQL.');
 }
 
 /**
