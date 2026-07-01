@@ -1,6 +1,6 @@
 import prisma from '../db.js';
 import { listOfficeLocations } from './officeLocation.js';
-import { startPoll } from './poll.js';
+import { createPollRecord } from './pollCreation.js';
 import type { OfficeLocation, OfficeWeekday } from '../../lib/types.js';
 
 const AUTO_POLL_DESCRIPTION = 'Scheduled lunch poll';
@@ -110,7 +110,7 @@ export async function runOfficePollScheduleCheck(now = new Date()): Promise<void
     }
 
     try {
-      await startPoll(
+      await createPollRecord(
         AUTO_POLL_DESCRIPTION,
         durationMinutes,
         undefined,

@@ -212,7 +212,6 @@ rel(officeContext,depends_on,officeLocation).
 rel(officeContext,depends_on,routeUtils).
 rel(officePollSchedule,depends_on,db).
 rel(officePollSchedule,depends_on,officeLocation).
-rel(officePollSchedule,depends_on,poll).
 rel(officePollSchedule,depends_on,lib_types).
 rel(officeRecommenderSettings,depends_on,db).
 rel(officeRecommenderSettings,depends_on,routeUtils).
@@ -292,3 +291,10 @@ rel(foodSelections_route,depends_on,authAccess).
 rel(foodSelections_route,depends_on,officeContext).
 rel(foodSelections_route,depends_on,authIdentity).
 rel(foodSelections_route,depends_on,lib_types).
+entity(pollCreation,service).
+rel(pollCreation,depends_on,db).
+rel(pollCreation,depends_on,officeLocation).
+rel(pollCreation,depends_on,lib_types).
+rel(poll,depends_on,pollCreation).
+rel(officePollSchedule,depends_on,pollCreation).
+rel(sse,depends_on,pollCreation).
