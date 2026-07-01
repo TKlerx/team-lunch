@@ -108,14 +108,14 @@ derivation_query(entity(officeLocation,service), "What are the import dependenci
 derived_at(entity(officeLocation,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(officePollSchedule,service), agent_scan).
 source_files(entity(officePollSchedule,service), ['src/server/services/officePollSchedule.ts']).
-source_hash(entity(officePollSchedule,service), 'sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c').
-source_file_hashes(entity(officePollSchedule,service), ['sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c']).
+source_hash(entity(officePollSchedule,service), 'sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514').
+source_file_hashes(entity(officePollSchedule,service), ['sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514']).
 derivation_query(entity(officePollSchedule,service), "What are the import dependencies between server modules?").
 derived_at(entity(officePollSchedule,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(poll,service), agent_scan).
 source_files(entity(poll,service), ['src/server/services/poll.ts']).
-source_hash(entity(poll,service), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(entity(poll,service), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(entity(poll,service), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(entity(poll,service), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(entity(poll,service), "What are the import dependencies between server modules?").
 derived_at(entity(poll,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(seededRng,service), agent_scan).
@@ -138,8 +138,8 @@ derivation_query(entity(userMenuDefaults,service), "What are the import dependen
 derived_at(entity(userMenuDefaults,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(sse,module), agent_scan).
 source_files(entity(sse,module), ['src/server/sse.ts']).
-source_hash(entity(sse,module), 'sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807').
-source_file_hashes(entity(sse,module), ['sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807']).
+source_hash(entity(sse,module), 'sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348').
+source_file_hashes(entity(sse,module), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
 derivation_query(entity(sse,module), "What are the import dependencies between server modules?").
 derived_at(entity(sse,module), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(auth_route,route), agent_scan).
@@ -642,20 +642,20 @@ derivation_query(rel(officeContext,depends_on,routeUtils), "What are the import 
 derived_at(rel(officeContext,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,db), agent_scan).
 source_files(rel(officePollSchedule,depends_on,db), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,db), 'sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c').
-source_file_hashes(rel(officePollSchedule,depends_on,db), ['sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c']).
+source_hash(rel(officePollSchedule,depends_on,db), 'sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514').
+source_file_hashes(rel(officePollSchedule,depends_on,db), ['sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514']).
 derivation_query(rel(officePollSchedule,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,officeLocation), agent_scan).
 source_files(rel(officePollSchedule,depends_on,officeLocation), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,officeLocation), 'sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c').
-source_file_hashes(rel(officePollSchedule,depends_on,officeLocation), ['sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c']).
+source_hash(rel(officePollSchedule,depends_on,officeLocation), 'sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514').
+source_file_hashes(rel(officePollSchedule,depends_on,officeLocation), ['sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514']).
 derivation_query(rel(officePollSchedule,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,lib_types), agent_scan).
 source_files(rel(officePollSchedule,depends_on,lib_types), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,lib_types), 'sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c').
-source_file_hashes(rel(officePollSchedule,depends_on,lib_types), ['sha256:4dd6984e6a2fa5466c63320102c07fb7bd03e679a76fd818d191b83456cc768c']).
+source_hash(rel(officePollSchedule,depends_on,lib_types), 'sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514').
+source_file_hashes(rel(officePollSchedule,depends_on,lib_types), ['sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514']).
 derivation_query(rel(officePollSchedule,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeRecommenderSettings,depends_on,db), agent_scan).
@@ -684,38 +684,38 @@ derivation_query(rel(officeRecommenderSettings,depends_on,mealRecommendationMode
 derived_at(rel(officeRecommenderSettings,depends_on,mealRecommendationModel), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,db), agent_scan).
 source_files(rel(poll,depends_on,db), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,db), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,db), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,db), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,db), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,sse), agent_scan).
 source_files(rel(poll,depends_on,sse), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,sse), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,sse), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,sse), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,sse), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,sse), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,sse), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,lib_types), agent_scan).
 source_files(rel(poll,depends_on,lib_types), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,lib_types), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,lib_types), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,lib_types), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,lib_types), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,authAccess), agent_scan).
 source_files(rel(poll,depends_on,authAccess), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,authAccess), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,authAccess), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,authAccess), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,authAccess), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,authAccess), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,authAccess), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,notificationEmail), agent_scan).
 source_files(rel(poll,depends_on,notificationEmail), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,notificationEmail), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,notificationEmail), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,notificationEmail), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,notificationEmail), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,notificationEmail), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,notificationEmail), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(poll,depends_on,officeLocation), agent_scan).
 source_files(rel(poll,depends_on,officeLocation), ['src/server/services/poll.ts']).
-source_hash(rel(poll,depends_on,officeLocation), 'sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e').
-source_file_hashes(rel(poll,depends_on,officeLocation), ['sha256:82336c70b55ee56c6ddf1871c031763cd680c8f3cc502ecd5925ea4b2407a18e']).
+source_hash(rel(poll,depends_on,officeLocation), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,officeLocation), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
 derivation_query(rel(poll,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(poll,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(shoppingList,depends_on,db), agent_scan).
@@ -768,20 +768,20 @@ derivation_query(rel(userMenuDefaults,depends_on,lib_types), "What are the impor
 derived_at(rel(userMenuDefaults,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,db), agent_scan).
 source_files(rel(sse,depends_on,db), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,db), 'sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807').
-source_file_hashes(rel(sse,depends_on,db), ['sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807']).
+source_hash(rel(sse,depends_on,db), 'sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348').
+source_file_hashes(rel(sse,depends_on,db), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
 derivation_query(rel(sse,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,lib_types), agent_scan).
 source_files(rel(sse,depends_on,lib_types), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,lib_types), 'sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807').
-source_file_hashes(rel(sse,depends_on,lib_types), ['sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807']).
+source_hash(rel(sse,depends_on,lib_types), 'sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348').
+source_file_hashes(rel(sse,depends_on,lib_types), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
 derivation_query(rel(sse,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,officeLocation), agent_scan).
 source_files(rel(sse,depends_on,officeLocation), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,officeLocation), 'sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807').
-source_file_hashes(rel(sse,depends_on,officeLocation), ['sha256:9c054e16a64fc35ea92d69023af845505b567cab0be96c52b03ce7af2c1d9807']).
+source_hash(rel(sse,depends_on,officeLocation), 'sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348').
+source_file_hashes(rel(sse,depends_on,officeLocation), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
 derivation_query(rel(sse,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(auth_route,depends_on,lib_types), agent_scan).
@@ -1168,3 +1168,27 @@ source_hash(rel(sse,depends_on,pollCreation), 'sha256:642ae7d389f05e1f5f7791fe78
 source_file_hashes(rel(sse,depends_on,pollCreation), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
 derivation_query(rel(sse,depends_on,pollCreation), "what does sse.ts import from pollCreation?").
 derived_at(rel(sse,depends_on,pollCreation), '2026-07-01T11:08:10Z', agent).
+derived_from(rel(officePollSchedule,depends_on,pollCreation), agent_scan).
+source_files(rel(officePollSchedule,depends_on,pollCreation), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel(officePollSchedule,depends_on,pollCreation), 'sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514').
+source_file_hashes(rel(officePollSchedule,depends_on,pollCreation), ['sha256:ea250028fedb9a81528356c0db5af4e3689daf87e335fe5f6d0b9c314837b514']).
+derivation_query(rel(officePollSchedule,depends_on,pollCreation), "What are the import dependencies between server modules?").
+derived_at(rel(officePollSchedule,depends_on,pollCreation), '2026-07-01T12:01:04Z', agent).
+derived_from(rel(poll,depends_on,pollCreation), agent_scan).
+source_files(rel(poll,depends_on,pollCreation), ['src/server/services/poll.ts']).
+source_hash(rel(poll,depends_on,pollCreation), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,pollCreation), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
+derivation_query(rel(poll,depends_on,pollCreation), "What are the import dependencies between server modules?").
+derived_at(rel(poll,depends_on,pollCreation), '2026-07-01T12:01:06Z', agent).
+derived_from(rel(poll,depends_on,officeLocation), agent_scan).
+source_files(rel(poll,depends_on,officeLocation), ['src/server/services/poll.ts']).
+source_hash(rel(poll,depends_on,officeLocation), 'sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318').
+source_file_hashes(rel(poll,depends_on,officeLocation), ['sha256:3a3739224796c9850b4fb35b1f5348485a2bb4ebcb6ff44b005e46d0431fa318']).
+derivation_query(rel(poll,depends_on,officeLocation), "What are the import dependencies between server modules?").
+derived_at(rel(poll,depends_on,officeLocation), '2026-07-01T12:01:08Z', agent).
+derived_from(rel(sse,depends_on,pollCreation), agent_scan).
+source_files(rel(sse,depends_on,pollCreation), ['src/server/sse.ts']).
+source_hash(rel(sse,depends_on,pollCreation), 'sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348').
+source_file_hashes(rel(sse,depends_on,pollCreation), ['sha256:642ae7d389f05e1f5f7791fe787b799b4c64a6af88e4cfc26a1b8ca670a98348']).
+derivation_query(rel(sse,depends_on,pollCreation), "What are the import dependencies between server modules?").
+derived_at(rel(sse,depends_on,pollCreation), '2026-07-01T12:01:09Z', agent).

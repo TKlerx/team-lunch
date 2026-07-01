@@ -298,3 +298,7 @@ rel(pollCreation,depends_on,lib_types).
 rel(poll,depends_on,pollCreation).
 rel(officePollSchedule,depends_on,pollCreation).
 rel(sse,depends_on,pollCreation).
+rel(officePollSchedule,depends_on,pollCreation).
+rel(poll,depends_on,pollCreation).
+rel(poll,depends_on,officeLocation).
+rel(sse,depends_on,pollCreation).
