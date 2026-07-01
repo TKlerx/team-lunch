@@ -10,7 +10,7 @@ description: "Migrated task list — Poll Lifecycle (already implemented)"
 
 ## Phase 1: Setup (Data + Shared Types)
 
-- [x] T001 Define `Poll`, `PollVote`, `PollExcludedMenu`, `AuditLog` models in `prisma/schema.prisma` + `prisma/schema.sqlite.prisma`
+- [x] T001 Define `Poll`, `PollVote`, `PollExcludedMenu`, `AuditLog` models in `prisma/schema.prisma`
 - [x] T002 Add cleanup for poll tables in `tests/server/helpers/db.ts`
 - [x] T003 [P] Define shared `Poll` type in `src/lib/types.ts`
 

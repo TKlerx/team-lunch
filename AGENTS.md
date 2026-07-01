@@ -82,8 +82,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - For custom URL-prefix deployments, set `VITE_BASE_PATH` (frontend) and `BASE_PATH` (backend) to the same value (for example `/team-lunch`); mismatched values break API/SSE routing.
 - Backend startup now fails fast when both `VITE_BASE_PATH` and `BASE_PATH` are set but do not match.
 - For custom server ports (for example `PORT=3830`), Vite proxy and `ports:check` now follow env vars (`PORT` and optional `VITE_PORT`) instead of fixed `3000/5173`.
-- For local backend testing without Postgres, use `pnpm dev:server:sqlite` (or `pnpm test:server:sqlite`); this uses `DB_PROVIDER=sqlite` and `prisma/schema.sqlite.prisma`.
-- Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
+- - Docker Compose now runs a dedicated `migrate` service (`pnpm exec prisma migrate deploy`) before `app`; app startup no longer executes migrations in its container command.
 - When Entra SSO is enabled, backend auth routes enforce `ENTRA_TENANT_ID` against returned ID-token claims and sync the Entra `name` claim into the account display-name cache; nickname/localStorage identity is retired.
 - Dual-auth mode is now backend-driven: users can sign in via local username/password (`/api/auth/local/login`) and/or Entra SSO when corresponding backend env vars are configured; without any configured auth method, the app shows an auth setup error instead of open access.
 - Entra redirect/login configuration is backend env-driven: set `APP_PUBLIC_URL` and `BASE_PATH` to derive callback URI automatically (`${APP_PUBLIC_URL}${BASE_PATH}/api/auth/entra/callback`), with optional explicit override via `ENTRA_REDIRECT_URI`.
@@ -98,8 +97,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Admins can now promote/demote approved users via `POST /api/auth/users/promote` and `POST /api/auth/users/demote`; role state persists in `auth_access_users.is_admin` while `AUTH_ADMIN_EMAIL` remains an undeletable/demotion-protected bootstrap admin.
 - If `AUTH_ADMIN_EMAIL` is set, approval workflow is enabled: non-admin users stay blocked in a waiting screen until the admin approves them (persisted in `auth_access_users`).
 - Local-auth env bootstrap credentials were removed; local accounts are now only DB-managed by admin and Docker port mapping now uses a single `PORT` variable.
-- `pnpm prisma:generate:sqlite` writes generated client code to `src/server/generated/sqlite-client`; do not commit this output and remove it before lint/duplication runs if it was generated locally.
-- If a new phase view reuses large markup from another view, `pnpm duplication` can exceed the 5% jscpd threshold; extract shared UI components early to keep duplication below the gate.
+- - If a new phase view reuses large markup from another view, `pnpm duplication` can exceed the 5% jscpd threshold; extract shared UI components early to keep duplication below the gate.
 - `pnpm complexity` is a validation gate that ratchets ESLint complexity warnings via `complexity-baseline.json`; reduce complexity where practical, then run `pnpm complexity:update` to lower the baseline intentionally. It has no threshold bypass.
 - `pnpm function-size` blocks any non-test source function above 300 lines with no allowlist exceptions.
 - Duplication follows the template quality-threshold convention: `QUALITY_THRESHOLDS_BYPASS=1` makes the duplication threshold advisory, but lint correctness, complexity, function-size, tests, and security checks still block.
@@ -112,7 +110,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Settings now offers canonical ingredient quick-picks plus free-text fallback; the saved payload still uses the existing `updateUserPreferences` API contract.
 - Prettier config and ignores are present, but `pnpm format:check` is intentionally not part of `validate.ps1` until the existing formatting baseline is cleaned up.
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
-- Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`, SQLite → `@prisma/adapter-better-sqlite3`), selected by `DB_PROVIDER`.
+- Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`).
 - The `?schema=` URL parameter is ignored by the node-postgres driver adapter; `src/server/db.ts` parses it and passes it to `PrismaPg` as the `schema` option so runtime queries hit the same schema migrations ran against. Connection URLs for the CLI/Schema Engine (migrate/db push) come from `prisma.config.ts` (`datasource.url = env("DATABASE_URL")`), not from a `url` in `schema.prisma` (v7 removed it).
 - Food-selection no-order reminders for voters are scheduled from `FOOD_SELECTION_REMINDER_MINUTES_BEFORE` (default `5`) and only target vote nicknames that are valid email addresses.
 - Microsoft Graph mail delivery now reuses the Entra app registration (`ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, `ENTRA_TENANT_ID`) and requires `GRAPH_MAIL_SENDER`; if Graph mail is not configured, approval/poll/reminder notifications are skipped without failing core flows.
@@ -211,15 +209,14 @@ database**, isolated from the dev/app DB so tests never touch real data.
 - Defined as the `db-test` service in `docker-compose.yml` (compose profile
   `test`, no named volume → data discarded on teardown).
 - Tests pick it up via `TEST_DATABASE_URL`. When that var is set, the whole
-  suite targets it (see `tests/server/setup.ts`); otherwise it falls back to a
-  `TEST_DATABASE_SCHEMA` schema inside `DATABASE_URL`, then to SQLite when
-  Postgres is unreachable.
+  suite targets it (see `tests/server/setup.ts`); otherwise it uses the
+  `TEST_DATABASE_SCHEMA` schema inside `DATABASE_URL`.
 - Teammates opt in by copying the committed template:
   `cp .env.test.example .env.test`. `.env.test` is gitignored; the suite then
   reads `TEST_DATABASE_URL` from it. Host port via `TEST_DB_PORT` (default
-  `55434`). Skip the copy to use the `DATABASE_URL` / SQLite fallback.
+  `55434`). Skip the copy to use `DATABASE_URL` with `TEST_DATABASE_SCHEMA`.
 - Caveat: with `.env.test` present, the dedicated DB is authoritative — the
-  suite will NOT silently fall back to SQLite. The git hooks run the suite, so
+  suite fails loudly when the configured PostgreSQL database is unreachable. The git hooks run the suite, so
   `pnpm db:test:up` must be running before you commit/push.
 
 ```bash

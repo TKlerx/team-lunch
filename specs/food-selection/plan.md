@@ -18,7 +18,7 @@ selection per office blocks new lunch cycles.
 
 **Primary Dependencies**: Fastify 5, Prisma 6 (FoodSelection/FoodOrder), SSE manager, `exceljs` (rating export), Microsoft Graph mail (`notificationEmail.ts`)
 
-**Storage**: PostgreSQL / SQLite — dual Prisma schema
+**Storage**: PostgreSQL — PostgreSQL Prisma schema
 
 **Testing**: Vitest + Supertest — `tests/server/food-selection-{service,routes,authz,timer,reminder}.test.ts`, `food-order-rating-export.test.ts`
 
@@ -46,7 +46,7 @@ src/server/services/notificationEmail.ts    # reminders + organizer pings (Graph
 src/server/routes/foodSelections.ts         # thin handlers + authz
 src/lib/types.ts                            # FoodSelection / FoodOrder shared types
 src/client/components/FoodSelection*.tsx, FoodDeliveryView.tsx, OrdersRail.tsx
-prisma/schema.prisma | schema.sqlite.prisma # FoodSelection, FoodOrder
+prisma/schema.prisma # FoodSelection, FoodOrder
 tests/server/food-selection-*.test.ts, food-order-rating-export.test.ts
 tests/client/FoodSelection*.test.tsx, FoodDeliveryView.test.tsx
 ```

@@ -115,12 +115,12 @@
 ### Data / Migration Impact *(include if feature touches persisted data)*
 
 <!--
-  Dual Prisma schema: prisma/schema.prisma (Postgres) + schema.sqlite.prisma.
-  Both must change together. Note name-snapshot columns for any new FK.
+  Prisma schema: prisma/schema.prisma (PostgreSQL).
+  Note name-snapshot columns for any new FK.
 -->
 
 - New/changed models or columns: [list]
-- Both Postgres and SQLite schemas updated: [yes/no]
+- PostgreSQL schema and migration updated: [yes/no]
 - Name-snapshot column needed alongside any FK: [yes/no — which]
 - `tests/server/helpers/db.ts` cleanup extended for new persisted models: [yes/no]
 

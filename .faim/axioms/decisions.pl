@@ -6,7 +6,6 @@ entity(project, project).
 prop(project, language, typescript).
 prop(project, architecture, single_package_fullstack).
 prop(project, storage, postgres).
-prop(project, storage, sqlite).
 prop(project, orm, prisma).
 prop(project, runtime, node24).
 prop(project, realtime, sse).

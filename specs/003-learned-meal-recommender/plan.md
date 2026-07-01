@@ -33,7 +33,7 @@ dependency** — the factorization machine and exploration policy are hand-rolle
 (small linear algebra over sparse vectors) to keep `npm audit` clean and avoid an
 ML toolchain.
 
-**Storage**: PostgreSQL (default) / SQLite (local+test) via Prisma dual schema.
+**Storage**: PostgreSQL via Prisma dual schema.
 New persisted models hold item features, stable item identity, learned model
 parameters (serialized JSON per version), per-office evaluation results,
 per-office recommendation-mode setting, and per-user anticipated-like marks.
@@ -135,7 +135,7 @@ src/
 
 prisma/
 ├── schema.prisma            # add models (Postgres)
-└── schema.sqlite.prisma     # add models (SQLite, in sync)
+└── schema.prisma     # add PostgreSQL models
 
 tests/
 ├── server/   # FM math, scoring, explore determinism, eval metric, marks, tagging, identity, routes
@@ -143,7 +143,7 @@ tests/
 ```
 
 **Structure Decision**: Single-package full-stack app. New backend services own
-all ML logic; routes stay thin; shared types in `lib`; dual Prisma schema updated
+all ML logic; routes stay thin; shared types in `lib`; PostgreSQL Prisma schema updated
 together; reuse 002's feature/AI modules rather than duplicating.
 
 ## Complexity Tracking

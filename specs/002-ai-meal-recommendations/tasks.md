@@ -17,7 +17,7 @@ description: "Task list — AI Meal Recommendations"
 **Purpose**: Add persisted impression storage and shared contracts before service/UI work.
 
 - [ ] T001 Add `MealRecommendationImpression` model and relations in `prisma/schema.prisma`
-- [ ] T002 Add matching `MealRecommendationImpression` model and relations in `prisma/schema.sqlite.prisma`
+- [ ] T002 Add the `MealRecommendationImpression` migration for `prisma/schema.prisma`
 - [ ] T003 Create PostgreSQL migration for recommendation impressions in `prisma/migrations/<timestamp>_add_meal_recommendation_impressions/migration.sql`
 - [ ] T004 Extend server test cleanup for recommendation impressions in `tests/server/helpers/db.ts`
 - [ ] T005 [P] Add shared recommendation source/signal/request/response types in `src/lib/types.ts`

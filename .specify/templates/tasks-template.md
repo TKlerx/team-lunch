@@ -26,7 +26,7 @@ description: "Task list template for feature implementation"
 - **SSE events**: `src/server/sse.ts` — `broadcast(event, payload)`
 - **Shared types**: `src/lib/types.ts`
 - **Client**: `src/client/components/`, `src/client/hooks/`, `src/client/pages/`
-- **Schema**: `prisma/schema.prisma` + `prisma/schema.sqlite.prisma` (both)
+- **Schema**: `prisma/schema.prisma`
 - **Tests**: `tests/server/[name].test.ts`, `tests/client/[Name].test.tsx`
 
 <!--
@@ -53,7 +53,7 @@ description: "Task list template for feature implementation"
 **Purpose**: Wire up data + shared types before logic. (Project is already
 initialized — `npm install` + tooling exist; do NOT re-scaffold.)
 
-- [ ] T001 Add/extend Prisma models in `prisma/schema.prisma` AND `prisma/schema.sqlite.prisma`, then `npx prisma migrate dev`
+- [ ] T001 Add/extend Prisma models in `prisma/schema.prisma`, then `npx prisma migrate dev`
 - [ ] T002 Extend `tests/server/helpers/db.ts` cleanup for any new persisted model
 - [ ] T003 [P] Add shared request/response + enum types in `src/lib/types.ts`
 

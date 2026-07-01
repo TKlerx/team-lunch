@@ -141,7 +141,7 @@ A user can finish a running poll early; an admin can abort it entirely.
 ### Data / Migration Impact
 
 - Models: `Poll`, `PollVote`, `PollExcludedMenu`, `AuditLog` — present in both
-  `prisma/schema.prisma` and `prisma/schema.sqlite.prisma`.
+  `prisma/schema.prisma`.
 - Name-snapshot columns present (`menu_name`, `winner_menu_name`).
 
 ### Scope Flags

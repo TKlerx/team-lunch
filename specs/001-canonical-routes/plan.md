@@ -14,7 +14,7 @@ Add canonical, refresh-safe client routes for top-level Team Lunch surfaces and 
 
 **Primary Dependencies**: React 18, Vite 6, React Router 6, existing Team Lunch app context and SSE hooks
 
-**Storage**: No storage changes. Existing PostgreSQL/SQLite Prisma schemas remain unchanged.
+**Storage**: No storage changes. Existing PostgreSQL Prisma schemas remain unchanged.
 
 **Testing**: Vitest + Testing Library for client router behavior; Playwright for production-style direct URL smoke coverage
 

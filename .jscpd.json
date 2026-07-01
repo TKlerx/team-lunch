@@ -7,10 +7,7 @@
     "prisma",
     "tests",
     "assets",
-    "import",
-    "src/server/generated/sqlite-client/**",
-    "**/src/server/generated/sqlite-client/**",
-    "server/generated/sqlite-client/**"
+    "import"
   ],
   "minTokens": 50,
   "minLines": 5,

@@ -15,7 +15,7 @@ keep bought items grouped by date for traceability, live-update via SSE.
 
 **Primary Dependencies**: Fastify 5, Prisma 6 (`ShoppingListItem`), SSE manager
 
-**Storage**: PostgreSQL / SQLite — dual Prisma schema
+**Storage**: PostgreSQL — PostgreSQL Prisma schema
 
 **Testing**: Vitest + Supertest — `tests/server/shopping-list-service.test.ts`, `shopping-list-routes.test.ts`
 
@@ -39,7 +39,7 @@ keep bought items grouped by date for traceability, live-update via SSE.
 src/server/services/shoppingList.ts   # add / mark-bought / list logic
 src/server/routes/shoppingList.ts      # GET, POST, POST :id/bought
 src/client/pages/ShoppingList.tsx       # To Buy + Bought (grouped by date) + Bought-all
-prisma/schema.prisma | schema.sqlite.prisma  # ShoppingListItem
+prisma/schema.prisma  # ShoppingListItem
 tests/server/shopping-list-service.test.ts, shopping-list-routes.test.ts
 ```
 
