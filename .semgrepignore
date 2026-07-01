@@ -1,3 +1,4 @@
+/.agents/
 src/server/routes/
 scripts/update-continuity.js
 tests/server/

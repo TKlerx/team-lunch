@@ -12,6 +12,9 @@ overrides:
   effect: 3.21.0
   '@hono/node-server': 1.19.13
 
+# Wait seven days before resolving newly published packages.
+minimumReleaseAge: 10080
+
 # Audit policy.
 # GHSA-w5hq-g745-h8pq: uuid v3/v5/v6 missing buffer bounds check when a buffer
 # is supplied. Reached only transitively via exceljs, which uses uuid v4
