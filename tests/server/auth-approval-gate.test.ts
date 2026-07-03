@@ -100,6 +100,20 @@ describe('auth approval gate', () => {
       iat: Math.floor(Date.now() / 1000),
     });
 
+    // Give the user an active session first so the block takes the
+    // version-incrementing update path (rather than creating a fresh row at
+    // version 0, which would still match the pre-block cookie on a clean DB).
+    const preBlockSession = createSessionCookieValue({
+      username: 'blocked@company.com',
+      method: 'entra',
+      iat: Math.floor(Date.now() / 1000),
+    });
+    await app.inject({
+      method: 'GET',
+      url: '/api/auth/config',
+      headers: { cookie: `team_lunch_auth_session=${preBlockSession}` },
+    });
+
     await app.inject({
       method: 'POST',
       url: '/api/auth/users/block',
@@ -119,15 +133,18 @@ describe('auth approval gate', () => {
       headers: { cookie: `team_lunch_auth_session=${blockedSession}` },
     });
 
+    // Blocking bumps the user's session version, so the pre-block cookie is
+    // invalidated: the user is logged out but the config still surfaces the
+    // blocked state.
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
       auth: {
-        authenticated: true,
+        authenticated: false,
         approvalRequired: true,
         approved: false,
         blocked: true,
         isAdmin: false,
-        role: 'user',
+        role: null,
         accessibleOfficeLocations: [],
       },
     });
