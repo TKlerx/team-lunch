@@ -51,6 +51,7 @@ const mockFetchMealRecommendationMarks = vi.fn();
 const mockUpsertMealRecommendationMark = vi.fn();
 const mockDeleteMealRecommendationMark = vi.fn();
 const mockFetchMealRecommendationOnboardingCandidates = vi.fn();
+const scrollIntoViewMock = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
   placeOrder: (...args: unknown[]) => mockPlaceOrder(...args),
   withdrawOrder: (...args: unknown[]) => mockWithdrawOrder(...args),
@@ -88,6 +89,10 @@ describe('FoodSelectionActiveView', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoViewMock,
+    });
     mockGetUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: [],
@@ -692,6 +697,35 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.getByText('Recommended because you rated this highly before.')).toBeInTheDocument();
     expect(screen.getByText('#2 Pepperoni')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /recommend a meal/i })).toBeInTheDocument();
+  });
+
+  it('jumps to the matching meal card when clicking a recommendation', async () => {
+    const user = userEvent.setup();
+    mockRecommendMeal.mockResolvedValue({
+      impressionId: 'impression-1',
+      foodSelectionId: 'fs-1',
+      source: 'deterministic',
+      generatedAt: '2026-01-01T12:00:00.000Z',
+      warnings: [],
+      items: [
+        {
+          itemId: 'item-1',
+          itemName: 'Margherita',
+          rank: 1,
+          score: 80,
+          reason: 'Recommended from the current menu.',
+          sourceSignals: [],
+          aiAssisted: false,
+        },
+      ],
+    });
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /recommend a meal/i }));
+    await user.click(await screen.findByRole('button', { name: /#1 margherita/i }));
+
+    expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'center' });
+    expect(document.getElementById('meal-item-item-1')).toHaveFocus();
   });
 
   it('shows exploratory recommendations when clicking "Explore something new"', async () => {

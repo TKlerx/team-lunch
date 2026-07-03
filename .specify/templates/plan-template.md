@@ -22,7 +22,7 @@
 
 **Primary Dependencies**: Fastify 5 (backend), React 18 + Vite 6 + React Router 6 (frontend), Prisma 6 (ORM), jose (JWT). Add feature-specific deps here.
 
-**Storage**: PostgreSQL (default) or SQLite (local/test) via Prisma — `prisma/schema.prisma` + `prisma/schema.sqlite.prisma`
+**Storage**: PostgreSQL via Prisma — `prisma/schema.prisma`
 
 **Testing**: Vitest 3 + Supertest (server), Vitest + Testing Library (client), Playwright (E2E)
 
@@ -81,8 +81,7 @@ src/
     └── types.ts       # shared request/response + domain types (both sides import)
 
 prisma/
-├── schema.prisma            # Postgres — update for any model change
-└── schema.sqlite.prisma     # SQLite — keep in sync
+└── schema.prisma            # PostgreSQL — update for any model change
 
 tests/
 ├── server/            # Vitest + Supertest (unit + integration)

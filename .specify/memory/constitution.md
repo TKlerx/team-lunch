@@ -8,7 +8,7 @@ browsers via Server-Sent Events (SSE).
 - **Primary language**: TypeScript (ESM, `"type": "module"`)
 - **Architecture**: Single-package full-stack app — React 18 + Vite client and a
   Fastify backend in one repository (one `package.json`), with shared types.
-- **Storage**: PostgreSQL (default) or SQLite (local/test) via Prisma 7 ORM with driver adapters.
+- **Storage**: PostgreSQL via Prisma 7 ORM with a driver adapter.
 
 ## Core Principles
 
@@ -67,8 +67,7 @@ the resulting `specs/CURRENT-WORK.md` / `specs/RECONCILIATION.md` if changed.
 
 ## Database Rules
 
-- Two Prisma schemas: `prisma/schema.prisma` (Postgres) and
-  `prisma/schema.sqlite.prisma` (SQLite). Keep model changes in sync.
+- One Prisma schema: `prisma/schema.prisma` (PostgreSQL). Persisted model changes require a PostgreSQL migration.
 - After any schema change, run `pnpm prisma migrate dev` before server tests.
 - Applied migration SQL is immutable — never edit an applied migration; force LF
   for `prisma/migrations/**/*.sql`. Use `prisma migrate resolve` to repair history.

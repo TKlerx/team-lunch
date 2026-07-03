@@ -49,6 +49,10 @@ The feature offers two distinct, complementary recommendation modes:
 - Q: How many ordering recommendations should be shown? → A: Default to 3, matching the top-3 evaluation metric, but let each user choose their own recommendation count in Settings (bounded 1–10). The safe and explore ordering endpoints both honor that personal setting.
 - Q: What evaluation work remains beyond baseline-vs-model gating? → A: Add an admin-only recommender/order dataset export before deeper model bake-offs. The export should include historical impressions, shown ranks, chosen orders, item identity/features, model source/version, office, and timestamps with actor identifiers pseudonymized, so self-built FM, xlearn FM, and future policies can be compared offline without direct production access.
 
+### Session 2026-07-01
+
+- Q: When a recommendation is shown in the ordering UI, should clicking it help the user add details? → A: Yes — clicking a recommended meal should jump to the matching current-menu meal card so the user can add comments/extras or order it there.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Recommendations get more personal the more I participate (Priority: P1)
@@ -312,6 +316,7 @@ preferences.
 - **FR-034**: Pre-vote recommendation impressions MUST be persisted separately from food-selection-bound impressions so later orders/ratings can be joined for learning/evaluation without inventing a fake food selection.
 - **FR-035**: System MUST let each user configure how many safe/explore ordering recommendations are shown, defaulting to 3 and bounded to 1–10 items.
 - **FR-036**: System MUST tag obvious side dishes and drinks with course-level features (for example `course:side` and `course:drink`) and exclude those items from normal safe, explore, and pre-vote recommendation candidate lists while still allowing their order/rating history to inform learned flavor preferences. If filtering would remove every candidate, the endpoint MAY fall back to the unfiltered menu rather than returning no recommendations.
+- **FR-037**: In the active food-selection UI, each safe/explore ordering recommendation with a current-menu item ID MUST be clickable and jump focus/scroll to that meal's order card so the user can add details or place the order from the normal order form.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -333,7 +338,7 @@ preferences.
 ### Data / Migration Impact *(include if feature touches persisted data)*
 
 - New/changed models or columns: persisted item features (with provenance), stable item-identity key, learned per-user preference model storage, per-office model-evaluation results, per-office recommendation-mode setting, per-user anticipated-like marks (item + like/dislike, with item-name snapshot); the existing recommendation-impression record gains a safe-baseline / safe-learned / explore / pre-vote source marker and can persist impressions not bound to a food selection.
-- Both Postgres and SQLite schemas updated: yes (dual schema must change together).
+- PostgreSQL schema and migration updated: yes (dual schema must change together).
 - Name-snapshot column needed alongside any FK: yes where new references to menu items/offices are added, following the existing snapshot convention so history survives source-row deletion.
 - `tests/server/helpers/db.ts` cleanup extended for new persisted models: yes.
 
@@ -357,6 +362,7 @@ preferences.
 - **SC-008**: When a user opts into "explore", at least a defined majority of surfaced items differ from their current safe recommendation (novel flavors or higher-uncertainty items), and explore results are always labelled as exploratory.
 - **SC-009**: A new user who completes onboarding by marking liked dishes receives recommendations personalized to those flavors on their first request, without any prior orders.
 - **SC-010**: During an active poll, pre-vote recommendations include only eligible candidate menus from the user's office and include menu context for 100% of returned items.
+- **SC-011**: In client tests, clicking a displayed ordering recommendation focuses the matching current-menu meal card.
 
 ## Assumptions
 

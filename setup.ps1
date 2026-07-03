@@ -46,7 +46,7 @@ $binDir = if ($IsWindows -or $env:OS -eq 'Windows_NT') { 'Scripts' } else { 'bin
 $pipExeName = if ($IsWindows -or $env:OS -eq 'Windows_NT') { 'pip.exe' } else { 'pip' }
 $pipExe = Join-Path $venvDir $binDir $pipExeName
 Write-Step "Installing semgrep into .venv"
-& $pipExe install semgrep
+& $pipExe install --upgrade semgrep
 if ($LASTEXITCODE -ne 0) { Write-Error "pip install semgrep failed"; exit 1 }
 
 # --- Done ---

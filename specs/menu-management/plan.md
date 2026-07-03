@@ -17,7 +17,7 @@ snapshots in polls/orders. Changes broadcast over SSE.
 
 **Primary Dependencies**: Fastify 5, Prisma 6 (`Menu`, `MenuItem`, user-default model), SSE manager
 
-**Storage**: PostgreSQL / SQLite — dual Prisma schema
+**Storage**: PostgreSQL — PostgreSQL Prisma schema
 
 **Testing**: Vitest + Supertest — `tests/server/menu-service.test.ts`, `menu-routes.test.ts`, `user-menu-defaults-service.test.ts`
 
@@ -44,7 +44,7 @@ src/server/services/userMenuDefaults.ts     # per-user default meal + fallback o
 src/server/routes/menus.ts                  # thin handlers (CRUD + import)
 src/client/pages/ManageMenus.tsx            # management UI + default-meal config + import
 src/client/components/NoMenusView.tsx       # empty-state CTA
-prisma/schema.prisma | schema.sqlite.prisma # Menu, MenuItem, UserMenuDefault
+prisma/schema.prisma # Menu, MenuItem, UserMenuDefault
 tests/server/menu-service.test.ts, menu-routes.test.ts, user-menu-defaults-service.test.ts
 ```
 

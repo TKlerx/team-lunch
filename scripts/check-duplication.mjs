@@ -1,16 +1,9 @@
 import { spawnSync } from "node:child_process";
-import path from "node:path";
+import { createRequire } from "node:module";
 
+const require = createRequire(import.meta.url);
+const jscpdBin = require.resolve("jscpd/run-jscpd.js");
 const bypassThresholds = process.env.QUALITY_THRESHOLDS_BYPASS === "1";
-const jscpdBin = path.join(
-  process.cwd(),
-  "node_modules",
-  "jscpd",
-  "dist",
-  "bin",
-  "jscpd.js",
-);
-
 const args = ["src/", "--config", ".jscpd.json"];
 
 if (bypassThresholds) {

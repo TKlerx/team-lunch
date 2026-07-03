@@ -175,7 +175,7 @@ signals are scoped to the signed-in user and office.
 - Displayed recommendation responses, including reasons/explanations, should be
   retained for audit/debugging; disallowed AI payload inputs such as remarks,
   names, and emails must still be excluded.
-- Both PostgreSQL and SQLite Prisma schemas must stay aligned.
+- The PostgreSQL Prisma schema and migrations must stay aligned.
 - `tests/server/helpers/db.ts` cleanup must be extended for new persisted models.
 
 ### Scope Flags

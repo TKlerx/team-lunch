@@ -10,7 +10,7 @@ description: "Migrated task list — Food Selection Lifecycle (already implement
 
 ## Phase 1: Setup (Data + Shared Types)
 
-- [x] T001 Define `FoodSelection`, `FoodOrder` models in `prisma/schema.prisma` + `prisma/schema.sqlite.prisma` (with `menu_name`/`item_name` snapshots)
+- [x] T001 Define `FoodSelection`, `FoodOrder` models in `prisma/schema.prisma` (with `menu_name`/`item_name` snapshots)
 - [x] T002 Add cleanup for food-selection tables in `tests/server/helpers/db.ts`
 - [x] T003 [P] Define `FoodSelection` / `FoodOrder` shared types in `src/lib/types.ts`
 

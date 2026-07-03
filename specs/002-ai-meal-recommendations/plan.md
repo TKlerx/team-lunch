@@ -20,7 +20,7 @@ and for later outcome analysis against orders and post-meal ratings.
 
 **Primary Dependencies**: Fastify 5, React 18 + Vite, Prisma 6, existing auth/session helpers, existing office context helpers. No required new runtime dependency for the deterministic recommender; optional AI provider integration should be isolated behind a small server-side adapter.
 
-**Storage**: PostgreSQL / SQLite via dual Prisma schemas. Add a recommendation-impression model to both `prisma/schema.prisma` and `prisma/schema.sqlite.prisma`, plus a PostgreSQL migration.
+**Storage**: PostgreSQL via PostgreSQL Prisma schema. Add a recommendation-impression model to both `prisma/schema.prisma`, plus a PostgreSQL migration.
 
 **Testing**: Vitest + Supertest for recommender service and route integration; Vitest + Testing Library for the food-selection UI affordance; privacy-focused tests for AI payload construction; existing `./validate.ps1 all` gate.
 
@@ -77,7 +77,7 @@ src/
 
 prisma/
 ├── schema.prisma
-├── schema.sqlite.prisma
+├── schema.prisma
 └── migrations/
     └── <timestamp>_add_meal_recommendation_impressions/
 
@@ -106,7 +106,7 @@ Completed in [research.md](research.md).
 
 ## Constitution Check - Post Design
 
-- New DB model is mirrored in both Prisma schemas and cleanup must be extended:
+- New DB model is mirrored in the Prisma schema and cleanup must be extended:
   **pass with implementation task**.
 - Shared types and route/service split are explicit in contracts: **pass**.
 - AI privacy guardrail has dedicated tests: **pass**.

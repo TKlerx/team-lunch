@@ -6,10 +6,7 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-if (databaseUrl.startsWith('file:')) {
-  console.log('SQLite database URL detected; skipping PostgreSQL production data safety verification.');
-  process.exit(0);
-}
+
 
 const freshInstallGuidance =
   'For a fresh install or intentional empty bootstrap, rerun deploy with ALLOW_EMPTY_DATABASE_DEPLOY=true. ' +
@@ -39,8 +36,7 @@ const countRaw = async (prisma, table) => {
 };
 
 // Prisma 7: ESM client (entry is `client.js`, not `index.js`) constructed with
-// a driver adapter. This script only runs against PostgreSQL (SQLite is skipped
-// above), so the pg adapter is always the right one here.
+// a driver adapter. PostgreSQL is the only supported database.
 const { PrismaClient } = await import('../dist/server/generated/client/client.js');
 const { PrismaPg } = await import('@prisma/adapter-pg');
 const adapter = new PrismaPg({ connectionString: databaseUrl });

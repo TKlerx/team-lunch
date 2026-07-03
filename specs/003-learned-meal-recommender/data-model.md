@@ -1,7 +1,7 @@
 # Phase 1 Data Model: Learned Meal Recommender
 
 New/changed persisted models. Both `prisma/schema.prisma` (Postgres) and
-`prisma/schema.sqlite.prisma` (SQLite) change together. Name-snapshot columns
+`prisma/schema.prisma` (PostgreSQL) change together. Name-snapshot columns
 accompany FKs per the constitution so history survives source-row deletion. All
 new models are added to `tests/server/helpers/db.ts` cleanup.
 

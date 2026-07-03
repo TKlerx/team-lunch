@@ -226,6 +226,8 @@ function OrderForm({
         {filteredMenuItems.map((item) => (
           <div
             key={item.id}
+            id={`meal-item-${item.id}`}
+            tabIndex={-1}
             className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted"
           >
             <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
@@ -524,8 +526,10 @@ function OrderBoard({
 
 function MealRecommendationsList({
   recommendations,
+  onJumpToMeal,
 }: {
   recommendations: MealRecommendationResponse;
+  onJumpToMeal: (itemId: string) => void;
 }) {
   return (
     <div className="mt-3 space-y-2">
@@ -553,20 +557,27 @@ function MealRecommendationsList({
         {recommendations.items.map((item) => (
           <li
             key={item.itemId ?? item.itemName}
-            className="rounded border border-border p-2"
+            className="rounded border border-border"
           >
-            <div className="flex items-baseline justify-between gap-2">
-              <span className="text-sm font-medium text-fg">
-                #{item.rank} {item.itemName}
+            <button
+              type="button"
+              onClick={() => item.itemId && onJumpToMeal(item.itemId)}
+              disabled={!item.itemId}
+              className="block w-full rounded p-2 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default disabled:hover:bg-transparent"
+            >
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="text-sm font-medium text-fg">
+                  #{item.rank} {item.itemName}
+                </span>
+                <span className="text-xs text-fg-muted">Score: {item.score}</span>
               </span>
-              <span className="text-xs text-fg-muted">Score: {item.score}</span>
-            </div>
-            <p className="mt-1 text-xs text-fg-muted">
-              {item.reason}
-              {item.aiAssisted && (
-                <span className="ml-1 text-accent-fg">(AI-assisted)</span>
-              )}
-            </p>
+              <span className="mt-1 block text-xs text-fg-muted">
+                {item.reason}
+                {item.aiAssisted && (
+                  <span className="ml-1 text-accent-fg">(AI-assisted)</span>
+                )}
+              </span>
+            </button>
           </li>
         ))}
       </ul>
@@ -582,6 +593,7 @@ function MealRecommendationsPanel({
   onRecommendMeal,
   onExploreMeal,
   onOpenOnboarding,
+  onJumpToMeal,
 }: {
   recommendations: MealRecommendationResponse | null;
   recommendationsLoading: boolean;
@@ -590,6 +602,7 @@ function MealRecommendationsPanel({
   onRecommendMeal: () => void;
   onExploreMeal: () => void;
   onOpenOnboarding: () => void;
+  onJumpToMeal: (itemId: string) => void;
 }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
@@ -631,7 +644,7 @@ function MealRecommendationsPanel({
         <p className="mt-2 text-sm text-danger-fg">{recommendationsError}</p>
       )}
       {recommendations ? (
-        <MealRecommendationsList recommendations={recommendations} />
+        <MealRecommendationsList recommendations={recommendations} onJumpToMeal={onJumpToMeal} />
       ) : null}
     </div>
   );
@@ -1356,6 +1369,12 @@ export default function FoodSelectionActiveView() {
     }
   };
 
+  const handleJumpToMeal = (itemId: string) => {
+    const target = document.getElementById(`meal-item-${itemId}`);
+    target?.scrollIntoView({ block: "center" });
+    target?.focus({ preventScroll: true });
+  };
+
   const timerOptions = Array.from(
     { length: 24 },
     (_, index) => (index + 1) * 5,
@@ -1433,6 +1452,7 @@ export default function FoodSelectionActiveView() {
             onRecommendMeal={() => void recommendationState.recommendMeal()}
             onExploreMeal={() => void recommendationState.exploreMeal()}
             onOpenOnboarding={mealMarkState.openOnboarding}
+            onJumpToMeal={handleJumpToMeal}
           />
           <MissingOrdersPanel
             votersWithoutOrder={votersWithoutOrder}

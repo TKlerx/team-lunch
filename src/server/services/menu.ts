@@ -101,53 +101,27 @@ function validateMenuName(name: string): string {
   return trimmedName;
 }
 
-function isSqliteProvider(): boolean {
-  if ((process.env.DB_PROVIDER?.toLowerCase() ?? 'postgresql') === 'sqlite') {
-    return true;
-  }
-
-  return false;
-}
-
-function menuNameEqualsFilter(name: string): { equals: string; mode?: 'insensitive' } {
-  if (isSqliteProvider()) {
-    return { equals: name };
-  }
-
+function menuNameEqualsFilter(name: string): { equals: string; mode: 'insensitive' } {
   return { equals: name, mode: 'insensitive' };
 }
 
-function itemNameEqualsFilter(name: string): { equals: string; mode?: 'insensitive' } {
+function itemNameEqualsFilter(name: string): { equals: string; mode: 'insensitive' } {
   return menuNameEqualsFilter(name);
 }
 
-function namesEqualCaseInsensitive(left: string, right: string): boolean {
-  return left.toLocaleLowerCase() === right.toLocaleLowerCase();
-}
-
 async function findMenuByName(
-  delegate: Pick<Prisma.TransactionClient['menu'], 'findFirst' | 'findMany'>,
+  delegate: Pick<Prisma.TransactionClient['menu'], 'findFirst'>,
   officeLocationId: string,
   name: string,
   excludedId?: string,
 ) {
-  if (!isSqliteProvider()) {
-    return delegate.findFirst({
-      where: {
-        officeLocationId,
-        name: menuNameEqualsFilter(name),
-        ...(excludedId ? { id: { not: excludedId } } : {}),
-      },
-    });
-  }
-
-  const candidates = await delegate.findMany({
+  return delegate.findFirst({
     where: {
       officeLocationId,
+      name: menuNameEqualsFilter(name),
       ...(excludedId ? { id: { not: excludedId } } : {}),
     },
   });
-  return candidates.find((candidate) => namesEqualCaseInsensitive(candidate.name, name)) ?? null;
 }
 
 async function findMenuItemByName(
@@ -155,23 +129,13 @@ async function findMenuItemByName(
   name: string,
   excludedId?: string,
 ) {
-  if (!isSqliteProvider()) {
-    return prisma.menuItem.findFirst({
-      where: {
-        menuId,
-        name: itemNameEqualsFilter(name),
-        ...(excludedId ? { id: { not: excludedId } } : {}),
-      },
-    });
-  }
-
-  const candidates = await prisma.menuItem.findMany({
+  return prisma.menuItem.findFirst({
     where: {
       menuId,
+      name: itemNameEqualsFilter(name),
       ...(excludedId ? { id: { not: excludedId } } : {}),
     },
   });
-  return candidates.find((candidate) => namesEqualCaseInsensitive(candidate.name, name)) ?? null;
 }
 
 function validateMenuLocation(location?: string | null): string | null {

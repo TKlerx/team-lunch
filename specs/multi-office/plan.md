@@ -19,7 +19,7 @@ office(s); global admins operate one selected office context at a time.
 
 **Primary Dependencies**: Fastify 5, Prisma 6 (`OfficeLocation`, membership table, office columns), SSE manager (office-aware), React context (`AdminOfficeContext`)
 
-**Storage**: PostgreSQL / SQLite — dual Prisma schema; staged migrations
+**Storage**: PostgreSQL — PostgreSQL Prisma schema; staged migrations
 
 **Testing**: Vitest + Supertest — `tests/server/office-location-service.test.ts`, `office-poll-schedule.test.ts`, plus office-scoping asserted within feature suites
 
@@ -45,7 +45,7 @@ src/server/services/officeContext.ts       # request → office context resoluti
 src/server/services/officePollSchedule.ts  # auto-start scheduling per office
 src/server/sse.ts                           # office-aware broadcast + initial_state
 src/client/context/AdminOfficeContext.tsx   # admin/multi-office selector state
-prisma/schema.prisma | schema.sqlite.prisma # OfficeLocation, auth_access_user_offices, office columns
+prisma/schema.prisma # OfficeLocation, auth_access_user_offices, office columns
 tests/server/office-location-service.test.ts, office-poll-schedule.test.ts
 ```
 
