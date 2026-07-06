@@ -24,3 +24,6 @@ backups/
 package-lock.json
 .zed/settings.json
 .faim/faim.log
+# SCIP dependency index (regenerated via scip-typescript; see .faim scanner docs)
+index.scip
+scip-deps*.jsonl
