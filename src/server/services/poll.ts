@@ -1,72 +1,30 @@
 import prisma from '../db.js';
-import { broadcast, formatPoll } from '../sse.js';
+import { broadcast } from '../sse.js';
 import type { Poll } from '../../lib/types.js';
 import { listApprovedAccessUserEmails } from './authAccess.js';
 import { sendEmail } from './notificationEmail.js';
+import { getOfficeDefaultFoodSelectionDurationMinutes } from './officeLocation.js';
 import {
-  ensureDefaultOfficeLocation,
-  getOfficeDefaultFoodSelectionDurationMinutes,
-  validateOfficeLocationId,
-} from './officeLocation.js';
+  pollInclude,
+  formatPoll,
+  validateDuration,
+  normalizeCreatorKey,
+  resolvePollOfficeLocationId,
+  ensureNoPollInProgress,
+  validateAndNormalizeExcludedMenus,
+  scheduleTimer,
+  clearTimer,
+  clearAllTimers,
+  getActiveTimers,
+  createPollRecord,
+  registerPollExpiryHandler,
+  registerPollStartedHandler,
+  announcePollStarted,
+} from './pollCreation.js';
 
-// ─── Timer management ──────────────────────────────────────
+export { clearTimer, clearAllTimers, getActiveTimers, formatPoll };
 
-const activeTimers = new Map<string, ReturnType<typeof setTimeout>>();
-const pollInclude = { votes: true, excludedMenus: true } as const;
-
-export function getActiveTimers(): Map<string, ReturnType<typeof setTimeout>> {
-  return activeTimers;
-}
-
-function scheduleTimer(pollId: string, endsAt: Date): void {
-  clearTimer(pollId);
-  const delay = endsAt.getTime() - Date.now();
-  if (delay <= 0) {
-    // Already expired — run immediately
-    void endPoll(pollId);
-    return;
-  }
-  const timer = setTimeout(() => {
-    activeTimers.delete(pollId);
-    void endPoll(pollId);
-  }, delay);
-  // Unref so the timer doesn't keep the process alive in tests
-  if (typeof timer === 'object' && 'unref' in timer) {
-    timer.unref();
-  }
-  activeTimers.set(pollId, timer);
-}
-
-export function clearTimer(pollId: string): void {
-  const existing = activeTimers.get(pollId);
-  if (existing) {
-    clearTimeout(existing);
-    activeTimers.delete(pollId);
-  }
-}
-
-export function clearAllTimers(): void {
-  for (const [id, timer] of activeTimers) {
-    clearTimeout(timer);
-    activeTimers.delete(id);
-  }
-}
-
-// ─── Validation helpers ────────────────────────────────────
-
-function validateDuration(durationMinutes: number): void {
-  if (
-    !Number.isInteger(durationMinutes) ||
-    durationMinutes < 5 ||
-    durationMinutes > 720 ||
-    durationMinutes % 5 !== 0
-  ) {
-    throw Object.assign(
-      new Error('Duration must be a multiple of 5 between 5 and 720 minutes'),
-      { statusCode: 400 },
-    );
-  }
-}
+// ─── Validation helpers (poll.ts-only) ────────────────────
 
 function validateExtension(extensionMinutes: number): void {
   const allowed = [5, 10, 15, 30];
@@ -110,11 +68,6 @@ function resolveVoteIdentity(label: string, actor?: VoteActor): {
   const actorKey = validateActorLabel(actor?.actorKey ?? label).toLowerCase();
   const actorEmail = actor?.actorEmail?.trim().toLowerCase() || null;
   return { actorKey, actorEmail, displayNameSnapshot };
-}
-
-function normalizeCreatorKey(createdBy?: string | null): string | null {
-  const normalized = createdBy?.trim().toLowerCase() ?? '';
-  return normalized.length > 0 ? normalized : null;
 }
 
 function parseGlobalAutoStartFoodSelectionMinutesFallback(): number {
@@ -167,13 +120,6 @@ type PollWithVotes = Awaited<ReturnType<typeof prisma.poll.findUniqueOrThrow>> &
   excludedMenus: Awaited<ReturnType<typeof prisma.pollExcludedMenu.findMany>>;
 };
 
-async function resolvePollOfficeLocationId(officeLocationId?: string): Promise<string> {
-  if (officeLocationId?.trim()) {
-    return (await validateOfficeLocationId(officeLocationId)).id;
-  }
-  return (await ensureDefaultOfficeLocation()).id;
-}
-
 async function fetchPollOrThrow(pollId: string, officeLocationId?: string): Promise<PollWithVotes> {
   const resolvedOfficeLocationId = officeLocationId
     ? await resolvePollOfficeLocationId(officeLocationId)
@@ -197,80 +143,6 @@ function requireActive(poll: PollWithVotes): void {
   }
   if (new Date() > poll.endsAt) {
     throw Object.assign(new Error('Poll has expired'), { statusCode: 400 });
-  }
-}
-
-type ExcludedMenuInput = Array<{ menuId: string; reason: string }> | undefined;
-
-async function validateAndNormalizeExcludedMenus(
-  excludedMenuJustifications: ExcludedMenuInput,
-  officeLocationId?: string,
-): Promise<Array<{ menuId: string; menuName: string; reason: string }>> {
-  const resolvedOfficeLocationId = await resolvePollOfficeLocationId(officeLocationId);
-  const availableMenus = await prisma.menu.findMany({
-    where: { officeLocationId: resolvedOfficeLocationId },
-    select: { id: true, name: true },
-  });
-
-  const byId = new Map(
-    availableMenus.map((menu: { id: string; name: string }) => [menu.id, menu.name]),
-  );
-  const rows = excludedMenuJustifications ?? [];
-  const seen = new Set<string>();
-  const normalized: Array<{ menuId: string; menuName: string; reason: string }> = [];
-
-  for (const row of rows) {
-    const menuId = row.menuId;
-    const reason = row.reason.trim();
-
-    if (!menuId || !byId.has(menuId)) {
-      throw Object.assign(new Error('Excluded menu must be a valid poll option'), { statusCode: 400 });
-    }
-    if (seen.has(menuId)) {
-      throw Object.assign(new Error('Duplicate excluded menu is not allowed'), { statusCode: 400 });
-    }
-    if (!reason || reason.length > 240) {
-      throw Object.assign(
-        new Error('A justification of 1-240 characters is required for each excluded menu'),
-        { statusCode: 400 },
-      );
-    }
-
-    seen.add(menuId);
-    normalized.push({ menuId, menuName: byId.get(menuId) as string, reason });
-  }
-
-  if (availableMenus.length > 0 && normalized.length >= availableMenus.length) {
-    throw Object.assign(new Error('At least one menu option must remain in the poll'), {
-      statusCode: 400,
-    });
-  }
-
-  return normalized;
-}
-
-async function ensureNoPollInProgress(officeLocationId?: string): Promise<void> {
-  const resolvedOfficeLocationId = await resolvePollOfficeLocationId(officeLocationId);
-  const existing = await prisma.poll.findFirst({
-    where: {
-      officeLocationId: resolvedOfficeLocationId,
-      status: { in: ['active', 'tied'] },
-    },
-  });
-  if (existing) {
-    throw Object.assign(new Error('A poll is already in progress'), { statusCode: 409 });
-  }
-
-  const ongoingDelivery = await prisma.foodSelection.findFirst({
-    where: {
-      officeLocationId: resolvedOfficeLocationId,
-      status: { in: ['ordering', 'delivering', 'delivery_due'] },
-    },
-  });
-  if (ongoingDelivery) {
-    throw Object.assign(new Error('Cannot start a new team lunch while an order is ongoing'), {
-      statusCode: 409,
-    });
   }
 }
 
@@ -368,6 +240,17 @@ async function notifyRegisteredUsersAboutPollStart(
   }
 }
 
+// ─── Register expiry handler ──────────────────────────────
+
+registerPollExpiryHandler((pollId: string) => {
+  void endPoll(pollId);
+});
+
+registerPollStartedHandler(async (poll: Poll, officeLocationId: string) => {
+  broadcast('poll_started', { poll }, officeLocationId);
+  await notifyRegisteredUsersAboutPollStart(poll, officeLocationId);
+});
+
 // ─── Poll operations ───────────────────────────────────────
 
 export async function startPoll(
@@ -377,49 +260,17 @@ export async function startPoll(
   officeLocationId?: string,
   createdBy?: string | null,
 ): Promise<Poll> {
-  const trimmed = description.trim();
-  if (!trimmed || trimmed.length > 120) {
-    throw Object.assign(new Error('Description must be 1–120 characters'), { statusCode: 400 });
-  }
-
-  validateDuration(durationMinutes);
-  const resolvedOfficeLocationId = await resolvePollOfficeLocationId(officeLocationId);
-  await ensureNoPollInProgress(resolvedOfficeLocationId);
-  const normalizedExclusions = await validateAndNormalizeExcludedMenus(
+  const { poll, resolvedOfficeLocationId } = await createPollRecord(
+    description,
+    durationMinutes,
     excludedMenuJustifications,
-    resolvedOfficeLocationId,
+    officeLocationId,
+    createdBy,
   );
 
-  const now = new Date();
-  const endsAt = new Date(now.getTime() + durationMinutes * 60 * 1000);
+  await announcePollStarted(poll, resolvedOfficeLocationId);
 
-  const poll = await prisma.poll.create({
-    data: {
-      officeLocationId: resolvedOfficeLocationId,
-      createdBy: normalizeCreatorKey(createdBy),
-      description: trimmed,
-      status: 'active',
-      startedAt: now,
-      endsAt,
-      excludedMenus: {
-        create: normalizedExclusions.map((entry) => ({
-          menuId: entry.menuId,
-          menuName: entry.menuName,
-          reason: entry.reason,
-        })),
-      },
-    },
-    include: pollInclude,
-  });
-
-  const formatted = formatPoll(poll);
-  broadcast('poll_started', { poll: formatted }, resolvedOfficeLocationId);
-  await notifyRegisteredUsersAboutPollStart(formatted, resolvedOfficeLocationId);
-
-  // Schedule expiry timer
-  scheduleTimer(poll.id, endsAt);
-
-  return formatted;
+  return poll;
 }
 
 export async function castVote(
@@ -834,4 +685,3 @@ export async function abortPoll(
   broadcast('poll_ended', { pollId, status: 'aborted' as const }, poll.officeLocationId);
   return formatted;
 }
-

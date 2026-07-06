@@ -1,16 +1,23 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { broadcast } from '../../src/server/sse.js';
 import prisma from '../../src/server/db.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import {
   createOfficeLocation,
   updateOfficeLocationSettings,
 } from '../../src/server/services/officeLocation.js';
+import '../../src/server/services/poll.js';
 import { runOfficePollScheduleCheck } from '../../src/server/services/officePollSchedule.js';
+
+vi.mock('../../src/server/sse.js', () => ({
+  broadcast: vi.fn(),
+}));
 
 describe('office poll scheduler', () => {
   beforeEach(async () => {
     await cleanDatabase();
     vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   afterAll(async () => {
@@ -38,6 +45,13 @@ describe('office poll scheduler', () => {
     expect(poll?.description).toBe('Scheduled lunch poll');
     expect(poll?.createdBy).toBe(`office-scheduler:${office.id}:2026-03-11`);
     expect(Math.round((poll!.endsAt.getTime() - poll!.startedAt.getTime()) / 60_000)).toBe(50);
+    expect(broadcast).toHaveBeenCalledWith(
+      'poll_started',
+      expect.objectContaining({
+        poll: expect.objectContaining({ id: poll?.id }),
+      }),
+      office.id,
+    );
   });
 
   it('does not create a duplicate scheduled poll for the same office and date', async () => {

@@ -1,7 +1,8 @@
 import type { ServerResponse } from 'node:http';
 import prisma from './db.js';
-import type { InitialStatePayload, Poll, PollVote, FoodSelection, FoodOrder } from '../lib/types.js';
+import type { InitialStatePayload, FoodSelection, FoodOrder } from '../lib/types.js';
 import { getOfficeDefaultFoodSelectionDurationMinutes } from './services/officeLocation.js';
+import { formatPoll } from './services/pollCreation.js';
 
 const clients = new Map<ServerResponse, string>();
 
@@ -46,74 +47,6 @@ export function getClientCount(): number {
 }
 
 // ─── Helpers to format DB models into API shapes ───────────
-
-function formatPoll(poll: {
-  id: string;
-  createdBy: string | null;
-  description: string;
-  status: string;
-  startedAt: Date;
-  endsAt: Date;
-  endedPrematurely: boolean;
-  winnerMenuId: string | null;
-  winnerMenuName: string | null;
-  winnerSelectedRandomly: boolean;
-  createdAt: Date;
-  excludedMenus?: Array<{
-    menuId: string;
-    menuName: string;
-    reason: string;
-  }>;
-  votes: Array<{
-    id: string;
-    pollId: string;
-    menuId: string;
-    menuName: string;
-    nickname: string;
-    actorKey?: string | null;
-    actorEmail?: string | null;
-    displayNameSnapshot?: string | null;
-    castAt: Date;
-  }>;
-}): Poll {
-  const voteCounts: Record<string, number> = {};
-  for (const vote of poll.votes) {
-    voteCounts[vote.menuId] = (voteCounts[vote.menuId] || 0) + 1;
-  }
-
-  return {
-    id: poll.id,
-    createdBy: poll.createdBy,
-    description: poll.description,
-    status: poll.status as Poll['status'],
-    startedAt: poll.startedAt.toISOString(),
-    endsAt: poll.endsAt.toISOString(),
-    endedPrematurely: poll.endedPrematurely,
-    winnerMenuId: poll.winnerMenuId,
-    winnerMenuName: poll.winnerMenuName,
-    winnerSelectedRandomly: poll.winnerSelectedRandomly,
-    createdAt: poll.createdAt.toISOString(),
-    excludedMenuJustifications: (poll.excludedMenus ?? []).map((entry) => ({
-      menuId: entry.menuId,
-      menuName: entry.menuName,
-      reason: entry.reason,
-    })),
-    votes: poll.votes.map(
-      (v): PollVote => ({
-        id: v.id,
-        pollId: v.pollId,
-        menuId: v.menuId,
-        menuName: v.menuName,
-        nickname: v.displayNameSnapshot ?? v.nickname,
-        actorKey: v.actorKey ?? null,
-        actorEmail: v.actorEmail ?? null,
-        displayNameSnapshot: v.displayNameSnapshot ?? v.nickname,
-        castAt: v.castAt.toISOString(),
-      }),
-    ),
-    voteCounts,
-  };
-}
 
 function formatFoodSelection(fs: {
   id: string;
@@ -262,3 +195,4 @@ export async function sendInitialState(res: ServerResponse, officeLocationId: st
 
 // Export formatters for reuse in services
 export { formatPoll, formatFoodSelection };
+// ponytail: formatPoll re-exported from pollCreation.ts for backwards compat with existing imports
