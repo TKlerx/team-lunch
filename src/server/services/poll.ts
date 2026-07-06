@@ -18,6 +18,8 @@ import {
   getActiveTimers,
   createPollRecord,
   registerPollExpiryHandler,
+  registerPollStartedHandler,
+  announcePollStarted,
 } from './pollCreation.js';
 
 export { clearTimer, clearAllTimers, getActiveTimers, formatPoll };
@@ -244,6 +246,11 @@ registerPollExpiryHandler((pollId: string) => {
   void endPoll(pollId);
 });
 
+registerPollStartedHandler(async (poll: Poll, officeLocationId: string) => {
+  broadcast('poll_started', { poll }, officeLocationId);
+  await notifyRegisteredUsersAboutPollStart(poll, officeLocationId);
+});
+
 // ─── Poll operations ───────────────────────────────────────
 
 export async function startPoll(
@@ -261,8 +268,7 @@ export async function startPoll(
     createdBy,
   );
 
-  broadcast('poll_started', { poll }, resolvedOfficeLocationId);
-  await notifyRegisteredUsersAboutPollStart(poll, resolvedOfficeLocationId);
+  await announcePollStarted(poll, resolvedOfficeLocationId);
 
   return poll;
 }

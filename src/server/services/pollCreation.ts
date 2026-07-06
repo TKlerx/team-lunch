@@ -9,9 +9,20 @@ export const pollInclude = { votes: true, excludedMenus: true } as const;
 
 // ponytail: late-bound callback so timer management stays in this low-layer module
 let onPollExpired: (pollId: string) => void = () => {};
+let onPollStarted: (poll: Poll, officeLocationId: string) => void | Promise<void> = () => {};
 
 export function registerPollExpiryHandler(handler: (pollId: string) => void): void {
   onPollExpired = handler;
+}
+
+export function registerPollStartedHandler(
+  handler: (poll: Poll, officeLocationId: string) => void | Promise<void>,
+): void {
+  onPollStarted = handler;
+}
+
+export async function announcePollStarted(poll: Poll, officeLocationId: string): Promise<void> {
+  await onPollStarted(poll, officeLocationId);
 }
 
 // ─── Timer management ──────────────────────────────────────
