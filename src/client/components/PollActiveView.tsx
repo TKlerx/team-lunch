@@ -3,6 +3,7 @@ import { useAppState } from '../context/AppContext.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { MealRecommendationPreVoteResponse } from '../../lib/types.js';
 import {
   getAuthenticatedActorKey,
@@ -303,6 +304,7 @@ export default function PollActiveView() {
   const [updatingTimer, setUpdatingTimer] = useState(false);
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState('');
   const [manualMinutesError, setManualMinutesError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
   const canKillPoll = isAdminAuthenticatedUser();
   const pollExpired = remaining <= 0;
 
@@ -310,7 +312,11 @@ export default function PollActiveView() {
   const canAdjustPollTimer = canKillPoll || isCreatorAuthenticatedUser(activePoll.createdBy);
 
   const handleFinishNow = async (): Promise<boolean> => {
-    const confirmed = window.confirm('Confirm completion?');
+    const confirmed = await confirm({
+      title: 'Confirm completion?',
+      consequenceText: 'This ends voting and moves Team Lunch to meal selection.',
+      confirmLabel: 'Confirm completion',
+    });
     if (!confirmed) return false;
 
     setSubmitting(true);
@@ -325,7 +331,12 @@ export default function PollActiveView() {
   };
 
   const handleAbort = async () => {
-    const confirmed = window.confirm('Abort this poll?');
+    const confirmed = await confirm({
+      title: 'Cancel this poll?',
+      consequenceText: 'Current votes will be discarded.',
+      confirmLabel: 'Cancel poll',
+      destructive: true,
+    });
     if (!confirmed) return;
 
     setAborting(true);
@@ -370,6 +381,7 @@ export default function PollActiveView() {
   const timerOptions = [5, 15, 30, 60];
 
   return (
+    <>
     <div className="mx-auto w-full max-w-2xl p-4">
       <TimerActionHeader
         title={
@@ -531,5 +543,7 @@ export default function PollActiveView() {
         <PublicVotesBoard votes={activePoll.votes} menus={votableMenus} />
       </div>
     </div>
+    {dialog}
+    </>
   );
 }

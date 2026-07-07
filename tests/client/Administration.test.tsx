@@ -720,6 +720,7 @@ describe('Administration user management', () => {
 
     await screen.findByRole('heading', { name: /administration/i });
     await user.click(screen.getByRole('button', { name: /delete local account/i }));
+    await user.click(screen.getAllByRole('button', { name: /delete local account/i }).at(-1)!);
 
     expect(await screen.findByText(/no users yet/i)).toBeInTheDocument();
   });

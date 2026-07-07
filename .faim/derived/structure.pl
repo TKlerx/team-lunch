@@ -1216,3 +1216,12 @@ rel('tests/client/ShoppingList.test.tsx',depends_on,'src/client/context/AppConte
 rel('tests/client/ShoppingList.test.tsx',depends_on,'src/client/pages/ShoppingList.tsx').
 rel('tests/client/ShoppingList.test.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/ThemeContext.test.tsx',depends_on,'src/client/context/ThemeContext.tsx').
+entity('src/client/components/ui/ConfirmDialog.tsx',module).
+rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx').
+rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx').
+rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').
+rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').
+rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').
+rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').
+rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').
+rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx').

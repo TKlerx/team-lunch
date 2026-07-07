@@ -276,14 +276,13 @@ describe('FoodDeliveryView', () => {
 
   it('confirms arrival manually', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     renderView();
 
     await user.click(screen.getByRole('button', { name: /delivery timer actions/i }));
     await user.click(screen.getByRole('button', { name: /confirm lunch arrived/i }));
+    await user.click(screen.getByRole('button', { name: /confirm arrival/i }));
 
     expect(mockConfirmArrival).toHaveBeenCalledWith('fs-1');
-    confirmSpy.mockRestore();
   });
 
   it('shows due message when delivery is due', () => {
@@ -311,15 +310,14 @@ describe('FoodDeliveryView', () => {
 
   it('aborts process from timer dropdown action', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockAbortFoodSelection.mockResolvedValue({});
     renderView();
 
     await user.click(screen.getByRole('button', { name: /delivery timer actions/i }));
     await user.click(screen.getByRole('button', { name: /abort process/i }));
+    await user.click(screen.getAllByRole('button', { name: /abort process/i }).at(-1)!);
 
     expect(mockAbortFoodSelection).toHaveBeenCalledWith('fs-1');
-    confirmSpy.mockRestore();
   });
 
   it('toggles delivered checkmark for an order line', async () => {

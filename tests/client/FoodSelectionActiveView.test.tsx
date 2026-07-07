@@ -272,7 +272,6 @@ describe('FoodSelectionActiveView', () => {
 
   it('asks for confirmation before adding an item with an ingredient alert', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
     mockGetUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: ['pizza'],
@@ -283,9 +282,9 @@ describe('FoodSelectionActiveView', () => {
 
     await screen.findByText(/ingredient alert: pizza/i);
     await user.click(screen.getAllByRole('button', { name: /^add$/i })[0]);
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mockPlaceOrder).not.toHaveBeenCalled();
-    confirmSpy.mockRestore();
   });
 
   it('includes order comment when clicking Add', async () => {
@@ -514,7 +513,6 @@ describe('FoodSelectionActiveView', () => {
 
   it('uses CTA button to complete meal collection when everyone already ordered', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockCompleteFoodSelectionNow.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -546,9 +544,9 @@ describe('FoodSelectionActiveView', () => {
 
     renderView();
     await user.click(screen.getByRole('button', { name: /click here when you place the order\./i }));
+    await user.click(screen.getByRole('button', { name: /confirm completion/i }));
 
     expect(mockCompleteFoodSelectionNow).toHaveBeenCalledWith('fs-1');
-    confirmSpy.mockRestore();
   });
 
   it('shows order board with other users\' orders', () => {
@@ -588,15 +586,14 @@ describe('FoodSelectionActiveView', () => {
 
   it('opens timer action menu and confirms completion', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockCompleteFoodSelectionNow.mockResolvedValue({});
     renderView();
 
     await user.click(screen.getByRole('button', { name: /food selection timer actions/i }));
     await user.click(screen.getByRole('button', { name: /finish meal collection/i }));
+    await user.click(screen.getByRole('button', { name: /confirm completion/i }));
 
     expect(mockCompleteFoodSelectionNow).toHaveBeenCalledWith('fs-1');
-    confirmSpy.mockRestore();
   });
 
   it('updates food selection timer from preset entry in timer menu', async () => {
@@ -635,15 +632,14 @@ describe('FoodSelectionActiveView', () => {
 
   it('calls abortFoodSelection from timer menu abort process action', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockAbortFoodSelection.mockResolvedValue({});
     renderView();
 
     await user.click(screen.getByRole('button', { name: /food selection timer actions/i }));
     await user.click(screen.getByRole('button', { name: /abort process/i }));
+    await user.click(screen.getByRole('button', { name: /abort food selection/i }));
 
     expect(mockAbortFoodSelection).toHaveBeenCalledWith('fs-1');
-    confirmSpy.mockRestore();
   });
 
   // ─── Meal recommendations ────────────────────────────────

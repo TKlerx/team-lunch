@@ -8,6 +8,7 @@ import {
 import { useAppDispatch, useAppState } from '../context/AppContext.js';
 import { useCountdown, useElapsedSince, formatTime } from '../hooks/useCountdown.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import {
   buildOrderLookupMaps,
   buildOrderSummary,
@@ -379,6 +380,7 @@ export default function FoodDeliveryView() {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [updatingDeliveredIds, setUpdatingDeliveredIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
   const canManageFoodSelection = isAdminAuthenticatedUser();
   const actorLabel = getAuthenticatedDisplayLabel();
 
@@ -450,7 +452,11 @@ export default function FoodDeliveryView() {
   }
 
   async function onConfirmArrival(): Promise<boolean> {
-    const confirmed = window.confirm('Confirm lunch has arrived? This cannot be changed afterwards.');
+    const confirmed = await confirm({
+      title: 'Confirm lunch has arrived?',
+      consequenceText: 'This cannot be changed afterwards.',
+      confirmLabel: 'Confirm arrival',
+    });
     if (!confirmed) return false;
 
     setIsConfirmingArrival(true);
@@ -467,7 +473,12 @@ export default function FoodDeliveryView() {
   }
 
   async function onAbortProcess(): Promise<boolean> {
-    const confirmed = window.confirm('Abort food selection?');
+    const confirmed = await confirm({
+      title: 'Abort food selection?',
+      consequenceText: 'This stops delivery tracking for this lunch.',
+      confirmLabel: 'Abort process',
+      destructive: true,
+    });
     if (!confirmed) return false;
 
     setError(null);
@@ -517,6 +528,7 @@ export default function FoodDeliveryView() {
   }
 
   return (
+    <>
     <div className="mx-auto w-full max-w-3xl p-4">
       <DeliveryTimerActions
         title={isDue ? 'Lunch should have arrived' : 'Awaiting lunch delivery'}
@@ -584,5 +596,7 @@ export default function FoodDeliveryView() {
         {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
       </div>
     </div>
+    {dialog}
+    </>
   );
 }

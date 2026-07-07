@@ -5,6 +5,7 @@ import { useCountdown, formatTime } from "../hooks/useCountdown.js";
 import * as api from "../api.js";
 import TimerActionHeader from "./TimerActionHeader.js";
 import MealOnboardingDialog from "./MealOnboardingDialog.js";
+import { useConfirmDialog } from "./ui/ConfirmDialog.js";
 import { formatPrice } from "../utils/orderCopy.js";
 import {
   getAuthenticatedActorKey,
@@ -121,6 +122,7 @@ function OrderForm({
   const [error, setError] = useState("");
   const [addingItemId, setAddingItemId] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
+  const { confirm, dialog } = useConfirmDialog();
 
   const filteredMenuItems = useMemo(() => {
     const normalizedSearch = itemSearch.trim().toLowerCase();
@@ -156,9 +158,11 @@ function OrderForm({
       warningLines.push(`Preference note: ${warnings.dislikes.join(", ")}`);
     }
     if (warningLines.length > 0) {
-      const shouldContinue = window.confirm(
-        `${warningLines.join("\n")}\n\nDo you still want to add this meal?`,
-      );
+      const shouldContinue = await confirm({
+        title: "Add this meal anyway?",
+        consequenceText: `${warningLines.join("\n")}\n\nDo you still want to add this meal?`,
+        confirmLabel: "Add meal",
+      });
       if (!shouldContinue) {
         return;
       }
@@ -399,6 +403,7 @@ function OrderForm({
           Withdraw
         </button>
       </div>
+      {dialog}
     </div>
   );
 }
@@ -1232,6 +1237,7 @@ export default function FoodSelectionActiveView() {
   const [updatingTimer, setUpdatingTimer] = useState(false);
   const [error, setError] = useState("");
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState("");
+  const { confirm, dialog } = useConfirmDialog();
   if (!activeFoodSelection || !nickname) return null;
 
   const selection = activeFoodSelection;
@@ -1327,7 +1333,11 @@ export default function FoodSelectionActiveView() {
   ]);
 
   const handleFinishNow = async (): Promise<boolean> => {
-    const confirmed = window.confirm("Confirm completion?");
+    const confirmed = await confirm({
+      title: "Confirm completion?",
+      consequenceText: "This ends meal selection and moves Team Lunch to ordering.",
+      confirmLabel: "Confirm completion",
+    });
     if (!confirmed) return false;
 
     setSubmitting(true);
@@ -1361,7 +1371,12 @@ export default function FoodSelectionActiveView() {
   };
 
   const handleAbort = async () => {
-    const confirmed = window.confirm("Abort food selection?");
+    const confirmed = await confirm({
+      title: "Abort food selection?",
+      consequenceText: "Current meal orders for this selection will stop changing.",
+      confirmLabel: "Abort food selection",
+      destructive: true,
+    });
     if (!confirmed) return;
 
     setSubmitting(true);
@@ -1495,6 +1510,7 @@ export default function FoodSelectionActiveView() {
         </p>
       )}
       {error && <p className="mt-4 text-sm text-danger-fg">{error}</p>}
+      {dialog}
     </div>
   );
 }

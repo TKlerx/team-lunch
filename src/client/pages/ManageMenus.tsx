@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
@@ -86,41 +87,7 @@ function parseMenuUrlInput(value: string): { value: string | null; error: string
   return normalized;
 }
 
-// ─── Confirmation dialog ────────────────────────────────────
 
-function ConfirmDialog({
-  message,
-  onConfirm,
-  onCancel,
-}: {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-sm rounded-lg bg-surface-raised p-6 shadow-xl">
-        <p className="mb-4 text-fg">{message}</p>
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded px-4 py-2 text-sm text-fg-muted hover:bg-surface-muted"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded bg-danger-solid px-4 py-2 text-sm font-medium text-danger-on transition-colors hover:opacity-90"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function MenuEditDialog({
   menuName,
@@ -430,13 +397,14 @@ function MenuItemRow({
         </button>
       </div>
 
-      {confirmDelete && (
-        <ConfirmDialog
-          message={`Delete item "${item.name}"?`}
-          onConfirm={() => void handleDelete()}
-          onCancel={() => setConfirmDelete(false)}
-        />
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        title={`Delete item "${item.name}"?`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => void handleDelete()}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </>
   );
 }
@@ -1309,13 +1277,15 @@ function MenuCard({
         )}
       </div>
 
-      {confirmDelete && (
-        <ConfirmDialog
-          message={`Delete menu "${menu.name}" and all its items?`}
-          onConfirm={() => void handleDelete()}
-          onCancel={() => setConfirmDelete(false)}
-        />
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        title={`Delete menu "${menu.name}"?`}
+        consequenceText="All menu items will be deleted too."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => void handleDelete()}
+        onCancel={() => setConfirmDelete(false)}
+      />
       {editingMenu && (
         <MenuEditDialog
           menuName={menu.name}
