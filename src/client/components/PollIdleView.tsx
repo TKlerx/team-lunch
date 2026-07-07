@@ -15,7 +15,7 @@ import {
   getSelectionsWaitingForRating,
 } from '../utils/dashboard.js';
 
-const POLL_DURATIONS = Array.from({ length: (720 - 5) / 5 + 1 }, (_, i) => 5 + i * 5);
+const POLL_DURATIONS = [5, 10, 15, 30, 45, 60, 120, 240, 480, 720] as const;
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
 
 function formatDuration(mins: number): string {
@@ -65,21 +65,21 @@ function DashboardStats({
   return (
     <DashboardCard title="Quick Stats">
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">Last winner</p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">{lastWinner ?? 'No winner yet'}</p>
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">Last winner</p>
+          <p className="mt-1 text-base font-semibold text-fg">{lastWinner ?? 'No winner yet'}</p>
         </div>
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">Average rating</p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">Average rating</p>
+          <p className="mt-1 text-base font-semibold text-fg">
             {averageRating === null ? 'No ratings yet' : `${averageRating.toFixed(1)} / 5`}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">
             Most ordered item
           </p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">
+          <p className="mt-1 text-base font-semibold text-fg">
             {mostOrderedItem ? `${mostOrderedItem.itemName} (${mostOrderedItem.count})` : 'No orders yet'}
           </p>
           {mostOrderedItem && (

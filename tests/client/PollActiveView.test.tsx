@@ -182,11 +182,11 @@ describe('PollActiveView', () => {
     expect(mockWithdrawVote).toHaveBeenCalledWith('poll-1', 'menu-1', 'Alice');
   });
 
-  it('shows "sit this one out" button to collapse voting panel', async () => {
+  it('shows "Hide voting panel" button to collapse voting panel', async () => {
     const user = userEvent.setup();
     renderView();
 
-    const sitOut = screen.getByText(/sit this one out/i);
+    const sitOut = screen.getByText(/hide voting panel/i);
     expect(sitOut).toBeInTheDocument();
 
     await user.click(sitOut);
@@ -211,7 +211,7 @@ describe('PollActiveView', () => {
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
-    await user.click(screen.getByRole('button', { name: /kill poll \(admin\)/i }));
+    await user.click(screen.getByRole('button', { name: /cancel poll/i }));
 
     expect(mockAbortPoll).toHaveBeenCalledWith('poll-1');
     confirmSpy.mockRestore();
@@ -223,7 +223,7 @@ describe('PollActiveView', () => {
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
-    expect(screen.queryByRole('button', { name: /kill poll \(admin\)/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /cancel poll/i })).not.toBeInTheDocument();
   });
 
   it('ends poll from timer menu confirm completion action', async () => {
@@ -259,6 +259,17 @@ describe('PollActiveView', () => {
     await user.type(screen.getByLabelText(/poll manual minutes remaining/i), '37{enter}');
 
     expect(mockUpdatePollTimer).toHaveBeenCalledWith('poll-1', 37);
+  });
+
+  it('rejects out-of-range manual minutes without calling the API', async () => {
+    const user = userEvent.setup();
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
+    await user.type(screen.getByLabelText(/poll manual minutes remaining/i), '999{enter}');
+
+    expect(mockUpdatePollTimer).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent(/between 1 and 720/i);
   });
 
   it('closes timer menu when clicking outside', async () => {

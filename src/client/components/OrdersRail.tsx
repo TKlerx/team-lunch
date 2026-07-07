@@ -37,7 +37,9 @@ export default function OrdersRail({
     : 'Start new Team Lunch';
   const remainingSeconds = useCountdown(hasOngoingLunchProcess ? inProgressCountdownTo : null);
   const timerLabel = formatTime(remainingSeconds);
-  const isPhase3Due = hasOngoingLunchProcess && inProgressPhaseLabel === '3/3' && remainingSeconds === 0;
+  // ponytail: match the "3/3" fraction, not the full label, so phase-name wording (T2/T13) can change freely
+  const isPhase3Due =
+    hasOngoingLunchProcess && !!inProgressPhaseLabel?.includes('3/3') && remainingSeconds === 0;
   const topActionClass = hasOngoingLunchProcess
     ? 'mb-4 w-full rounded-lg border border-warning bg-warning-soft px-3 py-2 text-left text-sm font-semibold text-warning-fg hover:bg-warning-soft/70'
     : 'mb-4 w-full rounded-lg border border-accent/50 bg-accent-soft px-3 py-2 text-left text-sm font-semibold text-accent-fg hover:bg-accent-soft/70 disabled:cursor-not-allowed disabled:opacity-50';

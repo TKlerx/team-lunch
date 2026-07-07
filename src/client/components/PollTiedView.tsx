@@ -164,7 +164,7 @@ export default function PollTiedView() {
                 onClick={() => setShowAbortConfirm(true)}
                 className="text-sm text-danger-fg hover:opacity-80"
               >
-                Kill poll (admin)
+                Cancel poll
               </button>
             )}
           </div>
