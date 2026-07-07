@@ -129,7 +129,7 @@ function VotingPanel({
           onClick={() => setCollapsed(true)}
           className="text-xs text-fg-muted hover:text-fg"
         >
-          I&apos;ll sit this one out
+          Hide voting panel
         </button>
       </div>
 
@@ -302,6 +302,7 @@ export default function PollActiveView() {
   const [aborting, setAborting] = useState(false);
   const [updatingTimer, setUpdatingTimer] = useState(false);
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState('');
+  const [manualMinutesError, setManualMinutesError] = useState<string | null>(null);
   const canKillPoll = isAdminAuthenticatedUser();
   const pollExpired = remaining <= 0;
 
@@ -366,7 +367,7 @@ export default function PollActiveView() {
   const votableMenus = menus
     .filter((m) => m.items.length > 0 && !excludedMenuIds.has(m.id))
     .map((m) => ({ id: m.id, name: m.name }));
-  const timerOptions = Array.from({ length: 24 }, (_, index) => (index + 1) * 5);
+  const timerOptions = [5, 15, 30, 60];
 
   return (
     <div className="mx-auto w-full max-w-2xl p-4">
@@ -409,7 +410,7 @@ export default function PollActiveView() {
                 disabled={aborting || submitting}
                 className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
               >
-                Kill poll (admin)
+                Cancel poll
               </button>
             )}
 
@@ -436,24 +437,37 @@ export default function PollActiveView() {
 
                 <div className="p-2">
                   <input
-                    type="text"
+                    type="number"
+                    min={1}
+                    max={720}
                     value={manualRemainingMinutes}
-                    onChange={(event) => setManualRemainingMinutes(event.target.value)}
+                    onChange={(event) => {
+                      setManualRemainingMinutes(event.target.value);
+                      setManualMinutesError(null);
+                    }}
                     onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                        void (async () => {
-                          const done = await handleUpdateTimer(
-                            Number.parseInt(manualRemainingMinutes, 10),
-                          );
-                          if (done) closeMenu();
-                        })();
+                      if (event.key !== 'Enter') return;
+                      event.preventDefault();
+                      const parsed = Number.parseInt(manualRemainingMinutes, 10);
+                      if (!Number.isInteger(parsed) || parsed < 1 || parsed > 720) {
+                        setManualMinutesError('Enter a whole number of minutes between 1 and 720.');
+                        return;
                       }
+                      void (async () => {
+                        const done = await handleUpdateTimer(parsed);
+                        if (done) closeMenu();
+                      })();
                     }}
                     placeholder="Manual minutes remaining"
                     className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
                     aria-label="Poll manual minutes remaining"
+                    aria-invalid={manualMinutesError ? true : undefined}
                   />
+                  {manualMinutesError && (
+                    <p className="mt-1 text-xs text-danger-fg" role="alert">
+                      {manualMinutesError}
+                    </p>
+                  )}
                 </div>
               </>
             ) : (

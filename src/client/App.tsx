@@ -135,14 +135,14 @@ export default function App() {
       ) {
         return {
           actionLabel: 'Awaiting lunch delivery...',
-          phaseLabel: '3/3',
+          phaseLabel: 'Step 3/3 · Delivery',
           countdownTo: activeFoodSelection.deliveryDueAt,
         };
       }
 
       return {
         actionLabel: 'Food selection in progress...',
-        phaseLabel: '2/3',
+        phaseLabel: 'Step 2/3 · Ordering',
         countdownTo: activeFoodSelection.endsAt,
       };
     }
@@ -150,7 +150,7 @@ export default function App() {
     if (activePoll) {
       return {
         actionLabel: 'Cuisine poll in progress...',
-        phaseLabel: '1/3',
+        phaseLabel: 'Step 1/3 · Poll',
         countdownTo: activePoll.endsAt,
       };
     }
@@ -158,7 +158,7 @@ export default function App() {
     if (isPollFinishedTransition) {
       return {
         actionLabel: 'Cuisine poll in progress...',
-        phaseLabel: '1/3',
+        phaseLabel: 'Step 1/3 · Poll',
         countdownTo: null,
       };
     }
@@ -257,14 +257,14 @@ export default function App() {
                   <img
                     src={cuisineAroundTheWorldImage}
                     alt=""
-                    className="h-auto w-auto max-h-full max-w-full object-contain opacity-20"
+                    className="h-auto w-auto max-h-full max-w-full object-contain opacity-[0.08]"
                   />
                 </div>
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <img
                     src={exampleCompanyLogoImage}
                     alt=""
-                    className="h-auto w-auto max-h-[24%] max-w-[45%] object-contain opacity-20"
+                    className="h-auto w-auto max-h-[24%] max-w-[45%] object-contain opacity-[0.08]"
                   />
                 </div>
               </div>

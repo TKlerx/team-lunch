@@ -137,9 +137,9 @@ describe('PollTiedView', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  it('shows "Kill poll (admin)" button', () => {
+  it('shows "Cancel poll" button', () => {
     renderView();
-    expect(screen.getByText('Kill poll (admin)')).toBeInTheDocument();
+    expect(screen.getByText('Cancel poll')).toBeInTheDocument();
   });
 
   it('shows confirmation and calls abortPoll on confirm', async () => {
@@ -147,7 +147,7 @@ describe('PollTiedView', () => {
     mockAbortPoll.mockResolvedValue({});
     renderView();
 
-    await user.click(screen.getByText('Kill poll (admin)'));
+    await user.click(screen.getByText('Cancel poll'));
     expect(screen.getByText('Kill this poll?')).toBeInTheDocument();
     await user.click(screen.getByText('Yes, kill'));
     expect(mockAbortPoll).toHaveBeenCalledWith('poll-1');
@@ -156,6 +156,6 @@ describe('PollTiedView', () => {
   it('hides kill poll controls for non-admin users', () => {
     mockIsAdminAuthenticatedUser.mockReturnValue(false);
     renderView();
-    expect(screen.queryByText('Kill poll (admin)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Cancel poll')).not.toBeInTheDocument();
   });
 });

@@ -204,12 +204,18 @@ function OrderForm({
           title={formatIngredientPreferencesTooltip(preferences)}
           className="inline-flex min-h-9 w-full shrink-0 items-center justify-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:w-auto"
         >
-          <span
-            className="material-symbols-outlined text-[20px]"
+          <svg
             aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
           >
-            person_heart
-          </span>
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.49 4.04 3 5.5l7 7Z" />
+          </svg>
           <span>Ingredient Preferences</span>
         </Link>
       </div>
