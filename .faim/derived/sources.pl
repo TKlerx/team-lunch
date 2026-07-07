@@ -1874,8 +1874,8 @@ derivation_query(entity('tests/e2e/smoke.spec.ts',module), "import graph (scip-t
 derived_at(entity('tests/e2e/smoke.spec.ts',module), '2026-07-06T11:23:53Z', agent).
 derived_from(entity('tests/server/auth-approval-gate.test.ts',module), scanner_scan).
 source_files(entity('tests/server/auth-approval-gate.test.ts',module), ['tests/server/auth-approval-gate.test.ts']).
-source_hash(entity('tests/server/auth-approval-gate.test.ts',module), 'sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237').
-source_file_hashes(entity('tests/server/auth-approval-gate.test.ts',module), ['sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237']).
+source_hash(entity('tests/server/auth-approval-gate.test.ts',module), 'sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef').
+source_file_hashes(entity('tests/server/auth-approval-gate.test.ts',module), ['sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef']).
 derivation_query(entity('tests/server/auth-approval-gate.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/server/auth-approval-gate.test.ts',module), '2026-07-06T11:23:53Z', agent).
 derived_from(entity('tests/server/helpers/db.ts',module), scanner_scan).
@@ -2102,8 +2102,8 @@ derivation_query(entity('tests/server/office-location-service.test.ts',module), 
 derived_at(entity('tests/server/office-location-service.test.ts',module), '2026-07-06T11:23:53Z', agent).
 derived_from(entity('tests/server/office-poll-schedule.test.ts',module), scanner_scan).
 source_files(entity('tests/server/office-poll-schedule.test.ts',module), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(entity('tests/server/office-poll-schedule.test.ts',module), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(entity('tests/server/office-poll-schedule.test.ts',module), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
+source_hash(entity('tests/server/office-poll-schedule.test.ts',module), 'sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8').
+source_file_hashes(entity('tests/server/office-poll-schedule.test.ts',module), ['sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8']).
 derivation_query(entity('tests/server/office-poll-schedule.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/server/office-poll-schedule.test.ts',module), '2026-07-06T11:23:53Z', agent).
 derived_from(entity('tests/server/poll-authz.test.ts',module), scanner_scan).
@@ -4550,14 +4550,14 @@ derivation_query(rel('tests/client/useSSE.test.ts',depends_on,'src/lib/types.ts'
 derived_at(rel('tests/client/useSSE.test.ts',depends_on,'src/lib/types.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), scanner_scan).
 source_files(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), ['tests/server/auth-approval-gate.test.ts']).
-source_hash(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), 'sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237').
-source_file_hashes(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), ['sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237']).
+source_hash(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), 'sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef').
+source_file_hashes(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), ['sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef']).
 derivation_query(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/index.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), scanner_scan).
 source_files(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), ['tests/server/auth-approval-gate.test.ts']).
-source_hash(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), 'sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237').
-source_file_hashes(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), ['sha256:c3dae10ec4ac29babeebe3635d56e4ff991a6c25119616240bbc0e21313ec237']).
+source_hash(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), 'sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef').
+source_file_hashes(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), ['sha256:d28cd71272b0e9edbeb54af69426c9bad169335c6287349839601efdc14a96ef']).
 derivation_query(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/auth-approval-gate.test.ts',depends_on,'src/server/services/authSession.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/helpers/db.ts',depends_on,'src/server/db.ts'), scanner_scan).
@@ -5816,34 +5816,28 @@ derivation_query(rel('tests/server/office-location-service.test.ts',depends_on,'
 derived_at(rel('tests/server/office-location-service.test.ts',depends_on,'src/lib/types.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
 source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), 'sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8']).
 derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
 source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8']).
 derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
 source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8']).
 derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), scanner_scan).
 source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), 'sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['sha256:2725c4739fabc24ce50ccd087d847e60c9dd72361fd613995b7cdd35f4be73e8']).
 derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), '2026-07-06T11:23:53Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), 'sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['sha256:379e83107841d91b4c8d4c14c160100901b1fcf10684d3854250eea602788ac5']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), '2026-07-06T11:23:53Z', agent).
 derived_from(rel('tests/server/poll-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
 source_files(rel('tests/server/poll-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/poll-authz.test.ts']).
 source_hash(rel('tests/server/poll-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:e7705df509ed90ab2d58bad4ce6ecdfccef79dbef17b69fa4571088fa90db077').

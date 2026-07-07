@@ -994,7 +994,6 @@ rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts').
 rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts').
 rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts').
 rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts').
-rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts').
 rel('tests/server/poll-authz.test.ts',depends_on,'tests/server/helpers/db.ts').
 rel('tests/server/poll-authz.test.ts',depends_on,'src/server/index.ts').
 rel('tests/server/poll-authz.test.ts',depends_on,'src/server/services/authSession.ts').
