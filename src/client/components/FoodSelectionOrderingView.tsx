@@ -11,6 +11,7 @@ import {
   copyOrderSummary,
 } from '../utils/orderCopy.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { FoodSelectionFallbackCandidate } from '../../lib/types.js';
 
 const ETA_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60] as const;
@@ -221,6 +222,7 @@ export default function FoodSelectionOrderingView() {
   const [fallbackSuccess, setFallbackSuccess] = useState('');
   const [placingFallbackFor, setPlacingFallbackFor] = useState<string | null>(null);
   const [pingingFallbackFor, setPingingFallbackFor] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
   const canManageFoodSelection = isAdminAuthenticatedUser();
 
   if (!activeFoodSelection || activeFoodSelection.status !== 'ordering') return null;
@@ -277,9 +279,11 @@ export default function FoodSelectionOrderingView() {
       return false;
     }
 
-    const confirmed = window.confirm(
-      `Confirm that you placed the restaurant order and are announcing an ETA of ${value} minutes?`,
-    );
+    const confirmed = await confirm({
+      title: 'Restaurant order placed?',
+      consequenceText: `Announce an ETA of ${value} minutes to everyone.`,
+      confirmLabel: 'Confirm order placed',
+    });
     if (!confirmed) {
       return false;
     }
@@ -299,9 +303,11 @@ export default function FoodSelectionOrderingView() {
   };
 
   const handleClaimOrdering = async () => {
-    const confirmed = window.confirm(
-      'Confirm that you are starting the restaurant order now? Everyone else will be notified so they do not order in parallel.',
-    );
+    const confirmed = await confirm({
+      title: 'Start the restaurant order now?',
+      consequenceText: 'Everyone else will be notified so they do not order in parallel.',
+      confirmLabel: 'Start ordering',
+    });
     if (!confirmed) {
       return;
     }
@@ -476,6 +482,7 @@ export default function FoodSelectionOrderingView() {
           onToggleProcessed={handleToggleProcessed}
         />
       </div>
+      {dialog}
     </div>
   );
 }

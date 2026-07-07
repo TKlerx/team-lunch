@@ -206,15 +206,14 @@ describe('PollActiveView', () => {
 
   it('calls abortPoll API from timer menu kill poll action', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockAbortPoll.mockResolvedValue({});
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
     await user.click(screen.getByRole('button', { name: /cancel poll/i }));
+    await user.click(screen.getAllByRole('button', { name: /cancel poll/i }).at(-1)!);
 
     expect(mockAbortPoll).toHaveBeenCalledWith('poll-1');
-    confirmSpy.mockRestore();
   });
 
   it('hides kill poll action for non-admin users', async () => {
@@ -228,15 +227,14 @@ describe('PollActiveView', () => {
 
   it('ends poll from timer menu confirm completion action', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockEndPoll.mockResolvedValue({});
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
     await user.click(screen.getByRole('button', { name: /confirm completion/i }));
+    await user.click(screen.getAllByRole('button', { name: /confirm completion/i }).at(-1)!);
 
     expect(mockEndPoll).toHaveBeenCalledWith('poll-1');
-    confirmSpy.mockRestore();
   });
 
   it('updates poll timer from preset entry in timer menu', async () => {
@@ -286,7 +284,6 @@ describe('PollActiveView', () => {
 
   it('shows a completion call to action when the poll timer has expired', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockEndPoll.mockResolvedValue({});
     mockUseCountdown.mockReturnValue(0);
 
@@ -297,10 +294,10 @@ describe('PollActiveView', () => {
 
     const ctaButton = screen.getAllByRole('button', { name: /confirm completion/i })[0];
     await user.click(ctaButton);
+    await user.click(screen.getAllByRole('button', { name: /confirm completion/i }).at(-1)!);
 
     expect(mockEndPoll).toHaveBeenCalledWith('poll-1');
     expect(screen.getByText(/voting is closed\. review the result and complete the poll\./i)).toBeInTheDocument();
-    confirmSpy.mockRestore();
   });
 
   it('shows a waiting message instead of the CTA for non-admins after expiry', () => {
