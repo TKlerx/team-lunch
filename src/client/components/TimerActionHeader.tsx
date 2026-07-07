@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { Button } from './ui/Button.js';
 
 interface TimerActionHeaderProps {
   title: ReactNode;
@@ -63,10 +64,10 @@ export default function TimerActionHeader({
       <span className={`text-sm font-medium ${dueStyle ? 'text-danger-fg' : 'text-accent-fg'}`}>
         {title}
       </span>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => setIsMenuOpen((open) => !open)}
-        className={`inline-flex items-center gap-1 rounded px-2 py-1 text-sm font-bold hover:bg-surface/60 ${
+        className={`inline-flex items-center gap-1 px-2 py-1 font-bold hover:bg-surface/60 ${
           dueStyle ? 'text-danger-fg' : 'text-accent-fg'
         }`}
         aria-label={triggerAriaLabel}
@@ -102,7 +103,7 @@ export default function TimerActionHeader({
           </span>
         )}
         <span>{timerLabel}</span>
-      </button>
+      </Button>
 
       {isMenuOpen && (
         <div className={`absolute right-4 top-[calc(100%+0.5rem)] z-20 rounded border border-border bg-surface-raised shadow-lg ${menuWidthClass}`}>

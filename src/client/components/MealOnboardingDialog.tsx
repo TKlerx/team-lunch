@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from './ui/Button.js';
 import { Modal } from './ui/Modal.js';
 import type {
   MealAnticipatedLikeSentiment,
@@ -28,19 +29,15 @@ function SentimentButton({
   onMarkCandidate: (itemId: string, sentiment: MealAnticipatedLikeSentiment) => Promise<void>;
 }) {
   return (
-    <button
-      type="button"
+    <Button
+      variant={sentiment === 'like' ? 'success' : 'warning'}
       disabled={disabled}
       onClick={() => void onMarkCandidate(candidate.itemId, sentiment)}
-      className={`rounded border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
-        sentiment === 'like'
-          ? 'border-success bg-success-soft text-success-fg hover:bg-success-soft/80'
-          : 'border-warning bg-warning-soft text-warning-fg hover:bg-warning-soft/80'
-      }`}
+      className="px-3 py-1.5"
       aria-label={`${label} ${candidate.itemName}`}
     >
       {label}
-    </button>
+    </Button>
   );
 }
 
@@ -82,13 +79,9 @@ export default function MealOnboardingDialog({
               to warm up your recommendations.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded border border-border px-3 py-1.5 text-sm font-medium text-fg-muted hover:bg-surface-muted"
-          >
+          <Button variant="secondary" onClick={onClose} className="px-3 py-1.5 text-fg-muted">
             Skip
-          </button>
+          </Button>
         </div>
 
         {loading ? (

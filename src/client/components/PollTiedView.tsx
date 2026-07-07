@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
 import * as api from '../api.js';
 import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
+import { Button } from './ui/Button.js';
+import { Select } from './ui/Select.js';
 
 const EXTEND_OPTIONS = [5, 10, 15, 30] as const;
 
@@ -97,23 +99,21 @@ export default function PollTiedView() {
             Extend voting
           </label>
           <div className="flex gap-2">
-            <select
+            <Select
               value={extensionMinutes}
               onChange={(e) => setExtensionMinutes(Number(e.target.value))}
-              className="flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
+              className="flex-1"
             >
               {EXTEND_OPTIONS.map((d) => (
                 <option key={d} value={d}>{d} min</option>
               ))}
-            </select>
-            <button
-              type="button"
+            </Select>
+            <Button
               onClick={() => void handleExtend()}
               disabled={submitting || !canManageTieExtension}
-              className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               Extend
-            </button>
+            </Button>
           </div>
           {!canManageTieExtension && (
             <p className="text-sm text-warning-fg">Only admins or the poll creator can extend this tie.</p>
@@ -127,14 +127,14 @@ export default function PollTiedView() {
         </div>
 
         {/* Random winner */}
-        <button
-          type="button"
+        <Button
+          variant="warning"
           onClick={() => void handleRandomWinner()}
           disabled={submitting}
-          className="w-full rounded bg-warning-solid px-4 py-2 text-sm font-medium text-warning-on hover:opacity-90 disabled:opacity-50"
+          className="w-full border-0 bg-warning-solid text-warning-on hover:opacity-90"
         >
           Pick randomly
-        </button>
+        </Button>
 
         {/* Kill poll */}
         {canKillPoll && (
@@ -142,30 +142,30 @@ export default function PollTiedView() {
             {showAbortConfirm ? (
               <div className="inline-flex items-center gap-2 rounded border border-danger bg-danger-soft px-4 py-2">
                 <span className="text-sm text-danger-fg">Kill this poll?</span>
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
                   onClick={() => void handleAbort()}
                   disabled={submitting}
-                  className="rounded bg-danger-solid px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                  className="border-0 bg-danger-solid px-3 py-1 text-white hover:opacity-90"
                 >
                   Yes, kill
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant="secondary"
                   onClick={() => setShowAbortConfirm(false)}
-                  className="rounded border border-border px-3 py-1 text-sm text-fg-muted hover:bg-surface-muted"
+                  className="px-3 py-1 text-fg-muted"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             ) : (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => setShowAbortConfirm(true)}
-                className="text-sm text-danger-fg hover:opacity-80"
+                className="text-danger-fg hover:opacity-80"
               >
                 Cancel poll
-              </button>
+              </Button>
             )}
           </div>
         )}

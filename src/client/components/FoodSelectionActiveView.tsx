@@ -5,6 +5,8 @@ import { useCountdown, formatTime } from "../hooks/useCountdown.js";
 import * as api from "../api.js";
 import TimerActionHeader from "./TimerActionHeader.js";
 import MealOnboardingDialog from "./MealOnboardingDialog.js";
+import { Button } from "./ui/Button.js";
+import { Input } from "./ui/Input.js";
 import { useConfirmDialog } from "./ui/ConfirmDialog.js";
 import { formatPrice } from "../utils/orderCopy.js";
 import {
@@ -224,11 +226,9 @@ function OrderForm({
         </Link>
       </div>
 
-      <input
-        type="text"
+      <Input
         value={itemSearch}
         onChange={(e) => setItemSearch(e.target.value)}
-        className="w-full rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
         placeholder="Search items (min. 3 chars)"
       />
 
@@ -269,8 +269,7 @@ function OrderForm({
               ) : null}
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <input
-                type="text"
+              <Input
                 value={itemNotes[item.id] ?? ""}
                 onChange={(event) =>
                   setItemNotes((prev) => ({
@@ -279,18 +278,17 @@ function OrderForm({
                   }))
                 }
                 maxLength={200}
-                className="min-w-0 flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
+                className="min-w-0 flex-1"
                 placeholder="Size / spiciness / extras / comments"
                 aria-label={`Comment for ${item.name}`}
               />
-              <button
-                type="button"
+              <Button
                 onClick={() => void handleAddItem(item.id)}
                 disabled={addingItemId === item.id || withdrawingAll}
-                className="w-full shrink-0 rounded bg-accent-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
+                className="w-full shrink-0 px-3 sm:w-auto"
               >
                 Add
-              </button>
+              </Button>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {mealMarksByItemId.get(item.id) ? (
@@ -308,35 +306,35 @@ function OrderForm({
                   Mark this dish
                 </span>
               )}
-              <button
-                type="button"
+              <Button
+                variant="secondary"
                 onClick={() => void onToggleMealMark(item.id, "like")}
                 disabled={markingItemId === item.id || marksLoading}
-                className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                className={`px-2.5 py-1 text-xs ${
                   mealMarksByItemId.get(item.id)?.sentiment === "like"
                     ? "border-success bg-success-soft text-success-fg"
-                    : "border-border text-fg-muted hover:bg-surface-muted"
+                    : "text-fg-muted"
                 }`}
                 aria-label={`Like ${item.name}`}
               >
                 Like
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() => void onToggleMealMark(item.id, "dislike")}
                 disabled={markingItemId === item.id || marksLoading}
-                className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                className={`px-2.5 py-1 text-xs ${
                   mealMarksByItemId.get(item.id)?.sentiment === "dislike"
                     ? "border-warning bg-warning-soft text-warning-fg"
-                    : "border-border text-fg-muted hover:bg-surface-muted"
+                    : "text-fg-muted"
                 }`}
                 aria-label={`Dislike ${item.name}`}
               >
                 Dislike
-              </button>
+              </Button>
               {mealMarksByItemId.get(item.id) ? (
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={() =>
                     void onToggleMealMark(
                       item.id,
@@ -344,11 +342,11 @@ function OrderForm({
                     )
                   }
                   disabled={markingItemId === item.id || marksLoading}
-                  className="rounded border border-border px-2.5 py-1 text-xs font-medium text-fg-muted hover:bg-surface-muted disabled:opacity-50"
+                  className="px-2.5 py-1 text-xs text-fg-muted"
                   aria-label={`Clear mark for ${item.name}`}
                 >
                   Clear
-                </button>
+                </Button>
               ) : null}
             </div>
           </div>
@@ -390,18 +388,17 @@ function OrderForm({
       {error && <p className="text-sm text-danger-fg">{error}</p>}
 
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
+        <Button
+          variant="danger"
           onClick={() => void handleWithdraw()}
           disabled={
             withdrawingAll ||
             addingItemId !== null ||
             existingOrders.length === 0
           }
-          className="rounded border border-danger px-4 py-2 text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-50"
         >
           Withdraw
-        </button>
+        </Button>
       </div>
       {dialog}
     </div>
@@ -509,14 +506,14 @@ function OrderBoard({
                       ? o.actorKey === actorKey ||
                         (!o.actorKey && o.nickname === nickname)
                       : o.nickname === nickname) && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="secondary"
                         onClick={() => void handleRemoveFromBoard(o.id)}
                         disabled={removingOrderId === o.id}
-                        className="inline-flex min-h-9 items-center justify-center rounded border border-border px-2 py-1 text-xs text-fg-muted opacity-100 transition-opacity hover:bg-surface-muted disabled:opacity-50 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+                        className="min-h-9 px-2 py-1 text-xs text-fg-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
                       >
                         Remove
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -570,11 +567,11 @@ function MealRecommendationsList({
             key={item.itemId ?? item.itemName}
             className="rounded border border-border"
           >
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => item.itemId && onJumpToMeal(item.itemId)}
               disabled={!item.itemId}
-              className="block w-full rounded p-2 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default disabled:hover:bg-transparent"
+              className="block w-full p-2 text-left disabled:cursor-default disabled:hover:bg-transparent"
             >
               <span className="flex items-baseline justify-between gap-2">
                 <span className="text-sm font-medium text-fg">
@@ -588,7 +585,7 @@ function MealRecommendationsList({
                   <span className="ml-1 text-accent-fg">(AI-assisted)</span>
                 )}
               </span>
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
@@ -620,35 +617,34 @@ function MealRecommendationsPanel({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <h3 className="text-sm font-semibold text-fg">Meal recommendations</h3>
         <div className="flex flex-col items-stretch gap-2 sm:items-end">
-          <button
-            type="button"
+          <Button
             onClick={onRecommendMeal}
             disabled={recommendationsLoading}
-            className="w-full rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
+            className="w-full px-3 py-1.5 sm:w-auto"
           >
             {recommendationsLoading &&
             recommendationsLoadingAction === "recommend"
               ? "Thinking..."
               : "Recommend a meal"}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="warning"
             onClick={onExploreMeal}
             disabled={recommendationsLoading}
-            className="w-full rounded border border-warning px-3 py-1.5 text-sm font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50 sm:w-auto"
+            className="w-full px-3 py-1.5 sm:w-auto"
           >
             {recommendationsLoading &&
             recommendationsLoadingAction === "explore"
               ? "Exploring..."
               : "Explore something new"}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={onOpenOnboarding}
-            className="w-full rounded border border-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-soft sm:w-auto"
+            className="w-full border-accent px-3 py-1.5 text-accent-fg hover:bg-accent-soft sm:w-auto"
           >
             Mark dishes you expect to like
-          </button>
+          </Button>
         </div>
       </div>
       {recommendationsError && (
@@ -674,14 +670,14 @@ function MissingOrdersEmptyState({
         Everyone who voted has ordered. Click below when you have placed the
         real order.
       </p>
-      <button
-        type="button"
+      <Button
+        variant="success"
         onClick={onFinishNow}
         disabled={submitting}
-        className="w-full rounded bg-success-solid px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+        className="w-full border-0 bg-success-solid px-3 text-white hover:opacity-90"
       >
         Click here when you place the order.
-      </button>
+      </Button>
     </div>
   );
 }
@@ -701,14 +697,13 @@ function MissingOrdersReminderControls({
 }) {
   return (
     <div className="mt-3 space-y-2">
-      <button
-        type="button"
+      <Button
         onClick={onRemindMissingOrders}
         disabled={remindingMissing || votersWithoutOrderCount === 0}
-        className="w-full rounded bg-accent-solid px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 sm:w-auto"
+        className="w-full px-3 py-1.5 sm:w-auto"
       >
         {remindingMissing ? "Sending reminders..." : "Ping missing users"}
-      </button>
+      </Button>
       {reminderMessage ? (
         <p className="text-xs text-success-fg">{reminderMessage}</p>
       ) : null}
@@ -822,15 +817,15 @@ function TimerMinuteOptions({
   return (
     <div className="max-h-40 overflow-y-auto border-b border-border py-1">
       {timerOptions.map((minutes) => (
-        <button
+        <Button
           key={minutes}
-          type="button"
+          variant="ghost"
           onClick={() => onSelectMinutes(minutes)}
           disabled={updatingTimer}
-          className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
+          className="w-full rounded-none px-3 py-1.5 text-left text-fg"
         >
           {minutes} min
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -847,8 +842,7 @@ function ManualTimerInput({
 }) {
   return (
     <div className="p-2">
-      <input
-        type="text"
+      <Input
         value={manualRemainingMinutes}
         onChange={(event) => onManualRemainingMinutesChange(event.target.value)}
         onKeyDown={(event) => {
@@ -858,7 +852,7 @@ function ManualTimerInput({
           }
         }}
         placeholder="Manual minutes remaining"
-        className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+        className="px-2 py-1.5"
         aria-label="Food selection manual minutes remaining"
       />
     </div>
@@ -961,8 +955,8 @@ function FoodSelectionTimerMenu({
   return (
     <>
       {canAdvanceToOrdering && (
-        <button
-          type="button"
+        <Button
+          variant="success"
           onClick={() => {
             void (async () => {
               const done = await onFinishNow();
@@ -970,14 +964,14 @@ function FoodSelectionTimerMenu({
             })();
           }}
           disabled={submitting}
-          className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+          className="w-full rounded-none border-x-0 border-t-0 px-3 text-left"
         >
           Finish meal collection
-        </button>
+        </Button>
       )}
       {canManageFoodSelection && (
-        <button
-          type="button"
+        <Button
+          variant="danger"
           onClick={() => {
             void (async () => {
               await onAbort();
@@ -985,10 +979,10 @@ function FoodSelectionTimerMenu({
             })();
           }}
           disabled={submitting}
-          className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+          className="w-full rounded-none border-x-0 border-t-0 px-3 text-left"
         >
           Abort process
-        </button>
+        </Button>
       )}
       {canAdjustFoodSelectionTimer ? (
         <>
