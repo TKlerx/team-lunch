@@ -2084,8 +2084,8 @@ derivation_query(entity('src/client/components/ThemeToggle.tsx',module), "import
 derived_at(entity('src/client/components/ThemeToggle.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/Header.tsx',module), scanner_scan).
 source_files(entity('src/client/components/Header.tsx',module), ['src/client/components/Header.tsx']).
-source_hash(entity('src/client/components/Header.tsx',module), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(entity('src/client/components/Header.tsx',module), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(entity('src/client/components/Header.tsx',module), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(entity('src/client/components/Header.tsx',module), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(entity('src/client/components/Header.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/Header.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Modal.tsx',module), scanner_scan).
@@ -2102,8 +2102,8 @@ derivation_query(entity('src/client/components/DatabaseConnectionModal.tsx',modu
 derived_at(entity('src/client/components/DatabaseConnectionModal.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/OrdersRail.tsx',module), scanner_scan).
 source_files(entity('src/client/components/OrdersRail.tsx',module), ['src/client/components/OrdersRail.tsx']).
-source_hash(entity('src/client/components/OrdersRail.tsx',module), 'sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6').
-source_file_hashes(entity('src/client/components/OrdersRail.tsx',module), ['sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6']).
+source_hash(entity('src/client/components/OrdersRail.tsx',module), 'sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593').
+source_file_hashes(entity('src/client/components/OrdersRail.tsx',module), ['sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593']).
 derivation_query(entity('src/client/components/OrdersRail.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/OrdersRail.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/OrderCopyStatus.tsx',module), scanner_scan).
@@ -2114,14 +2114,14 @@ derivation_query(entity('src/client/components/OrderCopyStatus.tsx',module), "im
 derived_at(entity('src/client/components/OrderCopyStatus.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionCompletedView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(entity('src/client/components/FoodSelectionCompletedView.tsx',module), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(entity('src/client/components/FoodSelectionCompletedView.tsx',module), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(entity('src/client/components/FoodSelectionCompletedView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodSelectionCompletedView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/MinutesActionDropdown.tsx',module), scanner_scan).
 source_files(entity('src/client/components/MinutesActionDropdown.tsx',module), ['src/client/components/MinutesActionDropdown.tsx']).
-source_hash(entity('src/client/components/MinutesActionDropdown.tsx',module), 'sha256:b0892e7d320ee59ddf34923e446010503c30974cc00d3fbaf144603f880e1bc8').
-source_file_hashes(entity('src/client/components/MinutesActionDropdown.tsx',module), ['sha256:b0892e7d320ee59ddf34923e446010503c30974cc00d3fbaf144603f880e1bc8']).
+source_hash(entity('src/client/components/MinutesActionDropdown.tsx',module), 'sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392').
+source_file_hashes(entity('src/client/components/MinutesActionDropdown.tsx',module), ['sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392']).
 derivation_query(entity('src/client/components/MinutesActionDropdown.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/MinutesActionDropdown.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/PollFinishedView.tsx',module), scanner_scan).
@@ -2138,44 +2138,44 @@ derivation_query(entity('src/client/components/NoMenusView.tsx',module), "import
 derived_at(entity('src/client/components/NoMenusView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/PollIdleView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/PollIdleView.tsx',module), ['src/client/components/PollIdleView.tsx']).
-source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(entity('src/client/components/PollIdleView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/PollIdleView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/TimerActionHeader.tsx',module), scanner_scan).
 source_files(entity('src/client/components/TimerActionHeader.tsx',module), ['src/client/components/TimerActionHeader.tsx']).
-source_hash(entity('src/client/components/TimerActionHeader.tsx',module), 'sha256:917193b59483249bd19b3fe57dd2fe7c625daf67cde209f02995015218bc1254').
-source_file_hashes(entity('src/client/components/TimerActionHeader.tsx',module), ['sha256:917193b59483249bd19b3fe57dd2fe7c625daf67cde209f02995015218bc1254']).
+source_hash(entity('src/client/components/TimerActionHeader.tsx',module), 'sha256:f2404aca325f9de7193d3018301069b9dd23eba289d7f7240d66eaddf6c91856').
+source_file_hashes(entity('src/client/components/TimerActionHeader.tsx',module), ['sha256:f2404aca325f9de7193d3018301069b9dd23eba289d7f7240d66eaddf6c91856']).
 derivation_query(entity('src/client/components/TimerActionHeader.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/TimerActionHeader.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/PollActiveView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/PollActiveView.tsx',module), ['src/client/components/PollActiveView.tsx']).
-source_hash(entity('src/client/components/PollActiveView.tsx',module), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(entity('src/client/components/PollActiveView.tsx',module), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(entity('src/client/components/PollActiveView.tsx',module), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(entity('src/client/components/PollActiveView.tsx',module), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(entity('src/client/components/PollActiveView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/PollActiveView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/PollTiedView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/PollTiedView.tsx',module), ['src/client/components/PollTiedView.tsx']).
-source_hash(entity('src/client/components/PollTiedView.tsx',module), 'sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb').
-source_file_hashes(entity('src/client/components/PollTiedView.tsx',module), ['sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb']).
+source_hash(entity('src/client/components/PollTiedView.tsx',module), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(entity('src/client/components/PollTiedView.tsx',module), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
 derivation_query(entity('src/client/components/PollTiedView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/PollTiedView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/MealOnboardingDialog.tsx',module), scanner_scan).
 source_files(entity('src/client/components/MealOnboardingDialog.tsx',module), ['src/client/components/MealOnboardingDialog.tsx']).
-source_hash(entity('src/client/components/MealOnboardingDialog.tsx',module), 'sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073').
-source_file_hashes(entity('src/client/components/MealOnboardingDialog.tsx',module), ['sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073']).
+source_hash(entity('src/client/components/MealOnboardingDialog.tsx',module), 'sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2').
+source_file_hashes(entity('src/client/components/MealOnboardingDialog.tsx',module), ['sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2']).
 derivation_query(entity('src/client/components/MealOnboardingDialog.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/MealOnboardingDialog.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionActiveView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodSelectionActiveView.tsx',module), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(entity('src/client/components/FoodSelectionActiveView.tsx',module), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(entity('src/client/components/FoodSelectionActiveView.tsx',module), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(entity('src/client/components/FoodSelectionActiveView.tsx',module), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(entity('src/client/components/FoodSelectionActiveView.tsx',module), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(entity('src/client/components/FoodSelectionActiveView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodSelectionActiveView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionAbortControl.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodSelectionAbortControl.tsx',module), ['src/client/components/FoodSelectionAbortControl.tsx']).
-source_hash(entity('src/client/components/FoodSelectionAbortControl.tsx',module), 'sha256:04d435a0626a2b636f26a6258ef246fc29261abcca7542880cd1d9bcae48e16b').
-source_file_hashes(entity('src/client/components/FoodSelectionAbortControl.tsx',module), ['sha256:04d435a0626a2b636f26a6258ef246fc29261abcca7542880cd1d9bcae48e16b']).
+source_hash(entity('src/client/components/FoodSelectionAbortControl.tsx',module), 'sha256:711493de566ba00ef50f3d002876bdd2340639345f44b57806da4d29d8d90ef9').
+source_file_hashes(entity('src/client/components/FoodSelectionAbortControl.tsx',module), ['sha256:711493de566ba00ef50f3d002876bdd2340639345f44b57806da4d29d8d90ef9']).
 derivation_query(entity('src/client/components/FoodSelectionAbortControl.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodSelectionAbortControl.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionOrderBoard.tsx',module), scanner_scan).
@@ -2186,20 +2186,20 @@ derivation_query(entity('src/client/components/FoodSelectionOrderBoard.tsx',modu
 derived_at(entity('src/client/components/FoodSelectionOrderBoard.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodSelectionOvertimeView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodSelectionOrderingView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodSelectionOrderingView.tsx',module), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(entity('src/client/components/FoodSelectionOrderingView.tsx',module), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(entity('src/client/components/FoodSelectionOrderingView.tsx',module), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(entity('src/client/components/FoodSelectionOrderingView.tsx',module), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(entity('src/client/components/FoodSelectionOrderingView.tsx',module), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(entity('src/client/components/FoodSelectionOrderingView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodSelectionOrderingView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/FoodDeliveryView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/FoodDeliveryView.tsx',module), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(entity('src/client/components/FoodDeliveryView.tsx',module), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(entity('src/client/components/FoodDeliveryView.tsx',module), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(entity('src/client/components/FoodDeliveryView.tsx',module), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(entity('src/client/components/FoodDeliveryView.tsx',module), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(entity('src/client/components/FoodDeliveryView.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/FoodDeliveryView.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/pages/MainView.tsx',module), scanner_scan).
@@ -2216,14 +2216,14 @@ derivation_query(entity('src/client/pages/ManageMenus.tsx',module), "import grap
 derived_at(entity('src/client/pages/ManageMenus.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Input.tsx',module), scanner_scan).
 source_files(entity('src/client/components/ui/Input.tsx',module), ['src/client/components/ui/Input.tsx']).
-source_hash(entity('src/client/components/ui/Input.tsx',module), 'sha256:90f3ca80eb9fcb7a28ce301d7c2bff5853caf77a9d9e7509ef99b7f357100527').
-source_file_hashes(entity('src/client/components/ui/Input.tsx',module), ['sha256:90f3ca80eb9fcb7a28ce301d7c2bff5853caf77a9d9e7509ef99b7f357100527']).
+source_hash(entity('src/client/components/ui/Input.tsx',module), 'sha256:8f0a2220f48b3eac4aa40d1c88fbdd8fedc3f9ecebc8d5a6e971f059bd7fab49').
+source_file_hashes(entity('src/client/components/ui/Input.tsx',module), ['sha256:8f0a2220f48b3eac4aa40d1c88fbdd8fedc3f9ecebc8d5a6e971f059bd7fab49']).
 derivation_query(entity('src/client/components/ui/Input.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Input.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Button.tsx',module), scanner_scan).
 source_files(entity('src/client/components/ui/Button.tsx',module), ['src/client/components/ui/Button.tsx']).
-source_hash(entity('src/client/components/ui/Button.tsx',module), 'sha256:c06e974f70e1a4804603c29a4282ecef100be4421e445bc1feba2385ae02d019').
-source_file_hashes(entity('src/client/components/ui/Button.tsx',module), ['sha256:c06e974f70e1a4804603c29a4282ecef100be4421e445bc1feba2385ae02d019']).
+source_hash(entity('src/client/components/ui/Button.tsx',module), 'sha256:9cce748b448467ff486bb004eeaf5e532554301700f4b0f9588154cee40219f0').
+source_file_hashes(entity('src/client/components/ui/Button.tsx',module), ['sha256:9cce748b448467ff486bb004eeaf5e532554301700f4b0f9588154cee40219f0']).
 derivation_query(entity('src/client/components/ui/Button.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Button.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/pages/ShoppingList.tsx',module), scanner_scan).
@@ -2234,14 +2234,14 @@ derivation_query(entity('src/client/pages/ShoppingList.tsx',module), "import gra
 derived_at(entity('src/client/pages/ShoppingList.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Section.tsx',module), scanner_scan).
 source_files(entity('src/client/components/ui/Section.tsx',module), ['src/client/components/ui/Section.tsx']).
-source_hash(entity('src/client/components/ui/Section.tsx',module), 'sha256:12345a65dee656c4d1b7efbf1bbb55ad1cf8d59777dc91868968faeb8dc06326').
-source_file_hashes(entity('src/client/components/ui/Section.tsx',module), ['sha256:12345a65dee656c4d1b7efbf1bbb55ad1cf8d59777dc91868968faeb8dc06326']).
+source_hash(entity('src/client/components/ui/Section.tsx',module), 'sha256:f322af8a52a6377b4b1c244cfe2dea6227656204048fd900189e6b8be38709a9').
+source_file_hashes(entity('src/client/components/ui/Section.tsx',module), ['sha256:f322af8a52a6377b4b1c244cfe2dea6227656204048fd900189e6b8be38709a9']).
 derivation_query(entity('src/client/components/ui/Section.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Section.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Select.tsx',module), scanner_scan).
 source_files(entity('src/client/components/ui/Select.tsx',module), ['src/client/components/ui/Select.tsx']).
-source_hash(entity('src/client/components/ui/Select.tsx',module), 'sha256:94e550c23d36e93f1c29370eee2c044c293becc1a039cab285428d21d65da767').
-source_file_hashes(entity('src/client/components/ui/Select.tsx',module), ['sha256:94e550c23d36e93f1c29370eee2c044c293becc1a039cab285428d21d65da767']).
+source_hash(entity('src/client/components/ui/Select.tsx',module), 'sha256:f049c423a0d41e2521e3679c677d51a410cbfa56d4181ef4c7a426b1feac9188').
+source_file_hashes(entity('src/client/components/ui/Select.tsx',module), ['sha256:f049c423a0d41e2521e3679c677d51a410cbfa56d4181ef4c7a426b1feac9188']).
 derivation_query(entity('src/client/components/ui/Select.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Select.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/pages/Settings.tsx',module), scanner_scan).
@@ -2270,8 +2270,8 @@ derivation_query(entity('src/client/App.tsx',module), "import graph (scip-typesc
 derived_at(entity('src/client/App.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Card.tsx',module), scanner_scan).
 source_files(entity('src/client/components/ui/Card.tsx',module), ['src/client/components/ui/Card.tsx']).
-source_hash(entity('src/client/components/ui/Card.tsx',module), 'sha256:6a4d840dbf8b2a95c26249f21ef4c4869d52654b7b2be72594e77f65529c6a5b').
-source_file_hashes(entity('src/client/components/ui/Card.tsx',module), ['sha256:6a4d840dbf8b2a95c26249f21ef4c4869d52654b7b2be72594e77f65529c6a5b']).
+source_hash(entity('src/client/components/ui/Card.tsx',module), 'sha256:50de8c9719f0e677f9b8521ce4273bd69665aed3754a32b8f325fec6e549d96d').
+source_file_hashes(entity('src/client/components/ui/Card.tsx',module), ['sha256:50de8c9719f0e677f9b8521ce4273bd69665aed3754a32b8f325fec6e549d96d']).
 derivation_query(entity('src/client/components/ui/Card.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Card.tsx',module), '2026-07-07T08:01:48Z', agent).
 derived_from(entity('src/client/components/ui/Panel.tsx',module), scanner_scan).
@@ -4034,44 +4034,44 @@ derivation_query(rel('src/client/components/ThemeToggle.tsx',depends_on,'src/cli
 derived_at(rel('src/client/components/ThemeToggle.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ThemeToggle.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/IconButton.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Menu.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/vite-env.d.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/config.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/Header.tsx']).
-source_hash(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), 'sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898').
-source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), ['sha256:72c5d484b62dae1b6337689a7bb42bcd5cf7dacbca1967788d5cbc1b11e48898']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
 derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/Header.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Modal.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
@@ -4088,50 +4088,50 @@ derivation_query(rel('src/client/components/DatabaseConnectionModal.tsx',depends
 derived_at(rel('src/client/components/DatabaseConnectionModal.tsx',depends_on,'src/client/components/ui/Modal.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/OrdersRail.tsx']).
-source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), 'sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6').
-source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), ['sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6']).
+source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), 'sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593').
+source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), ['sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593']).
 derivation_query(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/OrdersRail.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), scanner_scan).
 source_files(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['src/client/components/OrdersRail.tsx']).
-source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6').
-source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:560fe583da693a112e839cb2923172550a5afa91457dda472fdc08c7174009e6']).
+source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593').
+source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593']).
 derivation_query(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/hooks/useCountdown.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:3627b6d95baf5c2511b20a7a94c0a8f70846c9bc94bf410e0d3adc77b0701d0b']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
 derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollFinishedView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
@@ -4160,152 +4160,152 @@ derivation_query(rel('src/client/components/PollFinishedView.tsx',depends_on,'sr
 derived_at(rel('src/client/components/PollFinishedView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:5498a9c70b1a6b39c78fd073bdd786f322ebd2d038f897809b3f5ff41cadb4c2']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollActiveView.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), ['sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollTiedView.tsx']).
-source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb').
-source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
 derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollTiedView.tsx']).
-source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), 'sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb').
-source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), ['sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
 derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollTiedView.tsx']).
-source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb').
-source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
 derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollTiedView.tsx']).
-source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb').
-source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:61ad6738adf169c13fdf11497bc303cc558b59f82d43a5aa18b29c5411361aeb']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
 derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), scanner_scan).
 source_files(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['src/client/components/MealOnboardingDialog.tsx']).
-source_hash(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), 'sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073').
-source_file_hashes(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073']).
+source_hash(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), 'sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2').
+source_file_hashes(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2']).
 derivation_query(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/MealOnboardingDialog.tsx']).
-source_hash(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), 'sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073').
-source_file_hashes(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), ['sha256:ad8ae51fbe33c204f498c3a05decf8a67ebe09a361540ebd6fbfa0655c466073']).
+source_hash(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), 'sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2').
+source_file_hashes(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), ['sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2']).
 derivation_query(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/MealOnboardingDialog.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionActiveView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), ['sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderBoard.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
@@ -4322,140 +4322,140 @@ derivation_query(rel('src/client/components/FoodSelectionOrderBoard.tsx',depends
 derived_at(rel('src/client/components/FoodSelectionOrderBoard.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), 'sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257').
-source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), ['sha256:3a70eb213dc53a74f8d86926b4de9ce71006421eb7e9602fd2d20eef45b7e257']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
 derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionAbortControl.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/FoodSelectionOrderBoard.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/MinutesActionDropdown.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionOrderingView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), ['sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/api.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/hooks/useCountdown.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/TimerActionHeader.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/auth.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodDeliveryView.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), ['sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/pages/MainView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
@@ -4550,14 +4550,14 @@ derivation_query(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/lib/type
 derived_at(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
 source_files(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), ['src/client/components/ui/Input.tsx']).
-source_hash(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:90f3ca80eb9fcb7a28ce301d7c2bff5853caf77a9d9e7509ef99b7f357100527').
-source_file_hashes(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:90f3ca80eb9fcb7a28ce301d7c2bff5853caf77a9d9e7509ef99b7f357100527']).
+source_hash(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:8f0a2220f48b3eac4aa40d1c88fbdd8fedc3f9ecebc8d5a6e971f059bd7fab49').
+source_file_hashes(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:8f0a2220f48b3eac4aa40d1c88fbdd8fedc3f9ecebc8d5a6e971f059bd7fab49']).
 derivation_query(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
 source_files(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), ['src/client/components/ui/Button.tsx']).
-source_hash(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:c06e974f70e1a4804603c29a4282ecef100be4421e445bc1feba2385ae02d019').
-source_file_hashes(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:c06e974f70e1a4804603c29a4282ecef100be4421e445bc1feba2385ae02d019']).
+source_hash(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:9cce748b448467ff486bb004eeaf5e532554301700f4b0f9588154cee40219f0').
+source_file_hashes(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:9cce748b448467ff486bb004eeaf5e532554301700f4b0f9588154cee40219f0']).
 derivation_query(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Button.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/pages/ShoppingList.tsx',depends_on,'src/client/api.ts'), scanner_scan).
@@ -4598,14 +4598,14 @@ derivation_query(rel('src/client/pages/ShoppingList.tsx',depends_on,'src/lib/typ
 derived_at(rel('src/client/pages/ShoppingList.tsx',depends_on,'src/lib/types.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
 source_files(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), ['src/client/components/ui/Section.tsx']).
-source_hash(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:12345a65dee656c4d1b7efbf1bbb55ad1cf8d59777dc91868968faeb8dc06326').
-source_file_hashes(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:12345a65dee656c4d1b7efbf1bbb55ad1cf8d59777dc91868968faeb8dc06326']).
+source_hash(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:f322af8a52a6377b4b1c244cfe2dea6227656204048fd900189e6b8be38709a9').
+source_file_hashes(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:f322af8a52a6377b4b1c244cfe2dea6227656204048fd900189e6b8be38709a9']).
 derivation_query(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Section.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
 source_files(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), ['src/client/components/ui/Select.tsx']).
-source_hash(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:94e550c23d36e93f1c29370eee2c044c293becc1a039cab285428d21d65da767').
-source_file_hashes(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:94e550c23d36e93f1c29370eee2c044c293becc1a039cab285428d21d65da767']).
+source_hash(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:f049c423a0d41e2521e3679c677d51a410cbfa56d4181ef4c7a426b1feac9188').
+source_file_hashes(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:f049c423a0d41e2521e3679c677d51a410cbfa56d4181ef4c7a426b1feac9188']).
 derivation_query(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Select.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/pages/Settings.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), scanner_scan).
@@ -4850,8 +4850,8 @@ derivation_query(rel('src/client/App.tsx',depends_on,'src/client/vite-env.d.ts')
 derived_at(rel('src/client/App.tsx',depends_on,'src/client/vite-env.d.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
 source_files(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), ['src/client/components/ui/Card.tsx']).
-source_hash(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:6a4d840dbf8b2a95c26249f21ef4c4869d52654b7b2be72594e77f65529c6a5b').
-source_file_hashes(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:6a4d840dbf8b2a95c26249f21ef4c4869d52654b7b2be72594e77f65529c6a5b']).
+source_hash(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), 'sha256:50de8c9719f0e677f9b8521ce4273bd69665aed3754a32b8f325fec6e549d96d').
+source_file_hashes(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:50de8c9719f0e677f9b8521ce4273bd69665aed3754a32b8f325fec6e549d96d']).
 derivation_query(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), '2026-07-07T08:01:48Z', agent).
 derived_from(rel('src/client/components/ui/Panel.tsx',depends_on,'src/client/lib/cn.ts'), scanner_scan).
@@ -7178,49 +7178,217 @@ derivation_query(entity('src/client/components/ui/ConfirmDialog.tsx',module), "i
 derived_at(entity('src/client/components/ui/ConfirmDialog.tsx',module), '2026-07-07T08:34:40Z', agent).
 derived_from(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), agent_scan).
 source_files(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), "import graph").
 derived_at(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
 source_files(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
 derived_at(rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/pages/ManageMenus.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
 derived_from(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), agent_scan).
 source_files(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['src/client/components/ui/ConfirmDialog.tsx', 'src/client/components/PollActiveView.tsx', 'src/client/components/FoodSelectionActiveView.tsx', 'src/client/components/FoodSelectionOrderingView.tsx', 'src/client/components/FoodDeliveryView.tsx', 'src/client/pages/ManageMenus.tsx', 'src/client/pages/Administration.tsx']).
-source_hash(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:442a3142d4f533fe14e3db2c3c1c63f770a1e0ff26d7d7c8915bad1db5037691').
-source_file_hashes(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:909b996c0735d15a0ea84f4974a94a9fed021d0968bb340d29280af5d8609c7f', 'sha256:201b542c2a2f28845782ef77b6d165d9532f3206b32e4e274b9dd712927579db', 'sha256:b3bf93dd2d97c09a2b96819276b9a5a3cf4c77c91be31b1a70c8f8c14ac5c096', 'sha256:7e35dbad9fd4db12a33dfa8b9ca163ec70e920098d86c4c72d55da30ec87131d', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
+source_hash(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), 'sha256:3e9f2f1e4ee21ff4468c806557bb5443bb8d1bd518bfc3fc2214b3ae07cc8f39').
+source_file_hashes(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), ['sha256:a9d58246c19f70b76e0fa7f173f07b0026a1b8a254661df496c1db26ec6d2f17', 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269', 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505', 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731', 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5', 'sha256:fcde049b10baac013748dce00900ef9d796ca734c876f9bca71898d03d79383e', 'sha256:4bbb0f717e4a09cfb8b97b76fbd0381d137778aac7306f8f6c203930af49d979']).
 derivation_query(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), "import graph").
 derived_at(rel('src/client/pages/Administration.tsx',depends_on,'src/client/components/ui/ConfirmDialog.tsx'), '2026-07-07T08:35:13Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), agent_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), "import graph").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), agent_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), agent_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:41e3a4ab112c560716f65efa26627f7da6f7a765d0514191c92ccf118808a540']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), "import graph").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/OrdersRail.tsx']).
+source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593').
+source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593']).
+derivation_query(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), agent_scan).
+source_files(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['src/client/components/OrdersRail.tsx']).
+source_hash(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593').
+source_file_hashes(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:43af81c14f2fde0e8b639e353ed3293337b8b04489bcf1c75213f545fcfc2593']).
+derivation_query(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), "import graph").
+derived_at(rel('src/client/components/OrdersRail.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-07-07T09:04:11Z', agent).
+derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollActiveView.tsx']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
+derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:12:02Z', agent).
+derived_from(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/PollActiveView.tsx']).
+source_hash(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269').
+source_file_hashes(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:9d6119b284685f0cb5d409c10a706a49988573b2b070582f6197837a7b64e269']).
+derivation_query(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/PollActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:12:19Z', agent).
+derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionActiveView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
+derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:12:29Z', agent).
+derived_from(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/FoodSelectionActiveView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505').
+source_file_hashes(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:890f5ccb2bc3e0b5db318c3a6ae02f5b3c3148a3e7b99a0ea42724141c33e505']).
+derivation_query(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionActiveView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:12:35Z', agent).
+derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodDeliveryView.tsx']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
+derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:12:40Z', agent).
+derived_from(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/FoodDeliveryView.tsx']).
+source_hash(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5').
+source_file_hashes(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:2ef89f872287fb266f16602f4f2843aa5bb3130979f8c03210af71a3d50deeb5']).
+derivation_query(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodDeliveryView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:12:46Z', agent).
+derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/Header.tsx']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
+derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:13Z', agent).
+derived_from(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), agent_scan).
+source_files(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/Header.tsx']).
+source_hash(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a').
+source_file_hashes(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:317eb095a8ce96b5a6447840f28d0402abbb8a4ad9e53e1b3d4bbca5a5d67c6a']).
+derivation_query(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph").
+derived_at(rel('src/client/components/Header.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-07-07T09:19:14Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:15Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:19:16Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:209a6e222060e9db76d822ca127dd23509543b58263e036cb0632cb471abafd2']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-07-07T09:19:17Z', agent).
+derived_from(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/MinutesActionDropdown.tsx']).
+source_hash(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392').
+source_file_hashes(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392']).
+derivation_query(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:18Z', agent).
+derived_from(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), agent_scan).
+source_files(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/MinutesActionDropdown.tsx']).
+source_hash(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392').
+source_file_hashes(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:4a8358a3b702e6b06162123b7d49729020da2a714eb81c82480a55c633b75392']).
+derivation_query(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph").
+derived_at(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-07-07T09:19:18Z', agent).
+derived_from(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/TimerActionHeader.tsx']).
+source_hash(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:f2404aca325f9de7193d3018301069b9dd23eba289d7f7240d66eaddf6c91856').
+source_file_hashes(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:f2404aca325f9de7193d3018301069b9dd23eba289d7f7240d66eaddf6c91856']).
+derivation_query(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:37Z', agent).
+derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollTiedView.tsx']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
+derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:38Z', agent).
+derived_from(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), agent_scan).
+source_files(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/PollTiedView.tsx']).
+source_hash(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29').
+source_file_hashes(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:3ef7f6d5beaa564e49a23e2603bba693f21a23752f95240be78212740cdf7a29']).
+derivation_query(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph").
+derived_at(rel('src/client/components/PollTiedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-07-07T09:19:39Z', agent).
+derived_from(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/MealOnboardingDialog.tsx']).
+source_hash(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2').
+source_file_hashes(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:47b7212730c415c13d12701775540bee9104bf3932443154d2f9db2d9cdcafa2']).
+derivation_query(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/MealOnboardingDialog.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:40Z', agent).
+derived_from(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionAbortControl.tsx']).
+source_hash(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:711493de566ba00ef50f3d002876bdd2340639345f44b57806da4d29d8d90ef9').
+source_file_hashes(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:711493de566ba00ef50f3d002876bdd2340639345f44b57806da4d29d8d90ef9']).
+derivation_query(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionAbortControl.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:41Z', agent).
+derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
+derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:41Z', agent).
+derived_from(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/FoodSelectionOvertimeView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d').
+source_file_hashes(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:1852b670cb989096ffb56a37bf46bf516b602c3bd3c1a52e1cd861f15b2b394d']).
+derivation_query(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionOvertimeView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-07-07T09:19:42Z', agent).
+derived_from(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), agent_scan).
+source_files(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionOrderingView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731').
+source_file_hashes(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:04bb5dcddef032cd95bc3db5cd4e4247048da5c4ff377863046252a04784b731']).
+derivation_query(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph").
+derived_at(rel('src/client/components/FoodSelectionOrderingView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-07-07T09:19:43Z', agent).

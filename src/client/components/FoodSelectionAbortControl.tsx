@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from './ui/Button.js';
 
 interface FoodSelectionAbortControlProps {
   disabled: boolean;
@@ -15,32 +16,32 @@ export default function FoodSelectionAbortControl({
     return (
       <div className="inline-flex items-center gap-2 rounded border border-danger bg-danger-soft px-3 py-2">
         <span className="text-sm text-danger-fg">Abort food selection?</span>
-        <button
-          type="button"
+        <Button
+          variant="danger"
           onClick={() => void onAbort().finally(() => setShowAbortConfirm(false))}
           disabled={disabled}
-          className="rounded bg-danger-solid px-3 py-1 text-sm font-medium text-danger-on transition-colors hover:opacity-90 disabled:opacity-50"
+          className="border-0 bg-danger-solid px-3 py-1 text-danger-on hover:opacity-90"
         >
           Yes, abort
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => setShowAbortConfirm(false)}
-          className="rounded border border-border px-3 py-1 text-sm text-fg-muted hover:bg-surface-muted"
+          className="px-3 py-1 text-fg-muted"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={() => setShowAbortConfirm(true)}
-      className="text-sm text-danger-fg transition-opacity hover:opacity-80"
+      className="text-danger-fg hover:opacity-80"
     >
       Abort
-    </button>
+    </Button>
   );
 }

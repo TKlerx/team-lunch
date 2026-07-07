@@ -4,6 +4,8 @@ import * as api from '../api.js';
 import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
 import FoodSelectionOrderBoard from './FoodSelectionOrderBoard.js';
+import { Button } from './ui/Button.js';
+import { Select } from './ui/Select.js';
 
 const EXTEND_OPTIONS = [5, 10, 15] as const;
 
@@ -80,23 +82,21 @@ export default function FoodSelectionOvertimeView() {
           {/* Extend */}
           <div className="mb-4 space-y-2">
             <div className="flex gap-2">
-              <select
+              <Select
                 value={extensionMinutes}
                 onChange={(e) => setExtensionMinutes(Number(e.target.value))}
-                className="flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
+                className="flex-1"
               >
                 {EXTEND_OPTIONS.map((d) => (
                   <option key={d} value={d}>{d} min</option>
                 ))}
-              </select>
-              <button
-                type="button"
+              </Select>
+              <Button
                 onClick={() => void handleExtend()}
                 disabled={submitting || !canExtendFoodSelection}
-                className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Extend
-              </button>
+              </Button>
             </div>
             {!canExtendFoodSelection && (
               <p className="text-sm text-warning-fg">
@@ -112,14 +112,14 @@ export default function FoodSelectionOvertimeView() {
           </div>
 
           {canAdvanceToOrdering ? (
-            <button
-              type="button"
+            <Button
+              variant="success"
               onClick={() => void handleComplete()}
               disabled={submitting}
-              className="w-full rounded bg-success-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="w-full border-0 bg-success-solid text-white hover:opacity-90"
             >
               Confirm &mdash; we&apos;re done
-            </button>
+            </Button>
           ) : (
             <p className="rounded border border-border bg-surface-muted px-3 py-2 text-sm text-fg-muted">
               Finish meal collection once everyone has ordered.

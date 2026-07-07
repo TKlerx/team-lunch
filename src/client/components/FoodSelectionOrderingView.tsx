@@ -11,6 +11,7 @@ import {
   copyOrderSummary,
 } from '../utils/orderCopy.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import { Button } from './ui/Button.js';
 import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { FoodSelectionFallbackCandidate } from '../../lib/types.js';
 
@@ -100,9 +101,9 @@ function OrderingClaimPanel({
       <div className="mb-4 rounded border border-accent bg-accent-soft p-4">
         <h3 className="text-sm font-semibold text-accent-fg">Nobody has claimed the order yet</h3>
         <p className="mt-1 text-sm text-accent-fg">Claim the ordering step first so everyone knows who is calling the restaurant.</p>
-        <button type="button" onClick={onClaimOrdering} disabled={claimingOrder || submitting} className="mt-4 rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
+        <Button onClick={onClaimOrdering} disabled={claimingOrder || submitting} className="mt-4">
           {claimingOrder ? 'Claiming order...' : 'I am placing the order'}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -157,12 +158,12 @@ function FallbackCandidateRow({
         <span className="ml-2 text-fg-muted">{candidate.itemNumber ? `${candidate.itemNumber} ` : ''}{candidate.itemName}</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => onPingFallbackCandidate(candidate)} disabled={pingingFallbackFor === candidate.nickname || submitting} className="rounded border border-warning bg-surface px-3 py-1.5 text-xs font-medium text-warning-fg hover:bg-warning-soft disabled:opacity-50">
+        <Button variant="warning" onClick={() => onPingFallbackCandidate(candidate)} disabled={pingingFallbackFor === candidate.nickname || submitting} className="bg-surface px-3 py-1.5 text-xs">
           {pingingFallbackFor === candidate.nickname ? 'Pinging...' : 'Ping user'}
-        </button>
-        <button type="button" onClick={() => onPlaceFallbackOrder(candidate)} disabled={placingFallbackFor === candidate.nickname || submitting} className="rounded bg-warning-solid px-3 py-1.5 text-xs font-medium text-warning-on hover:opacity-90 disabled:opacity-50">
+        </Button>
+        <Button variant="warning" onClick={() => onPlaceFallbackOrder(candidate)} disabled={placingFallbackFor === candidate.nickname || submitting} className="border-0 bg-warning-solid px-3 py-1.5 text-xs text-warning-on hover:opacity-90">
           Place default meal
-        </button>
+        </Button>
       </div>
     </li>
   );
@@ -442,13 +443,13 @@ export default function FoodSelectionOrderingView() {
           />
 
           <div className="mb-4">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => void handleCopyOrders()}
-              className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft"
+              className="w-full border-accent bg-accent-soft px-3 text-accent-fg hover:bg-accent-soft"
             >
               Copy order list
-            </button>
+            </Button>
             <OrderCopyStatus status={copyStatus} />
           </div>
 

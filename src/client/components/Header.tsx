@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAdminOfficeContext } from '../context/AdminOfficeContext.js';
 import ThemeToggle from './ThemeToggle.js';
+import { Button } from './ui/Button.js';
 import { IconButton } from './ui/IconButton.js';
 import { MenuItem, MenuList } from './ui/Menu.js';
+import { Select } from './ui/Select.js';
 import pizzaLogo from '../../../assets/pizza-logo.png';
 import exampleCompanyLogoSmall from '../../../assets/example-company-logo-small.png';
 import { withBasePath } from '../config.js';
@@ -229,18 +231,18 @@ export default function Header({
         </Link>
 
         {canSwitchOfficeLocation && officeLocations.length > 1 && (
-          <select
+          <Select
             aria-label="Office location"
             value={selectedOfficeLocationId ?? ''}
             onChange={(event) => setSelectedOfficeLocationId(event.target.value)}
-            className="rounded border border-border bg-surface-muted px-2 py-1 text-xs font-medium text-fg hover:bg-surface focus:border-accent focus:outline-none"
+            className="bg-surface-muted px-2 py-1 text-xs font-medium hover:bg-surface"
           >
             {officeLocations.map((office) => (
               <option key={office.id} value={office.id}>
                 {office.name}
               </option>
             ))}
-          </select>
+          </Select>
         )}
 
         <ThemeToggle />
@@ -256,10 +258,10 @@ export default function Header({
 
         {nickname && (
           <div className="relative" ref={accountRef}>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setMenuOpen((open) => !open)}
-              className="flex items-center gap-2 rounded-full bg-accent-soft/70 px-3 py-1 text-sm font-medium text-accent-fg hover:bg-accent-soft"
+              className="flex items-center gap-2 rounded-full bg-accent-soft/70 px-3 py-1 text-accent-fg hover:bg-accent-soft"
               aria-haspopup="menu"
               aria-expanded={menuOpen}
             >
@@ -271,7 +273,7 @@ export default function Header({
               </span>
               <span>{nickname}</span>
               <ChevronDownIcon open={menuOpen} />
-            </button>
+            </Button>
 
             {menuOpen && (
               <MenuList className="w-52">

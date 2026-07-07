@@ -31,7 +31,7 @@ export function Button({ variant = 'primary', className, type, ...props }: Butto
     <button
       type={type ?? 'button'}
       className={cn(
-        'rounded px-4 py-2 text-sm font-medium transition-colors',
+        'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
         'disabled:cursor-not-allowed disabled:opacity-50',
         VARIANTS[variant],

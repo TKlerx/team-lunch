@@ -8,6 +8,8 @@ import {
 import { useAppDispatch, useAppState } from '../context/AppContext.js';
 import { useCountdown, useElapsedSince, formatTime } from '../hooks/useCountdown.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import { Button } from './ui/Button.js';
+import { Input } from './ui/Input.js';
 import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import {
   buildOrderLookupMaps,
@@ -162,14 +164,13 @@ function DeliveryEtaControls({
     <>
       <div className="max-h-48 overflow-y-auto border-b border-border py-1">
         {etaOptions.map((minutes) => (
-          <button key={minutes} type="button" onClick={() => onSaveEta(minutes)} disabled={isSavingEta} className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60">
+          <Button key={minutes} variant="ghost" onClick={() => onSaveEta(minutes)} disabled={isSavingEta} className="w-full rounded-none px-3 py-1.5 text-left text-fg">
             {minutes} min
-          </button>
+          </Button>
         ))}
       </div>
       <div className="p-2">
-        <input
-          type="text"
+        <Input
           value={manualEtaMinutes}
           onChange={(event) => onManualEtaMinutesChange(event.target.value)}
           onKeyDown={(event) => {
@@ -179,7 +180,7 @@ function DeliveryEtaControls({
             }
           }}
           placeholder="Manual minutes remaining"
-          className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+          className="px-2 py-1.5"
           aria-label="Manual minutes remaining"
         />
       </div>
@@ -219,13 +220,13 @@ function DeliveryTimerMenu({
 
   return (
     <>
-      <button type="button" onClick={() => void onConfirmArrival().then((done) => done && closeMenu())} disabled={isConfirmingArrival} className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60">
+      <Button variant="success" onClick={() => void onConfirmArrival().then((done) => done && closeMenu())} disabled={isConfirmingArrival} className="w-full rounded-none border-x-0 border-t-0 px-3 text-left">
         Confirm lunch arrived
-      </button>
+      </Button>
       {canManageFoodSelection ? (
-        <button type="button" onClick={() => void onAbortProcess().then((done) => done && closeMenu())} className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60">
+        <Button variant="danger" onClick={() => void onAbortProcess().then((done) => done && closeMenu())} className="w-full rounded-none border-x-0 border-t-0 px-3 text-left">
           Abort process
-        </button>
+        </Button>
       ) : null}
       <DeliveryEtaControls
         etaOptions={etaOptions}
@@ -362,9 +363,9 @@ function DeliveryOrdersList({
         <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
       </div>
       <div className="mt-3">
-        <button type="button" onClick={onCopyOrders} className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft">
+        <Button variant="secondary" onClick={onCopyOrders} className="w-full border-accent bg-accent-soft px-3 text-accent-fg hover:bg-accent-soft">
           Copy order list
-        </button>
+        </Button>
         <OrderCopyStatus status={copyStatus} />
       </div>
     </div>
