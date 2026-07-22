@@ -15,24 +15,23 @@ The flaws below are mostly **inconsistent application** of these foundations, no
 
 ## Usability flaws
 
-1. **Native `window.confirm` for destructive actions** — 10 occurrences across 5 files (`PollActiveView.tsx:312`, `FoodDeliveryView`, etc.), while `ManageMenus.tsx:91` already has a themed `ConfirmDialog`. Native confirms are unstyled, blocking, and say nothing about consequences ("Confirm completion?").
-2. **No feedback system for async results** — 67 `setError(...)` call sites render inline strings; zero toasts, zero `aria-live`/`role="alert"` anywhere. Success is silent, errors appear wherever the local component renders them and are missed if the user scrolled away. Screen readers hear nothing.
-3. **Modal lacks focus management** (`ui/Modal.tsx`) — no focus trap, no initial focus, no focus return, background scroll not locked. `ConfirmDialog` in ManageMenus is worse: hand-rolled overlay without `role="dialog"` or Escape handling, duplicating Modal.
-4. **Timer-adjust dropdown is a wall of 24 buttons** (`PollActiveView.tsx:418`) plus a free-text input (`type="text"`) for "manual minutes" — no validation feedback, `parseInt` of garbage silently fails. The poll duration `<select>` has **144 options** (5 min – 12 h in 5-min steps).
-5. **Cryptic status language** — the rail shows `2/3 · 04:32` with no legend for the three phases; "Kill poll (admin)" is aggressive jargon; "I'll sit this one out" as the *collapse* label reads like an action with consequences (it just hides the panel).
-6. **Mobile layout** — `App.tsx` is `h-screen overflow-hidden` with the OrdersRail stacked *above* the main content on small screens; the history list competes with the live poll for a slice of a non-scrollable viewport.
-7. **Misleading affordances** — Quick Stats cards in `PollIdleView.tsx:68` are non-interactive `<div>`s with `hover:bg-surface` hover states; conversely, history rows are buttons that look like static cards.
-8. **First-poll start is buried** — "Start new Team Lunch" lives in the rail as a colored slab; when a process is ongoing the *same button* silently changes meaning to "navigate to it". One control, two behaviors, styled as a status banner.
+1. **Rail status still needs a real phase explanation** — the rail is intentionally back to compact `2/3 · 04:32`; it no longer shows the reverted `Step 2/3 · Ordering` wording. A visible 3-step progress treatment is still needed if users do not understand the fraction.
+2. **Tied-poll cancel confirmation still uses old jargon** — the tied-poll action button says "Cancel poll", but its inline confirmation still says "Kill this poll?" / "Yes, kill" in `PollTiedView.tsx`.
+3. **Mobile layout** — `App.tsx` is `h-screen overflow-hidden` with the OrdersRail stacked *above* the main content on small screens; the history list competes with the live poll for a slice of a non-scrollable viewport.
+4. **History rows still look close to static cards** — Quick Stats no longer have misleading hover states, but rail/history rows are buttons styled like cards, so their clickability is still understated.
+5. **First-poll start is buried** — "Start new Team Lunch" lives in the rail as a colored slab; when a process is ongoing the *same button* silently changes meaning to "navigate to it". One control, two behaviors, styled as a status banner.
+
+Recently fixed: native `window.confirm` calls were replaced with shared modal confirmations; `Modal` now manages focus/scroll; action feedback now goes through toasts/`aria-live`; the poll timer controls and poll-duration presets were simplified.
 
 ## Visual / aesthetic flaws
 
-9. **Border-radius chaos** — `rounded`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, and `rounded-[28px]` all coexist, sometimes in one view (PollIdleView).
-10. **Inverted text hierarchy in Quick Stats** — labels are `text-fg` (strong) and values are `text-fg-muted` (dim): the data is de-emphasized and the caption shouts.
-11. **`ui/` primitives exist but aren't used** — `Button.tsx` has 6 variants with proper focus rings and disabled states, yet nearly every view hand-rolls `className="rounded border px-4 py-2 …"` buttons (most missing `focus-visible` rings). Same for Card/Panel/Input. Root cause of #9/#10.
-12. **Section-title styles differ everywhere** — `uppercase tracking-wide`, `tracking-[0.18em]`, `tracking-[0.25em]`, plain `font-semibold` — no type scale.
-13. **Watermark collage** — two stacked 20%-opacity images (cuisine art + company logo) behind *all* main content (`App.tsx:250-271`) reduce text contrast on every screen and read as visual noise rather than branding.
-14. **Default-Tailwind-blue identity** — accent is stock `blue-600`; combined with the pizza logo + emoji (⏰) accents, the app has no cohesive personality.
-15. **Google Fonts loads Material Symbols for a single icon** (`person_heart` in `index.html`) while everything else is hand-drawn inline SVG — an external render-blocking request for one glyph.
+6. **Some radius drift remains** — the worst arbitrary radius/tracking offenders were removed and shared primitives now set defaults, but `rounded`, `rounded-lg`, `rounded-xl`, and `rounded-2xl` still coexist by component role.
+7. **Remaining primitive gaps** — the main lunch-flow views now use `Button`, `Input`, `Select`, `Card`, and `sectionTitleClass` heavily, but some links/native controls and card-like containers remain bespoke where no primitive exists.
+8. **Section-title consistency improved, not universal** — `sectionTitleClass` exists and is used in key places, but local uppercase labels still appear in detail panels.
+9. **Watermark collage is quieter but still global** — the images are now `opacity-[0.08]`, not `opacity-20`, but they still sit behind all main content rather than only empty/idle states.
+10. **Default-Tailwind-blue identity** — accent is stock `blue-600`; combined with the pizza logo + emoji (⏰) accents, the app has no cohesive personality.
+
+Recently fixed: Quick Stats hierarchy/hover affordance, Material Symbols/Google Fonts, the worst arbitrary radius/tracking values, and the strongest watermark contrast issue.
 
 ## Improvement plan — ordered by effort
 
@@ -43,12 +42,12 @@ All paths below are relative to `src/client/` unless noted. Line numbers are as 
 - [x] **T1** ✅ *(2026-07-07)* Swap Quick Stats hierarchy: label `text-fg-muted text-xs`, value `text-fg`; remove hover styles from non-interactive divs.
   *Where:* `components/PollIdleView.tsx`, `DashboardStats` component (lines ~52–92). The three stat tiles (lines 68–89) each have a label `<p className="text-xs … text-fg">` and value `<p className="… text-fg-muted">` — swap the color classes. Also remove `hover:bg-surface` from those tile `<div>`s (they are not clickable).
   *Done:* swapped label→`text-fg-muted`, value→`text-fg`, and removed `hover:bg-surface` on all three tiles.
-- [x] **T2** ✅ *(2026-07-07)* Wording + phase legibility.
+- [x] **T2** ✅ *(2026-07-07, partially reverted)* Wording cleanup; phase legend reverted.
   *Where:*
-  - "Kill poll (admin)" → "Cancel poll": `components/PollActiveView.tsx:412` (button inside the `TimerActionHeader` menu). A sibling exists in `FoodDeliveryView.tsx` / `FoodSelectionActiveView.tsx` ("Abort food selection?" confirms) — align wording there too.
-  - "I'll sit this one out" → "Hide voting panel": `PollActiveView.tsx:132` (collapse button in `VotingPanel`).
-  - Phase badge "2/3" → "Step 2/3 · Ordering": labels originate in the `inProgressDetails` memo in `App.tsx:130–171` (`phaseLabel: '1/3'` etc.) and render in `components/OrdersRail.tsx:53–69` (`inProgressPhaseLabel`). Extend `phaseLabel` with a name, or add a `phaseName` field.
-  *Done:* "Cancel poll" applied in **both** `PollActiveView.tsx` and `PollTiedView.tsx` (same jargon). "Hide voting panel" applied. `phaseLabel`s → "Step 1/3 · Poll" / "Step 2/3 · Ordering" / "Step 3/3 · Delivery". **Gotcha fixed:** `OrdersRail.tsx:40` derived `isPhase3Due` from the exact string `=== '3/3'`; loosened to `?.includes('3/3')` so wording can change freely. Tests updated (PollActiveView, PollTiedView); `App.test` `1/3`/`2/3` assertions still pass (substring). **Left for T7:** the poll abort *confirm* dialog still reads "Kill this poll?" / "Yes, kill" — belongs with the ConfirmDialog rework, not a bare wording swap.
+  - "Kill poll (admin)" → "Cancel poll": `components/PollActiveView.tsx` and the tied-poll action in `components/PollTiedView.tsx`.
+  - "I'll sit this one out" → "Hide voting panel": `PollActiveView.tsx` (`VotingPanel`).
+  - Phase badge labels originate in the `inProgressDetails` memo in `App.tsx:130–171` and render in `components/OrdersRail.tsx`.
+  *Current state:* `PollActiveView` uses modal copy "Cancel this poll?" / "Cancel poll". `PollTiedView` still has inline confirmation copy "Kill this poll?" / "Yes, kill" even though its trigger says "Cancel poll". "Hide voting panel" is applied. The phase-label expansion to "Step 1/3 · Poll" / "Step 2/3 · Ordering" / "Step 3/3 · Delivery" was reverted; current rail labels are compact `1/3`, `2/3`, `3/3`. `OrdersRail` still checks `?.includes('3/3')` for the delivery-due animation.
 - [x] **T3** ✅ *(2026-07-07)* Manual-minutes input → `type="number" min=1 max=720` with inline validation; replace the 24-button preset list with the number input + 3–4 presets (5/15/30/60).
   *Where:* `components/PollActiveView.tsx`. The preset wall is `timerOptions` (line 369, `Array.from({length: 24}…)`) rendered as buttons at lines 418–435; the free-text input is lines 437–457 (`manualRemainingMinutes`, `type="text"`, bare `Number.parseInt` on Enter). All inside the `TimerActionHeader` children render-prop. `components/MinutesActionDropdown.tsx` looks like a related/duplicate control — check whether it should be the shared home for this.
   *Done:* `timerOptions` → `[5, 15, 30, 60]`. Manual input → `type="number" min=1 max=720`, with a JS bounds check on Enter (`1 ≤ n ≤ 720`, integer) that shows an inline `role="alert"` error + `aria-invalid` and blocks the API call — previously `NaN`/garbage went straight to `updatePollTimer`. **Verdict on `MinutesActionDropdown`:** *not* the shared home here — it ships its own trigger button + open/close state + outside-click handler, so nesting it inside `TimerActionHeader`'s render-prop menu would double the dropdown chrome. Improved the inline control in place instead. Added a test for the reject-out-of-range path.
@@ -94,8 +93,8 @@ All paths below are relative to `src/client/` unless noted. Line numbers are as 
   *Done:* added `context/ToastContext.tsx` with `ToastProvider`, `useToast()`, a portal-backed `aria-live="polite"` region, dismiss buttons, and auto-dismiss. Mounted it in `main.tsx`. Migrated action-level request failures/successes in the lunch-flow views, `ManageMenus`, `Administration` action hooks, and `ShoppingList`; field/import validation remains inline. Added `tests/client/ToastContext.test.tsx`.
 - [ ] **T12** Mobile pass: collapse the OrdersRail to a bottom sheet or "Past lunches (N)" disclosure below `md`, keeping the live-status pill visible.
   *Where the layout splits:* `App.tsx:215` (`<main className="flex min-h-0 flex-1 flex-col md:flex-row">`) and `OrdersRail.tsx:46` (`<aside className="… w-full … md:w-80 …">`). The problem: below `md` the rail stacks above the routed content inside a `h-screen overflow-hidden` shell (`App.tsx:201`), so history steals viewport from the live poll. Native `<details>` around the history list is the lazy version. Verify every `AppPhase` view at 375 px.
-- [ ] **T13** Visible 3-step progress stepper (Poll → Selection → Delivery) on all in-flow views, replacing the bare `1/3` fraction.
-  *Where:* phase state comes from `hooks/useAppPhase.ts` (`AppPhase` union in `src/lib/types.ts`); the fraction labels live in the `inProgressDetails` memo (`App.tsx:130–171`). Add a small `ui/Stepper` (or extend `components/TimerActionHeader.tsx`, which every in-flow view already renders as its header) and derive the active step from `phase`. Supersedes the T2 badge tweak — do T2 first anyway, it's minutes.
+- [ ] **T13** Visible 3-step progress stepper (Poll → Selection → Delivery) on all in-flow views, replacing or explaining the bare `1/3` fraction.
+  *Where:* phase state comes from `hooks/useAppPhase.ts` (`AppPhase` union in `src/lib/types.ts`); the fraction labels live in the `inProgressDetails` memo (`App.tsx:130–171`). Add a small `ui/Stepper` (or extend `components/TimerActionHeader.tsx`, which every in-flow view already renders as its header) and derive the active step from `phase`. The earlier T2 text-only legend was tried and reverted; a proper visual stepper is still open.
 - [ ] **T14** Separate "Start new Team Lunch" (primary CTA) from "View lunch in progress" (status link) — two controls, one meaning each.
   *Where:* the dual-behavior button is `OrdersRail.tsx:35–74` (`topActionLabel` / `topActionClass` switch on `hasOngoingLunchProcess`) with the branching handler passed from `App.tsx:225–247` (`onStartNewTeamLunch` navigates to poll/selection when one is ongoing, else dispatches `START_NEW_TEAM_LUNCH`). Split into: a status banner (link) rendered when `hasOngoingLunchProcess`, and a start CTA that also gets a home on the idle dashboard (`PollIdleView` already contains `PollStartForm` — the rail CTA can simply navigate/scroll there).
 
@@ -109,6 +108,6 @@ All paths below are relative to `src/client/` unless noted. Line numbers are as 
 
 ### Suggested sequence
 
-T1–T6 in one afternoon sweep → T7+T10 (dialog correctness) → T11 (feedback) → T8/T9 (consistency) → T12/T13 (mobile + stepper) → the rest as appetite allows.
+T12/T13 (mobile + stepper) → clean up the remaining tied-poll confirmation wording → T14 (split rail CTA/status) → T15 only if users still complain about look/feel → T16/T17 opportunistically.
 
-**Laziest high-impact path:** T7 + T11 + T9 — everything they need already exists in `ui/` and the token system; it's adoption work, not new design. Skip T15 until users complain about looks; skip T17 until someone asks for it.
+**Laziest high-impact path from here:** T12 + T13. The dialog, toast, timer, primitive-adoption, Quick Stats, Google Fonts, and watermark quick wins are already mostly done.
