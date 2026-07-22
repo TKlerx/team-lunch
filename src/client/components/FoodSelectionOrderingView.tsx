@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as api from '../api.js';
 import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
 import FoodSelectionOrderBoard from './FoodSelectionOrderBoard.js';
 import MinutesActionDropdown from './MinutesActionDropdown.js';
@@ -14,6 +15,7 @@ import OrderCopyStatus from './OrderCopyStatus.js';
 import { Button } from './ui/Button.js';
 import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { FoodSelectionFallbackCandidate } from '../../lib/types.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const ETA_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60] as const;
 
@@ -224,6 +226,7 @@ export default function FoodSelectionOrderingView() {
   const [placingFallbackFor, setPlacingFallbackFor] = useState<string | null>(null);
   const [pingingFallbackFor, setPingingFallbackFor] = useState<string | null>(null);
   const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
   const canManageFoodSelection = isAdminAuthenticatedUser();
 
   if (!activeFoodSelection || activeFoodSelection.status !== 'ordering') return null;
@@ -296,7 +299,7 @@ export default function FoodSelectionOrderingView() {
       setEtaMinutes(value);
       return true;
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not place the order') });
       return false;
     } finally {
       setSubmitting(false);
@@ -318,7 +321,7 @@ export default function FoodSelectionOrderingView() {
     try {
       await api.claimOrderingResponsibility(selection.id, actorLabel ?? undefined);
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not start ordering') });
     } finally {
       setClaimingOrder(false);
     }
@@ -330,7 +333,7 @@ export default function FoodSelectionOrderingView() {
     try {
       await api.abortFoodSelection(selection.id);
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not abort food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -341,7 +344,7 @@ export default function FoodSelectionOrderingView() {
     try {
       await api.setOrderProcessed(selection.id, orderId, processed, actorLabel ?? undefined);
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update order status') });
     } finally {
       setProcessingOrderIds((previous) => {
         const next = new Set(previous);

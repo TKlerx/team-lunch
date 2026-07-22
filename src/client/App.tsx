@@ -135,14 +135,14 @@ export default function App() {
       ) {
         return {
           actionLabel: 'Awaiting lunch delivery...',
-          phaseLabel: 'Step 3/3 · Delivery',
+          phaseLabel: '3/3',
           countdownTo: activeFoodSelection.deliveryDueAt,
         };
       }
 
       return {
         actionLabel: 'Food selection in progress...',
-        phaseLabel: 'Step 2/3 · Ordering',
+        phaseLabel: '2/3',
         countdownTo: activeFoodSelection.endsAt,
       };
     }
@@ -150,7 +150,7 @@ export default function App() {
     if (activePoll) {
       return {
         actionLabel: 'Cuisine poll in progress...',
-        phaseLabel: 'Step 1/3 · Poll',
+        phaseLabel: '1/3',
         countdownTo: activePoll.endsAt,
       };
     }
@@ -158,7 +158,7 @@ export default function App() {
     if (isPollFinishedTransition) {
       return {
         actionLabel: 'Cuisine poll in progress...',
-        phaseLabel: 'Step 1/3 · Poll',
+        phaseLabel: '1/3',
         countdownTo: null,
       };
     }

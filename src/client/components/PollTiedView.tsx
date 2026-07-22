@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import * as api from '../api.js';
 import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
 import { Button } from './ui/Button.js';
 import { Select } from './ui/Select.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const EXTEND_OPTIONS = [5, 10, 15, 30] as const;
 
 export default function PollTiedView() {
   const { activePoll, menus } = useAppState();
   const [extensionMinutes, setExtensionMinutes] = useState<number>(5);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
   const [showAbortConfirm, setShowAbortConfirm] = useState(false);
   const canKillPoll = isAdminAuthenticatedUser();
 
@@ -32,11 +34,10 @@ export default function PollTiedView() {
 
   const handleExtend = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.extendPoll(activePoll.id, extensionMinutes);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not extend the poll') });
     } finally {
       setSubmitting(false);
     }
@@ -44,11 +45,10 @@ export default function PollTiedView() {
 
   const handleRandomWinner = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.randomWinner(activePoll.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not choose a random winner') });
     } finally {
       setSubmitting(false);
     }
@@ -56,11 +56,10 @@ export default function PollTiedView() {
 
   const handleAbort = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.abortPoll(activePoll.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not cancel the poll') });
     } finally {
       setSubmitting(false);
       setShowAbortConfirm(false);
@@ -90,8 +89,6 @@ export default function PollTiedView() {
           ))}
           </div>
         </div>
-
-        {error && <p className="mb-4 text-center text-sm text-danger-fg">{error}</p>}
 
         {/* Extend voting */}
         <div className="mb-4 space-y-2">

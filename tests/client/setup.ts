@@ -6,4 +6,5 @@ import { afterEach } from 'vitest';
 // Ensure DOM cleanup between tests (needed when vitest globals=false)
 afterEach(() => {
   cleanup();
+  document.querySelectorAll('[data-toast-fallback="true"]').forEach((node) => node.remove());
 });

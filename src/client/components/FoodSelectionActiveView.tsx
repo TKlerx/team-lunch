@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppState } from "../context/AppContext.js";
+import { useToast } from "../context/ToastContext.js";
 import { useCountdown, formatTime } from "../hooks/useCountdown.js";
 import * as api from "../api.js";
 import TimerActionHeader from "./TimerActionHeader.js";
@@ -9,6 +10,7 @@ import { Button } from "./ui/Button.js";
 import { Input } from "./ui/Input.js";
 import { useConfirmDialog } from "./ui/ConfirmDialog.js";
 import { formatPrice } from "../utils/orderCopy.js";
+import { getErrorMessage } from "../lib/errorMessage.js";
 import {
   getAuthenticatedActorKey,
   getAuthenticatedDisplayLabel,
@@ -121,10 +123,10 @@ function OrderForm({
 }: OrderFormProps) {
   const [itemNotes, setItemNotes] = useState<Record<string, string>>({});
   const [itemSearch, setItemSearch] = useState("");
-  const [error, setError] = useState("");
   const [addingItemId, setAddingItemId] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
   const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
 
   const filteredMenuItems = useMemo(() => {
     const normalizedSearch = itemSearch.trim().toLowerCase();
@@ -171,7 +173,6 @@ function OrderForm({
     }
 
     setAddingItemId(itemId);
-    setError("");
     try {
       const itemNote = itemNotes[itemId]?.trim() ?? "";
       await api.placeOrder(
@@ -182,7 +183,7 @@ function OrderForm({
       );
       setItemNotes((prev) => ({ ...prev, [itemId]: "" }));
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not add this meal") });
     } finally {
       setAddingItemId(null);
     }
@@ -190,11 +191,10 @@ function OrderForm({
 
   const handleWithdraw = async () => {
     setWithdrawingAll(true);
-    setError("");
     try {
       await api.withdrawOrder(selectionId, nickname);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not withdraw your order") });
     } finally {
       setWithdrawingAll(false);
     }
@@ -385,8 +385,6 @@ function OrderForm({
         </div>
       )}
 
-      {error && <p className="text-sm text-danger-fg">{error}</p>}
-
       <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="danger"
@@ -432,7 +430,7 @@ function OrderBoard({
   totalPrice: number;
 }) {
   const [removingOrderId, setRemovingOrderId] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const ordersByUser = useMemo(() => {
     const grouped = new Map<string, typeof orders>();
     for (const order of orders) {
@@ -447,11 +445,10 @@ function OrderBoard({
 
   const handleRemoveFromBoard = async (orderId: string) => {
     setRemovingOrderId(orderId);
-    setError("");
     try {
       await api.withdrawOrder(selectionId, nickname, orderId);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not remove that order") });
     } finally {
       setRemovingOrderId(null);
     }
@@ -527,7 +524,6 @@ function OrderBoard({
           Total: {formatPrice(totalPrice)}
         </span>
       </div>
-      {error && <p className="text-sm text-danger-fg">{error}</p>}
     </div>
   );
 }
@@ -1229,9 +1225,9 @@ export default function FoodSelectionActiveView() {
   const remaining = useCountdown(activeFoodSelection?.endsAt);
   const [submitting, setSubmitting] = useState(false);
   const [updatingTimer, setUpdatingTimer] = useState(false);
-  const [error, setError] = useState("");
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState("");
   const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
   if (!activeFoodSelection || !nickname) return null;
 
   const selection = activeFoodSelection;
@@ -1335,12 +1331,11 @@ export default function FoodSelectionActiveView() {
     if (!confirmed) return false;
 
     setSubmitting(true);
-    setError("");
     try {
       await api.completeFoodSelectionNow(selection.id);
       return true;
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not complete food selection") });
       return false;
     } finally {
       setSubmitting(false);
@@ -1351,13 +1346,12 @@ export default function FoodSelectionActiveView() {
     remainingMinutes: number,
   ): Promise<boolean> => {
     setUpdatingTimer(true);
-    setError("");
     try {
       await api.updateFoodSelectionTimer(selection.id, remainingMinutes);
       setManualRemainingMinutes("");
       return true;
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not update the timer") });
       return false;
     } finally {
       setUpdatingTimer(false);
@@ -1374,11 +1368,10 @@ export default function FoodSelectionActiveView() {
     if (!confirmed) return;
 
     setSubmitting(true);
-    setError("");
     try {
       await api.abortFoodSelection(selection.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: "error", message: getErrorMessage(err, "Could not abort food selection") });
     } finally {
       setSubmitting(false);
     }
@@ -1503,7 +1496,6 @@ export default function FoodSelectionActiveView() {
           {mealMarkState.marksError}
         </p>
       )}
-      {error && <p className="mt-4 text-sm text-danger-fg">{error}</p>}
       {dialog}
     </div>
   );

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { FoodSelection, Poll } from '../../lib/types.js';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import {
   getAverageMealRating,
@@ -19,6 +20,7 @@ import { Card } from './ui/Card.js';
 import { Input } from './ui/Input.js';
 import { Select } from './ui/Select.js';
 import { sectionTitleClass } from './ui/Section.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const POLL_DURATIONS = [5, 10, 15, 30, 45, 60, 120, 240, 480, 720] as const;
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
@@ -317,6 +319,7 @@ function SingleMenuQuickStart({
   const [duration, setDuration] = useState<number>(defaultDuration);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setDuration(defaultDuration);
@@ -334,7 +337,7 @@ function SingleMenuQuickStart({
       await api.quickStartFoodSelection(duration);
       setError('');
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -391,6 +394,7 @@ function PollStartForm({
   const [excludedReasons, setExcludedReasons] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const handleStart = async (event: FormEvent) => {
     event.preventDefault();
@@ -425,7 +429,7 @@ function PollStartForm({
       setExcludedReasons({});
       setError('');
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start poll') });
     } finally {
       setSubmitting(false);
     }

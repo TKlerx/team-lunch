@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import * as api from '../api.js';
 import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
 import FoodSelectionOrderBoard from './FoodSelectionOrderBoard.js';
 import { Button } from './ui/Button.js';
 import { Select } from './ui/Select.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const EXTEND_OPTIONS = [5, 10, 15] as const;
 
 export default function FoodSelectionOvertimeView() {
   const { activeFoodSelection, menus } = useAppState();
   const [extensionMinutes, setExtensionMinutes] = useState<number>(5);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   if (!activeFoodSelection) return null;
 
@@ -24,11 +26,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleExtend = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.extendFoodSelection(selection.id, extensionMinutes);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not extend food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -36,11 +37,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleComplete = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.completeFoodSelection(selection.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not complete food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -48,11 +48,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleAbort = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.abortFoodSelection(selection.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not abort food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -76,8 +75,6 @@ export default function FoodSelectionOvertimeView() {
           <p className="mb-4 text-sm text-fg-muted">
             Extend the food selection or confirm the order?
           </p>
-
-          {error && <p className="mb-4 text-sm text-danger-fg">{error}</p>}
 
           {/* Extend */}
           <div className="mb-4 space-y-2">

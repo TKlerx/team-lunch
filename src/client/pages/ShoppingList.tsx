@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import { Input } from '../components/ui/Input.js';
 import { Button } from '../components/ui/Button.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 function formatTimestamp(value: string | null): string {
   if (!value) return '';
@@ -24,7 +26,7 @@ export default function ShoppingList() {
   const actorLabel = getAuthenticatedDisplayLabel();
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const openItems = shoppingListItems.filter((item) => !item.bought);
   const boughtItems = shoppingListItems.filter((item) => item.bought);
@@ -46,12 +48,11 @@ export default function ShoppingList() {
   const handleAddItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaving(true);
-    setError('');
     try {
       await api.createShoppingListItem(name, actorLabel ?? undefined);
       setName('');
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not add shopping-list item') });
     } finally {
       setSaving(false);
     }
@@ -59,11 +60,10 @@ export default function ShoppingList() {
 
   const handleMarkBought = async (itemId: string) => {
     setSaving(true);
-    setError('');
     try {
       await api.markShoppingListItemBought(itemId, actorLabel ?? undefined);
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update shopping-list item') });
     } finally {
       setSaving(false);
     }
@@ -75,13 +75,12 @@ export default function ShoppingList() {
     }
 
     setSaving(true);
-    setError('');
     try {
       await Promise.all(
         openItems.map((item) => api.markShoppingListItemBought(item.id, actorLabel ?? undefined)),
       );
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update shopping-list items') });
     } finally {
       setSaving(false);
     }
@@ -107,8 +106,6 @@ export default function ShoppingList() {
           Add item
         </Button>
       </form>
-
-      {error ? <p className="mt-3 text-sm text-danger-fg">{error}</p> : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="rounded-lg border border-warning bg-warning-soft p-4">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
@@ -7,6 +8,7 @@ import { Button } from './ui/Button.js';
 import { Input } from './ui/Input.js';
 import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { MealRecommendationPreVoteResponse } from '../../lib/types.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 import {
   getAuthenticatedActorKey,
   getAuthenticatedDisplayLabel,
@@ -69,7 +71,7 @@ function VotingPanel({
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
-  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const myVotedMenuIds = useMemo(
     () =>
@@ -83,7 +85,6 @@ function VotingPanel({
 
   const handleToggle = async (menuId: string) => {
     setLoading(menuId);
-    setError('');
     try {
       if (myVotedMenuIds.has(menuId)) {
         await api.withdrawVote(pollId, menuId, nickname);
@@ -91,7 +92,7 @@ function VotingPanel({
         await api.castVote(pollId, menuId, nickname);
       }
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not update your vote') });
     } finally {
       setLoading(null);
     }
@@ -99,11 +100,10 @@ function VotingPanel({
 
   const handleWithdrawAll = async () => {
     setWithdrawingAll(true);
-    setError('');
     try {
       await api.withdrawAllVotes(pollId, nickname);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not withdraw your votes') });
     } finally {
       setWithdrawingAll(false);
     }
@@ -127,8 +127,6 @@ function VotingPanel({
           Hide voting panel
         </Button>
       </div>
-
-      {error && <p className="mb-2 text-sm text-danger-fg">{error}</p>}
 
       {disabled && (
         <p className="mb-3 rounded border border-warning bg-warning-soft px-3 py-2 text-sm text-warning-fg">
@@ -212,17 +210,16 @@ function PublicVotesBoard({
 
 function PreVotePanel({ pollId }: { pollId: string }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [result, setResult] = useState<MealRecommendationPreVoteResponse | null>(null);
+  const { showToast } = useToast();
 
   const handleLoadRecommendations = async () => {
     setLoading(true);
-    setError('');
     try {
       const response = await api.recommendPreVote(pollId, 5);
       setResult(response);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not load recommendations') });
     } finally {
       setLoading(false);
     }
@@ -246,8 +243,6 @@ function PreVotePanel({ pollId }: { pollId: string }) {
           {loading ? 'Loading...' : result ? 'Refresh suggestions' : 'Show suggestions'}
         </Button>
       </div>
-
-      {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
 
       {result && (
         <div className="mt-4 space-y-3">

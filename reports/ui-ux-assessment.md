@@ -88,9 +88,10 @@ All paths below are relative to `src/client/` unless noted. Line numbers are as 
 
 ### Medium (1–3 days each)
 
-- [ ] **T11** Toast/announcement system: one `ToastProvider` + portal + `aria-live="polite"` region; route async success/failure through it, keep inline errors only for field-level validation.
+- [x] **T11** ✅ *(2026-07-07)* Toast/announcement system: one `ToastProvider` + portal + `aria-live="polite"` region; route async success/failure through it, keep inline errors only for field-level validation.
   *Mount point:* wrap in `main.tsx` next to the existing `AppContext`/`ThemeContext` providers (follow `context/ThemeContext.tsx` as the pattern; expose a `useToast()` hook).
   *Call sites to migrate:* grep `setError((err as Error).message)` — 67 hits across 9 files, heaviest: `pages/ManageMenus.tsx` (29), `PollIdleView.tsx` (7), `PollActiveView.tsx` (6), `FoodSelectionActiveView.tsx` (6), `FoodSelectionOvertimeView.tsx` (6). Migrate incrementally — action-level errors (vote failed, abort failed) become toasts; form-validation errors ("Description is required") stay inline.
+  *Done:* added `context/ToastContext.tsx` with `ToastProvider`, `useToast()`, a portal-backed `aria-live="polite"` region, dismiss buttons, and auto-dismiss. Mounted it in `main.tsx`. Migrated action-level request failures/successes in the lunch-flow views, `ManageMenus`, `Administration` action hooks, and `ShoppingList`; field/import validation remains inline. Added `tests/client/ToastContext.test.tsx`.
 - [ ] **T12** Mobile pass: collapse the OrdersRail to a bottom sheet or "Past lunches (N)" disclosure below `md`, keeping the live-status pill visible.
   *Where the layout splits:* `App.tsx:215` (`<main className="flex min-h-0 flex-1 flex-col md:flex-row">`) and `OrdersRail.tsx:46` (`<aside className="… w-full … md:w-80 …">`). The problem: below `md` the rail stacks above the routed content inside a `h-screen overflow-hidden` shell (`App.tsx:201`), so history steals viewport from the live poll. Native `<details>` around the history list is the lazy version. Verify every `AppPhase` view at 375 px.
 - [ ] **T13** Visible 3-step progress stepper (Poll → Selection → Delivery) on all in-flow views, replacing the bare `1/3` fraction.

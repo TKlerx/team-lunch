@@ -6,6 +6,7 @@ import {
   updateFoodSelectionEta,
 } from '../api.js';
 import { useAppDispatch, useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { useCountdown, useElapsedSince, formatTime } from '../hooks/useCountdown.js';
 import TimerActionHeader from './TimerActionHeader.js';
 import { Button } from './ui/Button.js';
@@ -21,6 +22,7 @@ import {
 } from '../utils/orderCopy.js';
 import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 function formatLateDuration(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -382,6 +384,7 @@ export default function FoodDeliveryView() {
   const [updatingDeliveredIds, setUpdatingDeliveredIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
   const canManageFoodSelection = isAdminAuthenticatedUser();
   const actorLabel = getAuthenticatedDisplayLabel();
 
@@ -445,7 +448,7 @@ export default function FoodDeliveryView() {
       setManualEtaMinutes('');
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not update ETA');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update ETA') });
       return false;
     } finally {
       setIsSavingEta(false);
@@ -466,7 +469,7 @@ export default function FoodDeliveryView() {
       await confirmFoodArrival(selection.id);
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not confirm arrival');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not confirm arrival') });
       return false;
     } finally {
       setIsConfirmingArrival(false);
@@ -487,7 +490,7 @@ export default function FoodDeliveryView() {
       await abortFoodSelection(selection.id);
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not abort process');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not abort process') });
       return false;
     }
   }
@@ -518,7 +521,7 @@ export default function FoodDeliveryView() {
     try {
       await setOrderDelivered(selection.id, orderId, delivered, actorLabel ?? undefined);
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not update delivery check');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update delivery check') });
     } finally {
       setUpdatingDeliveredIds((previous) => {
         const next = new Set(previous);
