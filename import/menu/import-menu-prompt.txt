@@ -8,9 +8,36 @@ Hard validation rules:
 - menu[1..] are category sections with an "items" array.
 - Every item needs "name", "ingredients", "price"; optional "item-number" is allowed.
 - item-number, if provided, must be a string with max 40 characters.
+- Within each section, sort items by item-number in increasing numeric order,
+  comparing the numbers as integers, NOT as strings: 1,2,10,100 - never the
+  lexicographic 1,10,100,2. Items without an item-number keep their position
+  relative to their neighbors. Sort even if the source menu lists items out of order.
+- Order the sections themselves by their lowest item-number, so item-numbers increase
+  across the whole file, even if the source menu orders sections differently.
 - price must be a number between 0 and 9999.99 with max 2 decimal places.
-- Item names must be unique across all sections (case-insensitive).
-- Items may include optional user-facing lowercase tags, e.g. ["vegetarian", "spicy"] or ["beverage", "cold"].
-- Use the tag "beverage" for drinks; otherwise omit it. Do not create a "meal" tag or internal tags like "course:drink".
-- If tags are unknown or not useful, omit the tags field. If another optional value is unknown, use an empty string or omit it.
+- Item names must be unique across all sections (case-insensitive). If the same dish
+  appears in several sections (e.g. a vegan variant or a lunch menu), disambiguate with
+  a short suffix like "Daal Tadka (Vegan)" or "Chicken Korma (Mittag)".
+Tagging rules:
+- Items may include optional user-facing lowercase tags. Omit the tags field when no
+  tag applies. Do not create a "meal" tag or internal tags like "course:drink".
+- Use the tag "beverage" for drinks; otherwise omit it.
+- Diet/style tags: "vegetarian", "vegan" (items from a vegan section get "vegan" only,
+  not "vegetarian"), "spicy" (dishes marked scharf/hot, e.g. Madras, Vindaloo),
+  "sweet" (desserts, sweet sides).
+- Main-protein tags, one per animal named in the dish name or ingredients:
+  "chicken", "lamb" (also Mutton/Keema), "pork", "beef", "duck", "fish",
+  "seafood" (prawns, shrimp, Garnelen, Jhinga, crustaceans).
+- Allergen tags, inferred from ingredients AND from any allergen code legend the menu
+  provides (e.g. A1=Weizenmehl, C=Eier, G=Milch, H1-H5=nuts). Allergen codes count even
+  when the ingredient text does not mention the allergen:
+  - "lactose": dairy such as Sahne, Joghurt, Butter, Ghee, Milch, Käse/Paneer/Hüttenkäse,
+    Rahm, Malai, ice cream. Coconut milk (Kokosnussmilch) is NOT lactose.
+  - "gluten": wheat/spelt flour, Fladenbrot/Naan/Roti/Bhatura, Teigtaschen, breaded items
+    (nuggets). Chickpea flour (Kichererbsenmehl) and lentil flour (Linsenmehl) are
+    gluten-free, so batter-fried pakoras and papadam are NOT gluten.
+  - "egg": Ei/Eier in the ingredients or an egg allergen code.
+  - "nut": Mandeln, Cashew, Walnüsse, Pistazien, Erdnüsse or a nut allergen code.
+- If tags are unknown or not useful, omit the tags field. If another optional value is
+  unknown, use an empty string or omit it.
 Output only one JSON object, no surrounding text.

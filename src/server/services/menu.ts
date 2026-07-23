@@ -236,7 +236,7 @@ function formatMenu(m: {
     orderUrl: m.orderUrl,
     sourceDateCreated: m.sourceDateCreated?.toISOString() ?? null,
     createdAt: m.createdAt.toISOString(),
-    items: m.items.map(formatMenuItem),
+    items: [...m.items].sort(compareMenuItems).map(formatMenuItem),
     itemCount: m.items.length,
   };
 }
@@ -264,6 +264,23 @@ function formatMenuItem(i: {
 }
 
 const itemOrderBy = [{ itemNumber: 'asc' as const }, { createdAt: 'asc' as const }, { id: 'asc' as const }];
+
+// itemNumber is a VarChar, so the DB orderBy above sorts "1","10","100","2" lexicographically.
+// Re-sort in app code with a numeric-aware collator so "2" comes before "10".
+const itemNumberCollator = new Intl.Collator('en', { numeric: true });
+function compareMenuItems(
+  a: { itemNumber: string | null; createdAt: Date; id: string },
+  b: { itemNumber: string | null; createdAt: Date; id: string },
+): number {
+  if (a.itemNumber !== b.itemNumber) {
+    if (a.itemNumber === null) return 1;
+    if (b.itemNumber === null) return -1;
+    const byNumber = itemNumberCollator.compare(a.itemNumber, b.itemNumber);
+    if (byNumber !== 0) return byNumber;
+  }
+  const byCreated = a.createdAt.getTime() - b.createdAt.getTime();
+  return byCreated !== 0 ? byCreated : a.id.localeCompare(b.id);
+}
 const menuTagInclude = {
   where: { provenance: MENU_TAG_PROVENANCE },
   select: { tag: true },
@@ -846,7 +863,7 @@ export async function listItems(menuId: string, officeLocationId?: string): Prom
     orderBy: itemOrderBy,
     include: { menuItemFeatures: menuTagInclude },
   });
-  return items.map(formatMenuItem);
+  return items.sort(compareMenuItems).map(formatMenuItem);
 }
 
 export async function createItem(
