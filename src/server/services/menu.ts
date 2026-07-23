@@ -5,6 +5,7 @@ import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeL
 import { ensureMenuItemIdentity, normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
 import { extractFeatures } from './mealFeatures.js';
 import { buildSanitizedTaggingPayload, requestAiFeatureTags } from './mealRecommendationAi.js';
+import { MENU_TAG_PROVENANCE, validateMenuTags } from '../../lib/menuItemTags.js';
 import type {
   Menu,
   MenuItem,
@@ -18,6 +19,7 @@ type ImportItem = {
   name: string;
   description: string;
   price: number;
+  tags: string[];
 };
 
 type ParsedMenuImport = {
@@ -195,6 +197,14 @@ function validateMenuUrl(url?: string | null, fieldLabel = 'URL'): string | null
   return trimmedUrl;
 }
 
+function parseImportItemTags(rawTags: unknown, itemPath: string, violations: ImportMenuViolation[]): string[] {
+  const validatedTags = validateMenuTags(rawTags, `${itemPath}.tags`);
+  if (validatedTags.error) {
+    violations.push({ path: `${itemPath}.tags`, message: validatedTags.error });
+  }
+  return validatedTags.tags;
+}
+
 // ─── Formatters ────────────────────────────────────────────
 
 function formatMenu(m: {
@@ -214,6 +224,7 @@ function formatMenu(m: {
     description: string | null;
     price: { toString(): string } | null;
     createdAt: Date;
+    menuItemFeatures?: Array<{ tag: string }>;
   }>;
 }): Menu {
   return {
@@ -238,6 +249,7 @@ function formatMenuItem(i: {
   description: string | null;
   price: { toString(): string } | null;
   createdAt: Date;
+  menuItemFeatures?: Array<{ tag: string }>;
 }): MenuItem {
   return {
     id: i.id,
@@ -246,8 +258,52 @@ function formatMenuItem(i: {
     name: i.name,
     description: i.description,
     price: i.price === null ? null : Number(i.price.toString()),
+    tags: i.menuItemFeatures?.map((feature) => feature.tag) ?? [],
     createdAt: i.createdAt.toISOString(),
   };
+}
+
+const itemOrderBy = [{ itemNumber: 'asc' as const }, { createdAt: 'asc' as const }, { id: 'asc' as const }];
+const menuTagInclude = {
+  where: { provenance: MENU_TAG_PROVENANCE },
+  select: { tag: true },
+  orderBy: { tag: 'asc' as const },
+};
+
+async function replaceMenuTags(
+  db: MenuItemDerivedDataDb,
+  menuItem: { id: string; name: string },
+  officeLocationId: string,
+  tags: unknown,
+): Promise<void> {
+  const validated = validateMenuTags(tags);
+  if (validated.error) {
+    throw Object.assign(new Error(validated.error), { statusCode: 400 });
+  }
+
+  const identity = await ensureMenuItemIdentity(menuItem.id, officeLocationId, db);
+  await db.menuItemFeature.deleteMany({
+    where: { menuItemId: menuItem.id, provenance: MENU_TAG_PROVENANCE },
+  });
+  if (validated.tags.length === 0) return;
+
+  await db.menuItemFeature.createMany({
+    data: validated.tags.map((tag) => ({
+      menuItemId: menuItem.id,
+      itemIdentityKey: identity.itemIdentityKey,
+      officeLocationId,
+      tag,
+      provenance: MENU_TAG_PROVENANCE,
+    })),
+  });
+}
+
+async function findFormattedMenuItem(id: string): Promise<MenuItem> {
+  const item = await prisma.menuItem.findUniqueOrThrow({
+    where: { id },
+    include: { menuItemFeatures: menuTagInclude },
+  });
+  return formatMenuItem(item);
 }
 
 type MenuItemDerivedDataDb = Pick<Prisma.TransactionClient, 'menuItem' | 'menuItemIdentity' | 'menuItemFeature'>;
@@ -266,7 +322,9 @@ async function syncMenuItemDerivedData(
   const identity = await ensureMenuItemIdentity(menuItem.id, officeLocationId, db);
   const tags = extractFeatures(menuItem.name, menuItem.description);
 
-  await db.menuItemFeature.deleteMany({ where: { menuItemId: menuItem.id } });
+  await db.menuItemFeature.deleteMany({
+    where: { menuItemId: menuItem.id, provenance: { in: ['keyword', 'ai'] } },
+  });
 
   if (tags.length === 0) {
     return {
@@ -297,7 +355,7 @@ async function syncMenuItemsDerivedData(
   const items = await db.menuItem.findMany({
     where: { menuId },
     select: { id: true, name: true, description: true },
-    orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+    orderBy: itemOrderBy,
   });
 
   const gapFillTargets: MenuItemGapFillTarget[] = [];
@@ -309,6 +367,28 @@ async function syncMenuItemsDerivedData(
   }
 
   return gapFillTargets;
+}
+
+async function syncImportedMenuTags(
+  db: MenuItemDerivedDataDb,
+  menuId: string,
+  officeLocationId: string,
+  importedItems: ImportItem[],
+): Promise<void> {
+  const importedByName = new Map(importedItems.map((item) => [item.name.toLocaleLowerCase(), item]));
+  const items = await db.menuItem.findMany({
+    where: { menuId },
+    select: { id: true, name: true },
+  });
+
+  for (const item of items) {
+    await replaceMenuTags(
+      db,
+      item,
+      officeLocationId,
+      importedByName.get(item.name.toLocaleLowerCase())?.tags ?? [],
+    );
+  }
 }
 
 function parseMenuImportPayload(payload: unknown): {
@@ -462,6 +542,7 @@ function parseMenuImportPayload(payload: unknown): {
       const rawItemNumber = item['item-number'];
       const rawIngredients = item.ingredients;
       const rawPrice = item.price;
+      const rawTags = item.tags;
 
       const itemName = typeof rawItemName === 'string' ? rawItemName.trim() : '';
       if (!itemName || itemName.length > 80) {
@@ -495,6 +576,8 @@ function parseMenuImportPayload(payload: unknown): {
         violations.push({ path: `${itemPath}.price`, message: 'price must have at most 2 decimal places' });
       }
 
+      const itemTags = parseImportItemTags(rawTags, itemPath, violations);
+
       if (
         itemName
         && itemName.length <= 80
@@ -511,6 +594,7 @@ function parseMenuImportPayload(payload: unknown): {
           name: itemName,
           description: ingredients,
           price: rawPrice,
+          tags: itemTags,
         });
       }
     }
@@ -650,7 +734,7 @@ export async function listMenus(officeLocationId?: string): Promise<Menu[]> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const menus = await prisma.menu.findMany({
     where: { officeLocationId: resolvedOfficeLocationId },
-    include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
+    include: { items: { orderBy: itemOrderBy, include: { menuItemFeatures: menuTagInclude } } },
     orderBy: { name: 'asc' },
   });
   return menus.map(formatMenu);
@@ -668,7 +752,7 @@ export async function createMenu(name: string, officeLocationId?: string): Promi
 
   const menu = await prisma.menu.create({
     data: { name: trimmed, officeLocationId: resolvedOfficeLocationId },
-    include: { items: true },
+    include: { items: { include: { menuItemFeatures: menuTagInclude } } },
   });
 
   const formatted = formatMenu(menu);
@@ -729,7 +813,7 @@ export async function updateMenu(
   const menu = await prisma.menu.update({
     where: { id },
     data: updates,
-    include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
+    include: { items: { orderBy: itemOrderBy, include: { menuItemFeatures: menuTagInclude } } },
   });
 
   const formatted = formatMenu(menu);
@@ -759,7 +843,8 @@ export async function listItems(menuId: string, officeLocationId?: string): Prom
 
   const items = await prisma.menuItem.findMany({
     where: { menuId },
-    orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+    orderBy: itemOrderBy,
+    include: { menuItemFeatures: menuTagInclude },
   });
   return items.map(formatMenuItem);
 }
@@ -771,6 +856,7 @@ export async function createItem(
   itemNumber?: string | null,
   price?: number | null,
   officeLocationId?: string,
+  tags?: unknown,
 ): Promise<MenuItem> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const trimmedName = validateItemName(name);
@@ -802,8 +888,9 @@ export async function createItem(
     },
   });
 
-  const formatted = formatMenuItem(item);
   await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
+  await replaceMenuTags(prisma, item, resolvedOfficeLocationId, tags);
+  const formatted = await findFormattedMenuItem(item.id);
   broadcast('item_created', { item: formatted }, resolvedOfficeLocationId);
   return formatted;
 }
@@ -815,6 +902,7 @@ export async function updateItem(
   itemNumber?: string | null,
   price?: number | null,
   officeLocationId?: string,
+  tags?: unknown,
 ): Promise<MenuItem> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const trimmedName = validateItemName(name);
@@ -837,6 +925,7 @@ export async function updateItem(
     });
   }
 
+  const shouldSyncDerivedData = current.name !== trimmedName || current.description !== trimmedDesc;
   const item = await prisma.menuItem.update({
     where: { id },
     data: {
@@ -847,8 +936,13 @@ export async function updateItem(
     },
   });
 
-  await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
-  const formatted = formatMenuItem(item);
+  if (shouldSyncDerivedData) {
+    await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
+  }
+  if (tags !== undefined) {
+    await replaceMenuTags(prisma, item, resolvedOfficeLocationId, tags);
+  }
+  const formatted = await findFormattedMenuItem(item.id);
   broadcast('item_updated', { item: formatted }, resolvedOfficeLocationId);
   return formatted;
 }
@@ -903,10 +997,11 @@ export async function importMenuFromJson(
       });
 
       const gapFillTargets = await syncMenuItemsDerivedData(tx, existing.id, resolvedOfficeLocationId);
+      await syncImportedMenuTags(tx, existing.id, resolvedOfficeLocationId, parsed.items);
 
       const updated = await tx.menu.findUniqueOrThrow({
         where: { id: existing.id },
-        include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
+        include: { items: { orderBy: itemOrderBy, include: { menuItemFeatures: menuTagInclude } } },
       });
 
       return { menu: formatMenu(updated), created: false, gapFillTargets };
@@ -935,10 +1030,11 @@ export async function importMenuFromJson(
     });
 
     const gapFillTargets = await syncMenuItemsDerivedData(tx, createdMenu.id, resolvedOfficeLocationId);
+    await syncImportedMenuTags(tx, createdMenu.id, resolvedOfficeLocationId, parsed.items);
 
     const createdWithItems = await tx.menu.findUniqueOrThrow({
       where: { id: createdMenu.id },
-      include: { items: { orderBy: [{ itemNumber: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] } },
+      include: { items: { orderBy: itemOrderBy, include: { menuItemFeatures: menuTagInclude } } },
     });
 
     return { menu: formatMenu(createdWithItems), created: true, gapFillTargets };

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
 import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
+import prisma from '../../src/server/db.js';
 
 // Suppress SSE broadcasts during tests
 vi.mock('../../src/server/sse.js', () => ({
@@ -448,6 +449,55 @@ describe('Menu service', () => {
 
     const menus = await menuService.listMenus();
     expect(menus[0].items.map((item) => item.name)).toEqual(['Unchanged', 'Will Update', 'Will Delete']);
+  });
+
+  it('imports menu tags as user-facing lowercase tags', async () => {
+    const payload = {
+      menu: [
+        { name: 'Tagged Menu', 'date-created': '2026-02-06T12:00:00Z' },
+        {
+          category: 'Mixed',
+          items: [
+            { name: 'Falafel', ingredients: 'Chickpeas', price: 8, tags: [' Vegan ', 'vegan'] },
+            { name: 'Cola', ingredients: 'Bottle', price: 2, tags: ['Beverage', 'cold'] },
+          ],
+        },
+      ],
+    };
+
+    const result = await menuService.importMenuFromJson(payload);
+
+    expect(result.menu.items.map((item) => [item.name, item.tags]).sort()).toEqual([
+      ['Cola', ['beverage', 'cold']],
+      ['Falafel', ['vegan']],
+    ]);
+  });
+
+  it('edits menu tags without exposing internal feature tags', async () => {
+    const menu = await menuService.createMenu('Tagged');
+    const item = await menuService.createItem(menu.id, 'Curry', 'Rice', null, 9, undefined, ['spicy']);
+
+    const persistedMenu = await prisma.menu.findUniqueOrThrow({ where: { id: menu.id } });
+    await prisma.menuItemFeature.create({
+      data: {
+        menuItemId: item.id,
+        itemIdentityKey: 'curry',
+        officeLocationId: persistedMenu.officeLocationId,
+        tag: 'internal:test',
+        provenance: 'keyword',
+      },
+    });
+
+    const updated = await menuService.updateItem(item.id, 'Curry', 'Rice', null, 9, undefined, ['VEGAN']);
+    const features = await prisma.menuItemFeature.findMany({
+      where: { menuItemId: item.id },
+      orderBy: [{ provenance: 'asc' }, { tag: 'asc' }],
+    });
+
+    expect(updated.tags).toEqual(['vegan']);
+    expect(features.map((feature) => [feature.provenance, feature.tag])).toContainEqual(['keyword', 'internal:test']);
+    expect(features.map((feature) => [feature.provenance, feature.tag])).toContainEqual(['menu', 'vegan']);
+    expect(features.map((feature) => [feature.provenance, feature.tag])).not.toContainEqual(['menu', 'spicy']);
   });
 
   it('previews import for new menu with created count only', async () => {

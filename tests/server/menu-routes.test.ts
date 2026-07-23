@@ -133,22 +133,24 @@ describe('Menu routes (integration)', () => {
     // Create item
     const createRes = await agent(server)
       .post(`/api/menus/${menuId}/items`)
-      .send({ name: 'Margherita Pizza', description: 'Classic', itemNumber: '12', price: 9.5 })
+      .send({ name: 'Margherita Pizza', description: 'Classic', itemNumber: '12', price: 9.5, tags: ['Vegetarian'] })
       .expect(201);
     expect(createRes.body.name).toBe('Margherita Pizza');
     expect(createRes.body.description).toBe('Classic');
     expect(createRes.body.itemNumber).toBe('12');
     expect(createRes.body.price).toBe(9.5);
+    expect(createRes.body.tags).toEqual(['vegetarian']);
     const itemId = createRes.body.id;
 
     // Update item
     const updateRes = await agent(server)
       .put(`/api/menus/${menuId}/items/${itemId}`)
-      .send({ name: 'Neapolitan Pizza', description: 'From Naples', itemNumber: '21', price: 10.5 })
+      .send({ name: 'Neapolitan Pizza', description: 'From Naples', itemNumber: '21', price: 10.5, tags: ['spicy'] })
       .expect(200);
     expect(updateRes.body.name).toBe('Neapolitan Pizza');
     expect(updateRes.body.itemNumber).toBe('21');
     expect(updateRes.body.price).toBe(10.5);
+    expect(updateRes.body.tags).toEqual(['spicy']);
 
     // Delete item
     await agent(server).delete(`/api/menus/${menuId}/items/${itemId}`).expect(204);

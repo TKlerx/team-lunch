@@ -128,6 +128,7 @@ export default async function menuRoutes(app: FastifyInstance) {
           req.body.itemNumber,
           req.body.price,
           officeLocationId,
+          req.body.tags,
         );
         return reply.status(201).send(item);
       } catch (err) {
@@ -153,6 +154,7 @@ export default async function menuRoutes(app: FastifyInstance) {
           req.body.itemNumber,
           req.body.price,
           officeLocationId,
+          req.body.tags,
         );
         return reply.send(item);
       } catch (err) {

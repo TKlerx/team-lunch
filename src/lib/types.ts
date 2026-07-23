@@ -68,6 +68,7 @@ export interface MenuItem {
   name: string;
   description: string | null;
   price: number | null;
+  tags: string[];
   createdAt: string;
 }
 
@@ -424,6 +425,7 @@ export interface CreateMenuItemRequest {
   description?: string;
   itemNumber?: string | null;
   price?: number | null;
+  tags?: string[];
 }
 
 export interface UpdateMenuItemRequest {
@@ -431,6 +433,7 @@ export interface UpdateMenuItemRequest {
   description?: string;
   itemNumber?: string | null;
   price?: number | null;
+  tags?: string[];
 }
 
 export interface ImportMenuViolation {

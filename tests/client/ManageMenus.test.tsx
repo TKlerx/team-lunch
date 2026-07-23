@@ -145,7 +145,7 @@ describe('ManageMenus', () => {
 
     await user.click(screen.getByRole('button', { name: /copy ai prompt/i }));
     expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Return JSON only.'));
-    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('course:side or course:drink'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Use the tag "beverage" for drinks'));
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument();
   });
 
@@ -604,6 +604,7 @@ describe('ManageMenus', () => {
       description: undefined,
       itemNumber: '12',
       price: 9.5,
+      tags: [],
     });
   });
 
@@ -631,7 +632,32 @@ describe('ManageMenus', () => {
       description: undefined,
       itemNumber: '21',
       price: 10.5,
+      tags: [],
     });
+  });
+
+  it('shows and edits menu item tags', async () => {
+    const user = userEvent.setup();
+    mockUpdateMenuItem.mockResolvedValue({});
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({ items: [makeMenuItem({ id: 'item-1', name: 'Cola', tags: ['beverage', 'cold'] })] })],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
+    expect(screen.getByText('beverage')).toBeInTheDocument();
+    expect(screen.getByText('cold')).toBeInTheDocument();
+
+    await user.click(screen.getAllByRole('button', { name: 'Edit' }).at(-1)!);
+    await user.clear(screen.getByPlaceholderText('Tags, comma-separated (optional)'));
+    await user.type(screen.getByPlaceholderText('Tags, comma-separated (optional)'), 'Hot, Beverage');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockUpdateMenuItem).toHaveBeenCalledWith('menu-1', 'item-1', expect.objectContaining({
+      tags: ['hot', 'beverage'],
+    }));
   });
 
   it('saves a default meal and organizer fallback opt-in for a menu', async () => {

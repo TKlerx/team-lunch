@@ -204,6 +204,62 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.queryByText('Pepperoni')).not.toBeInTheDocument();
   });
 
+  it('splits meals and beverages into tabs', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({ id: 'item-1', name: 'Pizza', tags: ['vegetarian'] }),
+          makeMenuItem({ id: 'item-2', name: 'Cola', tags: ['beverage', 'cold'] }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    expect(screen.getByText('Pizza')).toBeInTheDocument();
+    expect(screen.queryByText('Cola')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: /beverage/i }));
+
+    expect(screen.getByText('Cola')).toBeInTheDocument();
+    expect(screen.queryByText('Pizza')).not.toBeInTheDocument();
+  });
+
+  it('filters the active tab by selected tags using OR semantics', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({ id: 'item-1', name: 'Falafel', tags: ['vegan'] }),
+          makeMenuItem({ id: 'item-2', name: 'Curry', tags: ['spicy'] }),
+          makeMenuItem({ id: 'item-3', name: 'Burger', tags: ['classic'] }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: 'vegan' }));
+    await user.click(screen.getByRole('button', { name: 'spicy' }));
+
+    expect(screen.getByText('Falafel')).toBeInTheDocument();
+    expect(screen.getByText('Curry')).toBeInTheDocument();
+    expect(screen.queryByText('Burger')).not.toBeInTheDocument();
+  });
+
   it('shows per-item add actions and withdraw action', () => {
     renderView();
     expect(screen.getAllByRole('button', { name: /^add$/i })).toHaveLength(2);
