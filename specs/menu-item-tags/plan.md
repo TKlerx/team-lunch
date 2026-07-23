@@ -1,62 +1,222 @@
-# Menu item tags → filter & prune during meal selection
+# Menu item tags → meal/beverage tabs and tag filters
 
 ## Context
-During the meal-selection phase (`FoodSelectionActiveView` → `OrderForm`), users browse the winning menu's items with only a text search (min 3 chars, `filteredMenuItems` memo at src/client/components/FoodSelectionActiveView.tsx:131). The ask: imported menus should carry menu-item tags (vegan, vegetarian, drink, dessert, meal, …) so users can **filter by tag** during selection and **quickly remove undesired items** from view.
 
-Key discovery: **the tagging backend already exists.** `MenuItemFeature` (prisma/schema.prisma:96) stores per-item tags, written on every import in `src/server/services/menu.ts` via two paths — keyword extraction (`extractFeatures` in `src/server/services/mealFeatures.ts`, provenance `keyword`) and AI gap-fill (`requestAiFeatureTags`, provenance `ai`). Tags are prefixed and recommender-oriented: `ingredient:chicken`, `style:thai`, `style:vegan`, `course:drink`, `course:side`. They are **not** shipped to the client — `formatMenuItem` (src/server/services/menu.ts:233) drops them and the shared `MenuItem` type (src/lib/types.ts:64) has no tags field.
+During the meal-selection phase (`FoodSelectionActiveView` → `OrderForm`), users browse the winning menu's items with only a text search. The feature goal is to let imported menus carry user-facing tags per menu item, show/edit those tags in Manage Menus, and use them during food selection for simple filtering.
 
-So the feature is mostly: **ship existing tags to the client + build the filter/prune UI**. No new tag storage, no new endpoints, no AI-prompt change.
+Important distinction: the backend already has internal recommender feature tags in `MenuItemFeature`, written by keyword extraction (`provenance: "keyword"`) and AI gap-fill (`provenance: "ai"`). Those tags are not this feature's user-facing tags.
 
-## Open questions (decide before implementing)
+This feature adds user-facing menu tags using the same table with `provenance: "menu"`.
 
-**A. Tag quality / source.**
-- **A1:** reuse existing keyword+AI tags as-is; surface only a curated subset. Zero backend tagging changes. Risk: keyword-derived vegan/vegetarian is best-effort, "dessert"≈`style:sweet` is approximate, "meal" is derived by absence.
-- **A2:** extend the AI tagging prompt (`requestAiFeatureTags`) to emit clean course/diet categories (`course:meal`, `course:dessert`, reliable `diet:vegan`/`diet:vegetarian`). Better UX; touches the AI prompt + re-tag/backfill of existing menus.
+## Decisions
 
-**B. "Quick removal of undesired items" semantics.**
-- **B1:** personal, ephemeral client-side hide while browsing (× on each card). Nothing persisted; pure convenience.
-- **B2:** persistent per-user hidden-items/tags preference (stored via userPreferences).
-- **B3:** admin actually removes items from the menu (persistent, affects everyone) — partly exists via ManageMenus item delete.
+### A. Tag quality / source
 
-**C. Tag editing.** Should ManageMenus let an admin edit an item's tags, or is import-only tagging enough for v1?
+Imported menu items may have optional arbitrary plaintext tags:
 
-> The implementation below is written for **A1 + B1 + import-only** and must be revised if the decisions land elsewhere.
+```json
+{
+  "name": "Club Mate",
+  "ingredients": "500ml bottle",
+  "price": 2.8,
+  "tags": ["beverage", "cold", "caffeinated"]
+}
+```
+
+Rules:
+
+- Store import/admin menu tags as `MenuItemFeature` rows with `provenance: "menu"`.
+- Existing `provenance: "keyword"` and `provenance: "ai"` rows stay internal recommender metadata.
+- API/client `MenuItem.tags` exposes only `provenance: "menu"` tags.
+- Tags are arbitrary lowercase strings. `vegan`, `vegetarian`, `xyz`, etc. have no special meaning.
+- The only interpreted tag is `beverage`.
+- Items with `beverage` appear in the Beverage tab.
+- Items without `beverage` appear in the Meal tab.
+- There is no stored, imported, displayed, or edited `meal` tag.
+
+### B. Quick removal / prune semantics
+
+Dropped from v1. Meal/Beverage tabs plus tag filters are the pruning mechanism.
+
+No per-item hide button, no "show hidden", no persistent hidden preferences, and no admin delete semantics in this feature.
+
+### C. Tag editing
+
+Tags are editable in Manage Menus. Anyone who can edit menu items can add/remove that item's menu tags.
+
+Editing tags replaces only `provenance: "menu"` rows. It must not delete or alter `provenance: "keyword"` or `provenance: "ai"` rows.
+
+## Tag normalization
+
+Use one shared helper for import and manual editing:
+
+- Accept only arrays of strings from import JSON.
+- Trim whitespace.
+- Lowercase tags.
+- Drop empty tags.
+- Reject tags longer than 60 characters (`MenuItemFeature.tag` is `VarChar(60)`).
+- De-duplicate after normalization.
+
+Lowercase is the canonical stored and displayed form: `Beverage`, ` beverage `, and `beverage` all become `beverage`.
 
 ## Implementation
 
-### 1. Ship tags with menu items (server)
-- `src/lib/types.ts`: add `tags: string[]` to `MenuItem` (line 64).
-- `src/server/services/menu.ts`:
-  - Extend `formatMenuItem` (line 233) to emit `tags` from `menuItemFeatures`.
-  - Wherever a menu/items are loaded for `formatMenu`/`formatMenuItem`, extend the Prisma `include: { items: … }` with `menuItemFeatures: { select: { tag: true } }` — pattern repeats across the list/create/update/import paths (e.g. `findUniqueOrThrow` at lines ~907, ~939, and the menus-list query).
-  - Item mutation paths that emit SSE `item_created`/`item_updated` (payload is `MenuItem`, src/lib/types.ts:633-634) must go through the same formatter so live updates carry tags.
+### 1. Shared types and helpers
 
-### 2. Curated display vocabulary (shared helper)
-New `src/lib/menuItemTags.ts` (pure, shared client/server-agnostic):
-- Map raw tags → user-facing categories: `course:drink`→`Drink`, `style:sweet`→`Dessert`, `style:vegan`→`Vegan`, `style:vegetarian`→`Vegetarian`; `Meal` = item has none of `course:drink`/`course:side`/`style:sweet`. All other tags (ingredient:*, style:thai, …) stay hidden from the filter UI (still feed the recommender).
-- Reuse the existing tag constants `SIDE_DISH_FEATURE_TAG`/`DRINK_FEATURE_TAG` from `src/server/services/mealFeatures.ts:18-19` — move/re-export the string constants so the shared helper doesn't import server code (mealFeatures imports prisma).
-- `// ponytail:` comment naming the meal-by-absence heuristic and the AI-category upgrade path.
+- `src/lib/types.ts`
+  - Add `tags: string[]` to `MenuItem`.
+  - Add optional `tags?: string[]` to `CreateMenuItemRequest` and `UpdateMenuItemRequest`.
+- New shared helper, likely `src/lib/menuItemTags.ts`:
+  - `MENU_TAG_PROVENANCE = "menu"`
+  - `BEVERAGE_TAG = "beverage"`
+  - `normalizeMenuTags(...)`
+  - `isBeverageMenuItem(item)`
+  - `getFoodSelectionVisibleTags(item)` filters out `beverage`.
 
-### 3. Filter + prune UI (client)
-In `OrderForm` (src/client/components/FoodSelectionActiveView.tsx):
-- Compute category chips present in `menuItems` via the shared helper; render a chip row above the existing search `Input` (line ~229). Chips = existing `Button` primitive (`src/client/components/ui/Button.tsx`), toggled state via `aria-pressed` + accent styling per the semantic-token theme architecture.
-- State: `activeCategories: Set<string>` (multi-select OR within tags), `hiddenItemIds: Set<string>`.
-- Extend the `filteredMenuItems` memo (line 131) to AND: text search ∧ (no active chips ∨ item in any active category) ∧ not hidden.
-- Per-item dismiss (×) button on each item card adds to `hiddenItemIds`; a small "Show N hidden" reset link appears when non-empty. Ephemeral — resets on remount/phase change.
-- Show the item's category labels as tiny badges on the card (reuses the mark-pill styling already in the card).
+### 2. Database constraint
 
-## Files touched
-- `src/lib/types.ts` — `MenuItem.tags`
-- `src/lib/menuItemTags.ts` — new shared category mapping (+ tag constants moved here)
-- `src/server/services/menu.ts` — formatter + includes
-- `src/server/services/mealFeatures.ts` — re-export constants from shared module
-- `src/client/components/FoodSelectionActiveView.tsx` — chips, hide, filter memo
-- Tests: `tests/lib/menuItemTags.test.ts` (new), `tests/client/FoodSelectionActiveView.test.tsx` (extend), server menus-route test (assert `tags` in response)
+Current schema has:
+
+```prisma
+@@unique([menuItemId, tag])
+```
+
+Change to:
+
+```prisma
+@@unique([menuItemId, provenance, tag])
+```
+
+Reason: user-facing menu tags are arbitrary and could collide with internal recommender tags such as `style:thai`. The same literal tag may need to exist once as `provenance: "menu"` and once as `provenance: "keyword"` or `"ai"`.
+
+Add a Prisma migration.
+
+### 3. Import JSON schema and parser
+
+- `import/menu/import-menu-schema.json`
+  - Add optional item field `tags` as an array of strings, max item length 60.
+- `src/client/pages/ManageMenus.tsx`
+  - Update the import LLM prompt to mention optional `tags`.
+  - Tell it to use `beverage` for drinks only when appropriate.
+- `src/server/services/menu.ts`
+  - Extend `ImportItem` with `tags: string[]`.
+  - Parse optional `item.tags`.
+  - Validate through the shared normalization helper.
+  - Store parsed tags after menu items are created/fetched.
+
+Implementation note: the import flow currently uses `createMany`, which does not return item IDs. After `createMany`, fetch menu items for the menu and map by unique item name; item names are already validated unique case-insensitively.
+
+### 4. Preserve menu tags during internal feature sync
+
+Current internal feature sync deletes all feature rows for an item:
+
+```ts
+await db.menuItemFeature.deleteMany({ where: { menuItemId: menuItem.id } });
+```
+
+That would delete user-facing menu tags. Scope it to internal provenance only:
+
+```ts
+await db.menuItemFeature.deleteMany({
+  where: {
+    menuItemId: menuItem.id,
+    provenance: { in: ["keyword", "ai"] },
+  },
+});
+```
+
+If AI tags are only inserted in a separate import gap-fill path, ensure that path also does not conflict with or delete `provenance: "menu"` rows.
+
+### 5. Format and load menu tags
+
+- Extend `formatMenuItem` to emit `tags` from `menuItemFeatures` filtered to `provenance: "menu"`.
+- Every query that returns menus/items for API/SSE payloads must include:
+
+```ts
+menuItemFeatures: {
+  where: { provenance: "menu" },
+  select: { tag: true },
+  orderBy: { tag: "asc" }
+}
+```
+
+Relevant paths include:
+
+- menu list/detail responses
+- `listItems`
+- `createItem`
+- `updateItem`
+- import create/update result
+- SSE payloads for `item_created`, `item_updated`, `menu_created`, `menu_updated`
+
+### 6. Manage Menus UI
+
+- Show all `MenuItem.tags` as subtle badges on each menu item, including `beverage`.
+- Add simple tag editing to the existing item edit/create flow.
+- Saving an item with `tags` replaces only `provenance: "menu"` tags.
+- `tags: undefined` means leave tags unchanged for backward-compatible update calls.
+- `tags: []` means clear all menu tags.
+
+Badge visual style: subtle, small font, pastel-ish background, low contrast enough to avoid distraction but still readable.
+
+### 7. Food Selection UI
+
+In `FoodSelectionActiveView` / `OrderForm`:
+
+- Split the item list into two tabs:
+  - Meal: items without `beverage`
+  - Beverage: items with `beverage`
+- Within the active tab, derive available filter chips from tags in that tab.
+- Hide `beverage` from food-selection badges and filter chips.
+- If no chip is selected, show all items in the active tab.
+- If one or more chips are selected, show items matching any selected tag (OR semantics).
+- Existing text search still composes with tabs and tag filters.
+- Render non-`beverage` item tags as subtle badges on item cards.
+
+### 8. Tests
+
+Add/update focused tests:
+
+- `tests/lib/menuItemTags.test.ts`
+  - normalization
+  - beverage classification
+  - food-selection visible tags hide `beverage`
+  - OR matching behavior if helper owns it
+- Server menu/import tests
+  - import accepts item `tags`
+  - imported tags are returned as `MenuItem.tags`
+  - internal `keyword`/`ai` tags are not returned as `MenuItem.tags`
+  - updating item tags replaces only `provenance: "menu"`
+  - internal feature sync does not delete menu tags
+- Client Manage Menus tests
+  - tags display as badges
+  - tags can be edited with existing item-edit permission
+- Client Food Selection tests
+  - Meal tab excludes `beverage` items
+  - Beverage tab includes only `beverage` items
+  - `beverage` is hidden from chips/badges during food selection
+  - selecting multiple chips filters with OR semantics
+  - text search composes with selected tab and tags
 
 ## Verification
-1. `pnpm typecheck && pnpm lint`
-2. Unit: `menuItemTags.test.ts` — mapping table + meal-by-absence edges (drink-only item, sweet+vegan item, untagged item ⇒ Meal).
-3. Component: chip toggling narrows the list; × hides a card and "Show hidden" restores; text search composes with chips.
-4. Server test: `GET /api/menus` items include `tags`; SSE item payloads include `tags`.
-5. Manual: import a menu, run poll → food selection, verify chips/badges/hide during selection.
-6. FAIM: `pnpm faim:deps` to refresh the dependency graph, then `faim validate` (auth invariant untouched — no new endpoints, no mutation changes).
+
+Focused while iterating:
+
+```bash
+pnpm typecheck
+pnpm test:server
+pnpm test:client
+```
+
+Before marking the task shipped:
+
+```bash
+pwsh -File ./validate.ps1 all
+```
+
+FAIM after code changes:
+
+```bash
+pnpm faim:deps
+faim validate
+```
