@@ -42,38 +42,29 @@ function Write-Fail($msg) { Write-Host "  [FAIL] $msg" -ForegroundColor Red }
 function Write-Warn($msg) { Write-Host "  [SKIP] $msg" -ForegroundColor Yellow }
 
 function Invoke-NativeCommand([string]$commandLine) {
-    $stdoutPath = [System.IO.Path]::GetTempFileName()
-    $stderrPath = [System.IO.Path]::GetTempFileName()
+    # Stream the child's merged output through the pipeline: capture every line
+    # for the summaries/failure dump and print one progress dot per line, so
+    # dots reflect real substeps (e.g. vitest prints a line per test file).
+    $ErrorActionPreference = 'Continue' # stderr lines are progress here, not errors
+    $lines = [System.Collections.Generic.List[string]]::new()
 
-    try {
-        if ($IsWindows -or $env:OS -eq "Windows_NT") {
-            $fileName = "cmd.exe"
-            $arguments = "/c $commandLine"
-        } else {
-            $fileName = "/bin/sh"
-            $arguments = "-lc ""$commandLine"""
+    if ($IsWindows -or $env:OS -eq "Windows_NT") {
+        cmd.exe /c $commandLine 2>&1 | ForEach-Object {
+            $lines.Add("$_")
+            Write-Host '.' -NoNewline -ForegroundColor DarkGray
         }
+    } else {
+        /bin/sh -lc $commandLine 2>&1 | ForEach-Object {
+            $lines.Add("$_")
+            Write-Host '.' -NoNewline -ForegroundColor DarkGray
+        }
+    }
+    if ($lines.Count -gt 0) { Write-Host '' }
 
-        $process = Start-Process `
-            -FilePath $fileName `
-            -ArgumentList $arguments `
-            -RedirectStandardOutput $stdoutPath `
-            -RedirectStandardError $stderrPath `
-            -Wait `
-            -PassThru `
-            -NoNewWindow
-
-        return [pscustomobject]@{
-            ExitCode = $process.ExitCode
-            StdOut = [System.IO.File]::ReadAllText($stdoutPath)
-            StdErr = [System.IO.File]::ReadAllText($stderrPath)
-        }
-    } finally {
-        foreach ($path in @($stdoutPath, $stderrPath)) {
-            if (Test-Path $path) {
-                Remove-Item $path -Force -ErrorAction SilentlyContinue
-            }
-        }
+    return [pscustomobject]@{
+        ExitCode = $LASTEXITCODE
+        StdOut = ($lines -join "`n")
+        StdErr = ''
     }
 }
 

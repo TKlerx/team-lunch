@@ -2,7 +2,7 @@
 // Shared setup for server-side Vitest tests.
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync, statSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -104,25 +104,40 @@ function getMigrationLockDir(): string {
 	return path.join(os.tmpdir(), `team-lunch-prisma-migrate-${key}.lock`);
 }
 
+function tryAcquireLock(lockDir: string): boolean {
+	try {
+		mkdirSync(lockDir);
+		return true;
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
+			throw error;
+		}
+		return false;
+	}
+}
+
+// A killed run (Ctrl+C during migrate) leaks the lock dir and every later run
+// would spin until timeout. Steal locks older than any plausible migrate duration.
+function removeLockIfStale(lockDir: string): void {
+	try {
+		if (Date.now() - statSync(lockDir).mtimeMs > 60_000) {
+			rmSync(lockDir, { recursive: true, force: true });
+		}
+	} catch {
+		// lock vanished concurrently — next acquire attempt will settle it
+	}
+}
+
 function withMigrationLock(action: () => void): void {
 	const lockDir = getMigrationLockDir();
 	const startedAt = Date.now();
-	let acquired = false;
 
-	while (!acquired) {
-		try {
-			mkdirSync(lockDir);
-			acquired = true;
-		} catch (error) {
-			const nodeError = error as NodeJS.ErrnoException;
-			if (nodeError.code !== 'EEXIST') {
-				throw error;
-			}
-			if (Date.now() - startedAt > 120_000) {
-				throw new Error(`Timed out waiting for Prisma test migration lock: ${lockDir}`);
-			}
-			sleepSync(250);
+	while (!tryAcquireLock(lockDir)) {
+		removeLockIfStale(lockDir);
+		if (Date.now() - startedAt > 90_000) {
+			throw new Error(`Timed out waiting for Prisma test migration lock: ${lockDir}`);
 		}
+		sleepSync(250);
 	}
 
 	try {
@@ -142,6 +157,7 @@ function ensureTestSchemaMigrated(): void {
 			execSync('npx prisma migrate deploy --schema prisma/schema.prisma', {
 				stdio: 'pipe',
 				env: process.env as NodeJS.ProcessEnv,
+				timeout: 60_000, // never let a hung migrate block the whole suite
 			});
 		});
 	} catch (error) {
