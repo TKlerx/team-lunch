@@ -5,6 +5,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
+import menuImportPromptTemplate from '../../../import/menu/import-menu-prompt.txt?raw';
 import type {
   Menu,
   ImportMenuPreviewResponse,
@@ -17,24 +18,7 @@ import { validateMenuTags } from '../../lib/menuItemTags.js';
 const MENU_IMPORT_JSON_SCHEMA = menuImportJsonSchema;
 
 const MENU_IMPORT_SCHEMA_TEXT = JSON.stringify(MENU_IMPORT_JSON_SCHEMA, null, 2);
-const MENU_IMPORT_LLM_PROMPT = [
-  'You extract a Team Lunch menu import JSON from unstructured menu text.',
-  'Return JSON only. Do not include markdown, explanations, or comments.',
-  'Follow this exact schema and field names:',
-  MENU_IMPORT_SCHEMA_TEXT,
-  'Hard validation rules:',
-  '- Root object must be { "menu": [...] } with at least 2 entries.',
-  '- menu[0] is metadata and must include "name" and "date-created" (ISO datetime).',
-  '- menu[1..] are category sections with an "items" array.',
-  '- Every item needs "name", "ingredients", "price"; optional "item-number" is allowed.',
-  '- item-number, if provided, must be a string with max 40 characters.',
-  '- price must be a number between 0 and 9999.99 with max 2 decimal places.',
-  '- Item names must be unique across all sections (case-insensitive).',
-  '- Items may include optional lowercase tags, e.g. ["vegetarian", "spicy"] or ["beverage", "cold"].',
-  '- Use the tag "beverage" for drinks; otherwise omit it. Do not create a "meal" tag.',
-  '- If a value is unknown, use empty string for optional strings or omit optional fields.',
-  'Output only one JSON object, no surrounding text.',
-].join('\n');
+const MENU_IMPORT_LLM_PROMPT = menuImportPromptTemplate.replace('{{schema}}', MENU_IMPORT_SCHEMA_TEXT).trim();
 
 function formatPrice(value: number | null): string {
   return value === null ? '-' : `€${value.toFixed(2)}`;
