@@ -283,7 +283,6 @@ prop('GET:/api/food-selections/history',path,'/api/food-selections/history').
 prop('GET:/api/polls/active',path,'/api/polls/active').
 prop('POST:/api/menus/import',path,'/api/menus/import').
 prop('POST:/api/menus',path,'/api/menus').
-prop(faim,version,'0.5.1').
 entity('src/lib/types.ts',module).
 entity('src/client/config.ts',module).
 entity('src/client/api.ts',module).
@@ -1263,3 +1262,4 @@ rel('tests/client/ShoppingList.test.tsx',depends_on,'src/client/pages/ShoppingLi
 rel('tests/client/ShoppingList.test.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/ThemeContext.test.tsx',depends_on,'src/client/context/ThemeContext.tsx').
 rel('tests/client/ToastContext.test.tsx',depends_on,'src/client/context/ToastContext.tsx').
+prop(faim,version,'0.5.2').
