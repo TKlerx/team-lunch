@@ -94,28 +94,29 @@ function parseSafetyLabelsInputs(allergensInput: string, additivesInput: string)
 }
 
 function TagBadges({ tags }: { tags: string[] }) {
-  if (tags.length === 0) return null;
-  return (
-    <div className="mt-1 flex flex-wrap gap-1">
-      {tags.map((tag) => (
-        <span key={tag} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
+  return tags.map((tag) => (
+    <span key={`tag:${tag}`} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
+      {tag}
+    </span>
+  ));
 }
 
-function SafetyLabelBadges({ label, labels }: { label: string; labels: string[] }) {
-  if (labels.length === 0) return null;
+function SafetyLabelBadges({ labels, tone }: { labels: string[]; tone: 'allergen' | 'additive' }) {
+  const colorClass = tone === 'allergen' ? 'bg-danger/35' : 'bg-warning/35';
+  return labels.map((item) => (
+    <span key={`${tone}:${item}`} className={`rounded-full ${colorClass} px-1.5 py-0.5 text-[10px] font-medium text-fg-muted`}>
+      {item}
+    </span>
+  ));
+}
+
+function MenuItemLabelBadges({ item }: { item: Menu['items'][number] }) {
+  if (item.tags.length === 0 && item.allergens.length === 0 && item.additives.length === 0) return null;
   return (
-    <div className="mt-1 flex flex-wrap items-center gap-1">
-      <span className="text-[10px] font-semibold uppercase tracking-wide text-fg-muted">{label}:</span>
-      {labels.map((item) => (
-        <span key={item} className="rounded-full bg-warning-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
-          {item}
-        </span>
-      ))}
+    <div className="mt-1 flex flex-wrap gap-1">
+      <TagBadges tags={item.tags} />
+      <SafetyLabelBadges labels={item.allergens} tone="allergen" />
+      <SafetyLabelBadges labels={item.additives} tone="additive" />
     </div>
   );
 }
@@ -437,9 +438,7 @@ function MenuItemRow({
         <p className="inline-flex w-fit rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-fg-muted sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal">{item.itemNumber ?? '-'}</p>
         <div className="min-w-0">
           <p className="whitespace-normal break-words text-sm font-medium text-fg sm:truncate">{item.name}</p>
-          <TagBadges tags={item.tags} />
-          <SafetyLabelBadges label="Allergens" labels={item.allergens} />
-          <SafetyLabelBadges label="Additives" labels={item.additives} />
+          <MenuItemLabelBadges item={item} />
         </div>
         <p className="whitespace-normal break-words text-left text-sm text-fg-muted">{item.description ?? '-'}</p>
         <p className="text-sm font-medium text-success-fg sm:whitespace-nowrap">{formatPrice(item.price)}</p>

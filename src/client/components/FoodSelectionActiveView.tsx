@@ -139,6 +139,78 @@ type OrderItemCardProps = {
   onToggleMealMark: (itemId: string, sentiment: MealAnticipatedLikeSentiment) => void;
 };
 
+type LabelPillTone = 'tag' | 'allergen' | 'additive';
+
+const labelPillClasses: Record<LabelPillTone, string> = {
+  tag: 'bg-accent-soft/45',
+  allergen: 'bg-danger/35',
+  additive: 'bg-warning/35',
+};
+
+function LabelPills({ labels, tone }: { labels: string[]; tone: LabelPillTone }) {
+  return labels.map((label) => (
+    <span key={`${tone}:${label}`} className={`rounded-full ${labelPillClasses[tone]} px-1.5 py-0.5 text-[10px] font-medium text-fg-muted`}>
+      {label}
+    </span>
+  ));
+}
+
+function SafetyFilterPill({
+  label,
+  tone,
+  selected,
+  onToggle,
+}: {
+  label: string;
+  tone: 'allergen' | 'additive';
+  selected: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onToggle}
+      className={`relative overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium text-fg-muted transition-colors ${labelPillClasses[tone]} ${
+        selected ? 'border-fg-muted/70' : 'border-transparent'
+      }`}
+    >
+      <span className="relative z-10">{label}</span>
+      {selected ? <span aria-hidden className="absolute left-[-10%] top-1/2 h-px w-[120%] -rotate-12 bg-fg-muted/70" /> : null}
+    </button>
+  );
+}
+
+function MenuItemLabelInfo({ item }: { item: OrderMenuItem }) {
+  const visibleTags = getFoodSelectionVisibleTags(item);
+  if (visibleTags.length === 0 && item.allergens.length === 0 && item.additives.length === 0) return null;
+
+  const tooltipId = `meal-item-labels-${item.id}`;
+  return (
+    <span className="group relative shrink-0">
+      <button
+        type="button"
+        aria-label={`Labels for ${item.name}`}
+        aria-describedby={tooltipId}
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent-soft/45 text-[11px] font-bold text-fg-muted hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        i
+      </button>
+      <span
+        id={tooltipId}
+        role="tooltip"
+        className="pointer-events-none invisible absolute left-full top-1/2 z-20 ml-2 w-max max-w-[20rem] -translate-y-1/2 rounded border border-border bg-surface-raised p-2 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+      >
+        <span className="flex flex-wrap gap-1">
+          <LabelPills labels={visibleTags} tone="tag" />
+          <LabelPills labels={item.allergens} tone="allergen" />
+          <LabelPills labels={item.additives} tone="additive" />
+        </span>
+      </span>
+    </span>
+  );
+}
+
 function OrderItemCard({
   item,
   note,
@@ -151,29 +223,22 @@ function OrderItemCard({
   onAdd,
   onToggleMealMark,
 }: OrderItemCardProps) {
-  const visibleTags = getFoodSelectionVisibleTags(item);
   return (
     <div id={`meal-item-${item.id}`} tabIndex={-1} className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <span className="truncate text-sm font-medium text-fg">
-          {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
-          <span>{item.name}</span>
-        </span>
+        <div className="flex min-w-0 items-center gap-1">
+          <span className="truncate text-sm font-medium text-fg">
+            {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
+            <span>{item.name}</span>
+          </span>
+          <MenuItemLabelInfo item={item} />
+        </div>
         <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
           {item.price === null ? "-" : formatPrice(item.price)}
         </span>
       </div>
       <div>
         {item.description && <p className="text-xs text-fg-muted">{item.description}</p>}
-        {visibleTags.length > 0 && (
-          <p className="mt-1 text-xs text-fg-muted"><span>Tags:</span> {visibleTags.map((tag) => <span key={tag}> {tag}</span>)}</p>
-        )}
-        {item.allergens.length > 0 && (
-          <p className="mt-1 text-xs font-medium text-danger-fg"><span>Allergens:</span> {item.allergens.map((allergen) => <span key={allergen}> {allergen}</span>)}</p>
-        )}
-        {item.additives.length > 0 && (
-          <p className="mt-1 text-xs font-medium text-warning-fg"><span>Additives:</span> {item.additives.map((additive) => <span key={additive}> {additive}</span>)}</p>
-        )}
         {warnings?.allergies.length ? (
           <p className="mt-1 text-xs font-medium text-danger-fg">
             Ingredient alert: {warnings.allergies.join(", ")}
@@ -438,20 +503,26 @@ function OrderForm({
         </div>
       )}
 
-      {availableAllergens.length > 0 && (
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Exclude allergens">
+      {(availableAllergens.length > 0 || availableAdditives.length > 0) && (
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Exclude safety labels">
           {availableAllergens.map((allergen) => (
-            <button key={allergen} type="button" aria-pressed={selectedAllergens.has(allergen)} onClick={() => toggleSafetyLabel(allergen, setSelectedAllergens)}>{allergen}</button>
+            <SafetyFilterPill
+              key={allergen}
+              label={allergen}
+              tone="allergen"
+              selected={selectedAllergens.has(allergen)}
+              onToggle={() => toggleSafetyLabel(allergen, setSelectedAllergens)}
+            />
           ))}
-          {selectedAllergens.size > 0 && <button type="button" onClick={() => setSelectedAllergens(new Set())}>Clear allergen exclusions</button>}
-        </div>
-      )}
-      {availableAdditives.length > 0 && (
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Exclude additives">
           {availableAdditives.map((additive) => (
-            <button key={additive} type="button" aria-pressed={selectedAdditives.has(additive)} onClick={() => toggleSafetyLabel(additive, setSelectedAdditives)}>{additive}</button>
+            <SafetyFilterPill
+              key={additive}
+              label={additive}
+              tone="additive"
+              selected={selectedAdditives.has(additive)}
+              onToggle={() => toggleSafetyLabel(additive, setSelectedAdditives)}
+            />
           ))}
-          {selectedAdditives.size > 0 && <button type="button" onClick={() => setSelectedAdditives(new Set())}>Clear additive exclusions</button>}
         </div>
       )}
 

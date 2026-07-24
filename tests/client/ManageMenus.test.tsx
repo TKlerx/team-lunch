@@ -645,7 +645,7 @@ describe('ManageMenus', () => {
     });
   });
 
-  it('shows separately labelled allergen and additive badge groups', () => {
+  it('shows allergen and additive pills with safety colors', () => {
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -666,11 +666,11 @@ describe('ManageMenus', () => {
 
     fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
 
-    expect(screen.getByText('vegetarian')).toBeInTheDocument();
-    expect(screen.getByText('Allergens:')).toBeInTheDocument();
-    expect(screen.getByText('gluten')).toBeInTheDocument();
-    expect(screen.getByText('Additives:')).toBeInTheDocument();
-    expect(screen.getByText('preservative')).toBeInTheDocument();
+    expect(screen.getByText('vegetarian')).toHaveClass('rounded-full', 'bg-accent-soft/45');
+    expect(screen.queryByText('Allergens:')).not.toBeInTheDocument();
+    expect(screen.getByText('gluten')).toHaveClass('rounded-full', 'bg-danger/35', 'text-fg-muted');
+    expect(screen.queryByText('Additives:')).not.toBeInTheDocument();
+    expect(screen.getByText('preservative')).toHaveClass('rounded-full', 'bg-warning/35', 'text-fg-muted');
   });
 
   it('edits menu item safety labels and sends normalized API payloads', async () => {
