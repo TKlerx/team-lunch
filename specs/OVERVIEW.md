@@ -44,7 +44,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 001 | canonical-routes | Done | Y | - | - | - | - | - | Y |
 | 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
-| 004 | menu-safety-labels | Planned | Y | - | - | - | - | - | Y |
+| 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
