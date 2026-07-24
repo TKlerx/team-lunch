@@ -12,7 +12,7 @@
 
 **Purpose**: Add the durable item fields and one shared normalization boundary. No new catalogue, endpoint, event, or dependency.
 
-- [ ] T001 Add `MenuItem.allergens` and `MenuItem.additives` with empty-list defaults in `prisma/schema.prisma`; generate and apply a new LF-only migration in `prisma/migrations/` with `pnpm prisma migrate dev`.
+- [x] T001 Add `MenuItem.allergens` and `MenuItem.additives` with empty-list defaults in `prisma/schema.prisma`; generate and apply a new LF-only migration in `prisma/migrations/` with `pnpm prisma migrate dev`.
 - [ ] T002 Extend `src/lib/menuItemTags.ts` with reusable trim/lowercase/deduplication validation for safety-label lists while preserving existing tag behavior, and add `allergens`/`additives` to `MenuItem`, `CreateMenuItemRequest`, and `UpdateMenuItemRequest` in `src/lib/types.ts`.
 
 **Checkpoint**: Existing menu items read as having two empty safety-label lists; all client/server type consumers compile against the shared shape.
