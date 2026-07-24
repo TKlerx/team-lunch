@@ -35,6 +35,8 @@ import type {
   RecommenderOfficeModeResponse,
   RecommenderStatusResponse,
   RecommenderTrainResponse,
+  CreateMenuItemRequest,
+  UpdateMenuItemRequest,
 } from '../lib/types.js';
 import { withBasePath, withOfficeLocationContext } from './config.js';
 
@@ -170,16 +172,7 @@ export function deleteMenu(id: string): Promise<void> {
   return request<void>(apiPath(`/menus/${id}`), { method: 'DELETE' });
 }
 
-export function createMenuItem(
-  menuId: string,
-  payload: {
-    name: string;
-    description?: string;
-    itemNumber?: string | null;
-    price?: number | null;
-    tags?: string[];
-  },
-): Promise<MenuItem> {
+export function createMenuItem(menuId: string, payload: CreateMenuItemRequest): Promise<MenuItem> {
   return request<MenuItem>(apiPath(`/menus/${menuId}/items`), {
     method: 'POST',
     body: JSON.stringify(payload),
@@ -189,13 +182,7 @@ export function createMenuItem(
 export function updateMenuItem(
   menuId: string,
   itemId: string,
-  payload: {
-    name: string;
-    description?: string;
-    itemNumber?: string | null;
-    price?: number | null;
-    tags?: string[];
-  },
+  payload: UpdateMenuItemRequest,
 ): Promise<MenuItem> {
   return request<MenuItem>(apiPath(`/menus/${menuId}/items/${itemId}`), {
     method: 'PUT',
