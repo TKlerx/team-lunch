@@ -91,8 +91,8 @@
 
 **Purpose**: Verify the whole feature and keep the specification state accurate.
 
-- [ ] T014 Run the focused commands in `specs/004-menu-safety-labels/quickstart.md`, then `pwsh -File ./validate.ps1 all`; resolve failures caused by this feature and record unrelated blockers in `specs/004-menu-safety-labels/tasks.md`.
-- [ ] T015 Update completed checkboxes and operational discoveries in `specs/004-menu-safety-labels/tasks.md`, then refresh continuity only if intentionally requested by `specs/CURRENT-WORK.md`.
+- [x] T014 Run the focused commands in `specs/004-menu-safety-labels/quickstart.md`, then `pwsh -File ./validate.ps1 all`; resolve failures caused by this feature and record unrelated blockers in `specs/004-menu-safety-labels/tasks.md`.
+- [x] T015 Update completed checkboxes and operational discoveries in `specs/004-menu-safety-labels/tasks.md`, then refresh continuity only if intentionally requested by `specs/CURRENT-WORK.md`.
 
 ---
 
@@ -137,4 +137,4 @@ US1 + US2 + US3 → T014 → T015
 - Do not put safety labels in `MenuItemFeature`; that model remains recommendation/tag data.
 - Do not add a catalogue, settings persistence, a new endpoint, or a new SSE event.
 - Before each task is marked complete, run its focused test; before feature completion run the full validation gate.
-- The existing production dependency audit currently reports unrelated locked dependency advisories; do not weaken validation or alter dependencies as part of this feature unless separately requested.
+- The existing production dependency audit currently reports unrelated locked dependency advisories; do not weaken validation or alter dependencies as part of this feature unless separately requested. `validate.ps1 all` on 2026-07-24 confirms the feature passes every other gate; `pnpm audit --prod` remains blocked by `find-my-way` and React Router advisory chains.
