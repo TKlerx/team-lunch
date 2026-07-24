@@ -23,7 +23,7 @@
 
 **Purpose**: Carry the two lists through every existing menu-item write/read path before adding UI behavior.
 
-- [ ] T003 Extend `import/menu/import-menu-schema.json` and `import/menu/import-menu-prompt.txt` to emit optional lowercase `allergens` and `additives` separately from tags, map source legends into the correct set, and keep vegetarian/vegan annotations as tags only.
+- [x] T003 Extend `import/menu/import-menu-schema.json` and `import/menu/import-menu-prompt.txt` to emit optional lowercase `allergens` and `additives` separately from tags, map source legends into the correct set, and keep vegetarian/vegan annotations as tags only.
 - [ ] T004 Extend parsing, formatting, manual create/update, atomic import replacement, and existing menu/item SSE payloads in `src/server/services/menu.ts` so omitted create/import lists become empty, omitted update lists are preserved, and invalid import values produce path-specific violations.
 - [ ] T005 Extend the existing thin payload forwarding in `src/server/routes/menus.ts` and typed item requests in `src/client/api.ts` for `allergens` and `additives` without adding endpoints.
 
