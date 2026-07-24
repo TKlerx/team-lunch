@@ -44,6 +44,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 001 | canonical-routes | Done | Y | - | - | - | - | - | Y |
 | 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
+| 004 | menu-safety-labels | Planned | Y | - | - | - | - | - | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
@@ -63,11 +64,12 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
-2. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
-3. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
-4. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
-5. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
+1. **Menu safety labels**: Planned as [004-menu-safety-labels](004-menu-safety-labels/spec.md), promoted from [BACKLOG-008](BACKLOG.md). Ready for implementation planning.
+2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
+3. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
+4. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
+5. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
+6. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
 
 ## Notes
 

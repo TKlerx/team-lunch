@@ -1,7 +1,15 @@
-You extract a Team Lunch menu import JSON from unstructured menu text.
-Return JSON only. Do not include markdown, explanations, or comments.
-Follow this exact schema and field names:
+Extract JSON from unstructured menu text e.g. website, pdf, or markdown according to a schema that follows below.
+Use appropriate skills if available.
+
+Return pure, formatted JSON! Do not output markdown, explanations, or comments.
+Adhere to this exact JSON schema strictly:
 {{schema}}
+
+Source document language will be mostly German, mixed with food related terms in English, Italian, French, Spanish, Indian, etc.
+Input text can be structured in sections, e.g. "Vorspeise", "Nachspeise", "Getränke", etc.
+Dishes can have subscript codes for contained allergens, ingredients and additives. Capture these carfully!
+Find the associated code legend and use it for menu item tagging described below.
+
 Hard validation rules:
 - Root object must be { "menu": [...] } with at least 2 entries.
 - menu[0] is metadata and must include "name" and "date-created" (ISO datetime).
@@ -16,17 +24,18 @@ Hard validation rules:
   across the whole file, even if the source menu orders sections differently.
 - price must be a number between 0 and 9999.99 with max 2 decimal places.
 - Item names must be unique across all sections (case-insensitive). If the same dish
-  appears in several sections (e.g. a vegan variant or a lunch menu), disambiguate with
-  a short suffix like "Daal Tadka (Vegan)" or "Chicken Korma (Mittag)".
+  appears in several sections (e.g. section "Vegan" a "Beilagen"), disambiguate with
+  a short section suffix like "Gemischter Salat (Vegan)" or "Kartoffelsalat (Beilagen)".
+
 Tagging rules:
 - Items may include optional user-facing lowercase tags. Omit the tags field when no
-  tag applies. Do not create a "meal" tag or internal tags like "course:drink".
+  tag applies.
 - Use the tag "beverage" for drinks; otherwise omit it.
 - Diet/style tags: "vegetarian", "vegan" (items from a vegan section get "vegan" only,
-  not "vegetarian"), "spicy" (dishes marked scharf/hot, e.g. Madras, Vindaloo),
+  not "vegetarian"), "spicy" (dishes marked scharf/hot),
   "sweet" (desserts, sweet sides).
 - Main-protein tags, one per animal named in the dish name or ingredients:
-  "chicken", "lamb" (also Mutton/Keema), "pork", "beef", "duck", "fish",
+  e.g. "chicken", "lamb", "pork", "beef", "duck", "fish",
   "seafood" (prawns, shrimp, Garnelen, Jhinga, crustaceans).
 - Allergen tags, inferred from ingredients AND from any allergen code legend the menu
   provides (e.g. A1=Weizenmehl, C=Eier, G=Milch, H1-H5=nuts). Allergen codes count even
@@ -40,4 +49,3 @@ Tagging rules:
   - "nut": Mandeln, Cashew, Walnüsse, Pistazien, Erdnüsse or a nut allergen code.
 - If tags are unknown or not useful, omit the tags field. If another optional value is
   unknown, use an empty string or omit it.
-Output only one JSON object, no surrounding text.

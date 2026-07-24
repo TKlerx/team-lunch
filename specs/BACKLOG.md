@@ -24,6 +24,7 @@ they become numbered specs.
 | BACKLOG-005 | Multiple concurrent polls per office | Backlog | - | Requires product model redesign because current phase/SSE semantics assume at most one active poll per office. |
 | BACKLOG-006 | Live Entra account verification | Backlog | - | Manual tenant/app-registration validation that mocked tests cannot cover. |
 | BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
+| BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
 
 ## BACKLOG-007 notes — Prisma 7 production verification
 
