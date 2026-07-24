@@ -54,6 +54,8 @@ describe('appReducer state safety', () => {
               description: null,
               price: 9.5,
               tags: [],
+              allergens: [],
+              additives: [],
               createdAt: '2026-03-02T10:00:00.000Z',
             },
           ],

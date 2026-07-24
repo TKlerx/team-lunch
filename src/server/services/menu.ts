@@ -248,6 +248,8 @@ function formatMenuItem(i: {
   name: string;
   description: string | null;
   price: { toString(): string } | null;
+  allergens?: string[];
+  additives?: string[];
   createdAt: Date;
   menuItemFeatures?: Array<{ tag: string }>;
 }): MenuItem {
@@ -259,6 +261,8 @@ function formatMenuItem(i: {
     description: i.description,
     price: i.price === null ? null : Number(i.price.toString()),
     tags: i.menuItemFeatures?.map((feature) => feature.tag) ?? [],
+    allergens: i.allergens ?? [],
+    additives: i.additives ?? [],
     createdAt: i.createdAt.toISOString(),
   };
 }

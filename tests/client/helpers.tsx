@@ -33,6 +33,8 @@ export function makeMenuItem(overrides: Partial<MenuItem> = {}): MenuItem {
     createdAt: '2026-01-01T00:00:00Z',
     ...overrides,
     tags: overrides.tags ?? [],
+    allergens: overrides.allergens ?? [],
+    additives: overrides.additives ?? [],
   };
 }
 

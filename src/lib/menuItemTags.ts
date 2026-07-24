@@ -1,33 +1,43 @@
 export const MENU_TAG_PROVENANCE = 'menu';
 export const BEVERAGE_TAG = 'beverage';
-export const MAX_MENU_TAG_LENGTH = 60;
+export const MAX_MENU_LABEL_LENGTH = 60;
+export const MAX_MENU_TAG_LENGTH = MAX_MENU_LABEL_LENGTH;
 
 export type MenuItemWithTags = { tags: string[] };
 
-export function normalizeMenuTags(tags: readonly string[]): string[] {
-  const normalized = tags
-    .map((tag) => tag.trim().toLowerCase())
+export function normalizeMenuLabels(labels: readonly string[]): string[] {
+  const normalized = labels
+    .map((label) => label.trim().toLowerCase())
     .filter(Boolean);
 
   return Array.from(new Set(normalized));
 }
 
-export function validateMenuTags(tags: unknown, path = 'tags'): { tags: string[]; error: string | null } {
-  if (tags === undefined) return { tags: [], error: null };
-  if (!Array.isArray(tags)) return { tags: [], error: `${path} must be an array of strings` };
+export function validateMenuLabels(labels: unknown, path = 'labels'): { labels: string[]; error: string | null } {
+  if (labels === undefined) return { labels: [], error: null };
+  if (!Array.isArray(labels)) return { labels: [], error: `${path} must be an array of strings` };
 
   const strings: string[] = [];
-  for (let index = 0; index < tags.length; index += 1) {
-    const tag = tags[index];
-    if (typeof tag !== 'string') return { tags: [], error: `${path}[${index}] must be a string` };
-    const normalized = tag.trim().toLowerCase();
-    if (normalized.length > MAX_MENU_TAG_LENGTH) {
-      return { tags: [], error: `${path}[${index}] must be at most ${MAX_MENU_TAG_LENGTH} characters` };
+  for (let index = 0; index < labels.length; index += 1) {
+    const label = labels[index];
+    if (typeof label !== 'string') return { labels: [], error: `${path}[${index}] must be a string` };
+    const normalized = label.trim().toLowerCase();
+    if (normalized.length > MAX_MENU_LABEL_LENGTH) {
+      return { labels: [], error: `${path}[${index}] must be at most ${MAX_MENU_LABEL_LENGTH} characters` };
     }
-    strings.push(tag);
+    strings.push(label);
   }
 
-  return { tags: normalizeMenuTags(strings), error: null };
+  return { labels: normalizeMenuLabels(strings), error: null };
+}
+
+export function normalizeMenuTags(tags: readonly string[]): string[] {
+  return normalizeMenuLabels(tags);
+}
+
+export function validateMenuTags(tags: unknown, path = 'tags'): { tags: string[]; error: string | null } {
+  const validated = validateMenuLabels(tags, path);
+  return { tags: validated.labels, error: validated.error };
 }
 
 export function isBeverageMenuItem(item: MenuItemWithTags): boolean {

@@ -36,7 +36,7 @@ function renderView() {
 describe('PollFinishedView', () => {
   const menus = [
     makeMenu({ id: 'menu-1', name: 'Pizza Place' }),
-    makeMenu({ id: 'menu-2', name: 'Sushi Bar', items: [{ id: 'item-2', menuId: 'menu-2', name: 'Roll', description: null, price: null, tags: [], createdAt: '2026-01-01T00:00:00Z' }] }),
+    makeMenu({ id: 'menu-2', name: 'Sushi Bar', items: [{ id: 'item-2', menuId: 'menu-2', name: 'Roll', description: null, price: null, tags: [], allergens: [], additives: [], createdAt: '2026-01-01T00:00:00Z' }] }),
   ];
 
   beforeEach(() => {
