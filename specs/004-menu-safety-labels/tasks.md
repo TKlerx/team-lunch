@@ -77,11 +77,11 @@
 
 ### Tests for User Story 3
 
-- [ ] T012 [P] [US3] Add food-selection exclusion tests for allergen/additive matching, clearing, meal/beverage tabs, combined tag/search filters, empty results, and non-persistence in `tests/client/FoodSelectionActiveView.test.tsx`.
+- [x] T012 [P] [US3] Add food-selection exclusion tests for allergen/additive matching, clearing, meal/beverage tabs, combined tag/search filters, empty results, and non-persistence in `tests/client/FoodSelectionActiveView.test.tsx`.
 
 ### Implementation for User Story 3
 
-- [ ] T013 [US3] Add local selected-allergen/additive state, deduplicated controls, intersection filtering, and an explicit empty-filtered result to `src/client/components/FoodSelectionActiveView.tsx`; compose it with existing tab, search, and tag filters without mutating orders or preferences.
+- [x] T013 [US3] Add local selected-allergen/additive state, deduplicated controls, intersection filtering, and an explicit empty-filtered result to `src/client/components/FoodSelectionActiveView.tsx`; compose it with existing tab, search, and tag filters without mutating orders or preferences.
 
 **Checkpoint**: Food-selection users can safely hide matching dishes temporarily; orders and existing ingredient-warning behavior remain unchanged.
 

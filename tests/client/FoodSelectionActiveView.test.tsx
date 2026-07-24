@@ -337,6 +337,145 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.queryByText('Burger')).not.toBeInTheDocument();
   });
 
+  it('hides items matching selected allergen or additive exclusions and restores them when cleared', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({ id: 'item-gluten', name: 'Gluten pizza', allergens: ['gluten'] }),
+          makeMenuItem({ id: 'item-additive', name: 'Preserved salad', additives: ['preservative'] }),
+          makeMenuItem({ id: 'item-safe', name: 'Fresh soup', allergens: [], additives: [] }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    const allergenControls = screen.getByRole('group', { name: /exclude allergens/i });
+    const additiveControls = screen.getByRole('group', { name: /exclude additives/i });
+    expect(within(allergenControls).getAllByRole('button', { name: 'gluten' })).toHaveLength(1);
+
+    await user.click(within(allergenControls).getByRole('button', { name: 'gluten' }));
+    expect(screen.queryByText('Gluten pizza')).not.toBeInTheDocument();
+    expect(screen.getByText('Preserved salad')).toBeInTheDocument();
+    expect(screen.getByText('Fresh soup')).toBeInTheDocument();
+
+    await user.click(within(additiveControls).getByRole('button', { name: 'preservative' }));
+    expect(screen.queryByText('Preserved salad')).not.toBeInTheDocument();
+    expect(screen.getByText('Fresh soup')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /clear allergen exclusions/i }));
+    expect(screen.getByText('Gluten pizza')).toBeInTheDocument();
+    expect(screen.queryByText('Preserved salad')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /clear additive exclusions/i }));
+    expect(screen.getByText('Preserved salad')).toBeInTheDocument();
+  });
+
+  it('composes safety exclusions with tag and search filters', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({ id: 'item-safe-vegan', name: 'Vegan curry', tags: ['vegan'] }),
+          makeMenuItem({ id: 'item-gluten-vegan', name: 'Vegan gluten bowl', tags: ['vegan'], allergens: ['gluten'] }),
+          makeMenuItem({ id: 'item-gluten-classic', name: 'Classic gluten pizza', tags: ['classic'], allergens: ['gluten'] }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    await user.click(screen.getByRole('button', { name: 'vegan' }));
+    await user.click(screen.getByPlaceholderText(/search items/i));
+    await user.type(screen.getByPlaceholderText(/search items/i), 'veg');
+    await user.click(
+      within(screen.getByRole('group', { name: /exclude allergens/i })).getByRole('button', { name: 'gluten' }),
+    );
+
+    expect(screen.getByText('Vegan curry')).toBeInTheDocument();
+    expect(screen.queryByText('Vegan gluten bowl')).not.toBeInTheDocument();
+    expect(screen.queryByText('Classic gluten pizza')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /clear allergen exclusions/i }));
+    expect(screen.getByText('Vegan gluten bowl')).toBeInTheDocument();
+    expect(screen.queryByText('Classic gluten pizza')).not.toBeInTheDocument();
+  });
+
+  it('applies exclusions in meal and beverage tabs and shows the filtered empty state', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({ id: 'item-meal', name: 'Milk pasta', allergens: ['milk'] }),
+          makeMenuItem({ id: 'item-beverage', name: 'Milkshake', tags: ['beverage'], allergens: ['milk'] }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    await user.click(
+      within(screen.getByRole('group', { name: /exclude allergens/i })).getByRole('button', { name: 'milk' }),
+    );
+    expect(screen.queryByText('Milk pasta')).not.toBeInTheDocument();
+    expect(screen.getByText(/no matching items found/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: /beverage/i }));
+    expect(screen.queryByText('Milkshake')).not.toBeInTheDocument();
+    expect(screen.getByText(/no matching items found/i)).toBeInTheDocument();
+  });
+
+  it('does not persist safety exclusions after rerendering a new view or remounting', async () => {
+    const user = userEvent.setup();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [makeMenuItem({ id: 'item-gluten', name: 'Gluten pizza', allergens: ['gluten'] })],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+    const view = renderView();
+
+    await user.click(
+      within(screen.getByRole('group', { name: /exclude allergens/i })).getByRole('button', { name: 'gluten' }),
+    );
+    expect(screen.queryByText('Gluten pizza')).not.toBeInTheDocument();
+
+    view.rerender(
+      <MemoryRouter key="fresh-food-selection-view" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <FoodSelectionActiveView />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Gluten pizza')).toBeInTheDocument();
+
+    view.unmount();
+    renderView();
+    expect(screen.getByText('Gluten pizza')).toBeInTheDocument();
+  });
+
   it('shows per-item add actions and withdraw action', () => {
     renderView();
     expect(screen.getAllByRole('button', { name: /^add$/i })).toHaveLength(2);

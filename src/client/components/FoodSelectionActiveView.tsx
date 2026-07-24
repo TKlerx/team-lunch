@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { Link } from "react-router-dom";
 import { useAppState } from "../context/AppContext.js";
 import { useToast } from "../context/ToastContext.js";
@@ -60,6 +60,15 @@ function computeItemWarnings(
     haystack.includes(normalizeForMatch(term)),
   );
   return { allergies, dislikes };
+}
+
+function excludesSafetyLabels(
+  item: { allergens: string[]; additives: string[] },
+  selectedAllergens: ReadonlySet<string>,
+  selectedAdditives: ReadonlySet<string>,
+): boolean {
+  return item.allergens.some((allergen) => selectedAllergens.has(allergen))
+    || item.additives.some((additive) => selectedAdditives.has(additive));
 }
 
 function formatIngredientPreferencesTooltip(
@@ -250,6 +259,8 @@ function OrderForm({
   const [itemSearch, setItemSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"meal" | "beverage">("meal");
   const [selectedTags, setSelectedTags] = useState<Set<string>>(() => new Set());
+  const [selectedAllergens, setSelectedAllergens] = useState<Set<string>>(() => new Set());
+  const [selectedAdditives, setSelectedAdditives] = useState<Set<string>>(() => new Set());
   const [addingItemId, setAddingItemId] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
   const { confirm, dialog } = useConfirmDialog();
@@ -263,6 +274,14 @@ function OrderForm({
     () => Array.from(new Set(tabMenuItems.flatMap(getFoodSelectionVisibleTags))).sort(),
     [tabMenuItems],
   );
+  const availableAllergens = useMemo(
+    () => Array.from(new Set(menuItems.flatMap((item) => item.allergens))).sort(),
+    [menuItems],
+  );
+  const availableAdditives = useMemo(
+    () => Array.from(new Set(menuItems.flatMap((item) => item.additives))).sort(),
+    [menuItems],
+  );
   const filteredMenuItems = useMemo(() => {
     const normalizedSearch = itemSearch.trim().toLowerCase();
     return tabMenuItems.filter((item) => {
@@ -270,9 +289,11 @@ function OrderForm({
       const matchesSearch = normalizedSearch.length < 3
         || item.name.toLowerCase().includes(normalizedSearch)
         || description.includes(normalizedSearch);
-      return matchesSearch && matchesAnySelectedTag(item, selectedTags);
+      return matchesSearch
+        && matchesAnySelectedTag(item, selectedTags)
+        && !excludesSafetyLabels(item, selectedAllergens, selectedAdditives);
     });
-  }, [itemSearch, selectedTags, tabMenuItems]);
+  }, [itemSearch, selectedAdditives, selectedAllergens, selectedTags, tabMenuItems]);
   const itemNumberById = useMemo(
     () =>
       new Map(
@@ -288,6 +309,15 @@ function OrderForm({
       const next = new Set(current);
       if (next.has(tag)) next.delete(tag);
       else next.add(tag);
+      return next;
+    });
+  };
+
+  const toggleSafetyLabel = (label: string, setSelection: Dispatch<SetStateAction<Set<string>>>) => {
+    setSelection((current) => {
+      const next = new Set(current);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
       return next;
     });
   };
@@ -396,7 +426,7 @@ function OrderForm({
               type="button"
               aria-pressed={selectedTags.has(tag)}
               onClick={() => toggleSelectedTag(tag)}
-              className={`rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+              className={`rounded-full border px-2 py-0.5 text-[11px] font-medium transition-col ${
                 selectedTags.has(tag)
                   ? "border-accent bg-accent-soft text-accent-fg"
                   : "border-transparent bg-surface-muted text-fg-muted hover:text-fg"
@@ -405,6 +435,23 @@ function OrderForm({
               {tag}
             </button>
           ))}
+        </div>
+      )}
+
+      {availableAllergens.length > 0 && (
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Exclude allergens">
+          {availableAllergens.map((allergen) => (
+            <button key={allergen} type="button" aria-pressed={selectedAllergens.has(allergen)} onClick={() => toggleSafetyLabel(allergen, setSelectedAllergens)}>{allergen}</button>
+          ))}
+          {selectedAllergens.size > 0 && <button type="button" onClick={() => setSelectedAllergens(new Set())}>Clear allergen exclusions</button>}
+        </div>
+      )}
+      {availableAdditives.length > 0 && (
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Exclude additives">
+          {availableAdditives.map((additive) => (
+            <button key={additive} type="button" aria-pressed={selectedAdditives.has(additive)} onClick={() => toggleSafetyLabel(additive, setSelectedAdditives)}>{additive}</button>
+          ))}
+          {selectedAdditives.size > 0 && <button type="button" onClick={() => setSelectedAdditives(new Set())}>Clear additive exclusions</button>}
         </div>
       )}
 
