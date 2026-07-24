@@ -44,8 +44,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T008 [US1] Add comma-separated allergen and additive inputs, client-side validation, API payloads, reset behavior, and separate edit/list badges in `src/client/pages/ManageMenus.tsx`.
-- [ ] T009 [US1] Extend manual item editing, badge separation, and copied import-prompt assertions in `tests/client/ManageMenus.test.tsx`.
+- [x] T008 [US1] Add comma-separated allergen and additive inputs, client-side validation, API payloads, reset behavior, and separate edit/list badges in `src/client/pages/ManageMenus.tsx`.
+- [x] T009 [US1] Extend manual item editing, badge separation, and copied import-prompt assertions in `tests/client/ManageMenus.test.tsx`.
 
 **Checkpoint**: Menu management independently supports imported and manually edited safety labels, while tags retain their existing behavior.
 
