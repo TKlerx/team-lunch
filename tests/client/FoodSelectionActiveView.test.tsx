@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from './testRender.js';
+import { render, screen, within } from './testRender.js';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, makePoll } from './helpers.js';
@@ -177,6 +177,83 @@ describe('FoodSelectionActiveView', () => {
     renderView();
     expect(screen.getByLabelText('Comment for Margherita')).toBeInTheDocument();
     expect(screen.getByLabelText('Comment for Pepperoni')).toBeInTheDocument();
+  });
+
+  it('renders tags, allergens, and additives as separately labelled text groups', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({
+            id: 'item-safety',
+            name: 'Safety pizza',
+            tags: ['vegetarian'],
+            allergens: ['gluten', 'milk'],
+            additives: ['preservative'],
+          }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    const card = within(document.getElementById('meal-item-item-safety')!);
+    expect(card.getByText(/^tags:?$/i)).toBeInTheDocument();
+    expect(card.getByText('vegetarian')).toBeInTheDocument();
+    expect(card.getByText(/^allergens:?$/i)).toBeInTheDocument();
+    expect(card.getByText('gluten')).toBeInTheDocument();
+    expect(card.getByText('milk')).toBeInTheDocument();
+    expect(card.getByText(/^additives:?$/i)).toBeInTheDocument();
+    expect(card.getByText('preservative')).toBeInTheDocument();
+  });
+
+  it('keeps safety groups textual when tags are absent and omits empty groups', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [makeMenu({
+        id: 'menu-1',
+        name: 'Pizza Place',
+        items: [
+          makeMenuItem({
+            id: 'item-safety-only',
+            name: 'Safety-only dish',
+            tags: [],
+            allergens: ['sesame'],
+            additives: ['colouring'],
+          }),
+          makeMenuItem({
+            id: 'item-tags-only',
+            name: 'Tags-only dish',
+            tags: ['vegan'],
+            allergens: [],
+            additives: [],
+          }),
+        ],
+      })],
+      latestCompletedPoll: makePoll({ status: 'finished', winnerMenuId: 'menu-1', winnerMenuName: 'Pizza Place' }),
+      activeFoodSelection: makeFoodSelection({ menuId: 'menu-1', menuName: 'Pizza Place', status: 'active' }),
+    });
+
+    renderView();
+
+    const safetyOnlyCard = within(document.getElementById('meal-item-item-safety-only')!);
+    expect(safetyOnlyCard.queryByText(/^tags:?$/i)).not.toBeInTheDocument();
+    expect(safetyOnlyCard.getByText(/^allergens:?$/i)).toBeInTheDocument();
+    expect(safetyOnlyCard.getByText('sesame')).toBeInTheDocument();
+    expect(safetyOnlyCard.getByText(/^additives:?$/i)).toBeInTheDocument();
+    expect(safetyOnlyCard.getByText('colouring')).toBeInTheDocument();
+
+    const tagsOnlyCard = within(document.getElementById('meal-item-item-tags-only')!);
+    expect(tagsOnlyCard.getByText(/^tags:?$/i)).toBeInTheDocument();
+    expect(tagsOnlyCard.getByText('vegan')).toBeInTheDocument();
+    expect(tagsOnlyCard.queryByText(/^allergens:?$/i)).not.toBeInTheDocument();
+    expect(tagsOnlyCard.queryByText(/^additives:?$/i)).not.toBeInTheDocument();
   });
 
   it('shows an item search field', () => {

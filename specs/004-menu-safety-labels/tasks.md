@@ -59,11 +59,11 @@
 
 ### Tests for User Story 2
 
-- [ ] T010 [P] [US2] Add card-display coverage for separate tag, allergen, and additive groups in `tests/client/FoodSelectionActiveView.test.tsx`.
+- [x] T010 [P] [US2] Add card-display coverage for separate tag, allergen, and additive groups in `tests/client/FoodSelectionActiveView.test.tsx`.
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] Extend `OrderMenuItem` and `OrderItemCard` in `src/client/components/FoodSelectionActiveView.tsx` to display explicitly labelled allergen and additive groups independently from visible preference tags.
+- [x] T011 [US2] Extend `OrderMenuItem` and `OrderItemCard` in `src/client/components/FoodSelectionActiveView.tsx` to display explicitly labelled allergen and additive groups independently from visible preference tags.
 
 **Checkpoint**: Food-selection cards clearly identify every non-empty label set without changing Settings warnings or recommendation behavior.
 

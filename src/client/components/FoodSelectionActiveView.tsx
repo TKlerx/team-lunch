@@ -90,6 +90,8 @@ type OrderMenuItem = {
   description: string | null;
   price: number | null;
   tags: string[];
+  allergens: string[];
+  additives: string[];
 };
 
 type ExistingOrder = {
@@ -155,13 +157,13 @@ function OrderItemCard({
       <div>
         {item.description && <p className="text-xs text-fg-muted">{item.description}</p>}
         {visibleTags.length > 0 && (
-          <div className="mt-1 flex flex-wrap gap-1">
-            {visibleTags.map((tag) => (
-              <span key={tag} className="rounded-full bg-accent-soft/40 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
-                {tag}
-              </span>
-            ))}
-          </div>
+          <p className="mt-1 text-xs text-fg-muted"><span>Tags:</span> {visibleTags.map((tag) => <span key={tag}> {tag}</span>)}</p>
+        )}
+        {item.allergens.length > 0 && (
+          <p className="mt-1 text-xs font-medium text-danger-fg"><span>Allergens:</span> {item.allergens.map((allergen) => <span key={allergen}> {allergen}</span>)}</p>
+        )}
+        {item.additives.length > 0 && (
+          <p className="mt-1 text-xs font-medium text-warning-fg"><span>Additives:</span> {item.additives.map((additive) => <span key={additive}> {additive}</span>)}</p>
         )}
         {warnings?.allergies.length ? (
           <p className="mt-1 text-xs font-medium text-danger-fg">
