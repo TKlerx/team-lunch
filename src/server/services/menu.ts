@@ -222,7 +222,8 @@ function parseImportItemLabels(
   const path = `${itemPath}.${labelType}`;
   const validated = validateMenuLabels(rawLabels, path);
   if (validated.error) {
-    violations.push({ path, message: validated.error });
+    const errorPath = validated.error.slice(0, validated.error.indexOf(' must '));
+    violations.push({ path: errorPath, message: validated.error.replace(`${itemPath}.`, '') });
   }
   return validated.labels;
 }

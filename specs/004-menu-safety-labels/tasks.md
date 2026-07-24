@@ -39,8 +39,8 @@
 
 ### Tests for User Story 1
 
-- [ ] T006 [P] [US1] Add normalization, omitted-list, update-preservation, and atomic invalid-import coverage in `tests/server/menu-service.test.ts`.
-- [ ] T007 [P] [US1] Add create/update/import request and path-specific validation coverage in `tests/server/menu-routes.test.ts`.
+- [x] T006 [P] [US1] Add normalization, omitted-list, update-preservation, and atomic invalid-import coverage in `tests/server/menu-service.test.ts`.
+- [x] T007 [P] [US1] Add create/update/import request and path-specific validation coverage in `tests/server/menu-routes.test.ts`.
 
 ### Implementation for User Story 1
 

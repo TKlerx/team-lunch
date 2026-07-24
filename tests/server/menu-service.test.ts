@@ -207,6 +207,39 @@ describe('Menu service', () => {
     expect(item.description).toBeNull();
   });
 
+  it('normalizes manual safety labels independently from tags', async () => {
+    const menu = await menuService.createMenu('Italian');
+
+    const item = await menuService.createItem(menu.id, 'Pizza', undefined, undefined, undefined, undefined, {
+      tags: [' Vegan ', 'vegan'],
+      allergens: [' Gluten ', 'GLUTEN'],
+      additives: [' E250 ', 'e250'],
+    });
+
+    expect(item.tags).toEqual(['vegan']);
+    expect(item.allergens).toEqual(['gluten']);
+    expect(item.additives).toEqual(['e250']);
+  });
+
+  it('defaults omitted safety-label lists to empty for manual creates and imports', async () => {
+    const manualMenu = await menuService.createMenu('Manual Menu');
+    const manualItem = await menuService.createItem(manualMenu.id, 'Plain Pizza');
+
+    const imported = await menuService.importMenuFromJson({
+      menu: [
+        { name: 'Imported Menu', 'date-created': '2026-02-06T12:00:00Z' },
+        {
+          category: 'Pizza',
+          items: [{ name: 'Plain Pasta', ingredients: 'Tomato', price: 8 }],
+        },
+      ],
+    });
+
+    expect(manualItem.allergens).toEqual([]);
+    expect(manualItem.additives).toEqual([]);
+    expect(imported.menu.items[0]).toMatchObject({ allergens: [], additives: [] });
+  });
+
   it('rejects creating item with empty name', async () => {
     const menu = await menuService.createMenu('Italian');
     await expect(menuService.createItem(menu.id, '')).rejects.toThrow(
@@ -266,6 +299,22 @@ describe('Menu service', () => {
     await menuService.createItem(menu.id, 'Pizza');
     const item2 = await menuService.createItem(menu.id, 'Pasta');
     await expect(menuService.updateItem(item2.id, 'pizza')).rejects.toThrow('already exists');
+  });
+
+  it('preserves omitted safety-label lists when updating an item', async () => {
+    const menu = await menuService.createMenu('Italian');
+    const item = await menuService.createItem(menu.id, 'Pizza', undefined, undefined, undefined, undefined, {
+      allergens: ['gluten'],
+      additives: ['e250'],
+    });
+
+    const updated = await menuService.updateItem(item.id, 'Pizza', 'Updated description', undefined, 10, undefined, {
+      tags: ['vegetarian'],
+    });
+
+    expect(updated.tags).toEqual(['vegetarian']);
+    expect(updated.allergens).toEqual(['gluten']);
+    expect(updated.additives).toEqual(['e250']);
   });
 
   // ─── Delete Item ─────────────────────────────────────────
@@ -412,6 +461,43 @@ describe('Menu service', () => {
 
     const menus = await menuService.listMenus();
     expect(menus).toHaveLength(0);
+  });
+
+  it('rejects invalid safety-label imports atomically without replacing existing items', async () => {
+    const existing = await menuService.createMenu('Pizza Pronto');
+    await menuService.createItem(existing.id, 'Existing Pizza', 'Tomato', undefined, 9, undefined, {
+      allergens: ['gluten'],
+    });
+
+    await expect(
+      menuService.importMenuFromJson({
+        menu: [
+          { name: 'Pizza Pronto', 'date-created': '2026-02-06T12:00:00Z' },
+          {
+            category: 'Pizza',
+            items: [
+              {
+                name: 'Replacement Pizza',
+                ingredients: 'Tomato',
+                price: 10,
+                allergens: 'gluten',
+              },
+            ],
+          },
+        ],
+      }),
+    ).rejects.toMatchObject({
+      message: 'Import payload validation failed',
+      statusCode: 400,
+      violations: expect.arrayContaining([
+        expect.objectContaining({ path: 'menu[1].items[0].allergens' }),
+      ]),
+    });
+
+    const menu = (await menuService.listMenus()).find((candidate) => candidate.id === existing.id);
+    expect(menu?.items).toMatchObject([
+      { name: 'Existing Pizza', allergens: ['gluten'], additives: [] },
+    ]);
   });
 
   it('previews import with created/updated/deleted item counts', async () => {

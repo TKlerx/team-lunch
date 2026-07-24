@@ -133,24 +133,44 @@ describe('Menu routes (integration)', () => {
     // Create item
     const createRes = await agent(server)
       .post(`/api/menus/${menuId}/items`)
-      .send({ name: 'Margherita Pizza', description: 'Classic', itemNumber: '12', price: 9.5, tags: ['Vegetarian'] })
+      .send({
+        name: 'Margherita Pizza',
+        description: 'Classic',
+        itemNumber: '12',
+        price: 9.5,
+        tags: ['Vegetarian'],
+        allergens: [' Milk ', 'milk', 'Gluten'],
+        additives: [' Colouring ', 'colouring'],
+      })
       .expect(201);
     expect(createRes.body.name).toBe('Margherita Pizza');
     expect(createRes.body.description).toBe('Classic');
     expect(createRes.body.itemNumber).toBe('12');
     expect(createRes.body.price).toBe(9.5);
     expect(createRes.body.tags).toEqual(['vegetarian']);
+    expect(createRes.body.allergens).toEqual(['milk', 'gluten']);
+    expect(createRes.body.additives).toEqual(['colouring']);
     const itemId = createRes.body.id;
 
     // Update item
     const updateRes = await agent(server)
       .put(`/api/menus/${menuId}/items/${itemId}`)
-      .send({ name: 'Neapolitan Pizza', description: 'From Naples', itemNumber: '21', price: 10.5, tags: ['spicy'] })
+      .send({
+        name: 'Neapolitan Pizza',
+        description: 'From Naples',
+        itemNumber: '21',
+        price: 10.5,
+        tags: ['spicy'],
+        allergens: ['Sesame'],
+        additives: [],
+      })
       .expect(200);
     expect(updateRes.body.name).toBe('Neapolitan Pizza');
     expect(updateRes.body.itemNumber).toBe('21');
     expect(updateRes.body.price).toBe(10.5);
     expect(updateRes.body.tags).toEqual(['spicy']);
+    expect(updateRes.body.allergens).toEqual(['sesame']);
+    expect(updateRes.body.additives).toEqual([]);
 
     // Delete item
     await agent(server).delete(`/api/menus/${menuId}/items/${itemId}`).expect(204);
@@ -406,7 +426,16 @@ describe('Menu routes (integration)', () => {
         },
         {
           category: 'Pizza',
-          items: [{ 'item-number': '12', name: 'Margherita', ingredients: 'Tomato, Cheese', price: 7.5 }],
+          items: [
+            {
+              'item-number': '12',
+              name: 'Margherita',
+              ingredients: 'Tomato, Cheese',
+              price: 7.5,
+              allergens: [' Milk ', 'milk', 'Gluten'],
+              additives: [' Colouring ', 'colouring'],
+            },
+          ],
         },
       ],
     };
@@ -423,6 +452,8 @@ describe('Menu routes (integration)', () => {
     expect(res.body.menu.items[0].itemNumber).toBe('12');
     expect(res.body.menu.items[0].description).toBe('Tomato, Cheese');
     expect(res.body.menu.items[0].price).toBe(7.5);
+    expect(res.body.menu.items[0].allergens).toEqual(['milk', 'gluten']);
+    expect(res.body.menu.items[0].additives).toEqual(['colouring']);
   });
 
   it('imports menu JSON payload with only required metadata fields', async () => {
@@ -465,7 +496,16 @@ describe('Menu routes (integration)', () => {
         },
         {
           category: 'Pizza',
-          items: [{ 'item-number': 'X'.repeat(41), name: '', ingredients: '', price: -1 }],
+          items: [
+            {
+              'item-number': 'X'.repeat(41),
+              name: '',
+              ingredients: '',
+              price: -1,
+              allergens: ['milk', 1],
+              additives: [false],
+            },
+          ],
         },
       ],
     };
@@ -482,6 +522,8 @@ describe('Menu routes (integration)', () => {
         expect.objectContaining({ path: 'menu[0].name' }),
         expect.objectContaining({ path: 'menu[1].items[0].item-number' }),
         expect.objectContaining({ path: 'menu[1].items[0].price' }),
+        expect.objectContaining({ path: 'menu[1].items[0].allergens[1]' }),
+        expect.objectContaining({ path: 'menu[1].items[0].additives[0]' }),
       ]),
     );
 
