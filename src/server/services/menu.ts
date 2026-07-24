@@ -5,7 +5,7 @@ import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeL
 import { ensureMenuItemIdentity, normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
 import { extractFeatures } from './mealFeatures.js';
 import { buildSanitizedTaggingPayload, requestAiFeatureTags } from './mealRecommendationAi.js';
-import { MENU_TAG_PROVENANCE, validateMenuTags } from '../../lib/menuItemTags.js';
+import { MENU_TAG_PROVENANCE, validateMenuLabels, validateMenuTags } from '../../lib/menuItemTags.js';
 import type {
   Menu,
   MenuItem,
@@ -20,6 +20,8 @@ type ImportItem = {
   description: string;
   price: number;
   tags: string[];
+  allergens: string[];
+  additives: string[];
 };
 
 type ParsedMenuImport = {
@@ -37,6 +39,12 @@ type ExistingItemLite = {
   name: string;
   description: string | null;
   price: { toString(): string } | null;
+};
+
+type MenuItemLabelsInput = {
+  tags?: unknown;
+  allergens?: unknown;
+  additives?: unknown;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -205,6 +213,32 @@ function parseImportItemTags(rawTags: unknown, itemPath: string, violations: Imp
   return validatedTags.tags;
 }
 
+function parseImportItemLabels(
+  rawLabels: unknown,
+  labelType: 'allergens' | 'additives',
+  itemPath: string,
+  violations: ImportMenuViolation[],
+): string[] {
+  const path = `${itemPath}.${labelType}`;
+  const validated = validateMenuLabels(rawLabels, path);
+  if (validated.error) {
+    violations.push({ path, message: validated.error });
+  }
+  return validated.labels;
+}
+
+function validateItemLabels(labels: unknown, labelType: 'allergens' | 'additives'): string[] {
+  const validated = validateMenuLabels(labels, labelType);
+  if (validated.error) {
+    throw Object.assign(new Error(validated.error), { statusCode: 400 });
+  }
+  return validated.labels;
+}
+
+function parseMenuItemLabels(labels?: MenuItemLabelsInput | unknown[]): MenuItemLabelsInput {
+  return Array.isArray(labels) ? { tags: labels } : labels ?? {};
+}
+
 // ─── Formatters ────────────────────────────────────────────
 
 function formatMenu(m: {
@@ -223,6 +257,8 @@ function formatMenu(m: {
     name: string;
     description: string | null;
     price: { toString(): string } | null;
+    allergens?: string[];
+    additives?: string[];
     createdAt: Date;
     menuItemFeatures?: Array<{ tag: string }>;
   }>;
@@ -412,6 +448,24 @@ async function syncImportedMenuTags(
   }
 }
 
+async function createImportedMenuItems(
+  db: Pick<Prisma.TransactionClient, 'menuItem'>,
+  menuId: string,
+  items: ImportItem[],
+): Promise<void> {
+  await db.menuItem.createMany({
+    data: items.map((item) => ({
+      menuId,
+      itemNumber: item.itemNumber,
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      allergens: item.allergens,
+      additives: item.additives,
+    })),
+  });
+}
+
 function parseMenuImportPayload(payload: unknown): {
   parsed: ParsedMenuImport | null;
   violations: ImportMenuViolation[];
@@ -564,6 +618,8 @@ function parseMenuImportPayload(payload: unknown): {
       const rawIngredients = item.ingredients;
       const rawPrice = item.price;
       const rawTags = item.tags;
+      const rawAllergens = item.allergens;
+      const rawAdditives = item.additives;
 
       const itemName = typeof rawItemName === 'string' ? rawItemName.trim() : '';
       if (!itemName || itemName.length > 80) {
@@ -598,6 +654,8 @@ function parseMenuImportPayload(payload: unknown): {
       }
 
       const itemTags = parseImportItemTags(rawTags, itemPath, violations);
+      const allergens = parseImportItemLabels(rawAllergens, 'allergens', itemPath, violations);
+      const additives = parseImportItemLabels(rawAdditives, 'additives', itemPath, violations);
 
       if (
         itemName
@@ -616,6 +674,8 @@ function parseMenuImportPayload(payload: unknown): {
           description: ingredients,
           price: rawPrice,
           tags: itemTags,
+          allergens,
+          additives,
         });
       }
     }
@@ -877,13 +937,16 @@ export async function createItem(
   itemNumber?: string | null,
   price?: number | null,
   officeLocationId?: string,
-  tags?: unknown,
+  labels?: MenuItemLabelsInput | unknown[],
 ): Promise<MenuItem> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const trimmedName = validateItemName(name);
   const trimmedDesc = validateItemDescription(description);
   const trimmedItemNumber = validateItemNumber(itemNumber);
   const validatedPrice = validateItemPrice(price);
+  const labelInput = parseMenuItemLabels(labels);
+  const validatedAllergens = validateItemLabels(labelInput.allergens, 'allergens');
+  const validatedAdditives = validateItemLabels(labelInput.additives, 'additives');
 
   // Check menu exists
   const menu = await prisma.menu.findFirst({ where: { id: menuId, officeLocationId: resolvedOfficeLocationId } });
@@ -906,11 +969,13 @@ export async function createItem(
       name: trimmedName,
       description: trimmedDesc,
       price: validatedPrice,
+      allergens: validatedAllergens,
+      additives: validatedAdditives,
     },
   });
 
   await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
-  await replaceMenuTags(prisma, item, resolvedOfficeLocationId, tags);
+  await replaceMenuTags(prisma, item, resolvedOfficeLocationId, labelInput.tags);
   const formatted = await findFormattedMenuItem(item.id);
   broadcast('item_created', { item: formatted }, resolvedOfficeLocationId);
   return formatted;
@@ -923,13 +988,16 @@ export async function updateItem(
   itemNumber?: string | null,
   price?: number | null,
   officeLocationId?: string,
-  tags?: unknown,
+  labels?: MenuItemLabelsInput | unknown[],
 ): Promise<MenuItem> {
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const trimmedName = validateItemName(name);
   const trimmedDesc = validateItemDescription(description);
   const trimmedItemNumber = validateItemNumber(itemNumber);
   const validatedPrice = validateItemPrice(price);
+  const labelInput = parseMenuItemLabels(labels);
+  const validatedAllergens = labelInput.allergens === undefined ? undefined : validateItemLabels(labelInput.allergens, 'allergens');
+  const validatedAdditives = labelInput.additives === undefined ? undefined : validateItemLabels(labelInput.additives, 'additives');
 
   const current = await prisma.menuItem.findFirst({
     where: { id, menu: { officeLocationId: resolvedOfficeLocationId } },
@@ -954,14 +1022,16 @@ export async function updateItem(
       name: trimmedName,
       description: trimmedDesc,
       price: validatedPrice,
+      ...(validatedAllergens === undefined ? {} : { allergens: validatedAllergens }),
+      ...(validatedAdditives === undefined ? {} : { additives: validatedAdditives }),
     },
   });
 
   if (shouldSyncDerivedData) {
     await syncMenuItemDerivedData(prisma, item, resolvedOfficeLocationId);
   }
-  if (tags !== undefined) {
-    await replaceMenuTags(prisma, item, resolvedOfficeLocationId, tags);
+  if (labelInput.tags !== undefined) {
+    await replaceMenuTags(prisma, item, resolvedOfficeLocationId, labelInput.tags);
   }
   const formatted = await findFormattedMenuItem(item.id);
   broadcast('item_updated', { item: formatted }, resolvedOfficeLocationId);
@@ -1007,15 +1077,7 @@ export async function importMenuFromJson(
 
       await tx.menuItem.deleteMany({ where: { menuId: existing.id } });
 
-      await tx.menuItem.createMany({
-        data: parsed.items.map((item) => ({
-          menuId: existing.id,
-          itemNumber: item.itemNumber,
-          name: item.name,
-          description: item.description,
-          price: item.price,
-        })),
-      });
+      await createImportedMenuItems(tx, existing.id, parsed.items);
 
       const gapFillTargets = await syncMenuItemsDerivedData(tx, existing.id, resolvedOfficeLocationId);
       await syncImportedMenuTags(tx, existing.id, resolvedOfficeLocationId, parsed.items);
@@ -1040,15 +1102,7 @@ export async function importMenuFromJson(
       },
     });
 
-    await tx.menuItem.createMany({
-      data: parsed.items.map((item) => ({
-        menuId: createdMenu.id,
-        itemNumber: item.itemNumber,
-        name: item.name,
-        description: item.description,
-        price: item.price,
-      })),
-    });
+    await createImportedMenuItems(tx, createdMenu.id, parsed.items);
 
     const gapFillTargets = await syncMenuItemsDerivedData(tx, createdMenu.id, resolvedOfficeLocationId);
     await syncImportedMenuTags(tx, createdMenu.id, resolvedOfficeLocationId, parsed.items);
