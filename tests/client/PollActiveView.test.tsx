@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from './testRender.js';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { makePoll, makeMenu } from './helpers.js';
@@ -211,7 +211,9 @@ describe('PollActiveView', () => {
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
     await user.click(screen.getByRole('button', { name: /cancel poll/i }));
-    await user.click(screen.getAllByRole('button', { name: /cancel poll/i }).at(-1)!);
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /cancel poll/i }),
+    );
 
     expect(mockAbortPoll).toHaveBeenCalledWith('poll-1');
   });
@@ -232,7 +234,9 @@ describe('PollActiveView', () => {
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
     await user.click(screen.getByRole('button', { name: /confirm completion/i }));
-    await user.click(screen.getAllByRole('button', { name: /confirm completion/i }).at(-1)!);
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /confirm completion/i }),
+    );
 
     expect(mockEndPoll).toHaveBeenCalledWith('poll-1');
   });
@@ -294,7 +298,9 @@ describe('PollActiveView', () => {
 
     const ctaButton = screen.getAllByRole('button', { name: /confirm completion/i })[0];
     await user.click(ctaButton);
-    await user.click(screen.getAllByRole('button', { name: /confirm completion/i }).at(-1)!);
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /confirm completion/i }),
+    );
 
     expect(mockEndPoll).toHaveBeenCalledWith('poll-1');
     expect(screen.getByText(/voting is closed\. review the result and complete the poll\./i)).toBeInTheDocument();

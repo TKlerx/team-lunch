@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from './testRender.js';
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 import MainView from '../../src/client/pages/MainView.js';

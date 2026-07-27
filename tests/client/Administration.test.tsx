@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from './testRender.js';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Administration from '../../src/client/pages/Administration.js';
@@ -720,7 +720,9 @@ describe('Administration user management', () => {
 
     await screen.findByRole('heading', { name: /administration/i });
     await user.click(screen.getByRole('button', { name: /delete local account/i }));
-    await user.click(screen.getAllByRole('button', { name: /delete local account/i }).at(-1)!);
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /delete local account/i }),
+    );
 
     expect(await screen.findByText(/no users yet/i)).toBeInTheDocument();
   });

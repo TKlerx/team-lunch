@@ -24,18 +24,7 @@ interface ToastContextValue {
   showToast: (toast: ToastOptions) => void;
 }
 
-function showFallbackToast(toast: ToastOptions) {
-  if (typeof document === 'undefined') return;
-  const region = document.createElement('div');
-  region.setAttribute('aria-live', 'polite');
-  region.setAttribute('data-toast-fallback', 'true');
-  region.textContent = toast.message;
-  document.body.append(region);
-}
-
-const ToastContext = createContext<ToastContextValue>({
-  showToast: showFallbackToast,
-});
+const ToastContext = createContext<ToastContextValue | null>(null);
 
 const TONE_CLASS: Record<ToastTone, string> = {
   success: 'border-success bg-success-soft text-success-fg',
@@ -52,11 +41,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const showToast = useCallback((toast: ToastOptions) => {
     const id = Date.now() + Math.random();
-    setToasts((current) => [
-      ...current,
-      { id, tone: toast.tone ?? 'info', message: toast.message },
-    ]);
-    window.setTimeout(() => dismissToast(id), 5000);
+    const tone = toast.tone ?? 'info';
+    setToasts((current) => [...current, { id, tone, message: toast.message }]);
+    // Errors stay until dismissed: they are the ones worth reading, and a 5s
+    // timer that cannot be paused fails WCAG 2.2.1 for exactly that content.
+    if (tone !== 'error') {
+      window.setTimeout(() => dismissToast(id), 5000);
+    }
   }, [dismissToast]);
 
   const value = useMemo(() => ({ showToast }), [showToast]);
@@ -67,12 +58,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {createPortal(
         <div
           aria-live="polite"
-          aria-atomic="true"
+          // atomic=false so adding/removing one toast does not re-announce the whole stack
+          aria-atomic="false"
           className="fixed bottom-4 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2"
         >
           {toasts.map((toast) => (
             <div
               key={toast.id}
+              // errors get assertive announcement so they are not queued behind other speech
+              role={toast.tone === 'error' ? 'alert' : 'status'}
               className={`rounded-lg border px-4 py-3 text-sm shadow-lg ${TONE_CLASS[toast.tone]}`}
             >
               <div className="flex items-start gap-3">
@@ -96,5 +90,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 export function useToast(): ToastContextValue {
-  return useContext(ToastContext);
+  const value = useContext(ToastContext);
+  if (!value) {
+    throw new Error('useToast must be used inside a <ToastProvider>');
+  }
+  return value;
 }

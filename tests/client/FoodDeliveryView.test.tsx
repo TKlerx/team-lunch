@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from './testRender.js';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { makeFoodOrder, makeFoodSelection } from './helpers.js';
@@ -315,7 +315,9 @@ describe('FoodDeliveryView', () => {
 
     await user.click(screen.getByRole('button', { name: /delivery timer actions/i }));
     await user.click(screen.getByRole('button', { name: /abort process/i }));
-    await user.click(screen.getAllByRole('button', { name: /abort process/i }).at(-1)!);
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /abort process/i }),
+    );
 
     expect(mockAbortFoodSelection).toHaveBeenCalledWith('fs-1');
   });
