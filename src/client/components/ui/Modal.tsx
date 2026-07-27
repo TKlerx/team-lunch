@@ -49,6 +49,12 @@ function trapTabKey(event: KeyboardEvent, dialog: HTMLDivElement | null) {
 }
 
 function useModalFocus(open: boolean, onClose: (() => void) | undefined, dialogRef: RefObject<HTMLDivElement | null>) {
+  // Callers pass inline arrows, so `onClose` changes identity on every parent render.
+  // Keeping it in a ref stops the effect from re-running (and re-stealing focus) each
+  // time a countdown parent ticks — see the focus-stability test.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     if (!open) return;
 
@@ -60,7 +66,7 @@ function useModalFocus(open: boolean, onClose: (() => void) | undefined, dialogR
     (getFocusableElements(dialog)[0] ?? dialog)?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && onClose) return onClose();
+      if (event.key === 'Escape' && onCloseRef.current) return onCloseRef.current();
       if (event.key === 'Tab') trapTabKey(event, dialog);
     };
 
@@ -70,7 +76,7 @@ function useModalFocus(open: boolean, onClose: (() => void) | undefined, dialogR
       document.body.style.overflow = previousOverflow;
       previouslyFocused?.focus();
     };
-  }, [dialogRef, open, onClose]);
+  }, [dialogRef, open]);
 }
 
 /**
