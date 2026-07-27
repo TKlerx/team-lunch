@@ -13,7 +13,7 @@ import type {
   UserMenuDefaultPreference,
 } from '../../lib/types.js';
 import { getErrorMessage } from '../lib/errorMessage.js';
-import { validateMenuTags } from '../../lib/menuItemTags.js';
+import { validateMenuLabels, validateMenuTags } from '../../lib/menuItemTags.js';
 
 const MENU_IMPORT_JSON_SCHEMA = menuImportJsonSchema;
 
@@ -79,15 +79,44 @@ function parseTagsInput(value: string): { tags: string[]; error: string | null }
   return validateMenuTags(value.split(','), 'tags');
 }
 
+function parseLabelsInput(value: string, labelType: 'allergens' | 'additives'): { labels: string[]; error: string | null } {
+  return validateMenuLabels(value.split(','), labelType);
+}
+
+function parseSafetyLabelsInputs(allergensInput: string, additivesInput: string) {
+  const allergens = parseLabelsInput(allergensInput, 'allergens');
+  const additives = parseLabelsInput(additivesInput, 'additives');
+  return {
+    allergens: allergens.labels,
+    additives: additives.labels,
+    error: allergens.error ?? additives.error,
+  };
+}
+
 function TagBadges({ tags }: { tags: string[] }) {
-  if (tags.length === 0) return null;
+  return tags.map((tag) => (
+    <span key={`tag:${tag}`} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
+      {tag}
+    </span>
+  ));
+}
+
+function SafetyLabelBadges({ labels, tone }: { labels: string[]; tone: 'allergen' | 'additive' }) {
+  const colorClass = tone === 'allergen' ? 'bg-danger/35' : 'bg-warning/35';
+  return labels.map((item) => (
+    <span key={`${tone}:${item}`} className={`rounded-full ${colorClass} px-1.5 py-0.5 text-[10px] font-medium text-fg-muted`}>
+      {item}
+    </span>
+  ));
+}
+
+function MenuItemLabelBadges({ item }: { item: Menu['items'][number] }) {
+  if (item.tags.length === 0 && item.allergens.length === 0 && item.additives.length === 0) return null;
   return (
     <div className="mt-1 flex flex-wrap gap-1">
-      {tags.map((tag) => (
-        <span key={tag} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
-          {tag}
-        </span>
-      ))}
+      <TagBadges tags={item.tags} />
+      <SafetyLabelBadges labels={item.allergens} tone="allergen" />
+      <SafetyLabelBadges labels={item.additives} tone="additive" />
     </div>
   );
 }
@@ -241,6 +270,8 @@ function MenuItemRow({
   const [description, setDescription] = useState(item.description ?? '');
   const [price, setPrice] = useState(item.price === null ? '' : item.price.toFixed(2));
   const [tagsInput, setTagsInput] = useState(item.tags.join(', '));
+  const [allergensInput, setAllergensInput] = useState(item.allergens.join(', '));
+  const [additivesInput, setAdditivesInput] = useState(item.additives.join(', '));
   const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -271,6 +302,11 @@ function MenuItemRow({
       setError(parsedTags.error);
       return;
     }
+    const parsedSafetyLabels = parseSafetyLabelsInputs(allergensInput, additivesInput);
+    if (parsedSafetyLabels.error) {
+      setError(parsedSafetyLabels.error);
+      return;
+    }
     setSubmitting(true);
     try {
       await api.updateMenuItem(menuId, item.id, {
@@ -279,6 +315,8 @@ function MenuItemRow({
         itemNumber: trimmedItemNumber || null,
         price: parsedPrice.value,
         tags: parsedTags.tags,
+        allergens: parsedSafetyLabels.allergens,
+        additives: parsedSafetyLabels.additives,
       });
       setEditing(false);
       setError('');
@@ -347,6 +385,20 @@ function MenuItemRow({
             className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Tags, comma-separated (optional)"
           />
+          <input
+            type="text"
+            value={allergensInput}
+            onChange={(e) => { setAllergensInput(e.target.value); setError(''); }}
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+            placeholder="Allergens, comma-separated (optional)"
+          />
+          <input
+            type="text"
+            value={additivesInput}
+            onChange={(e) => { setAdditivesInput(e.target.value); setError(''); }}
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+            placeholder="Additives, comma-separated (optional)"
+          />
           {error && <p className="text-sm text-danger-fg">{error}</p>}
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -366,6 +418,8 @@ function MenuItemRow({
                 setDescription(item.description ?? '');
                 setPrice(item.price === null ? '' : item.price.toFixed(2));
                 setTagsInput(item.tags.join(', '));
+                setAllergensInput(item.allergens.join(', '));
+                setAdditivesInput(item.additives.join(', '));
                 setError('');
               }}
               className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"
@@ -384,7 +438,7 @@ function MenuItemRow({
         <p className="inline-flex w-fit rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-fg-muted sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal">{item.itemNumber ?? '-'}</p>
         <div className="min-w-0">
           <p className="whitespace-normal break-words text-sm font-medium text-fg sm:truncate">{item.name}</p>
-          <TagBadges tags={item.tags} />
+          <MenuItemLabelBadges item={item} />
         </div>
         <p className="whitespace-normal break-words text-left text-sm text-fg-muted">{item.description ?? '-'}</p>
         <p className="text-sm font-medium text-success-fg sm:whitespace-nowrap">{formatPrice(item.price)}</p>
@@ -694,9 +748,22 @@ function AddItemForm({ menuId }: { menuId: string }) {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [tagsInput, setTagsInput] = useState('');
+  const [allergensInput, setAllergensInput] = useState('');
+  const [additivesInput, setAdditivesInput] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { showToast } = useToast();
+
+  const resetForm = () => {
+    setItemNumber('');
+    setName('');
+    setDescription('');
+    setPrice('');
+    setTagsInput('');
+    setAllergensInput('');
+    setAdditivesInput('');
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -723,6 +790,11 @@ function AddItemForm({ menuId }: { menuId: string }) {
       setError(parsedTags.error);
       return;
     }
+    const parsedSafetyLabels = parseSafetyLabelsInputs(allergensInput, additivesInput);
+    if (parsedSafetyLabels.error) {
+      setError(parsedSafetyLabels.error);
+      return;
+    }
     setSubmitting(true);
     try {
       await api.createMenuItem(menuId, {
@@ -731,13 +803,10 @@ function AddItemForm({ menuId }: { menuId: string }) {
         itemNumber: itemNumber.trim() || null,
         price: parsedPrice.value,
         tags: parsedTags.tags,
+        allergens: parsedSafetyLabels.allergens,
+        additives: parsedSafetyLabels.additives,
       });
-      setItemNumber('');
-      setName('');
-      setDescription('');
-      setPrice('');
-      setTagsInput('');
-      setError('');
+      resetForm();
       setOpen(false);
     } catch (err) {
       showToast({ tone: 'error', message: getErrorMessage(err, 'Could not add menu item') });
@@ -803,6 +872,20 @@ function AddItemForm({ menuId }: { menuId: string }) {
         className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Tags, comma-separated (optional)"
       />
+      <input
+        type="text"
+        value={allergensInput}
+        onChange={(e) => { setAllergensInput(e.target.value); setError(''); }}
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+        placeholder="Allergens, comma-separated (optional)"
+      />
+      <input
+        type="text"
+        value={additivesInput}
+        onChange={(e) => { setAdditivesInput(e.target.value); setError(''); }}
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+        placeholder="Additives, comma-separated (optional)"
+      />
       {error && <p className="text-sm text-danger-fg">{error}</p>}
       <div className="flex flex-col gap-2 sm:flex-row">
         <button
@@ -816,12 +899,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
           type="button"
           onClick={() => {
             setOpen(false);
-            setItemNumber('');
-            setName('');
-            setDescription('');
-            setPrice('');
-            setTagsInput('');
-            setError('');
+            resetForm();
           }}
           className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"
         >

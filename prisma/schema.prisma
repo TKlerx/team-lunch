@@ -69,6 +69,8 @@ model MenuItem {
   name        String   @db.VarChar(80)
   description String?  @db.VarChar(200)
   price       Decimal? @db.Decimal(8, 2)
+  allergens   String[] @default([]) @db.VarChar(60)
+  additives   String[] @default([]) @db.VarChar(60)
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
   menu       Menu        @relation(fields: [menuId], references: [id], onDelete: Cascade)

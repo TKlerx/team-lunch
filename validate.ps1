@@ -32,6 +32,10 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Child processes (pnpm, vitest, jscpd) emit UTF-8; without this PowerShell
+# decodes their output as the OEM code page and box-drawing turns into mojibake.
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+
 if ($Host.UI -and $Host.UI.RawUI) {
     $Host.UI.RawUI.WindowTitle = "team-lunch validate"
 }

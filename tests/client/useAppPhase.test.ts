@@ -64,6 +64,8 @@ function makeMenu(overrides: Partial<Menu> = {}): Menu {
         description: null,
         price: null,
         tags: [],
+        allergens: [],
+        additives: [],
         createdAt: '2026-01-01T00:00:00Z',
       },
     ],

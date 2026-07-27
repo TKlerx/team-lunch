@@ -86,6 +86,20 @@
                     "type": "string",
                     "maxLength": 60
                   }
+                },
+                "allergens": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 60
+                  }
+                },
+                "additives": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 60
+                  }
                 }
               }
             }

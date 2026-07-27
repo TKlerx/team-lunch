@@ -5,7 +5,7 @@
       "location": "Am Bischofsteich 4, 33102 Paderborn",
       "phone": "05251 5455249",
       "url": "https://www.indish-restaurant.com",
-      "date-created": "2026-07-23T00:00:00Z"
+      "date-created": "2026-07-27T00:00:00Z"
     },
     {
       "category": "Vorspeisen",
@@ -16,7 +16,9 @@
           "ingredients": "Knusprig frittierte Teigtaschen gefüllt mit Kartoffeln, Möhren und grünen Erbsen",
           "price": 5.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "gluten"
           ]
         },
@@ -35,8 +37,13 @@
           "ingredients": "Hausgemachter Käse in würzigem Kichererbsenmehl paniert und frittiert",
           "price": 6.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -63,9 +70,14 @@
           "ingredients": "King Prawns in Cashew-Sahne-Sauce mariniert, aus dem Tandoor, serviert mit Sauce",
           "price": 9.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -83,7 +95,9 @@
           "ingredients": "Zarte Hähnchenstreifen mit würzigem Kichererbsenmehl ummantelt und frittiert",
           "price": 6.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "egg"
           ]
         },
@@ -125,7 +139,9 @@
           "ingredients": "Linsensuppe mit frischen Korianderblättern und Kreuzkümmel verfeinert",
           "price": 5.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -135,9 +151,15 @@
           "ingredients": "Köstliche Hühnersuppe mit Eiern, Zwiebeln, Tomaten und Korianderblättern",
           "price": 6.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "egg",
             "gluten"
+          ],
+          "additives": [
+            "farbstoffe",
+            "geschmacksverstärker"
           ]
         },
         {
@@ -146,9 +168,14 @@
           "ingredients": "Frische Gemüsesuppe mit Zwiebeln, verfeinert mit Kreuzkümmel und Korianderblättern",
           "price": 5.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
+          ],
+          "additives": [
+            "geschmacksverstärker"
           ]
         },
         {
@@ -157,9 +184,14 @@
           "ingredients": "Delikate Pilzsuppe mit Zwiebeln, Knoblauch und Ingwer",
           "price": 5.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
+          ],
+          "additives": [
+            "geschmacksverstärker"
           ]
         },
         {
@@ -168,9 +200,15 @@
           "ingredients": "Hausgemachte Tomatensuppe mit Sahne und frischen Kräutern",
           "price": 5.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
+          ],
+          "additives": [
+            "farbstoffe",
+            "geschmacksverstärker"
           ]
         },
         {
@@ -179,9 +217,14 @@
           "ingredients": "Hausgemachte Fischsuppe mit Zwiebeln, Ingwer und Knoblauch",
           "price": 5.9,
           "tags": [
-            "fish",
+            "fish"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
+          ],
+          "additives": [
+            "geschmacksverstärker"
           ]
         }
       ]
@@ -195,7 +238,9 @@
           "ingredients": "Frischer grüner Salat, Tomaten, Gurken, Paprika und rote Zwiebeln",
           "price": 4.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -205,7 +250,9 @@
           "ingredients": "Frischer grüner Salat, Tomaten, Gurken, Paprika und rote Zwiebeln",
           "price": 6.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -215,7 +262,9 @@
           "ingredients": "Frischer grüner Salat, Tomaten, Gurken, Paprika, Chicken Tikka Hähnchenstreifen und rote Zwiebeln",
           "price": 9.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -239,8 +288,13 @@
           "ingredients": "Joghurt mit Zwiebeln, Gurken und Tomaten, verfeinert mit Chat Masala und frischen Korianderblättern",
           "price": 4.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -249,8 +303,13 @@
           "ingredients": "Verschiedene eingelegte Gemüsestückchen, eine würzige Beilage",
           "price": 1.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -259,7 +318,9 @@
           "ingredients": "Fluffiges Fladenbrot aus Vollkornmehl frisch aus dem Tandoor",
           "price": 2.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
           ]
@@ -270,7 +331,9 @@
           "ingredients": "Fluffiges Fladenbrot aus Weizenmehl frisch aus dem Tandoor, mit Butter",
           "price": 3.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
           ]
@@ -281,7 +344,9 @@
           "ingredients": "Fladenbrot gefüllt mit Knoblauch und Korianderblättern",
           "price": 3.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "gluten",
             "lactose"
           ]
@@ -292,7 +357,9 @@
           "ingredients": "Fladenbrot gefüllt mit hausgemachtem Hüttenkäse",
           "price": 4.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
           ]
@@ -303,7 +370,9 @@
           "ingredients": "Fladenbrot gefüllt mit Lammhackfleisch, Ingwer und verschiedenen Kräutern",
           "price": 4.5,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "gluten",
             "lactose"
           ]
@@ -315,7 +384,9 @@
           "price": 4.5,
           "tags": [
             "vegetarian",
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "gluten",
             "nut",
             "lactose"
@@ -337,8 +408,15 @@
           "price": 1,
           "tags": [
             "vegetarian",
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe",
+            "süßstoffe"
           ]
         },
         {
@@ -346,8 +424,15 @@
           "ingredients": "Hausgemachte Joghurt-Sauce",
           "price": 1,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe",
+            "süßstoffe"
           ]
         },
         {
@@ -355,8 +440,15 @@
           "ingredients": "Hausgemachte Minz-Sauce",
           "price": 1,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe",
+            "süßstoffe"
           ]
         },
         {
@@ -374,8 +466,13 @@
           "ingredients": "Chicken Nuggets mit Pommes frites",
           "price": 6.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "gluten"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -384,8 +481,13 @@
           "ingredients": "Frittiertes, fluffiges Fladenbrot",
           "price": 3.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "gluten"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         }
       ]
@@ -399,8 +501,13 @@
           "ingredients": "4 Hähnchenkeulen mariniert in Joghurt und Knoblauch-Ingwer, mit Zwiebeln, Paprika und Gewürzen",
           "price": 16.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -409,9 +516,14 @@
           "ingredients": "Hähnchenbrustfilet mariniert in Joghurt und Cashewpaste mit Zwiebeln, Paprika und verschiedenen indischen Gewürzen",
           "price": 16.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -420,8 +532,13 @@
           "ingredients": "Hähnchenbrustfilet mariniert in Joghurt und Knoblauch-Ingwer mit Zwiebeln, Paprika und Gewürzen",
           "price": 16.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -430,8 +547,13 @@
           "ingredients": "Lamm mariniert in Joghurt und Knoblauch-Ingwer-Paste mit Zwiebeln, Paprika und verschiedenen indischen Gewürzen",
           "price": 17.5,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -440,9 +562,14 @@
           "ingredients": "Würziges Lammhackfleisch aus dem Tandoor mit Zwiebeln, Paprika, Tomaten, Eiern, Knoblauch, Ingwer und Koriander",
           "price": 17.5,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "egg",
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -451,8 +578,13 @@
           "ingredients": "Riesengarnelen in Marinade aus Joghurt, Knoblauch und Ingwer, mit Zwiebeln und Paprika im Tandoor gegrillt",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -461,8 +593,13 @@
           "ingredients": "Fischfilet in reichhaltiger Joghurt-Sauce mariniert, mit Zwiebeln und Paprika im Tandoor gegrillt",
           "price": 17.9,
           "tags": [
-            "fish",
+            "fish"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -472,9 +609,14 @@
           "price": 17.9,
           "tags": [
             "chicken",
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose",
             "gluten"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -483,8 +625,13 @@
           "ingredients": "Gegrillter Hüttenkäse mariniert in Joghurt-Ingwer-Paste mit exotischen Gewürzen, Paprika und Zwiebeln in Tikkasauce",
           "price": 15.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         }
       ]
@@ -498,7 +645,9 @@
           "ingredients": "Hähnchenbrust mit Ingwer, Knoblauch, Tomaten und Zwiebeln gebraten, in reichhaltiger Sauce serviert",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -508,8 +657,14 @@
           "ingredients": "Zarte Hähnchenbrust im Tandoor geröstet mit Zwiebeln, Paprika, in cremig-pikanter Tikka Masala Sauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -518,9 +673,15 @@
           "ingredients": "Gewürfelte Hähnchenbrust aus dem Tandoor in cremiger Cashew-Mandelsauce, Tomatenpüree, Ghee und indischen Gewürzen",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -529,7 +690,9 @@
           "ingredients": "Hähnchenbrustwürfel zubereitet mit Kokosnussmilch in delikater Cashew-Mandel-Sahnesauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -540,7 +703,9 @@
           "ingredients": "Hähnchenbrust mit Spinat, Ingwer, Knoblauch und verschiedenen milden Gewürzen in Curry-Sahne-Sauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -551,8 +716,13 @@
           "price": 15.5,
           "tags": [
             "spicy",
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -562,8 +732,13 @@
           "price": 15.5,
           "tags": [
             "spicy",
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -572,7 +747,9 @@
           "ingredients": "Hähnchenbrust mit Mangopüree, Knoblauch, Ingwer und Mandel-Cashewpaste in Sahnesauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -583,8 +760,13 @@
           "ingredients": "Frittierte Hähnchenbrust im Teigmantel zubereitet mit Paprika, Ingwer, Zwiebeln, serviert in reichhaltiger Currysauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -593,8 +775,13 @@
           "ingredients": "Hähnchenbrust gewürfelt mit Zwiebeln, Paprika, Tomaten, Knoblauch, Ingwer, Kreuzkümmel und Koriander in Currysauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -603,7 +790,9 @@
           "ingredients": "Hähnchenbrust, Pfifferlinge und Brokkoli mit hausgemachtem Hüttenkäse in Curry-Sahne-Sauce",
           "price": 15.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         }
@@ -618,7 +807,9 @@
           "ingredients": "Lammfleischwürfel mit Ingwer, Knoblauch, frischen Tomaten und Zwiebeln in reichhaltiger Currysauce",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -628,8 +819,14 @@
           "ingredients": "Zarte Lammfleischstücke, Zwiebeln und Paprika im Tandoor geröstet, in cremig-pikanter Tikka-Masala-Sauce",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -638,8 +835,14 @@
           "ingredients": "Lammfleisch mittelscharf mit Tomaten, Zwiebeln, Joghurt und Ingwer in Currysauce",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -648,7 +851,9 @@
           "ingredients": "Lammfleisch in Püree aus Spinat, Tomaten, Ingwer, Knoblauch, Kreuzkümmel und verschiedenen Kräutern",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -659,8 +864,13 @@
           "price": 16.9,
           "tags": [
             "spicy",
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -669,7 +879,9 @@
           "ingredients": "Saftiges Lammfleisch in Zwiebeln, Paprika, Tomaten, Knoblauch und Ingwer, verfeinert mit Kreuzkümmel und Koriander",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -679,8 +891,13 @@
           "ingredients": "Lammfleisch im Teigmantel mit Zwiebeln, Paprika, Knoblauch, Ingwer in reichhaltiger Currysauce",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -689,7 +906,9 @@
           "ingredients": "Lammfleisch zubereitet mit Kokosnussmilch in delikater Mandel-Sahne-Sauce",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -700,7 +919,9 @@
           "ingredients": "Lammfleisch, Pfifferlinge und Brokkoli mit hausgemachtem Hüttenkäse in Curry-Sahne-Sauce gekocht",
           "price": 16.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -711,8 +932,13 @@
           "price": 16.9,
           "tags": [
             "spicy",
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         }
       ]
@@ -726,8 +952,14 @@
           "ingredients": "Saftiges Entenfleisch in Zwiebeln, Paprika, Tomaten, Knoblauch und Ingwer mit Kreuzkümmel, Koriander und Gewürzen",
           "price": 16.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -737,7 +969,9 @@
           "price": 16.9,
           "tags": [
             "spicy",
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -747,7 +981,9 @@
           "ingredients": "Entenfleisch zubereitet mit Kokosnussmilch in delikater Cashew-Mandel-Sauce",
           "price": 16.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "nut",
             "lactose"
           ]
@@ -759,8 +995,13 @@
           "price": 16.9,
           "tags": [
             "spicy",
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -769,7 +1010,9 @@
           "ingredients": "Entenfleisch, Pfifferlinge und Brokkoli mit hausgemachtem Hüttenkäse in Curry-Sahne-Sauce gekocht",
           "price": 16.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -779,9 +1022,14 @@
           "ingredients": "Entenfleisch zubereitet mit Mangopüree in delikater Cashew-Mandelsauce",
           "price": 16.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "nut",
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         }
       ]
@@ -796,6 +1044,9 @@
           "price": 15.9,
           "tags": [
             "fish"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -805,6 +1056,9 @@
           "price": 15.9,
           "tags": [
             "fish"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -814,8 +1068,13 @@
           "price": 15.9,
           "tags": [
             "spicy",
-            "fish",
+            "fish"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -824,7 +1083,9 @@
           "ingredients": "Riesengarnelen mit frischen Tomaten, Zwiebeln, Knoblauch und Ingwer, verfeinert mit indischen Gewürzen in Currysauce",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -834,8 +1095,13 @@
           "ingredients": "Riesengarnelen im Teigmantel mit Zwiebeln, Paprika, Knoblauch, Ingwer, serviert in Currysauce",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -845,8 +1111,13 @@
           "price": 17.9,
           "tags": [
             "spicy",
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -855,9 +1126,14 @@
           "ingredients": "Gewürfelte Garnelen in cremiger Sauce aus Joghurt, Tomatenpüree, Ghee und verschiedenen indischen Gewürzen",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -866,7 +1142,9 @@
           "ingredients": "Garnelen mit Kokosnussmilch in delikater Mandel-Sahne-Sauce",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -877,7 +1155,9 @@
           "ingredients": "Riesengarnelen mit Mangopüree, Knoblauch, Ingwer und Mandel-Cashewpaste in Sahnesauce",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -893,9 +1173,14 @@
           "ingredients": "Zarte Gemüse mit Zwiebeln, Knoblauch, Ingwer, Cashewnüssen, Safran, Koriander und Minze in Basmati-Reis mit Biryani-Sauce",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "nut",
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -904,9 +1189,15 @@
           "ingredients": "Zarte Hähnchenbrust mit Zwiebeln, Knoblauch, Ingwer, Cashewnüssen, Safran, Koriander und Minze in Basmati-Reis",
           "price": 14.5,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "nut",
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -915,9 +1206,14 @@
           "ingredients": "Zartes Lammfleisch mit Zwiebeln, Knoblauch, Ingwer, Cashewnüssen, Safran, Koriander und Minze in Basmati-Reis",
           "price": 16.5,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "nut",
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -926,7 +1222,9 @@
           "ingredients": "Riesengarnelen mit Zwiebeln, Knoblauch, Ingwer, Cashewnüssen, Safran, Koriander und Minze in Basmati-Reis",
           "price": 17.9,
           "tags": [
-            "seafood",
+            "seafood"
+          ],
+          "allergens": [
             "nut",
             "lactose"
           ]
@@ -942,7 +1240,9 @@
           "ingredients": "Rote Linsen mit Zwiebeln, Knoblauch, Ingwer, Curryblättern, Kreuzkümmel, Koriander und Gewürzen",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -952,7 +1252,9 @@
           "ingredients": "Schwarze Linsen mit Zwiebeln, Ingwer, Knoblauch, Kreuzkümmel in Butter-Sahne-Currysauce",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -962,7 +1264,9 @@
           "ingredients": "Frischer Spinat sowie Kartoffeln mit Knoblauch, Ingwer, Kümmel, Methi und indischen Gewürzen in Currysauce",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -972,9 +1276,14 @@
           "ingredients": "Bällchen aus frischem Gemüse zubereitet mit Knoblauch, Ingwer und Gewürzen in Sahne-Currysauce",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -983,7 +1292,9 @@
           "ingredients": "Frischer hausgemachter Hüttenkäse, zubereitet mit Spinat, Knoblauch, Ingwer, Methi und Gewürzen",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -993,7 +1304,9 @@
           "ingredients": "Hausgemachter Hüttenkäse mit Zwiebeln, Tomaten, Knoblauch, Ingwer und Gewürzen in Sahnesauce",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -1004,7 +1317,9 @@
           "ingredients": "Kombination aus verschiedenen Gemüsen in Curry aus Kokosnussmilch und Mandel-Sahne-Sauce",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -1015,8 +1330,13 @@
           "ingredients": "Zarte Okrastücke in Hüttenkäse, Kurkuma und Zwiebeln angebraten, serviert in reichhaltiger Currysauce",
           "price": 13.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1025,8 +1345,13 @@
           "ingredients": "Kichererbsen mit frischen Tomaten und Zwiebeln in Currysauce, garniert mit Koriander",
           "price": 12.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1035,7 +1360,9 @@
           "ingredients": "Hausgemachter frischer Hüttenkäse mit grünen Erbsen, gekocht mit Zwiebeln, Tomaten und Gewürzen",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1045,8 +1372,13 @@
           "ingredients": "Blumenkohl und Kartoffelwürfel gekocht mit Gewürzen, Knoblauch, Ingwer und Zwiebeln",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1055,7 +1387,9 @@
           "ingredients": "Champignons gekocht mit Hüttenkäse, grüne Erbsen, Gewürze und Ingwer in reichhaltiger Currysauce",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1065,7 +1399,9 @@
           "ingredients": "Frische Aubergine gekocht mit Gewürzen und Ingwer in reichhaltiger Currysauce",
           "price": 13.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1075,8 +1411,13 @@
           "ingredients": "Frischer Spinat und Kichererbsen mit Knoblauch, Ingwer und indischen Gewürzen in reichhaltiger Sauce",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1085,8 +1426,13 @@
           "ingredients": "Verschiedene Gemüse mit Zwiebeln, Paprika, Tomaten verfeinert mit indischen Gewürzen",
           "price": 12.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -1095,7 +1441,9 @@
           "ingredients": "Hausgemachter Hüttenkäse mit Koriander und Kreuzkümmel gebraten, in Tomatensoße mit Paprika und Zwiebeln, gut gewürzt",
           "price": 13.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         }
@@ -1137,7 +1485,9 @@
           "ingredients": "Verschiedenes Gemüse in reichhaltigem Curry aus Kokosnussmilch und Cashew-Mandelsauce",
           "price": 13.5,
           "tags": [
-            "vegan",
+            "vegan"
+          ],
+          "allergens": [
             "nut"
           ]
         },
@@ -1157,6 +1507,9 @@
           "price": 12.5,
           "tags": [
             "vegan"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1175,6 +1528,9 @@
           "price": 12.9,
           "tags": [
             "vegan"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1192,7 +1548,9 @@
           "ingredients": "Bällchen aus verschiedenen frischen Gemüsen zubereitet mit Knoblauch, Ingwer und indischen Gewürzen in Kokosnussmilch-Currysauce",
           "price": 13.5,
           "tags": [
-            "vegan",
+            "vegan"
+          ],
+          "allergens": [
             "nut"
           ]
         }
@@ -1207,10 +1565,16 @@
           "ingredients": "Frittierte Bällchen aus getrockneter Milch, serviert mit Sahne",
           "price": 5.9,
           "tags": [
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "lactose",
             "gluten",
             "nut"
+          ],
+          "additives": [
+            "konservierungsstoffe",
+            "süßstoffe"
           ]
         },
         {
@@ -1219,10 +1583,15 @@
           "ingredients": "Süßer indischer Milchreis verfeinert, garniert mit Mandeln und Cashew",
           "price": 5.9,
           "tags": [
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "lactose",
             "gluten",
             "nut"
+          ],
+          "additives": [
+            "süßstoffe"
           ]
         },
         {
@@ -1231,8 +1600,13 @@
           "ingredients": "Erdbeere, Vanille oder Schokolade; mit Sahne +0,50",
           "price": 1.6,
           "tags": [
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -1241,8 +1615,13 @@
           "ingredients": "Erdbeere, Vanille, Schokolade; mit Sahne +0,50",
           "price": 4.5,
           "tags": [
-            "sweet",
+            "sweet"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         }
       ]
@@ -1265,7 +1644,9 @@
           "ingredients": "Frischer Spinat und Kartoffeln mit Knoblauch, Ingwer, Kümmel, Methi und indischen Gewürzen in reichhaltiger Sauce",
           "price": 8.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1275,7 +1656,9 @@
           "ingredients": "Linsen mit Zwiebeln, Ingwer, Knoblauch, verschiedenen Kräutern in Butter und Sahne angebraten",
           "price": 8.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1285,8 +1668,13 @@
           "ingredients": "Hausgemachter frischer Rahmkäse mit grünen Erbsen, gekocht mit Zwiebeln, Tomaten und indischen Gewürzen",
           "price": 9.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1295,9 +1683,14 @@
           "ingredients": "Bällchen aus frischen Gemüsen zubereitet mit Knoblauch, Ingwer und indischen Gewürzen in Sahne-Currysauce",
           "price": 8.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1306,7 +1699,9 @@
           "ingredients": "Hausgemachter Hüttenkäse mit Zwiebeln, Tomaten, Knoblauch, Ingwer und verschiedenen Gewürzen in Sahnesauce",
           "price": 9.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -1317,7 +1712,9 @@
           "ingredients": "Frischer hausgemachter Hüttenkäse zubereitet mit Spinat, Knoblauch, Ingwer, Methi und Gewürzen",
           "price": 9.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1327,8 +1724,13 @@
           "ingredients": "Blumenkohl und Kartoffelwürfel gekocht mit Hüttenkäse, Gewürzen, Knoblauch, Ingwer und Zwiebeln",
           "price": 9.5,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1337,8 +1739,13 @@
           "ingredients": "Zarte Okrastücke in Hüttenkäse, Kurkuma und Zwiebeln angebraten, serviert in reichhaltiger Currysauce",
           "price": 10.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1347,8 +1754,13 @@
           "ingredients": "Kichererbsen mit frischen Tomaten und Zwiebeln in Currysauce, garniert mit Koriander",
           "price": 8.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1357,7 +1769,9 @@
           "ingredients": "Champignons gekocht mit Hüttenkäse, grünen Erbsen, Gewürzen und Ingwer in reichhaltiger Currysauce",
           "price": 9.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1367,7 +1781,9 @@
           "ingredients": "Frische Aubergine gekocht mit Hüttenkäse, Kichererbsen, Gewürzen und Ingwer in reichhaltiger Currysauce",
           "price": 9.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1377,7 +1793,9 @@
           "ingredients": "Hüttenkäse im Teigmantel mit Zwiebeln, Paprika, Knoblauch, Ingwer und reichhaltiger pikanter Currysauce",
           "price": 10.9,
           "tags": [
-            "vegetarian",
+            "vegetarian"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1387,8 +1805,13 @@
           "ingredients": "Zartes Rotbarschfilet in reichhaltiger Currysauce, zubereitet mit Tomaten, Ingwer, Knoblauch, Curryblättern und Senfkörnern",
           "price": 10.9,
           "tags": [
-            "fish",
+            "fish"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1397,7 +1820,9 @@
           "ingredients": "Hähnchenbrustwürfel zubereitet mit Kokosnussmilch in delikater Mandel-Sahne-Sauce",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -1408,9 +1833,15 @@
           "ingredients": "Gewürfelte Hähnchenbrust aus dem Tandoor in cremiger Cashew-Mandelsauce, Tomatenpüree, Ghee und indischen Gewürzen",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "farbstoffe",
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1419,8 +1850,13 @@
           "ingredients": "Hähnchenbrust im Teigmantel mit Zwiebeln, Paprika, Knoblauch, Ingwer und grünem Chili in reichhaltiger Currysauce",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -1430,8 +1866,13 @@
           "price": 10.9,
           "tags": [
             "spicy",
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1440,8 +1881,13 @@
           "ingredients": "Hähnchenbrust mit Mangopüree, Knoblauch, Ingwer und verschiedenen Gewürzen in Sahnesauce",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1450,8 +1896,13 @@
           "ingredients": "Hähnchenbrust gewürfelt mit Zwiebeln, Paprika, Tomaten, Knoblauch und Ingwer, verfeinert mit Currysauce",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1460,7 +1911,9 @@
           "ingredients": "Hähnchenbrust mit Spinat, Ingwer, Knoblauch und verschiedenen milden Gewürzen in cremiger Curry-Sauce",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1470,7 +1923,9 @@
           "ingredients": "Hähnchenbrust mit Ingwer, Knoblauch, Tomaten, Zwiebeln und Pfeffer gebraten, in reichhaltiger Sauce serviert",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1480,7 +1935,9 @@
           "ingredients": "Zarte Hähnchenbrust im Tandoor geröstet und in cremig-pikanter Tikka Masala Sauce nach Art des Hauses serviert",
           "price": 10.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1490,7 +1947,9 @@
           "ingredients": "Hühnerbrust mariniert in Joghurt und Cashewkern-Paste, gekocht mit Zwiebeln, Paprika und indischen Gewürzen",
           "price": 11.9,
           "tags": [
-            "chicken",
+            "chicken"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]
@@ -1501,7 +1960,9 @@
           "ingredients": "Lammfleischwürfel mit Ingwer, Knoblauch, frischen Tomaten, Zwiebeln und Pfeffer in reichhaltiger Currysauce",
           "price": 11.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1512,7 +1973,9 @@
           "price": 11.9,
           "tags": [
             "spicy",
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1522,9 +1985,14 @@
           "ingredients": "Lammfleisch zubereitet mit Kokosnussmilch in delikater Mandel-Sahne-Sauce",
           "price": 11.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose",
             "nut"
+          ],
+          "additives": [
+            "konservierungsstoffe"
           ]
         },
         {
@@ -1533,8 +2001,13 @@
           "ingredients": "Lammfleisch im Teigmantel mit Zwiebeln, Paprika, Knoblauch, Ingwer und grünem Chili in reichhaltiger Currysauce",
           "price": 11.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -1543,7 +2016,9 @@
           "ingredients": "Lammfleisch in Püree aus Spinat, Tomaten, Ingwer, Knoblauch, Kreuzkümmel und verschiedenen Kräutern",
           "price": 11.9,
           "tags": [
-            "lamb",
+            "lamb"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1553,7 +2028,9 @@
           "ingredients": "Entenfleischwürfel mit Ingwer, Knoblauch, frischen Tomaten, Zwiebeln und Pfeffer in reichhaltiger Currysauce",
           "price": 11.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1563,8 +2040,13 @@
           "ingredients": "Entenfleisch zubereitet in cremiger Sauce aus Joghurt, Tomatenpüree, Ghee und verschiedenen indischen Gewürzen",
           "price": 11.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
+          ],
+          "additives": [
+            "farbstoffe"
           ]
         },
         {
@@ -1573,7 +2055,9 @@
           "ingredients": "Entenfleisch zubereitet mit Kokosnussmilch in delikater Cashew-Mandel-Sauce",
           "price": 11.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "nut",
             "lactose"
           ]
@@ -1585,7 +2069,9 @@
           "price": 11.9,
           "tags": [
             "spicy",
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose"
           ]
         },
@@ -1595,7 +2081,9 @@
           "ingredients": "Entenbrustfilet mit Mangopüree, Knoblauch, Ingwer und verschiedenen Kräutern in Curry-Sahnesauce",
           "price": 11.9,
           "tags": [
-            "duck",
+            "duck"
+          ],
+          "allergens": [
             "lactose",
             "nut"
           ]

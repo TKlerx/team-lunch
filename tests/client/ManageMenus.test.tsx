@@ -144,8 +144,11 @@ describe('ManageMenus', () => {
     await user.click(screen.getByRole('button', { name: /import from json/i }));
 
     await user.click(screen.getByRole('button', { name: /copy ai prompt/i }));
-    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Return JSON only.'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Return pure, formatted JSON!'));
     expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Use the tag "beverage" for drinks'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('Safety-label rules:'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('`allergens` and `additives` arrays separately from `tags`'));
+    expect(clipboardWriteText).toHaveBeenCalledWith(expect.stringContaining('never invent labels'));
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument();
   });
 
@@ -597,6 +600,8 @@ describe('ManageMenus', () => {
     await user.type(screen.getByPlaceholderText('Meal number (optional)'), '12');
     await user.type(screen.getByPlaceholderText('Item name'), 'Calzone');
     await user.type(screen.getByPlaceholderText('Price (optional)'), '9.50');
+    await user.type(screen.getByPlaceholderText('Allergens, comma-separated (optional)'), ' Gluten, dairy, gluten ');
+    await user.type(screen.getByPlaceholderText('Additives, comma-separated (optional)'), ' Preservative, colorant, preservative ');
     await user.click(screen.getByRole('button', { name: 'Add' }));
 
     expect(mockCreateMenuItem).toHaveBeenCalledWith('menu-1', {
@@ -605,6 +610,8 @@ describe('ManageMenus', () => {
       itemNumber: '12',
       price: 9.5,
       tags: [],
+      allergens: ['gluten', 'dairy'],
+      additives: ['preservative', 'colorant'],
     });
   });
 
@@ -633,6 +640,76 @@ describe('ManageMenus', () => {
       itemNumber: '21',
       price: 10.5,
       tags: [],
+      allergens: [],
+      additives: [],
+    });
+  });
+
+  it('shows allergen and additive pills with safety colors', () => {
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [
+        makeMenu({
+          items: [
+            makeMenuItem({
+              name: 'Pasta al Forno',
+              tags: ['vegetarian'],
+              allergens: ['gluten'],
+              additives: ['preservative'],
+            }),
+          ],
+        }),
+      ],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
+
+    expect(screen.getByText('vegetarian')).toHaveClass('rounded-full', 'bg-accent-soft/45');
+    expect(screen.queryByText('Allergens:')).not.toBeInTheDocument();
+    expect(screen.getByText('gluten')).toHaveClass('rounded-full', 'bg-danger/35', 'text-fg-muted');
+    expect(screen.queryByText('Additives:')).not.toBeInTheDocument();
+    expect(screen.getByText('preservative')).toHaveClass('rounded-full', 'bg-warning/35', 'text-fg-muted');
+  });
+
+  it('edits menu item safety labels and sends normalized API payloads', async () => {
+    const user = userEvent.setup();
+    mockUpdateMenuItem.mockResolvedValue({});
+    mockUseAppState.mockReturnValue({
+      ...initialAppState,
+      initialized: true,
+      menus: [
+        makeMenu({
+          items: [
+            makeMenuItem({
+              id: 'item-1',
+              name: 'Pasta al Forno',
+              allergens: ['gluten'],
+              additives: ['colorant'],
+            }),
+          ],
+        }),
+      ],
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
+    await user.click(screen.getAllByRole('button', { name: 'Edit' }).at(-1)!);
+    await user.clear(screen.getByPlaceholderText('Allergens, comma-separated (optional)'));
+    await user.type(screen.getByPlaceholderText('Allergens, comma-separated (optional)'), ' Dairy, gluten, dairy ');
+    await user.clear(screen.getByPlaceholderText('Additives, comma-separated (optional)'));
+    await user.type(screen.getByPlaceholderText('Additives, comma-separated (optional)'), ' Preservative, Colorant, preservative ');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockUpdateMenuItem).toHaveBeenCalledWith('menu-1', 'item-1', {
+      name: 'Pasta al Forno',
+      description: undefined,
+      itemNumber: null,
+      price: null,
+      tags: [],
+      allergens: ['dairy', 'gluten'],
+      additives: ['preservative', 'colorant'],
     });
   });
 
