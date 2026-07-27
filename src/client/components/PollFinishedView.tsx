@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import * as api from '../api.js';
 import MinutesActionDropdown from './MinutesActionDropdown.js';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import type { Poll } from '../../lib/types.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
 type MenuVoteEntry = { menuId: string; name: string; count: number };
@@ -106,6 +108,7 @@ export default function PollFinishedView({
   const [duration, setDuration] = useState<number>(defaultFoodSelectionDurationMinutes);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setDuration(defaultFoodSelectionDurationMinutes);
@@ -133,7 +136,7 @@ export default function PollFinishedView({
       setDuration(value);
       return true;
     } catch (requestError) {
-      setError((requestError as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not start food selection') });
       return false;
     } finally {
       setSubmitting(false);

@@ -257,14 +257,14 @@ export default function App() {
                   <img
                     src={cuisineAroundTheWorldImage}
                     alt=""
-                    className="h-auto w-auto max-h-full max-w-full object-contain opacity-20"
+                    className="h-auto w-auto max-h-full max-w-full object-contain opacity-[0.08]"
                   />
                 </div>
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <img
                     src={exampleCompanyLogoImage}
                     alt=""
-                    className="h-auto w-auto max-h-[24%] max-w-[45%] object-contain opacity-20"
+                    className="h-auto w-auto max-h-[24%] max-w-[45%] object-contain opacity-[0.08]"
                   />
                 </div>
               </div>

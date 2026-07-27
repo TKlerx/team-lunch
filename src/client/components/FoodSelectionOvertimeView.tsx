@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import * as api from '../api.js';
 import { isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
 import FoodSelectionOrderBoard from './FoodSelectionOrderBoard.js';
+import { Button } from './ui/Button.js';
+import { Select } from './ui/Select.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const EXTEND_OPTIONS = [5, 10, 15] as const;
 
 export default function FoodSelectionOvertimeView() {
   const { activeFoodSelection, menus } = useAppState();
   const [extensionMinutes, setExtensionMinutes] = useState<number>(5);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   if (!activeFoodSelection) return null;
 
@@ -22,11 +26,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleExtend = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.extendFoodSelection(selection.id, extensionMinutes);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not extend food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -34,11 +37,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleComplete = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.completeFoodSelection(selection.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not complete food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -46,11 +48,10 @@ export default function FoodSelectionOvertimeView() {
 
   const handleAbort = async () => {
     setSubmitting(true);
-    setError('');
     try {
       await api.abortFoodSelection(selection.id);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not abort food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -75,28 +76,24 @@ export default function FoodSelectionOvertimeView() {
             Extend the food selection or confirm the order?
           </p>
 
-          {error && <p className="mb-4 text-sm text-danger-fg">{error}</p>}
-
           {/* Extend */}
           <div className="mb-4 space-y-2">
             <div className="flex gap-2">
-              <select
+              <Select
                 value={extensionMinutes}
                 onChange={(e) => setExtensionMinutes(Number(e.target.value))}
-                className="flex-1 rounded border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
+                className="flex-1"
               >
                 {EXTEND_OPTIONS.map((d) => (
                   <option key={d} value={d}>{d} min</option>
                 ))}
-              </select>
-              <button
-                type="button"
+              </Select>
+              <Button
                 onClick={() => void handleExtend()}
                 disabled={submitting || !canExtendFoodSelection}
-                className="rounded bg-accent-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
               >
                 Extend
-              </button>
+              </Button>
             </div>
             {!canExtendFoodSelection && (
               <p className="text-sm text-warning-fg">
@@ -112,14 +109,14 @@ export default function FoodSelectionOvertimeView() {
           </div>
 
           {canAdvanceToOrdering ? (
-            <button
-              type="button"
+            <Button
+              variant="success-solid"
               onClick={() => void handleComplete()}
               disabled={submitting}
-              className="w-full rounded bg-success-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="w-full"
             >
               Confirm &mdash; we&apos;re done
-            </button>
+            </Button>
           ) : (
             <p className="rounded border border-border bg-surface-muted px-3 py-2 text-sm text-fg-muted">
               Finish meal collection once everyone has ordered.

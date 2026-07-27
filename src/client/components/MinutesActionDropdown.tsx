@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button } from './ui/Button.js';
+import { Input } from './ui/Input.js';
 
 interface MinutesActionDropdownProps {
   triggerLabel: string;
@@ -61,36 +63,34 @@ export default function MinutesActionDropdown({
 
   return (
     <div className="relative inline-block" ref={containerRef}>
-      <button
-        type="button"
+      <Button
+        variant="success-solid"
         onClick={() => setIsOpen((open) => !open)}
         disabled={disabled || submitting}
         aria-label={triggerAriaLabel}
-        className="rounded bg-success-solid px-4 py-2 text-sm font-medium text-success-on transition-colors hover:opacity-90 disabled:opacity-50"
       >
         {triggerLabel}
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-56 rounded border border-border bg-surface-raised shadow-lg">
           <div className="max-h-48 overflow-y-auto border-b border-border py-1">
             {options.map((minutes) => (
-              <button
+              <Button
                 key={minutes}
-                type="button"
+                variant="ghost"
                 onClick={() => {
                   void runSubmit(minutes);
                 }}
                 disabled={disabled || submitting}
-                className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
+                className="w-full rounded-none px-3 py-1.5 text-left text-fg"
               >
                 {minutes} min
-              </button>
+              </Button>
             ))}
           </div>
           <div className="space-y-2 p-2">
-            <input
-              type="text"
+            <Input
               value={manualMinutes}
               onChange={(event) => setManualMinutes(event.target.value)}
               onKeyDown={(event) => {
@@ -103,20 +103,20 @@ export default function MinutesActionDropdown({
               }}
               placeholder={customPlaceholder}
               aria-label={customAriaLabel}
-              className="w-full rounded border border-border bg-surface px-2 py-1.5 text-sm text-fg focus:border-accent focus:outline-none"
+              className="px-2 py-1.5"
             />
-            <button
-              type="button"
+            <Button
+              variant="success"
               onClick={() => {
                 const parsed = Number.parseInt(manualMinutes, 10);
                 if (!Number.isInteger(parsed)) return;
                 void runSubmit(parsed);
               }}
               disabled={disabled || submitting}
-              className="w-full rounded border border-success px-3 py-1.5 text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+              className="w-full px-3 py-1.5"
             >
               {submitButtonLabel}
-            </button>
+            </Button>
           </div>
         </div>
       )}

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
@@ -9,6 +11,7 @@ import type {
   ImportMenuViolation,
   UserMenuDefaultPreference,
 } from '../../lib/types.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 const MENU_IMPORT_JSON_SCHEMA = menuImportJsonSchema;
 
@@ -86,41 +89,7 @@ function parseMenuUrlInput(value: string): { value: string | null; error: string
   return normalized;
 }
 
-// ─── Confirmation dialog ────────────────────────────────────
 
-function ConfirmDialog({
-  message,
-  onConfirm,
-  onCancel,
-}: {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-sm rounded-lg bg-surface-raised p-6 shadow-xl">
-        <p className="mb-4 text-fg">{message}</p>
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded px-4 py-2 text-sm text-fg-muted hover:bg-surface-muted"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded bg-danger-solid px-4 py-2 text-sm font-medium text-danger-on transition-colors hover:opacity-90"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function MenuEditDialog({
   menuName,
@@ -273,6 +242,7 @@ function MenuItemRow({
   const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const handleSave = async () => {
     const trimmedItemNumber = itemNumber.trim();
@@ -305,7 +275,7 @@ function MenuItemRow({
       setEditing(false);
       setError('');
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not save menu item') });
     } finally {
       setSubmitting(false);
     }
@@ -317,7 +287,7 @@ function MenuItemRow({
       await api.deleteMenuItem(menuId, item.id);
       setConfirmDelete(false);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not delete menu item') });
     } finally {
       setSubmitting(false);
     }
@@ -430,13 +400,14 @@ function MenuItemRow({
         </button>
       </div>
 
-      {confirmDelete && (
-        <ConfirmDialog
-          message={`Delete item "${item.name}"?`}
-          onConfirm={() => void handleDelete()}
-          onCancel={() => setConfirmDelete(false)}
-        />
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        title={`Delete item "${item.name}"?`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => void handleDelete()}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </>
   );
 }
@@ -705,6 +676,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
   const [price, setPrice] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -741,7 +713,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
       setError('');
       setOpen(false);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not add menu item') });
     } finally {
       setSubmitting(false);
     }
@@ -844,14 +816,12 @@ function DefaultMealPreferenceEditor({
     preference?.allowOrganizerFallback ?? false,
   );
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const { showToast } = useToast();
 
   useEffect(() => {
     setSelectedItemId(preference?.itemId ?? '');
     setDefaultComment(preference?.defaultComment ?? '');
     setAllowOrganizerFallback(preference?.allowOrganizerFallback ?? false);
-    setError('');
   }, [preference?.allowOrganizerFallback, preference?.defaultComment, preference?.itemId]);
 
   if (!nickname) {
@@ -862,8 +832,6 @@ function DefaultMealPreferenceEditor({
 
   const handleSave = async () => {
     setSaving(true);
-    setError('');
-    setSuccess('');
     try {
       const saved = await api.updateUserMenuDefaultPreference(
         menu.id,
@@ -873,9 +841,9 @@ function DefaultMealPreferenceEditor({
         selectedItemId ? allowOrganizerFallback : false,
       );
       onSaved(saved);
-      setSuccess(saved.itemId ? 'Default meal saved.' : 'Default meal cleared.');
+      showToast({ tone: 'success', message: saved.itemId ? 'Default meal saved.' : 'Default meal cleared.' });
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not save default meal') });
     } finally {
       setSaving(false);
     }
@@ -902,8 +870,6 @@ function DefaultMealPreferenceEditor({
                 setDefaultComment('');
                 setAllowOrganizerFallback(false);
               }
-              setError('');
-              setSuccess('');
             }}
             className="mt-1 w-full rounded border border-success bg-surface px-3 py-2 text-sm text-fg focus:border-success focus:outline-none"
             aria-label={`Default meal for ${menu.name}`}
@@ -923,8 +889,6 @@ function DefaultMealPreferenceEditor({
             value={defaultComment}
             onChange={(event) => {
               setDefaultComment(event.target.value);
-              setError('');
-              setSuccess('');
             }}
             disabled={!selectedItemId}
             maxLength={200}
@@ -943,8 +907,6 @@ function DefaultMealPreferenceEditor({
               disabled={!selectedItemId}
               onChange={(event) => {
                 setAllowOrganizerFallback(event.target.checked);
-                setError('');
-                setSuccess('');
               }}
               className="mt-0.5"
             />
@@ -965,8 +927,6 @@ function DefaultMealPreferenceEditor({
                 setSelectedItemId('');
                 setDefaultComment('');
                 setAllowOrganizerFallback(false);
-                setError('');
-                setSuccess('');
               }}
               disabled={saving || (!selectedItemId && !allowOrganizerFallback)}
               className="rounded border border-success bg-surface px-3 py-1.5 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-50"
@@ -974,8 +934,6 @@ function DefaultMealPreferenceEditor({
               Clear selection
             </button>
           </div>
-          {success ? <p className="mt-2 text-xs text-success-fg">{success}</p> : null}
-          {error ? <p className="mt-2 text-xs text-danger-fg">{error}</p> : null}
         </>
       )}
     </div>
@@ -1201,7 +1159,6 @@ function MenuCard({
 }) {
   const [editingMenu, setEditingMenu] = useState(false);
   const [nameInput, setNameInput] = useState(menu.name);
-  const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [locationInput, setLocationInput] = useState(menu.location ?? '');
   const [phoneInput, setPhoneInput] = useState(menu.phone ?? '');
@@ -1209,6 +1166,7 @@ function MenuCard({
   const [orderUrlInput, setOrderUrlInput] = useState(menu.orderUrl ?? '');
   const [contactError, setContactError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
   const [collapsed, setCollapsed] = useState(true);
 
   const handleMenuSave = async () => {
@@ -1254,7 +1212,6 @@ function MenuCard({
         orderUrl: parsedOrderUrl.value,
       });
       setEditingMenu(false);
-      setError('');
     } catch (err) {
       setContactError((err as Error).message);
     } finally {
@@ -1268,7 +1225,7 @@ function MenuCard({
       await api.deleteMenu(menu.id);
       setConfirmDelete(false);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not delete menu') });
     } finally {
       setSubmitting(false);
     }
@@ -1295,10 +1252,6 @@ function MenuCard({
           onDelete={() => setConfirmDelete(true)}
         />
 
-        {error && (
-          <p className="px-4 py-1 text-sm text-danger-fg">{error}</p>
-        )}
-
         {!collapsed && (
           <MenuCardContent
             menu={menu}
@@ -1309,13 +1262,15 @@ function MenuCard({
         )}
       </div>
 
-      {confirmDelete && (
-        <ConfirmDialog
-          message={`Delete menu "${menu.name}" and all its items?`}
-          onConfirm={() => void handleDelete()}
-          onCancel={() => setConfirmDelete(false)}
-        />
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        title={`Delete menu "${menu.name}"?`}
+        consequenceText="All menu items will be deleted too."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => void handleDelete()}
+        onCancel={() => setConfirmDelete(false)}
+      />
       {editingMenu && (
         <MenuEditDialog
           menuName={menu.name}
@@ -1367,8 +1322,8 @@ function NewMenuDropdown({
   onToggleImport: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -1396,13 +1351,12 @@ function NewMenuDropdown({
   const handleCreateManually = async () => {
     if (creating) return;
     setOpen(false);
-    setError('');
     setCreating(true);
     const name = generateMenuName();
     try {
       await api.createMenu(name);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not create menu') });
     } finally {
       setCreating(false);
     }
@@ -1445,7 +1399,6 @@ function NewMenuDropdown({
           </button>
         </div>
       )}
-      {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
     </div>
   );
 }

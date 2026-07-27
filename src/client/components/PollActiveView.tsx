@@ -1,9 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { useCountdown, formatTime } from '../hooks/useCountdown.js';
 import * as api from '../api.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import { Button } from './ui/Button.js';
+import { Input } from './ui/Input.js';
+import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import type { MealRecommendationPreVoteResponse } from '../../lib/types.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 import {
   getAuthenticatedActorKey,
   getAuthenticatedDisplayLabel,
@@ -66,7 +71,7 @@ function VotingPanel({
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
-  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const myVotedMenuIds = useMemo(
     () =>
@@ -80,7 +85,6 @@ function VotingPanel({
 
   const handleToggle = async (menuId: string) => {
     setLoading(menuId);
-    setError('');
     try {
       if (myVotedMenuIds.has(menuId)) {
         await api.withdrawVote(pollId, menuId, nickname);
@@ -88,7 +92,7 @@ function VotingPanel({
         await api.castVote(pollId, menuId, nickname);
       }
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not update your vote') });
     } finally {
       setLoading(null);
     }
@@ -96,11 +100,10 @@ function VotingPanel({
 
   const handleWithdrawAll = async () => {
     setWithdrawingAll(true);
-    setError('');
     try {
       await api.withdrawAllVotes(pollId, nickname);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not withdraw your votes') });
     } finally {
       setWithdrawingAll(false);
     }
@@ -109,13 +112,9 @@ function VotingPanel({
   if (collapsed) {
     return (
       <div className="text-center">
-        <button
-          type="button"
-          onClick={() => setCollapsed(false)}
-          className="text-sm text-accent hover:text-accent-fg"
-        >
+        <Button variant="ghost" onClick={() => setCollapsed(false)} className="text-accent hover:text-accent-fg">
           Show voting panel
-        </button>
+        </Button>
       </div>
     );
   }
@@ -124,16 +123,10 @@ function VotingPanel({
     <div>
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-fg">Your votes</h3>
-        <button
-          type="button"
-          onClick={() => setCollapsed(true)}
-          className="text-xs text-fg-muted hover:text-fg"
-        >
-          I&apos;ll sit this one out
-        </button>
+        <Button variant="ghost" onClick={() => setCollapsed(true)} className="px-2 py-1 text-xs">
+          Hide voting panel
+        </Button>
       </div>
-
-      {error && <p className="mb-2 text-sm text-danger-fg">{error}</p>}
 
       {disabled && (
         <p className="mb-3 rounded border border-warning bg-warning-soft px-3 py-2 text-sm text-warning-fg">
@@ -146,32 +139,28 @@ function VotingPanel({
           const voted = myVotedMenuIds.has(menu.id);
           const isLoading = loading === menu.id;
           return (
-            <button
+            <Button
               key={menu.id}
-              type="button"
+              variant="secondary"
               onClick={() => void handleToggle(menu.id)}
               disabled={isLoading || disabled}
-              className={`w-full rounded border px-4 py-2 text-left text-sm font-medium transition-colors disabled:opacity-50 ${
-                voted
-                  ? 'border-accent bg-accent-soft text-accent-fg'
-                  : 'border-border bg-surface text-fg hover:bg-surface-muted'
-              }`}
+              className={`w-full text-left ${voted ? 'border-accent bg-accent-soft text-accent-fg' : ''}`}
             >
               {voted ? '✓ ' : ''}{menu.name}
-            </button>
+            </Button>
           );
         })}
       </div>
 
       <div className="mt-3">
-        <button
-          type="button"
+        <Button
+          variant="danger"
           onClick={() => void handleWithdrawAll()}
           disabled={withdrawingAll || myVotedMenuIds.size === 0 || disabled}
-          className="w-full rounded border border-danger px-4 py-2 text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-50"
+          className="w-full"
         >
           Withdraw my votes
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -221,17 +210,16 @@ function PublicVotesBoard({
 
 function PreVotePanel({ pollId }: { pollId: string }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [result, setResult] = useState<MealRecommendationPreVoteResponse | null>(null);
+  const { showToast } = useToast();
 
   const handleLoadRecommendations = async () => {
     setLoading(true);
-    setError('');
     try {
       const response = await api.recommendPreVote(pollId, 5);
       setResult(response);
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not load recommendations') });
     } finally {
       setLoading(false);
     }
@@ -246,17 +234,15 @@ function PreVotePanel({ pollId }: { pollId: string }) {
             See what dishes look strongest across the current candidate menus before you vote.
           </p>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={() => void handleLoadRecommendations()}
           disabled={loading}
-          className="rounded border border-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-soft disabled:opacity-60"
+          className="border-accent px-3 py-1.5 text-accent-fg hover:bg-accent-soft"
         >
           {loading ? 'Loading...' : result ? 'Refresh suggestions' : 'Show suggestions'}
-        </button>
+        </Button>
       </div>
-
-      {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
 
       {result && (
         <div className="mt-4 space-y-3">
@@ -302,6 +288,8 @@ export default function PollActiveView() {
   const [aborting, setAborting] = useState(false);
   const [updatingTimer, setUpdatingTimer] = useState(false);
   const [manualRemainingMinutes, setManualRemainingMinutes] = useState('');
+  const [manualMinutesError, setManualMinutesError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
   const canKillPoll = isAdminAuthenticatedUser();
   const pollExpired = remaining <= 0;
 
@@ -309,7 +297,11 @@ export default function PollActiveView() {
   const canAdjustPollTimer = canKillPoll || isCreatorAuthenticatedUser(activePoll.createdBy);
 
   const handleFinishNow = async (): Promise<boolean> => {
-    const confirmed = window.confirm('Confirm completion?');
+    const confirmed = await confirm({
+      title: 'Confirm completion?',
+      consequenceText: 'This ends voting and moves Team Lunch to meal selection.',
+      confirmLabel: 'Confirm completion',
+    });
     if (!confirmed) return false;
 
     setSubmitting(true);
@@ -324,7 +316,12 @@ export default function PollActiveView() {
   };
 
   const handleAbort = async () => {
-    const confirmed = window.confirm('Abort this poll?');
+    const confirmed = await confirm({
+      title: 'Cancel this poll?',
+      consequenceText: 'Current votes will be discarded.',
+      confirmLabel: 'Cancel poll',
+      destructive: true,
+    });
     if (!confirmed) return;
 
     setAborting(true);
@@ -366,9 +363,10 @@ export default function PollActiveView() {
   const votableMenus = menus
     .filter((m) => m.items.length > 0 && !excludedMenuIds.has(m.id))
     .map((m) => ({ id: m.id, name: m.name }));
-  const timerOptions = Array.from({ length: 24 }, (_, index) => (index + 1) * 5);
+  const timerOptions = [5, 15, 30, 60];
 
   return (
+    <>
     <div className="mx-auto w-full max-w-2xl p-4">
       <TimerActionHeader
         title={
@@ -383,8 +381,8 @@ export default function PollActiveView() {
       >
         {({ closeMenu }) => (
           <>
-            <button
-              type="button"
+            <Button
+              variant="success"
               onClick={() => {
                 void (async () => {
                   const done = await handleFinishNow();
@@ -392,14 +390,14 @@ export default function PollActiveView() {
                 })();
               }}
               disabled={submitting}
-              className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
+              className="w-full rounded-none border-x-0 border-t-0 px-3 text-left"
             >
               Confirm completion
-            </button>
+            </Button>
 
             {canKillPoll && (
-              <button
-                type="button"
+              <Button
+                variant="danger"
                 onClick={() => {
                   void (async () => {
                     await handleAbort();
@@ -407,19 +405,19 @@ export default function PollActiveView() {
                   })();
                 }}
                 disabled={aborting || submitting}
-                className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60"
+                className="w-full rounded-none border-x-0 border-t-0 px-3 text-left"
               >
-                Kill poll (admin)
-              </button>
+                Cancel poll
+              </Button>
             )}
 
             {canAdjustPollTimer ? (
               <>
                 <div className="max-h-40 overflow-y-auto border-b border-border py-1">
                   {timerOptions.map((minutes) => (
-                    <button
+                    <Button
                       key={minutes}
-                      type="button"
+                      variant="ghost"
                       onClick={() => {
                         void (async () => {
                           const done = await handleUpdateTimer(minutes);
@@ -427,33 +425,46 @@ export default function PollActiveView() {
                         })();
                       }}
                       disabled={updatingTimer}
-                      className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60"
+                      className="w-full rounded-none px-3 py-1.5 text-left text-fg"
                     >
                       {minutes} min
-                    </button>
+                    </Button>
                   ))}
                 </div>
 
                 <div className="p-2">
-                  <input
-                    type="text"
+                  <Input
+                    type="number"
+                    min={1}
+                    max={720}
                     value={manualRemainingMinutes}
-                    onChange={(event) => setManualRemainingMinutes(event.target.value)}
+                    onChange={(event) => {
+                      setManualRemainingMinutes(event.target.value);
+                      setManualMinutesError(null);
+                    }}
                     onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                        void (async () => {
-                          const done = await handleUpdateTimer(
-                            Number.parseInt(manualRemainingMinutes, 10),
-                          );
-                          if (done) closeMenu();
-                        })();
+                      if (event.key !== 'Enter') return;
+                      event.preventDefault();
+                      const parsed = Number.parseInt(manualRemainingMinutes, 10);
+                      if (!Number.isInteger(parsed) || parsed < 1 || parsed > 720) {
+                        setManualMinutesError('Enter a whole number of minutes between 1 and 720.');
+                        return;
                       }
+                      void (async () => {
+                        const done = await handleUpdateTimer(parsed);
+                        if (done) closeMenu();
+                      })();
                     }}
                     placeholder="Manual minutes remaining"
-                    className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+                    className="px-2 py-1.5"
                     aria-label="Poll manual minutes remaining"
+                    aria-invalid={manualMinutesError ? true : undefined}
                   />
+                  {manualMinutesError && (
+                    <p className="mt-1 text-xs text-danger-fg" role="alert">
+                      {manualMinutesError}
+                    </p>
+                  )}
                 </div>
               </>
             ) : (
@@ -479,16 +490,16 @@ export default function PollActiveView() {
             The menu poll has ended. Finalize the result so everyone can move on to meal selection.
           </p>
           {canKillPoll ? (
-            <button
-              type="button"
+            <Button
+              variant="success-solid"
               onClick={() => {
                 void handleFinishNow();
               }}
               disabled={submitting}
-              className="mt-4 rounded bg-success-solid px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+              className="mt-4"
             >
               Confirm completion
-            </button>
+            </Button>
           ) : (
             <p className="mt-3 text-sm text-warning-fg">
               Waiting for an organizer to confirm the result.
@@ -517,5 +528,7 @@ export default function PollActiveView() {
         <PublicVotesBoard votes={activePoll.votes} menus={votableMenus} />
       </div>
     </div>
+    {dialog}
+    </>
   );
 }

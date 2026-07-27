@@ -12,6 +12,9 @@ import {
   resolveOrderPrice,
 } from '../utils/orderCopy.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import { Button } from './ui/Button.js';
+import { Input } from './ui/Input.js';
+import { Select } from './ui/Select.js';
 
 interface FoodSelectionCompletedViewProps {
   selection?: FoodSelection;
@@ -144,13 +147,13 @@ export default function FoodSelectionCompletedView({
     <div className="flex min-h-0 flex-1 items-start justify-center p-4">
       <div className="w-full max-w-md rounded-lg border border-success bg-surface p-6 shadow-sm">
         {isHistorical && onBackToDashboard && (
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={onBackToDashboard}
-            className="mb-4 flex items-center gap-1 rounded border border-border px-3 py-1.5 text-sm font-medium text-fg-muted hover:bg-surface-muted"
+            className="mb-4 flex items-center gap-1 px-3 py-1.5 text-fg-muted"
           >
             &larr; Back to Dashboard
-          </button>
+          </Button>
         )}
         <h2 className="mb-1 text-center text-lg font-semibold text-success-fg">
           {heading}
@@ -200,13 +203,13 @@ export default function FoodSelectionCompletedView({
                     </div>
                     {isOrderOwnedByCurrentUser(o) && (
                       <div className="mt-1 flex items-center gap-2">
-                        <select
+                        <Select
                           value={ratingValues[o.id] ?? o.rating ?? ''}
                           onChange={(e) => {
                             const parsed = Number.parseInt(e.target.value, 10);
                             setRatingValues((prev) => ({ ...prev, [o.id]: Number.isNaN(parsed) ? 0 : parsed }));
                           }}
-                          className="rounded border border-border px-2 py-1 text-xs"
+                          className="px-2 py-1 text-xs"
                           aria-label={`Rating for ${o.itemName}`}
                         >
                           <option value="">Rate meal</option>
@@ -215,26 +218,25 @@ export default function FoodSelectionCompletedView({
                           <option value="3">3</option>
                           <option value="4">4</option>
                           <option value="5">5</option>
-                        </select>
-                        <input
-                          type="text"
+                        </Select>
+                        <Input
                           value={feedbackValues[o.id] ?? o.feedbackComment ?? ''}
                           onChange={(e) => {
                             setFeedbackValues((prev) => ({ ...prev, [o.id]: e.target.value }));
                           }}
-                          className="min-w-0 flex-1 rounded border border-border px-2 py-1 text-xs"
+                          className="min-w-0 flex-1 px-2 py-1 text-xs"
                           maxLength={300}
                           placeholder="Remark about food or delivery"
                           aria-label={`Feedback remark for ${o.itemName}`}
                         />
-                        <button
-                          type="button"
+                        <Button
+                          variant="secondary"
                           onClick={() => void handleSaveRating(o.id, o.rating)}
                           disabled={savingRatingId === o.id}
-                          className="rounded border border-accent bg-accent-soft px-2 py-1 text-xs font-medium text-accent-fg hover:bg-accent-soft disabled:opacity-50"
+                          className="border-accent bg-accent-soft px-2 py-1 text-xs text-accent-fg hover:bg-accent-soft"
                         >
                           Save feedback
-                        </button>
+                        </Button>
                       </div>
                     )}
                     {isOrderOwnedByCurrentUser(o) && (o.rating || o.feedbackComment) ? (
@@ -269,20 +271,20 @@ export default function FoodSelectionCompletedView({
         )}
 
         <div className="mt-4 space-y-2">
-          <button
-            type="button"
+          <Button
+            variant="success"
             onClick={() => void handleCopyOrders()}
-            className="w-full rounded border border-success bg-success-soft px-3 py-2 text-sm font-medium text-success-fg hover:bg-success-soft"
+            className="w-full px-3"
           >
             Copy order list
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={() => void handleExport()}
-            className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft"
+            className="w-full border-accent bg-accent-soft px-3 text-accent-fg hover:bg-accent-soft"
           >
             Export my orders & ratings (Excel)
-          </button>
+          </Button>
           {exportState === 'done' && (
             <p className="text-center text-xs text-accent-fg">Excel export downloaded.</p>
           )}

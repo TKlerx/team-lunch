@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from './testRender.js';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem } from './helpers.js';
@@ -114,18 +114,16 @@ describe('FoodSelectionOrderingView', () => {
 
   it('claims ordering responsibility before placing the order', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     renderView();
 
     await user.click(screen.getByRole('button', { name: /i am placing the order/i }));
+    await user.click(screen.getByRole('button', { name: /start ordering/i }));
 
     expect(mockClaimOrderingResponsibility).toHaveBeenCalledWith('fs-1', 'Alice');
-    confirmSpy.mockRestore();
   });
 
   it('submits place-order request with custom ETA', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     mockPlaceDeliveryOrder.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -173,14 +171,13 @@ describe('FoodSelectionOrderingView', () => {
     await user.click(screen.getByRole('button', { name: /place order eta menu/i }));
     await user.type(screen.getByLabelText(/custom eta in minutes/i), '37');
     await user.click(screen.getByRole('button', { name: /confirm placed order/i }));
+    await user.click(screen.getByRole('button', { name: /confirm order placed/i }));
 
     expect(mockPlaceDeliveryOrder).toHaveBeenCalledWith('fs-1', 37, 'Alice');
-    confirmSpy.mockRestore();
   });
 
   it('does not submit place-order request when confirmation is canceled', async () => {
     const user = userEvent.setup();
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -212,9 +209,9 @@ describe('FoodSelectionOrderingView', () => {
 
     await user.click(screen.getByRole('button', { name: /place order eta menu/i }));
     await user.click(screen.getByRole('button', { name: '40 min' }));
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mockPlaceDeliveryOrder).not.toHaveBeenCalled();
-    confirmSpy.mockRestore();
   });
 
   it('shows validation error for invalid custom ETA and does not submit', async () => {

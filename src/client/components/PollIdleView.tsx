@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { FoodSelection, Poll } from '../../lib/types.js';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import {
   getAverageMealRating,
@@ -14,8 +15,14 @@ import {
   getRecentlyUsedMenus,
   getSelectionsWaitingForRating,
 } from '../utils/dashboard.js';
+import { Button } from './ui/Button.js';
+import { Card } from './ui/Card.js';
+import { Input } from './ui/Input.js';
+import { Select } from './ui/Select.js';
+import { sectionTitleClass } from './ui/Section.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
-const POLL_DURATIONS = Array.from({ length: (720 - 5) / 5 + 1 }, (_, i) => 5 + i * 5);
+const POLL_DURATIONS = [5, 10, 15, 30, 45, 60, 120, 240, 480, 720] as const;
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
 
 function formatDuration(mins: number): string {
@@ -40,12 +47,10 @@ function DashboardCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface-muted p-5 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-fg-muted">
-        {title}
-      </h3>
+    <Card className="bg-surface-muted p-5">
+      <h3 className={`mb-3 ${sectionTitleClass}`}>{title}</h3>
       {children}
-    </section>
+    </Card>
   );
 }
 
@@ -65,21 +70,21 @@ function DashboardStats({
   return (
     <DashboardCard title="Quick Stats">
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">Last winner</p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">{lastWinner ?? 'No winner yet'}</p>
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">Last winner</p>
+          <p className="mt-1 text-base font-semibold text-fg">{lastWinner ?? 'No winner yet'}</p>
         </div>
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">Average rating</p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">Average rating</p>
+          <p className="mt-1 text-base font-semibold text-fg">
             {averageRating === null ? 'No ratings yet' : `${averageRating.toFixed(1)} / 5`}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-surface-muted hover:bg-surface p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-fg">
+        <div className="rounded-xl border border-border bg-surface-muted p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">
             Most ordered item
           </p>
-          <p className="mt-1 text-base font-semibold text-fg-muted">
+          <p className="mt-1 text-base font-semibold text-fg">
             {mostOrderedItem ? `${mostOrderedItem.itemName} (${mostOrderedItem.count})` : 'No orders yet'}
           </p>
           {mostOrderedItem && (
@@ -137,13 +142,13 @@ function DashboardInsights({
                       {formatCompletedAt(selection.completedAt)}
                     </p>
                   </div>
-                  <button
-                    type="button"
+                  <Button
+                    variant="warning-solid"
                     onClick={() => onOpenHistorySelection?.(selection.selectionId)}
-                    className="rounded-lg bg-warning-solid px-3 py-2 text-sm font-medium text-warning-on hover:opacity-90"
+                    className="px-3"
                   >
                     Rate now
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -156,11 +161,11 @@ function DashboardInsights({
           ) : (
             <div className="space-y-2">
               {recentHistory.map((selection) => (
-                <button
+                <Button
                   key={selection.id}
-                  type="button"
+                  variant="secondary"
                   onClick={() => onOpenHistorySelection?.(selection.id)}
-                  className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left hover:border-border hover:bg-surface-muted"
+                  className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left"
                 >
                   <span>
                     <span className="block font-medium text-fg">{selection.menuName}</span>
@@ -169,7 +174,7 @@ function DashboardInsights({
                     </span>
                   </span>
                   <span className="text-sm text-fg-muted">{formatCompletedAt(selection.completedAt)}</span>
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -242,11 +247,11 @@ function DashboardInsights({
           ) : (
             <div className="space-y-2">
               {myOrders.map((order, index) => (
-                <button
+                <Button
                   key={`${order.selectionId}-${order.itemName}-${index}`}
-                  type="button"
+                  variant="secondary"
                   onClick={() => onOpenHistorySelection?.(order.selectionId)}
-                  className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left hover:border-border hover:bg-surface-muted"
+                  className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block font-medium text-fg">{order.itemName}</span>
@@ -272,7 +277,7 @@ function DashboardInsights({
                     )}
                     <span className="text-xs text-fg-muted">{formatCompletedAt(order.completedAt)}</span>
                   </span>
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -288,16 +293,16 @@ function QuickActions() {
   return (
     <DashboardCard title="Quick Actions">
       <div className="grid gap-2">
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={() => navigate('/menus')}
-          className="rounded-xl border border-border bg-surface px-4 py-3 text-left hover:bg-surface-muted"
+          className="rounded-2xl px-4 py-3 text-left"
         >
           <span className="block font-medium text-fg">Manage menus</span>
           <span className="mt-1 block text-sm text-fg-muted">
             Create, update, clean up, and import menus from the menu management screen.
           </span>
-        </button>
+        </Button>
       </div>
     </DashboardCard>
   );
@@ -314,6 +319,7 @@ function SingleMenuQuickStart({
   const [duration, setDuration] = useState<number>(defaultDuration);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setDuration(defaultDuration);
@@ -331,7 +337,7 @@ function SingleMenuQuickStart({
       await api.quickStartFoodSelection(duration);
       setError('');
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start food selection') });
     } finally {
       setSubmitting(false);
     }
@@ -348,29 +354,30 @@ function SingleMenuQuickStart({
           <label htmlFor="quick-duration" className="mb-1 block text-sm font-medium text-fg">
             Duration
           </label>
-          <select
+          <Select
             id="quick-duration"
             value={duration}
             onChange={(event) => setDuration(Number(event.target.value))}
-            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-success focus:outline-none"
+            className="focus:border-success"
           >
             {FOOD_DURATIONS.map((value) => (
               <option key={value} value={value}>
                 {value} min
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {error && <p className="text-sm text-danger-fg">{error}</p>}
 
-        <button
+        <Button
           type="submit"
+          variant="success-solid"
           disabled={submitting}
-          className="w-full rounded-xl bg-success-solid px-4 py-3 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="w-full py-3"
         >
           {submitting ? 'Starting...' : 'Start Food Selection'}
-        </button>
+        </Button>
       </form>
     </DashboardCard>
   );
@@ -387,6 +394,7 @@ function PollStartForm({
   const [excludedReasons, setExcludedReasons] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const handleStart = async (event: FormEvent) => {
     event.preventDefault();
@@ -421,7 +429,7 @@ function PollStartForm({
       setExcludedReasons({});
       setError('');
     } catch (err) {
-      setError((err as Error).message);
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start poll') });
     } finally {
       setSubmitting(false);
     }
@@ -434,16 +442,14 @@ function PollStartForm({
           <label htmlFor="poll-desc" className="mb-1 block text-sm font-medium text-fg">
             Description
           </label>
-          <input
+          <Input
             id="poll-desc"
-            type="text"
             value={description}
             onChange={(event) => {
               setDescription(event.target.value);
               setError('');
             }}
             maxLength={120}
-            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
             placeholder="What do we eat today?"
           />
           <p className="mt-1 text-xs text-fg-muted">{description.length}/120</p>
@@ -453,18 +459,17 @@ function PollStartForm({
           <label htmlFor="poll-duration" className="mb-1 block text-sm font-medium text-fg">
             Duration
           </label>
-          <select
+          <Select
             id="poll-duration"
             value={duration}
             onChange={(event) => setDuration(Number(event.target.value))}
-            className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none"
           >
             {POLL_DURATIONS.map((value) => (
               <option key={value} value={value}>
                 {formatDuration(value)}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="rounded-xl border border-border bg-surface-muted p-3">
@@ -494,8 +499,7 @@ function PollStartForm({
                     {menu.name}
                   </label>
                   {isExcluded && (
-                    <input
-                      type="text"
+                    <Input
                       value={excludedReasons[menu.id]}
                       onChange={(event) => {
                         setExcludedReasons((previous) => ({
@@ -505,7 +509,7 @@ function PollStartForm({
                         setError('');
                       }}
                       maxLength={240}
-                      className="mt-2 w-full rounded-xl border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+                      className="mt-2 px-2 py-1.5"
                       placeholder="Why is this option excluded?"
                     />
                   )}
@@ -517,13 +521,9 @@ function PollStartForm({
 
         {error && <p className="text-sm text-danger-fg">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-xl bg-accent-solid px-4 py-3 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={submitting} className="w-full py-3">
           {submitting ? 'Starting...' : 'Start new Team Lunch'}
-        </button>
+        </Button>
       </form>
     </DashboardCard>
   );
@@ -546,15 +546,15 @@ export default function PollIdleView({
 
   return (
     <div className="mx-auto flex min-h-0 w-full max-w-[1500px] flex-1 flex-col gap-6 p-4 lg:px-6">
-      <section className="rounded-[28px] border border-border bg-surface-muted p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fg">Dashboard</p>
+      <Card className="bg-surface-muted p-6">
+        <p className={sectionTitleClass}>Dashboard</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-fg">
           Team Lunch home base
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-fg-muted">
           Start the next lunch round, catch up on ratings, and use recent history to make faster decisions.
         </p>
-      </section>
+      </Card>
 
       <div className="grid min-h-0 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-4">

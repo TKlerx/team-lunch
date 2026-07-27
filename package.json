@@ -48,6 +48,7 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "auth:seed": "tsx scripts/auth-seed.ts",
+    "faim:deps": "node ./scripts/faim-scip-deps.mjs",
     "deploy": "sh ./scripts/deploy.sh",
     "validate": "pwsh -NoProfile -File ./validate.ps1 all"
   },
@@ -70,6 +71,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "@sourcegraph/scip-typescript": "^0.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",

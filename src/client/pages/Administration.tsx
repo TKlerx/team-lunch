@@ -12,8 +12,10 @@ import {
   setAuthenticatedDisplayName,
 } from "../auth.js";
 import RecommenderAdminPanel from "../components/RecommenderAdminPanel.js";
+import { useConfirmDialog, type ConfirmDialogOptions } from "../components/ui/ConfirmDialog.js";
 import { withBasePath } from "../config.js";
 import { useAdminOfficeContext } from "../context/AdminOfficeContext.js";
+import { useToast } from "../context/ToastContext.js";
 import {
   LOCAL_PASSWORD_MAX_LENGTH,
   LOCAL_PASSWORD_MIN_LENGTH,
@@ -21,6 +23,7 @@ import {
   type OfficeLocation,
   type OfficeWeekday,
 } from "../../lib/types.js";
+import { getErrorMessage } from "../lib/errorMessage.js";
 
 const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
   { value: "monday", label: "Mon" },
@@ -468,6 +471,7 @@ function useOfficeActions(
   const [newOfficeName, setNewOfficeName] = useState("");
   const [creatingOffice, setCreatingOffice] = useState(false);
   const [updatingOfficeId, setUpdatingOfficeId] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const runOfficeAction = async (
     officeId: string,
@@ -480,7 +484,7 @@ function useOfficeActions(
       await action();
       await refreshConfig();
     } catch (officeError) {
-      setError(officeError instanceof Error ? officeError.message : fallback);
+      showToast({ tone: "error", message: getErrorMessage(officeError, fallback) });
     } finally {
       setUpdatingOfficeId(null);
     }
@@ -713,13 +717,19 @@ function saveEmail(
   );
 }
 
-function deleteUser(runUserAction: UserActionRunner, email: string) {
-  if (
-    !window.confirm(
-      `Delete local account ${email}? Historical votes and orders stay unchanged.`,
-    )
-  ) {
-    return Promise.resolve();
+async function deleteUser(
+  runUserAction: UserActionRunner,
+  email: string,
+  confirm: (options: ConfirmDialogOptions) => Promise<boolean>,
+) {
+  const confirmed = await confirm({
+    title: `Delete local account ${email}?`,
+    consequenceText: "Historical votes and orders stay unchanged.",
+    confirmLabel: "Delete local account",
+    destructive: true,
+  });
+  if (!confirmed) {
+    return;
   }
   return runUserAction(
     email,
@@ -744,6 +754,8 @@ function useUserActions(
   const [updatingUserRoleEmail, setUpdatingUserRoleEmail] = useState<
     string | null
   >(null);
+  const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
 
   const runUserAction: UserActionRunner = async (email, action, fallback) => {
     setUpdatingUserRoleEmail(email);
@@ -752,7 +764,7 @@ function useUserActions(
       await action();
       await refreshConfig();
     } catch (userError) {
-      setError(userError instanceof Error ? userError.message : fallback);
+      showToast({ tone: "error", message: getErrorMessage(userError, fallback) });
     } finally {
       setUpdatingUserRoleEmail(null);
     }
@@ -770,7 +782,8 @@ function useUserActions(
     saveDisplayName: (email: string) =>
       saveDisplayName(runUserAction, email, drafts),
     saveEmail: (email: string) => saveEmail(runUserAction, email, drafts),
-    deleteUser: (email: string) => deleteUser(runUserAction, email),
+    deleteUser: (email: string) => deleteUser(runUserAction, email, confirm),
+    dialog,
   };
 }
 
@@ -827,6 +840,7 @@ export default function Administration() {
           drafts={admin.drafts}
           actions={userActions}
         />
+        {userActions.dialog}
       </div>
     </div>
   );

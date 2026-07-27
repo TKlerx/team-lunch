@@ -8,7 +8,7 @@ import { cn } from '../../lib/cn.js';
 export function Card({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('rounded-xl border border-border bg-surface shadow-sm', className)}
+      className={cn('rounded-2xl border border-border bg-surface shadow-sm', className)}
       {...props}
     >
       {children}

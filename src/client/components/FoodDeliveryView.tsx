@@ -6,8 +6,12 @@ import {
   updateFoodSelectionEta,
 } from '../api.js';
 import { useAppDispatch, useAppState } from '../context/AppContext.js';
+import { useToast } from '../context/ToastContext.js';
 import { useCountdown, useElapsedSince, formatTime } from '../hooks/useCountdown.js';
 import TimerActionHeader from './TimerActionHeader.js';
+import { Button } from './ui/Button.js';
+import { Input } from './ui/Input.js';
+import { useConfirmDialog } from './ui/ConfirmDialog.js';
 import {
   buildOrderLookupMaps,
   buildOrderSummary,
@@ -18,6 +22,7 @@ import {
 } from '../utils/orderCopy.js';
 import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import { getErrorMessage } from '../lib/errorMessage.js';
 
 function formatLateDuration(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -161,14 +166,13 @@ function DeliveryEtaControls({
     <>
       <div className="max-h-48 overflow-y-auto border-b border-border py-1">
         {etaOptions.map((minutes) => (
-          <button key={minutes} type="button" onClick={() => onSaveEta(minutes)} disabled={isSavingEta} className="block w-full px-3 py-1.5 text-left text-sm text-fg hover:bg-surface-muted disabled:opacity-60">
+          <Button key={minutes} variant="ghost" onClick={() => onSaveEta(minutes)} disabled={isSavingEta} className="w-full rounded-none px-3 py-1.5 text-left text-fg">
             {minutes} min
-          </button>
+          </Button>
         ))}
       </div>
       <div className="p-2">
-        <input
-          type="text"
+        <Input
           value={manualEtaMinutes}
           onChange={(event) => onManualEtaMinutesChange(event.target.value)}
           onKeyDown={(event) => {
@@ -178,7 +182,7 @@ function DeliveryEtaControls({
             }
           }}
           placeholder="Manual minutes remaining"
-          className="w-full rounded border border-border px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+          className="px-2 py-1.5"
           aria-label="Manual minutes remaining"
         />
       </div>
@@ -218,13 +222,13 @@ function DeliveryTimerMenu({
 
   return (
     <>
-      <button type="button" onClick={() => void onConfirmArrival().then((done) => done && closeMenu())} disabled={isConfirmingArrival} className="block w-full border-b border-border bg-success-soft px-3 py-2 text-left text-sm font-medium text-success-fg hover:bg-success-soft disabled:opacity-60">
+      <Button variant="success" onClick={() => void onConfirmArrival().then((done) => done && closeMenu())} disabled={isConfirmingArrival} className="w-full rounded-none border-x-0 border-t-0 px-3 text-left">
         Confirm lunch arrived
-      </button>
+      </Button>
       {canManageFoodSelection ? (
-        <button type="button" onClick={() => void onAbortProcess().then((done) => done && closeMenu())} className="block w-full border-b border-border bg-danger-soft px-3 py-2 text-left text-sm font-medium text-danger-fg hover:bg-danger-soft disabled:opacity-60">
+        <Button variant="danger" onClick={() => void onAbortProcess().then((done) => done && closeMenu())} className="w-full rounded-none border-x-0 border-t-0 px-3 text-left">
           Abort process
-        </button>
+        </Button>
       ) : null}
       <DeliveryEtaControls
         etaOptions={etaOptions}
@@ -361,9 +365,9 @@ function DeliveryOrdersList({
         <span className="text-sm font-semibold text-fg">Total: {formatPrice(totalPrice)}</span>
       </div>
       <div className="mt-3">
-        <button type="button" onClick={onCopyOrders} className="w-full rounded border border-accent bg-accent-soft px-3 py-2 text-sm font-medium text-accent-fg hover:bg-accent-soft">
+        <Button variant="secondary" onClick={onCopyOrders} className="w-full border-accent bg-accent-soft px-3 text-accent-fg hover:bg-accent-soft">
           Copy order list
-        </button>
+        </Button>
         <OrderCopyStatus status={copyStatus} />
       </div>
     </div>
@@ -379,6 +383,8 @@ export default function FoodDeliveryView() {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [updatingDeliveredIds, setUpdatingDeliveredIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirmDialog();
+  const { showToast } = useToast();
   const canManageFoodSelection = isAdminAuthenticatedUser();
   const actorLabel = getAuthenticatedDisplayLabel();
 
@@ -442,7 +448,7 @@ export default function FoodDeliveryView() {
       setManualEtaMinutes('');
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not update ETA');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update ETA') });
       return false;
     } finally {
       setIsSavingEta(false);
@@ -450,7 +456,11 @@ export default function FoodDeliveryView() {
   }
 
   async function onConfirmArrival(): Promise<boolean> {
-    const confirmed = window.confirm('Confirm lunch has arrived? This cannot be changed afterwards.');
+    const confirmed = await confirm({
+      title: 'Confirm lunch has arrived?',
+      consequenceText: 'This cannot be changed afterwards.',
+      confirmLabel: 'Confirm arrival',
+    });
     if (!confirmed) return false;
 
     setIsConfirmingArrival(true);
@@ -459,7 +469,7 @@ export default function FoodDeliveryView() {
       await confirmFoodArrival(selection.id);
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not confirm arrival');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not confirm arrival') });
       return false;
     } finally {
       setIsConfirmingArrival(false);
@@ -467,7 +477,12 @@ export default function FoodDeliveryView() {
   }
 
   async function onAbortProcess(): Promise<boolean> {
-    const confirmed = window.confirm('Abort food selection?');
+    const confirmed = await confirm({
+      title: 'Abort food selection?',
+      consequenceText: 'This stops delivery tracking for this lunch.',
+      confirmLabel: 'Abort process',
+      destructive: true,
+    });
     if (!confirmed) return false;
 
     setError(null);
@@ -475,7 +490,7 @@ export default function FoodDeliveryView() {
       await abortFoodSelection(selection.id);
       return true;
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not abort process');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not abort process') });
       return false;
     }
   }
@@ -506,7 +521,7 @@ export default function FoodDeliveryView() {
     try {
       await setOrderDelivered(selection.id, orderId, delivered, actorLabel ?? undefined);
     } catch (requestError: unknown) {
-      setError(requestError instanceof Error ? requestError.message : 'Could not update delivery check');
+      showToast({ tone: 'error', message: getErrorMessage(requestError, 'Could not update delivery check') });
     } finally {
       setUpdatingDeliveredIds((previous) => {
         const next = new Set(previous);
@@ -517,6 +532,7 @@ export default function FoodDeliveryView() {
   }
 
   return (
+    <>
     <div className="mx-auto w-full max-w-3xl p-4">
       <DeliveryTimerActions
         title={isDue ? 'Lunch should have arrived' : 'Awaiting lunch delivery'}
@@ -584,5 +600,7 @@ export default function FoodDeliveryView() {
         {error && <p className="mt-3 text-sm text-danger-fg">{error}</p>}
       </div>
     </div>
+    {dialog}
+    </>
   );
 }

@@ -1,5 +1,7 @@
 import type { FoodSelection } from '../../lib/types.js';
 import { formatTime, useCountdown } from '../hooks/useCountdown.js';
+import { Button } from './ui/Button.js';
+import { sectionTitleClass } from './ui/Section.js';
 
 interface OrdersRailProps {
   history: FoodSelection[];
@@ -37,15 +39,18 @@ export default function OrdersRail({
     : 'Start new Team Lunch';
   const remainingSeconds = useCountdown(hasOngoingLunchProcess ? inProgressCountdownTo : null);
   const timerLabel = formatTime(remainingSeconds);
-  const isPhase3Due = hasOngoingLunchProcess && inProgressPhaseLabel === '3/3' && remainingSeconds === 0;
+  // ponytail: match the "3/3" fraction, not the full label, so phase-name wording (T2/T13) can change freely
+  const isPhase3Due =
+    hasOngoingLunchProcess && !!inProgressPhaseLabel?.includes('3/3') && remainingSeconds === 0;
+  const topActionVariant = hasOngoingLunchProcess ? 'warning' : 'primary';
   const topActionClass = hasOngoingLunchProcess
-    ? 'mb-4 w-full rounded-lg border border-warning bg-warning-soft px-3 py-2 text-left text-sm font-semibold text-warning-fg hover:bg-warning-soft/70'
-    : 'mb-4 w-full rounded-lg border border-accent/50 bg-accent-soft px-3 py-2 text-left text-sm font-semibold text-accent-fg hover:bg-accent-soft/70 disabled:cursor-not-allowed disabled:opacity-50';
+    ? 'mb-4 w-full px-3 text-left font-semibold'
+    : 'mb-4 w-full border border-accent/50 bg-accent-soft px-3 text-left font-semibold text-accent-fg hover:bg-accent-soft/70';
 
   return (
     <aside className="flex min-h-0 w-full flex-col border-b border-border bg-surface p-4 md:w-80 md:border-b-0 md:border-r">
-      <button
-        type="button"
+      <Button
+        variant={topActionVariant}
         onClick={onStartNewTeamLunch}
         disabled={!hasOngoingLunchProcess && disableStartNewTeamLunch}
         className={topActionClass}
@@ -71,37 +76,35 @@ export default function OrdersRail({
         ) : (
           topActionLabel
         )}
-      </button>
+      </Button>
 
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-fg-muted">Past Lunches</h2>
+      <h2 className={`mb-3 ${sectionTitleClass}`}>Past Lunches</h2>
 
       {selectedSelectionId && hasOngoingLunchProcess && onBackToOngoing && (
-        <button
-          type="button"
+        <Button
+          variant="success"
           onClick={onBackToOngoing}
-          className="mb-4 w-full rounded-lg border border-success bg-success-soft px-3 py-2 text-left text-sm font-semibold text-success-fg hover:bg-success-soft/70"
+          className="mb-4 w-full px-3 text-left font-semibold"
         >
           Back to ongoing Team Lunch
-        </button>
+        </Button>
       )}
 
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
         {history.map((selection) => {
           const isSelected = selectedSelectionId === selection.id;
           return (
-            <button
+            <Button
               key={selection.id}
-              type="button"
+              variant="secondary"
               onClick={() => onSelectSelection(selection.id)}
-              className={`w-full rounded-lg border px-3 py-2 text-left ${
-                isSelected
-                  ? 'border-success bg-success-soft'
-                  : 'border-border bg-surface-muted hover:bg-surface'
+              className={`w-full px-3 text-left ${
+                isSelected ? 'border-success bg-success-soft' : 'bg-surface-muted hover:bg-surface'
               }`}
             >
               <p className="text-sm font-medium text-fg">{selection.menuName}</p>
               <p className="text-xs text-fg-muted">{formatCompletedAt(selection.completedAt)}</p>
-            </button>
+            </Button>
           );
         })}
 

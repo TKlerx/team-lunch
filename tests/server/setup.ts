@@ -2,7 +2,7 @@
 // Shared setup for server-side Vitest tests.
 import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync, statSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -104,25 +104,47 @@ function getMigrationLockDir(): string {
 	return path.join(os.tmpdir(), `team-lunch-prisma-migrate-${key}.lock`);
 }
 
+function tryAcquireLock(lockDir: string): boolean {
+	try {
+		mkdirSync(lockDir);
+		return true;
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
+			throw error;
+		}
+		return false;
+	}
+}
+
+// `prisma migrate` is hard-killed at MIGRATE_TIMEOUT_MS, so a live lock can never be
+// held much longer than that. Anything older was leaked by a killed run (Ctrl+C), hence
+// the 2x margin: a slow-but-alive migrate must never have its lock stolen out from under
+// it, or two migrations run against the same database at once.
+const MIGRATE_TIMEOUT_MS = 60_000;
+const STALE_LOCK_MS = 2 * MIGRATE_TIMEOUT_MS;
+// Must exceed STALE_LOCK_MS, otherwise a waiter gives up before it is ever allowed to steal.
+const LOCK_WAIT_TIMEOUT_MS = 5 * MIGRATE_TIMEOUT_MS;
+
+function removeLockIfStale(lockDir: string): void {
+	try {
+		if (Date.now() - statSync(lockDir).mtimeMs > STALE_LOCK_MS) {
+			rmSync(lockDir, { recursive: true, force: true });
+		}
+	} catch {
+		// lock vanished concurrently — next acquire attempt will settle it
+	}
+}
+
 function withMigrationLock(action: () => void): void {
 	const lockDir = getMigrationLockDir();
 	const startedAt = Date.now();
-	let acquired = false;
 
-	while (!acquired) {
-		try {
-			mkdirSync(lockDir);
-			acquired = true;
-		} catch (error) {
-			const nodeError = error as NodeJS.ErrnoException;
-			if (nodeError.code !== 'EEXIST') {
-				throw error;
-			}
-			if (Date.now() - startedAt > 120_000) {
-				throw new Error(`Timed out waiting for Prisma test migration lock: ${lockDir}`);
-			}
-			sleepSync(250);
+	while (!tryAcquireLock(lockDir)) {
+		removeLockIfStale(lockDir);
+		if (Date.now() - startedAt > LOCK_WAIT_TIMEOUT_MS) {
+			throw new Error(`Timed out waiting for Prisma test migration lock: ${lockDir}`);
 		}
+		sleepSync(250);
 	}
 
 	try {
@@ -142,6 +164,7 @@ function ensureTestSchemaMigrated(): void {
 			execSync('npx prisma migrate deploy --schema prisma/schema.prisma', {
 				stdio: 'pipe',
 				env: process.env as NodeJS.ProcessEnv,
+				timeout: MIGRATE_TIMEOUT_MS, // never let a hung migrate block the whole suite
 			});
 		});
 	} catch (error) {
