@@ -29,7 +29,7 @@ import FoodSelectionCompletedView from '../../src/client/components/FoodSelectio
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <FoodSelectionCompletedView />
     </MemoryRouter>,
   );

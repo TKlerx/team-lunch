@@ -74,7 +74,7 @@ import FoodSelectionActiveView from '../../src/client/components/FoodSelectionAc
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <FoodSelectionActiveView />
     </MemoryRouter>,
   );

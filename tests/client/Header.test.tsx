@@ -15,7 +15,7 @@ function renderHeader(
   authMethod: AuthMethod | null = 'local',
 ) {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <Header
         nickname={nickname}
         authMethod={authMethod}

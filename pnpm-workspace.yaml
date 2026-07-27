@@ -10,12 +10,37 @@ allowBuilds:
 # Dependency overrides (pnpm 11 reads these here, not from package.json).
 overrides:
   effect: 3.21.0
-  '@hono/node-server': 1.19.13
+  '@hono/node-server': 2.0.10
+  hono: 4.12.27
+  'minimatch@3>brace-expansion': 1.1.16
+  'minimatch@5>brace-expansion': 2.1.2
+  'minimatch@10>brace-expansion': 5.0.8
+  valibot: ^1.4.2
+  '@fastify/ajv-compiler>fast-uri': 3.1.4
+  'ajv>fast-uri': 3.1.4
+  'fast-json-stringify>fast-uri': 4.1.1
 
 # Wait seven days before resolving newly published packages.
 minimumReleaseAge: 10080
 
+# Security-patched release; intentionally exempt from the maturity delay.
+minimumReleaseAgeExclude:
+  - '@fastify/static'
+  - '@hono/node-server'
+  - brace-expansion
+
 # Audit policy.
+# GHSA-mh99-v99m-4gvg: ExcelJS 4.4.0 is the only available release and depends
+# on brace-expansion v1/v2 through its archive writer. The patched v5 API is
+# incompatible with those dependencies. This app only calls `xlsx.writeBuffer()`
+# to generate an authenticated order export; it never parses uploads or accepts
+# glob patterns. Remove this exception when ExcelJS replaces those dependencies.
+#
+# GHSA-qwww-vcr4-c8h2: React Router's RSC-mode CSRF bypass is unreachable in
+# this client-only Vite SPA: it has no SSR, RSC, server actions, or static handler.
+# React Router 8 is the first patched version; revisit when its DOM package supports
+# the app's routing model.
+#
 # GHSA-w5hq-g745-h8pq: uuid v3/v5/v6 missing buffer bounds check when a buffer
 # is supplied. Reached only transitively via exceljs, which uses uuid v4
 # (random, no buffer arg), so the vulnerable code path is not exercised.
@@ -23,4 +48,6 @@ minimumReleaseAge: 10080
 # so we accept this advisory instead of upgrading.
 auditConfig:
   ignoreGhsas:
+    - GHSA-mh99-v99m-4gvg
+    - GHSA-qwww-vcr4-c8h2
     - GHSA-w5hq-g745-h8pq

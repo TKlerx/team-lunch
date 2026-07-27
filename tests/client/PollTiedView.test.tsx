@@ -38,7 +38,7 @@ import PollTiedView from '../../src/client/components/PollTiedView.js';
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <PollTiedView />
     </MemoryRouter>,
   );

@@ -35,7 +35,7 @@ import FoodDeliveryView from '../../src/client/components/FoodDeliveryView.js';
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <FoodDeliveryView />
     </MemoryRouter>,
   );

@@ -47,7 +47,7 @@ import ManageMenus from '../../src/client/pages/ManageMenus.js';
 
 function renderPage() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <ManageMenus />
     </MemoryRouter>,
   );
@@ -193,8 +193,10 @@ describe('ManageMenus', () => {
     await vi.waitFor(() => {
       expect(mockImportMenuJson).toHaveBeenCalledTimes(1);
     });
-    // Panel closes after successful import
-    expect(screen.queryByLabelText(/paste menu json/i)).not.toBeInTheDocument();
+    // React 19 commits the close after the import promise resolves.
+    await vi.waitFor(() => {
+      expect(screen.queryByLabelText(/paste menu json/i)).not.toBeInTheDocument();
+    });
   });
 
   it('previews and imports from pasted JSON text', async () => {

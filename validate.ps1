@@ -369,7 +369,7 @@ if ($Phase -in "all", "full", "quality", "commit") {
 }
 
 if ($Phase -in "all", "full", "quality", "commit") {
-    Invoke-ValidationStep "Dependency audit (pnpm audit --prod)" "pnpm audit --prod" "dependency-audit" "production dependency audit failed" {
+    Invoke-ValidationStep "Dependency audit (pnpm audit --prod)" "pnpm audit:prod" "dependency-audit" "production dependency audit failed" {
         param($result)
         Get-DependencyAuditSummary $result
     }
