@@ -281,6 +281,7 @@ function Invoke-TrivyImageScan {
     $trivyImage = if ($env:TRIVY_IMAGE) { $env:TRIVY_IMAGE } else { $defaultTrivyImage }
     $scanImage = if ($env:TRIVY_SCAN_IMAGE) { $env:TRIVY_SCAN_IMAGE } else { "team-lunch:trivy-scan" }
     $viteBasePath = if ($env:VITE_BASE_PATH) { $env:VITE_BASE_PATH } else { "/" }
+    $trivyIgnoreFile = (Resolve-Path ".trivyignore").Path
 
     try {
         $dockerVersion = Invoke-NativeCommand "docker --version"
@@ -295,7 +296,7 @@ function Invoke-TrivyImageScan {
             throw "docker build failed for $scanImage"
         }
 
-        $scanResult = Invoke-NativeCommand "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy_cache:/root/.cache $trivyImage image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress $scanImage"
+        $scanResult = Invoke-NativeCommand "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=bind,source=`"$trivyIgnoreFile`",target=/trivyignore,readonly -v trivy_cache:/root/.cache $trivyImage image --scanners vuln --severity HIGH,CRITICAL --ignorefile /trivyignore --exit-code 1 --no-progress $scanImage"
         if ($scanResult.ExitCode -ne 0) {
             Write-CommandLog $scanResult
             throw "trivy found high/critical vulnerabilities in $scanImage"
