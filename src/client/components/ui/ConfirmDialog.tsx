@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Modal } from './Modal.js';
 import { Button } from './Button.js';
 
@@ -33,7 +33,10 @@ export function ConfirmDialog({
       <h2 id="confirm-dialog-title" className="text-lg font-semibold text-fg">
         {title}
       </h2>
-      {consequenceText ? <p className="mt-2 text-sm text-fg-muted">{consequenceText}</p> : null}
+      {/* pre-line: callers pass multi-line warnings (allergies/dislikes) that HTML would otherwise collapse. */}
+      {consequenceText ? (
+        <p className="mt-2 whitespace-pre-line text-sm text-fg-muted">{consequenceText}</p>
+      ) : null}
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="ghost" onClick={onCancel}>
           {cancelLabel}
@@ -55,6 +58,16 @@ export function useConfirmDialog() {
     pendingRef.current = null;
     setPending(null);
   }, []);
+
+  // An SSE phase change can unmount the host mid-confirm; settle the promise so the
+  // awaiting caller still reaches its `finally` and clears its submitting flag.
+  useEffect(
+    () => () => {
+      pendingRef.current?.resolve(false);
+      pendingRef.current = null;
+    },
+    [],
+  );
 
   const confirm = useCallback((options: ConfirmDialogOptions) => {
     pendingRef.current?.resolve(false);
