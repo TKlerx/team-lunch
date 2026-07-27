@@ -164,7 +164,7 @@ function OrderForm({
     if (warningLines.length > 0) {
       const shouldContinue = await confirm({
         title: "Add this meal anyway?",
-        consequenceText: `${warningLines.join("\n")}\n\nDo you still want to add this meal?`,
+        consequenceText: warningLines.join("\n"),
         confirmLabel: "Add meal",
       });
       if (!shouldContinue) {
@@ -667,10 +667,10 @@ function MissingOrdersEmptyState({
         real order.
       </p>
       <Button
-        variant="success"
+        variant="success-solid"
         onClick={onFinishNow}
         disabled={submitting}
-        className="w-full border-0 bg-success-solid px-3 text-white hover:opacity-90"
+        className="w-full px-3"
       >
         Click here when you place the order.
       </Button>

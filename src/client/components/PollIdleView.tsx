@@ -143,9 +143,9 @@ function DashboardInsights({
                     </p>
                   </div>
                   <Button
-                    variant="warning"
+                    variant="warning-solid"
                     onClick={() => onOpenHistorySelection?.(selection.selectionId)}
-                    className="border-0 bg-warning-solid px-3 text-warning-on hover:opacity-90"
+                    className="px-3"
                   >
                     Rate now
                   </Button>
@@ -372,9 +372,9 @@ function SingleMenuQuickStart({
 
         <Button
           type="submit"
-          variant="success"
+          variant="success-solid"
           disabled={submitting}
-          className="w-full border-0 bg-success-solid py-3 text-white hover:opacity-90"
+          className="w-full py-3"
         >
           {submitting ? 'Starting...' : 'Start Food Selection'}
         </Button>

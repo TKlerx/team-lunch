@@ -163,7 +163,7 @@ function FallbackCandidateRow({
         <Button variant="warning" onClick={() => onPingFallbackCandidate(candidate)} disabled={pingingFallbackFor === candidate.nickname || submitting} className="bg-surface px-3 py-1.5 text-xs">
           {pingingFallbackFor === candidate.nickname ? 'Pinging...' : 'Ping user'}
         </Button>
-        <Button variant="warning" onClick={() => onPlaceFallbackOrder(candidate)} disabled={placingFallbackFor === candidate.nickname || submitting} className="border-0 bg-warning-solid px-3 py-1.5 text-xs text-warning-on hover:opacity-90">
+        <Button variant="warning-solid" onClick={() => onPlaceFallbackOrder(candidate)} disabled={placingFallbackFor === candidate.nickname || submitting} className="px-3 py-1.5 text-xs">
           Place default meal
         </Button>
       </div>

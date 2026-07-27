@@ -125,10 +125,10 @@ export default function PollTiedView() {
 
         {/* Random winner */}
         <Button
-          variant="warning"
+          variant="warning-solid"
           onClick={() => void handleRandomWinner()}
           disabled={submitting}
-          className="w-full border-0 bg-warning-solid text-warning-on hover:opacity-90"
+          className="w-full"
         >
           Pick randomly
         </Button>
@@ -140,10 +140,10 @@ export default function PollTiedView() {
               <div className="inline-flex items-center gap-2 rounded border border-danger bg-danger-soft px-4 py-2">
                 <span className="text-sm text-danger-fg">Kill this poll?</span>
                 <Button
-                  variant="danger"
+                  variant="danger-solid"
                   onClick={() => void handleAbort()}
                   disabled={submitting}
-                  className="border-0 bg-danger-solid px-3 py-1 text-white hover:opacity-90"
+                  className="px-3 py-1"
                 >
                   Yes, kill
                 </Button>

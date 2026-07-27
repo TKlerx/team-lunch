@@ -7,7 +7,10 @@ export type ButtonVariant =
   | 'ghost'
   | 'danger'
   | 'success'
-  | 'warning';
+  | 'warning'
+  | 'danger-solid'
+  | 'success-solid'
+  | 'warning-solid';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -20,6 +23,10 @@ const VARIANTS: Record<ButtonVariant, string> = {
   danger: 'border border-danger bg-danger-soft text-danger-fg hover:bg-danger-soft/70',
   success: 'border border-success bg-success-soft text-success-fg hover:bg-success-soft/70',
   warning: 'border border-warning bg-warning-soft text-warning-fg hover:bg-warning-soft/70',
+  // Filled counterparts for the primary action in a group; `primary` is already solid.
+  'danger-solid': 'bg-danger-solid text-danger-on hover:opacity-90',
+  'success-solid': 'bg-success-solid text-success-on hover:opacity-90',
+  'warning-solid': 'bg-warning-solid text-warning-on hover:opacity-90',
 };
 
 /**

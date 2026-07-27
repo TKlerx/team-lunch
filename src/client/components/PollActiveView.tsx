@@ -491,12 +491,12 @@ export default function PollActiveView() {
           </p>
           {canKillPoll ? (
             <Button
-              variant="success"
+              variant="success-solid"
               onClick={() => {
                 void handleFinishNow();
               }}
               disabled={submitting}
-              className="mt-4 border-0 bg-success-solid text-white hover:opacity-90"
+              className="mt-4"
             >
               Confirm completion
             </Button>

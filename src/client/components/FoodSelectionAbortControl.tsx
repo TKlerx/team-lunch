@@ -17,10 +17,10 @@ export default function FoodSelectionAbortControl({
       <div className="inline-flex items-center gap-2 rounded border border-danger bg-danger-soft px-3 py-2">
         <span className="text-sm text-danger-fg">Abort food selection?</span>
         <Button
-          variant="danger"
+          variant="danger-solid"
           onClick={() => void onAbort().finally(() => setShowAbortConfirm(false))}
           disabled={disabled}
-          className="border-0 bg-danger-solid px-3 py-1 text-danger-on hover:opacity-90"
+          className="px-3 py-1"
         >
           Yes, abort
         </Button>

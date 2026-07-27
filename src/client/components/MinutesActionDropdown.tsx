@@ -64,11 +64,10 @@ export default function MinutesActionDropdown({
   return (
     <div className="relative inline-block" ref={containerRef}>
       <Button
-        variant="success"
+        variant="success-solid"
         onClick={() => setIsOpen((open) => !open)}
         disabled={disabled || submitting}
         aria-label={triggerAriaLabel}
-        className="border-0 bg-success-solid text-success-on hover:opacity-90"
       >
         {triggerLabel}
       </Button>

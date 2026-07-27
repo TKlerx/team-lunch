@@ -110,10 +110,10 @@ export default function FoodSelectionOvertimeView() {
 
           {canAdvanceToOrdering ? (
             <Button
-              variant="success"
+              variant="success-solid"
               onClick={() => void handleComplete()}
               disabled={submitting}
-              className="w-full border-0 bg-success-solid text-white hover:opacity-90"
+              className="w-full"
             >
               Confirm &mdash; we&apos;re done
             </Button>
