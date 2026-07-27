@@ -100,7 +100,7 @@ describe('App layout with Orders rail', () => {
     localStorage.setItem('team_lunch_display_name', 'Admin');
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -117,7 +117,7 @@ describe('App layout with Orders rail', () => {
 
   it('renders orders rail and main view by default', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -130,7 +130,7 @@ describe('App layout with Orders rail', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -145,7 +145,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/menus']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -161,7 +161,7 @@ describe('App layout with Orders rail', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -183,7 +183,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -206,7 +206,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -234,7 +234,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -262,7 +262,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -287,7 +287,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/menus']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -322,7 +322,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -347,7 +347,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -368,7 +368,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -392,7 +392,7 @@ describe('App layout with Orders rail', () => {
     });
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
@@ -409,7 +409,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/shopping-list']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -422,7 +422,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/shopping']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -447,7 +447,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/polls/poll-42']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -481,7 +481,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/polls/poll-history']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -507,7 +507,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/polls/poll-stale']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -533,7 +533,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/food-selections/fs-live']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -565,7 +565,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/food-selections/fs-history']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,
@@ -590,7 +590,7 @@ describe('App layout with Orders rail', () => {
     render(
       <MemoryRouter
         initialEntries={['/food-selections/missing-selection']}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
       >
         <App />
       </MemoryRouter>,

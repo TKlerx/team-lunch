@@ -27,7 +27,7 @@ import PollFinishedView from '../../src/client/components/PollFinishedView.js';
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <PollFinishedView />
     </MemoryRouter>,
   );

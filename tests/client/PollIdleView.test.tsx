@@ -28,7 +28,7 @@ import PollIdleView from '../../src/client/components/PollIdleView.js';
 
 function renderView(onOpenHistorySelection?: (selectionId: string) => void) {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <PollIdleView onOpenHistorySelection={onOpenHistorySelection} />
     </MemoryRouter>,
   );

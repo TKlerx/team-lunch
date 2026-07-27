@@ -1,0 +1,8 @@
+# ExcelJS 4.4.0's archive writer requires brace-expansion v1/v2. This app only
+# writes authenticated order exports and does not parse uploads or glob patterns.
+# Remove when ExcelJS replaces these legacy dependencies.
+CVE-2026-14257
+
+# React Router RSC-mode issue; this Vite SPA has no SSR, RSC, or server actions.
+# Remove when a compatible react-router-dom release contains the fix.
+GHSA-qwww-vcr4-c8h2

@@ -29,7 +29,7 @@ import FoodSelectionOvertimeView from '../../src/client/components/FoodSelection
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <FoodSelectionOvertimeView />
     </MemoryRouter>,
   );

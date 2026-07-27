@@ -56,7 +56,7 @@ import PollActiveView from '../../src/client/components/PollActiveView.js';
 
 function renderView() {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <PollActiveView />
     </MemoryRouter>,
   );

@@ -39,7 +39,7 @@ vi.mock('../../src/client/components/FoodSelectionCompletedView.js', () => ({
 
 function renderPhase(phase: AppPhase) {
   return render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter>
       <MainView phase={phase} />
     </MemoryRouter>,
   );

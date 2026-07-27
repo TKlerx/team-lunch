@@ -453,7 +453,7 @@ function ImportMenuPanel({ onClose }: { onClose: () => void }) {
   const [preview, setPreview] = useState<ImportMenuPreviewResponse | null>(null);
   const [jsonTextInput, setJsonTextInput] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const previewRequestIdRef = useRef(0);
 
   const readFileText = async (file: File): Promise<string> => {

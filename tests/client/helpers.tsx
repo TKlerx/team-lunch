@@ -13,7 +13,7 @@ export function RouterWrapper({ children, route = '/' }: { children: ReactNode; 
   return (
     <MemoryRouter
       initialEntries={[route]}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+
     >
       {children}
     </MemoryRouter>
