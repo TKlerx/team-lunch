@@ -457,7 +457,7 @@ describe('FoodSelectionActiveView', () => {
     expect(screen.queryByText('Gluten pizza')).not.toBeInTheDocument();
 
     view.rerender(
-      <MemoryRouter key="fresh-food-selection-view" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <MemoryRouter key="fresh-food-selection-view">
         <FoodSelectionActiveView />
       </MemoryRouter>,
     );
