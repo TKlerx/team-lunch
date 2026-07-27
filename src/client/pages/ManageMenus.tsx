@@ -5,6 +5,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
+import menuImportPromptTemplate from '../../../import/menu/import-menu-prompt.txt?raw';
 import type {
   Menu,
   ImportMenuPreviewResponse,
@@ -12,27 +13,12 @@ import type {
   UserMenuDefaultPreference,
 } from '../../lib/types.js';
 import { getErrorMessage } from '../lib/errorMessage.js';
+import { validateMenuTags } from '../../lib/menuItemTags.js';
 
 const MENU_IMPORT_JSON_SCHEMA = menuImportJsonSchema;
 
 const MENU_IMPORT_SCHEMA_TEXT = JSON.stringify(MENU_IMPORT_JSON_SCHEMA, null, 2);
-const MENU_IMPORT_LLM_PROMPT = [
-  'You extract a Team Lunch menu import JSON from unstructured menu text.',
-  'Return JSON only. Do not include markdown, explanations, or comments.',
-  'Follow this exact schema and field names:',
-  MENU_IMPORT_SCHEMA_TEXT,
-  'Hard validation rules:',
-  '- Root object must be { "menu": [...] } with at least 2 entries.',
-  '- menu[0] is metadata and must include "name" and "date-created" (ISO datetime).',
-  '- menu[1..] are category sections with an "items" array.',
-  '- Every item needs "name", "ingredients", "price"; optional "item-number" is allowed.',
-  '- item-number, if provided, must be a string with max 40 characters.',
-  '- price must be a number between 0 and 9999.99 with max 2 decimal places.',
-  '- Item names must be unique across all sections (case-insensitive).',
-  '- Keep side dishes and drinks as menu items when present; make their item name/category clear (for example "Garlic Naan", "Mango Lassi", or a "Drinks" section) so the app can tag them as course:side or course:drink after import.',
-  '- If a value is unknown, use empty string for optional strings or omit optional fields.',
-  'Output only one JSON object, no surrounding text.',
-].join('\n');
+const MENU_IMPORT_LLM_PROMPT = menuImportPromptTemplate.replace('{{schema}}', MENU_IMPORT_SCHEMA_TEXT).trim();
 
 function formatPrice(value: number | null): string {
   return value === null ? '-' : `€${value.toFixed(2)}`;
@@ -89,7 +75,22 @@ function parseMenuUrlInput(value: string): { value: string | null; error: string
   return normalized;
 }
 
+function parseTagsInput(value: string): { tags: string[]; error: string | null } {
+  return validateMenuTags(value.split(','), 'tags');
+}
 
+function TagBadges({ tags }: { tags: string[] }) {
+  if (tags.length === 0) return null;
+  return (
+    <div className="mt-1 flex flex-wrap gap-1">
+      {tags.map((tag) => (
+        <span key={tag} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function MenuEditDialog({
   menuName,
@@ -239,6 +240,7 @@ function MenuItemRow({
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description ?? '');
   const [price, setPrice] = useState(item.price === null ? '' : item.price.toFixed(2));
+  const [tagsInput, setTagsInput] = useState(item.tags.join(', '));
   const [error, setError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -264,6 +266,11 @@ function MenuItemRow({
       setError(parsedPrice.error);
       return;
     }
+    const parsedTags = parseTagsInput(tagsInput);
+    if (parsedTags.error) {
+      setError(parsedTags.error);
+      return;
+    }
     setSubmitting(true);
     try {
       await api.updateMenuItem(menuId, item.id, {
@@ -271,6 +278,7 @@ function MenuItemRow({
         description: description.trim() || undefined,
         itemNumber: trimmedItemNumber || null,
         price: parsedPrice.value,
+        tags: parsedTags.tags,
       });
       setEditing(false);
       setError('');
@@ -332,6 +340,13 @@ function MenuItemRow({
             className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
             placeholder="Price (optional)"
           />
+          <input
+            type="text"
+            value={tagsInput}
+            onChange={(e) => { setTagsInput(e.target.value); setError(''); }}
+            className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+            placeholder="Tags, comma-separated (optional)"
+          />
           {error && <p className="text-sm text-danger-fg">{error}</p>}
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -350,6 +365,7 @@ function MenuItemRow({
                 setName(item.name);
                 setDescription(item.description ?? '');
                 setPrice(item.price === null ? '' : item.price.toFixed(2));
+                setTagsInput(item.tags.join(', '));
                 setError('');
               }}
               className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"
@@ -366,7 +382,10 @@ function MenuItemRow({
     <>
       <div className="grid grid-cols-1 gap-2 rounded px-3 py-2 hover:bg-surface-muted sm:grid-cols-[max-content_minmax(0,1fr)_minmax(0,4fr)_max-content_max-content_max-content] sm:items-start">
         <p className="inline-flex w-fit rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-fg-muted sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal">{item.itemNumber ?? '-'}</p>
-        <p className="whitespace-normal break-words text-sm font-medium text-fg sm:truncate">{item.name}</p>
+        <div className="min-w-0">
+          <p className="whitespace-normal break-words text-sm font-medium text-fg sm:truncate">{item.name}</p>
+          <TagBadges tags={item.tags} />
+        </div>
         <p className="whitespace-normal break-words text-left text-sm text-fg-muted">{item.description ?? '-'}</p>
         <p className="text-sm font-medium text-success-fg sm:whitespace-nowrap">{formatPrice(item.price)}</p>
         <button
@@ -674,6 +693,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { showToast } = useToast();
@@ -698,6 +718,11 @@ function AddItemForm({ menuId }: { menuId: string }) {
       setError(parsedPrice.error);
       return;
     }
+    const parsedTags = parseTagsInput(tagsInput);
+    if (parsedTags.error) {
+      setError(parsedTags.error);
+      return;
+    }
     setSubmitting(true);
     try {
       await api.createMenuItem(menuId, {
@@ -705,11 +730,13 @@ function AddItemForm({ menuId }: { menuId: string }) {
         description: description.trim() || undefined,
         itemNumber: itemNumber.trim() || null,
         price: parsedPrice.value,
+        tags: parsedTags.tags,
       });
       setItemNumber('');
       setName('');
       setDescription('');
       setPrice('');
+      setTagsInput('');
       setError('');
       setOpen(false);
     } catch (err) {
@@ -769,6 +796,13 @@ function AddItemForm({ menuId }: { menuId: string }) {
         className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
         placeholder="Price (optional)"
       />
+      <input
+        type="text"
+        value={tagsInput}
+        onChange={(e) => { setTagsInput(e.target.value); setError(''); }}
+        className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-fg focus:border-accent focus:outline-none"
+        placeholder="Tags, comma-separated (optional)"
+      />
       {error && <p className="text-sm text-danger-fg">{error}</p>}
       <div className="flex flex-col gap-2 sm:flex-row">
         <button
@@ -786,6 +820,7 @@ function AddItemForm({ menuId }: { menuId: string }) {
             setName('');
             setDescription('');
             setPrice('');
+            setTagsInput('');
             setError('');
           }}
           className="w-full rounded px-3 py-2 text-xs text-fg-muted hover:bg-surface-muted sm:w-auto sm:py-1"

@@ -53,6 +53,7 @@ describe('appReducer state safety', () => {
               name: 'Margherita',
               description: null,
               price: 9.5,
+              tags: [],
               createdAt: '2026-03-02T10:00:00.000Z',
             },
           ],

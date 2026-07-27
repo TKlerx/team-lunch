@@ -12,6 +12,11 @@ import { useConfirmDialog } from "./ui/ConfirmDialog.js";
 import { formatPrice } from "../utils/orderCopy.js";
 import { getErrorMessage } from "../lib/errorMessage.js";
 import {
+  getFoodSelectionVisibleTags,
+  isBeverageMenuItem,
+  matchesAnySelectedTag,
+} from "../../lib/menuItemTags.js";
+import {
   getAuthenticatedActorKey,
   getAuthenticatedDisplayLabel,
   isAdminAuthenticatedUser,
@@ -84,6 +89,7 @@ type OrderMenuItem = {
   name: string;
   description: string | null;
   price: number | null;
+  tags: string[];
 };
 
 type ExistingOrder = {
@@ -109,6 +115,123 @@ type OrderFormProps = {
   ) => void;
 };
 
+type OrderItemCardProps = {
+  item: OrderMenuItem;
+  note: string;
+  warnings: ItemWarnings | undefined;
+  mark: MealRecommendationMark | undefined;
+  adding: boolean;
+  disabled: boolean;
+  marksLoading: boolean;
+  onNoteChange: (itemId: string, value: string) => void;
+  onAdd: (itemId: string) => void;
+  onToggleMealMark: (itemId: string, sentiment: MealAnticipatedLikeSentiment) => void;
+};
+
+function OrderItemCard({
+  item,
+  note,
+  warnings,
+  mark,
+  adding,
+  disabled,
+  marksLoading,
+  onNoteChange,
+  onAdd,
+  onToggleMealMark,
+}: OrderItemCardProps) {
+  const visibleTags = getFoodSelectionVisibleTags(item);
+  return (
+    <div id={`meal-item-${item.id}`} tabIndex={-1} className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+        <span className="truncate text-sm font-medium text-fg">
+          {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
+          <span>{item.name}</span>
+        </span>
+        <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
+          {item.price === null ? "-" : formatPrice(item.price)}
+        </span>
+      </div>
+      <div>
+        {item.description && <p className="text-xs text-fg-muted">{item.description}</p>}
+        {visibleTags.length > 0 && (
+          <div className="mt-1 flex flex-wrap gap-1">
+            {visibleTags.map((tag) => (
+              <span key={tag} className="rounded-full bg-accent-soft/40 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {warnings?.allergies.length ? (
+          <p className="mt-1 text-xs font-medium text-danger-fg">
+            Ingredient alert: {warnings.allergies.join(", ")}
+          </p>
+        ) : null}
+        {warnings?.dislikes.length ? (
+          <p className="mt-1 text-xs font-medium text-warning-fg">
+            Preference match: {warnings.dislikes.join(", ")}
+          </p>
+        ) : null}
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input
+          value={note}
+          onChange={(event) => onNoteChange(item.id, event.target.value)}
+          maxLength={200}
+          className="min-w-0 flex-1"
+          placeholder="Size / spiciness / extras / comments"
+          aria-label={`Comment for ${item.name}`}
+        />
+        <Button onClick={() => onAdd(item.id)} disabled={adding || disabled} className="w-full shrink-0 px-3 sm:w-auto">
+          Add
+        </Button>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {mark ? (
+          <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+            mark.sentiment === "like" ? "bg-success-soft text-success-fg" : "bg-warning-soft text-warning-fg"
+          }`}
+          >
+            Marked {mark.sentiment}
+          </span>
+        ) : (
+          <span className="text-[11px] font-medium uppercase tracking-wide text-fg-muted">Mark this dish</span>
+        )}
+        <Button
+          variant="secondary"
+          onClick={() => onToggleMealMark(item.id, "like")}
+          disabled={disabled || marksLoading}
+          className={`px-2.5 py-1 text-xs ${mark?.sentiment === "like" ? "border-success bg-success-soft text-success-fg" : "text-fg-muted"}`}
+          aria-label={`Like ${item.name}`}
+        >
+          Like
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => onToggleMealMark(item.id, "dislike")}
+          disabled={disabled || marksLoading}
+          className={`px-2.5 py-1 text-xs ${mark?.sentiment === "dislike" ? "border-warning bg-warning-soft text-warning-fg" : "text-fg-muted"}`}
+          aria-label={`Dislike ${item.name}`}
+        >
+          Dislike
+        </Button>
+        {mark ? (
+          <Button
+            variant="secondary"
+            onClick={() => onToggleMealMark(item.id, mark.sentiment)}
+            disabled={disabled || marksLoading}
+            className="px-2.5 py-1 text-xs text-fg-muted"
+            aria-label={`Clear mark for ${item.name}`}
+          >
+            Clear
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function OrderForm({
   selectionId,
   menuItems,
@@ -123,25 +246,31 @@ function OrderForm({
 }: OrderFormProps) {
   const [itemNotes, setItemNotes] = useState<Record<string, string>>({});
   const [itemSearch, setItemSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<"meal" | "beverage">("meal");
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(() => new Set());
   const [addingItemId, setAddingItemId] = useState<string | null>(null);
   const [withdrawingAll, setWithdrawingAll] = useState(false);
   const { confirm, dialog } = useConfirmDialog();
   const { showToast } = useToast();
 
+  const tabMenuItems = useMemo(
+    () => menuItems.filter((item) => isBeverageMenuItem(item) === (activeTab === "beverage")),
+    [activeTab, menuItems],
+  );
+  const availableTags = useMemo(
+    () => Array.from(new Set(tabMenuItems.flatMap(getFoodSelectionVisibleTags))).sort(),
+    [tabMenuItems],
+  );
   const filteredMenuItems = useMemo(() => {
     const normalizedSearch = itemSearch.trim().toLowerCase();
-    if (normalizedSearch.length < 3) {
-      return menuItems;
-    }
-
-    return menuItems.filter((item) => {
+    return tabMenuItems.filter((item) => {
       const description = item.description?.toLowerCase() ?? "";
-      return (
-        item.name.toLowerCase().includes(normalizedSearch) ||
-        description.includes(normalizedSearch)
-      );
+      const matchesSearch = normalizedSearch.length < 3
+        || item.name.toLowerCase().includes(normalizedSearch)
+        || description.includes(normalizedSearch);
+      return matchesSearch && matchesAnySelectedTag(item, selectedTags);
     });
-  }, [menuItems, itemSearch]);
+  }, [itemSearch, selectedTags, tabMenuItems]);
   const itemNumberById = useMemo(
     () =>
       new Map(
@@ -151,6 +280,20 @@ function OrderForm({
       ),
     [menuItems],
   );
+
+  const toggleSelectedTag = (tag: string) => {
+    setSelectedTags((current) => {
+      const next = new Set(current);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  };
+
+  const switchTab = (tab: "meal" | "beverage") => {
+    setActiveTab(tab);
+    setSelectedTags(new Set());
+  };
 
   const handleAddItem = async (itemId: string) => {
     const warnings = itemWarningsById.get(itemId);
@@ -226,6 +369,43 @@ function OrderForm({
         </Link>
       </div>
 
+      <div className="flex rounded-lg border border-border bg-surface-muted p-1" role="tablist" aria-label="Menu item type">
+        {(["meal", "beverage"] as const).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab}
+            onClick={() => switchTab(tab)}
+            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+              activeTab === tab ? "bg-surface text-fg shadow-sm" : "text-fg-muted hover:text-fg"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {availableTags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5" aria-label="Filter tags">
+          {availableTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              aria-pressed={selectedTags.has(tag)}
+              onClick={() => toggleSelectedTag(tag)}
+              className={`rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                selectedTags.has(tag)
+                  ? "border-accent bg-accent-soft text-accent-fg"
+                  : "border-transparent bg-surface-muted text-fg-muted hover:text-fg"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
+
       <Input
         value={itemSearch}
         onChange={(e) => setItemSearch(e.target.value)}
@@ -234,122 +414,19 @@ function OrderForm({
 
       <div className="max-h-[65vh] space-y-2 overflow-y-auto pr-1">
         {filteredMenuItems.map((item) => (
-          <div
+          <OrderItemCard
             key={item.id}
-            id={`meal-item-${item.id}`}
-            tabIndex={-1}
-            className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted"
-          >
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-              <span className="truncate text-sm font-medium text-fg">
-                {item.itemNumber && (
-                  <span className="mr-1 text-fg-muted">{item.itemNumber}</span>
-                )}
-                <span>{item.name}</span>
-              </span>
-              <span className="text-right text-xs font-semibold text-success-fg sm:w-20 sm:whitespace-nowrap">
-                {item.price === null ? "-" : formatPrice(item.price)}
-              </span>
-            </div>
-            <div>
-              {item.description && (
-                <p className="text-xs text-fg-muted">{item.description}</p>
-              )}
-              {itemWarningsById.get(item.id)?.allergies.length ? (
-                <p className="mt-1 text-xs font-medium text-danger-fg">
-                  Ingredient alert:{" "}
-                  {itemWarningsById.get(item.id)?.allergies.join(", ")}
-                </p>
-              ) : null}
-              {itemWarningsById.get(item.id)?.dislikes.length ? (
-                <p className="mt-1 text-xs font-medium text-warning-fg">
-                  Preference match:{" "}
-                  {itemWarningsById.get(item.id)?.dislikes.join(", ")}
-                </p>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Input
-                value={itemNotes[item.id] ?? ""}
-                onChange={(event) =>
-                  setItemNotes((prev) => ({
-                    ...prev,
-                    [item.id]: event.target.value,
-                  }))
-                }
-                maxLength={200}
-                className="min-w-0 flex-1"
-                placeholder="Size / spiciness / extras / comments"
-                aria-label={`Comment for ${item.name}`}
-              />
-              <Button
-                onClick={() => void handleAddItem(item.id)}
-                disabled={addingItemId === item.id || withdrawingAll}
-                className="w-full shrink-0 px-3 sm:w-auto"
-              >
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              {mealMarksByItemId.get(item.id) ? (
-                <span
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                    mealMarksByItemId.get(item.id)?.sentiment === "like"
-                      ? "bg-success-soft text-success-fg"
-                      : "bg-warning-soft text-warning-fg"
-                  }`}
-                >
-                  Marked {mealMarksByItemId.get(item.id)?.sentiment}
-                </span>
-              ) : (
-                <span className="text-[11px] font-medium uppercase tracking-wide text-fg-muted">
-                  Mark this dish
-                </span>
-              )}
-              <Button
-                variant="secondary"
-                onClick={() => void onToggleMealMark(item.id, "like")}
-                disabled={markingItemId === item.id || marksLoading}
-                className={`px-2.5 py-1 text-xs ${
-                  mealMarksByItemId.get(item.id)?.sentiment === "like"
-                    ? "border-success bg-success-soft text-success-fg"
-                    : "text-fg-muted"
-                }`}
-                aria-label={`Like ${item.name}`}
-              >
-                Like
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => void onToggleMealMark(item.id, "dislike")}
-                disabled={markingItemId === item.id || marksLoading}
-                className={`px-2.5 py-1 text-xs ${
-                  mealMarksByItemId.get(item.id)?.sentiment === "dislike"
-                    ? "border-warning bg-warning-soft text-warning-fg"
-                    : "text-fg-muted"
-                }`}
-                aria-label={`Dislike ${item.name}`}
-              >
-                Dislike
-              </Button>
-              {mealMarksByItemId.get(item.id) ? (
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    void onToggleMealMark(
-                      item.id,
-                      mealMarksByItemId.get(item.id)?.sentiment ?? "like",
-                    )
-                  }
-                  disabled={markingItemId === item.id || marksLoading}
-                  className="px-2.5 py-1 text-xs text-fg-muted"
-                  aria-label={`Clear mark for ${item.name}`}
-                >
-                  Clear
-                </Button>
-              ) : null}
-            </div>
-          </div>
+            item={item}
+            note={itemNotes[item.id] ?? ""}
+            warnings={itemWarningsById.get(item.id)}
+            mark={mealMarksByItemId.get(item.id)}
+            adding={addingItemId === item.id}
+            disabled={withdrawingAll || markingItemId === item.id}
+            marksLoading={marksLoading}
+            onNoteChange={(itemId, value) => setItemNotes((prev) => ({ ...prev, [itemId]: value }))}
+            onAdd={(itemId) => void handleAddItem(itemId)}
+            onToggleMealMark={(itemId, sentiment) => void onToggleMealMark(itemId, sentiment)}
+          />
         ))}
         {filteredMenuItems.length === 0 && (
           <p className="text-sm italic text-fg-muted">

@@ -105,7 +105,7 @@ model MenuItemFeature {
   menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
   officeLocation OfficeLocation @relation(fields: [officeLocationId], references: [id], onDelete: Cascade)
 
-  @@unique([menuItemId, tag])
+  @@unique([menuItemId, provenance, tag])
   @@index([itemIdentityKey, officeLocationId])
   @@map("menu_item_features")
 }

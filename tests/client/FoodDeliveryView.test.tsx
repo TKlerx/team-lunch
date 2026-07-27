@@ -107,8 +107,8 @@ describe('FoodDeliveryView', () => {
           createdAt: '2026-01-01T00:00:00Z',
           itemCount: 2,
           items: [
-            { id: 'i-1', menuId: 'menu-1', itemNumber: '12', name: 'Margherita', description: null, price: 9.5, createdAt: '2026-01-01T00:00:00Z' },
-            { id: 'i-2', menuId: 'menu-1', name: 'Pepperoni', description: null, price: 11, createdAt: '2026-01-01T00:00:00Z' },
+            { id: 'i-1', menuId: 'menu-1', itemNumber: '12', name: 'Margherita', description: null, price: 9.5, tags: [], createdAt: '2026-01-01T00:00:00Z' },
+            { id: 'i-2', menuId: 'menu-1', name: 'Pepperoni', description: null, price: 11, tags: [], createdAt: '2026-01-01T00:00:00Z' },
           ],
         },
       ],
@@ -214,7 +214,7 @@ describe('FoodDeliveryView', () => {
           createdAt: '2026-01-01T00:00:00Z',
           itemCount: 1,
           items: [
-            { id: 'i-1', menuId: 'menu-1', name: 'Margherita', description: null, price: 9.5, createdAt: '2026-01-01T00:00:00Z' },
+            { id: 'i-1', menuId: 'menu-1', name: 'Margherita', description: null, price: 9.5, tags: [], createdAt: '2026-01-01T00:00:00Z' },
           ],
         },
       ],

@@ -177,6 +177,7 @@ export function createMenuItem(
     description?: string;
     itemNumber?: string | null;
     price?: number | null;
+    tags?: string[];
   },
 ): Promise<MenuItem> {
   return request<MenuItem>(apiPath(`/menus/${menuId}/items`), {
@@ -193,6 +194,7 @@ export function updateMenuItem(
     description?: string;
     itemNumber?: string | null;
     price?: number | null;
+    tags?: string[];
   },
 ): Promise<MenuItem> {
   return request<MenuItem>(apiPath(`/menus/${menuId}/items/${itemId}`), {
