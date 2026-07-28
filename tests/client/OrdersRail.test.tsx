@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import OrdersRail from '../../src/client/components/OrdersRail.js';
-import { makeFoodSelection } from './helpers.js';
+import { makeFoodSelection, setupUser } from './helpers.js';
 
 describe('OrdersRail', () => {
   it('shows Start new Team Lunch as first prominent action', () => {
@@ -60,7 +59,7 @@ describe('OrdersRail', () => {
   });
 
   it('calls onSelectSelection when clicking a history item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onSelect = vi.fn();
 
     render(
@@ -77,7 +76,7 @@ describe('OrdersRail', () => {
   });
 
   it('calls onStartNewTeamLunch when clicking top action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onStart = vi.fn();
 
     render(
@@ -144,7 +143,7 @@ describe('OrdersRail', () => {
   });
 
   it('shows Back to ongoing Team Lunch when history is selected and process is ongoing', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onBack = vi.fn();
 
     render(

@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import MealOnboardingDialog from '../../src/client/components/MealOnboardingDialog.js';
+import { setupUser } from './helpers.js';
 
 describe('MealOnboardingDialog', () => {
   it('renders candidate cards and marks the selected dish', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onClose = vi.fn();
     const onMarkCandidate = vi.fn().mockResolvedValue(undefined);
 

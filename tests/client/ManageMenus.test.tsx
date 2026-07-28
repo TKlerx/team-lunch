@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeMenu, makeMenuItem } from './helpers.js';
+import { makeMenu, makeMenuItem, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -83,7 +82,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows dropdown options when clicking New Menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
@@ -119,7 +118,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows empty preview hint and disabled Confirm when import panel opens', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
@@ -131,7 +130,7 @@ describe('ManageMenus', () => {
   });
 
   it('copies AI prompt from import panel', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const clipboardWriteText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(globalThis.navigator, 'clipboard', {
       configurable: true,
@@ -203,7 +202,7 @@ describe('ManageMenus', () => {
   });
 
   it('previews and imports from pasted JSON text', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPreviewImportMenuJson.mockResolvedValue({
       menuName: 'Thai Bowl',
       menuExists: false,
@@ -245,7 +244,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows validation error when pasted JSON is invalid', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
 
@@ -311,7 +310,7 @@ describe('ManageMenus', () => {
   });
 
   it('calls createMenu with auto-incremented name via Manually', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCreateMenu.mockResolvedValue(makeMenu({ name: 'New Menu 1' }));
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
@@ -323,7 +322,7 @@ describe('ManageMenus', () => {
   });
 
   it('skips existing menu names when auto-incrementing', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCreateMenu.mockResolvedValue(makeMenu({ name: 'New Menu 3' }));
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -342,7 +341,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows API error on manual create failure', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCreateMenu.mockRejectedValue(new Error('Duplicate name'));
     mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [] });
     renderPage();
@@ -434,7 +433,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows menu edit dialog when clicking Edit', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -451,7 +450,7 @@ describe('ManageMenus', () => {
   });
 
   it('calls updateMenu API when saving name and contact details', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateMenu.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -480,7 +479,7 @@ describe('ManageMenus', () => {
   });
 
   it('sends orderUrl when editing order URL field', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateMenu.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -500,7 +499,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows validation error for non-http order URL', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -533,7 +532,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows delete confirmation dialog', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -550,7 +549,7 @@ describe('ManageMenus', () => {
   });
 
   it('calls deleteMenu API on confirmation', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockDeleteMenu.mockResolvedValue(undefined);
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -586,7 +585,7 @@ describe('ManageMenus', () => {
   });
 
   it('opens add item form and calls createMenuItem', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCreateMenuItem.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -616,7 +615,7 @@ describe('ManageMenus', () => {
   });
 
   it('edits item number and price for an existing menu item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateMenuItem.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -674,7 +673,7 @@ describe('ManageMenus', () => {
   });
 
   it('edits menu item safety labels and sends normalized API payloads', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateMenuItem.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -714,7 +713,7 @@ describe('ManageMenus', () => {
   });
 
   it('shows and edits menu item tags', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateMenuItem.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -738,7 +737,7 @@ describe('ManageMenus', () => {
   });
 
   it('saves a default meal and organizer fallback opt-in for a menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,

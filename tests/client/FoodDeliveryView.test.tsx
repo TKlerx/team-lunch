@@ -1,8 +1,7 @@
 ﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, within } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodOrder, makeFoodSelection } from './helpers.js';
+import { makeFoodOrder, makeFoodSelection, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -197,7 +196,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('copies current order list during delivery', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const writeTextMock = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -241,7 +240,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('updates ETA from timer dropdown preset', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -263,7 +262,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('updates ETA from manual minutes input in timer dropdown', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
 
     renderView();
 
@@ -275,7 +274,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('confirms arrival manually', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /delivery timer actions/i }));
@@ -309,7 +308,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('aborts process from timer dropdown action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockAbortFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -323,7 +322,7 @@ describe('FoodDeliveryView', () => {
   });
 
   it('toggles delivered checkmark for an order line', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockSetOrderDelivered.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,

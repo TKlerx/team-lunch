@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makePoll, makeMenu } from './helpers.js';
+import { makePoll, makeMenu, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -94,7 +93,7 @@ describe('PollTiedView', () => {
   });
 
   it('calls extendPoll with selected duration on Extend click', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockExtendPoll.mockResolvedValue({});
     renderView();
 
@@ -107,7 +106,7 @@ describe('PollTiedView', () => {
   });
 
   it('calls randomWinner on "Pick randomly" click', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRandomWinner.mockResolvedValue({});
     renderView();
 
@@ -117,7 +116,7 @@ describe('PollTiedView', () => {
   });
 
   it('shows API error on failure', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockExtendPoll.mockRejectedValue(new Error('Poll not tied'));
     renderView();
 
@@ -143,7 +142,7 @@ describe('PollTiedView', () => {
   });
 
   it('shows confirmation and calls abortPoll on confirm', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockAbortPoll.mockResolvedValue({});
     renderView();
 

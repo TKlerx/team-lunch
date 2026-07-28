@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodOrder, makeFoodSelection, makeMenu, makePoll } from './helpers.js';
+import { makeFoodOrder, makeFoodSelection, makeMenu, makePoll, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -98,7 +97,7 @@ describe('PollIdleView', () => {
   });
 
   it('shows meals waiting for rating and opens the selection when requested', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onOpenHistorySelection = vi.fn();
     renderView(onOpenHistorySelection);
 
@@ -130,7 +129,7 @@ describe('PollIdleView', () => {
   });
 
   it('calls api.startPoll on valid submission', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockStartPoll.mockResolvedValue({});
     renderView();
 
@@ -141,7 +140,7 @@ describe('PollIdleView', () => {
   });
 
   it('requires a reason for each excluded menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.type(screen.getByLabelText('Description'), 'Lunch today?');
@@ -154,7 +153,7 @@ describe('PollIdleView', () => {
   });
 
   it('shows error from API on failure', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockStartPoll.mockRejectedValue(new Error('Active poll exists'));
     renderView();
 
@@ -165,7 +164,7 @@ describe('PollIdleView', () => {
   });
 
   it('renders single-menu quick start when only one menu has items', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockQuickStartFoodSelection.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,

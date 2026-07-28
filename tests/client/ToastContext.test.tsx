@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { ToastProvider, useToast } from '../../src/client/context/ToastContext.js';
+import { setupUser } from './helpers.js';
 
 function ToastTrigger() {
   const { showToast } = useToast();
@@ -14,7 +14,7 @@ function ToastTrigger() {
 
 describe('ToastProvider', () => {
   it('announces and dismisses toast messages', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     render(
       <ToastProvider>
         <ToastTrigger />

@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makePoll, makeMenu } from './helpers.js';
+import { makePoll, makeMenu, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -114,7 +113,7 @@ describe('PollFinishedView', () => {
   });
 
   it('calls startFoodSelection with default preset', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockStartFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -124,7 +123,7 @@ describe('PollFinishedView', () => {
   });
 
   it('uses selected preset duration for startFoodSelection', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockStartFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -134,7 +133,7 @@ describe('PollFinishedView', () => {
   });
 
   it('shows API error on failure', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockStartFoodSelection.mockRejectedValue(new Error('No finished poll'));
     renderView();
 
