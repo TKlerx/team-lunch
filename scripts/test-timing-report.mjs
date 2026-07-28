@@ -83,11 +83,31 @@ function buildReport(raw) {
   const caseMs = cases.reduce((s, c) => s + c.ms, 0);
   const wallMs = Math.max(...raw.testResults.map((f) => f.endTime)) - raw.startTime;
 
+  // Union of the per-file [start, end] intervals. Files overlap when they run in
+  // parallel, so summing them would double-count; the union is the time at least
+  // one file was executing. Whatever is left of the wall clock is time no test ran
+  // at all — setup files, imports, transform, pool startup.
+  const spans = raw.testResults
+    .map((f) => [f.startTime, f.endTime])
+    .sort((a, b) => a[0] - b[0]);
+  let activeMs = 0;
+  let [openStart, openEnd] = spans[0] ?? [0, 0];
+  for (const [start, end] of spans.slice(1)) {
+    if (start > openEnd) {
+      activeMs += openEnd - openStart;
+      [openStart, openEnd] = [start, end];
+    } else if (end > openEnd) {
+      openEnd = end;
+    }
+  }
+  activeMs += openEnd - openStart;
+
   return {
     generatedAt: new Date().toISOString(),
     wallMs,
     caseMs,
-    unattributedMs: wallMs - caseMs,
+    activeMs,
+    idleMs: wallMs - activeMs,
     totals: {
       files: files.length,
       cases: cases.length,
@@ -146,7 +166,7 @@ function renderHtml(report) {
   const summaryBlocks = [
     ['Wall clock', fmt(report.wallMs)],
     ['Case time', fmt(report.caseMs)],
-    ['Unattributed', fmt(report.unattributedMs)],
+    ['No test running', fmt(report.idleMs)],
     ['Files', report.totals.files],
     ['Cases', report.totals.cases],
     ['Failed', report.totals.failed],
@@ -183,9 +203,10 @@ function renderHtml(report) {
         </div>
         <p class="quiet">
             Durations come from vitest's own per-case measurements. Wall clock is the whole
-            <code>vitest run</code>; case time is the sum of the cases themselves; the difference is
-            setup files, imports, transform and pool startup, which is billed to no single case.
-            Bars are scaled against the slowest row in their own table.
+            <code>vitest run</code>; case time is the sum of the cases themselves, which can exceed
+            the wall clock because client files run in parallel. &ldquo;No test running&rdquo; is the
+            part of the wall clock during which no test file was executing at all — setup files,
+            imports, transform and pool startup. Bars are scaled against the slowest row in their own table.
         </p>
     </div>
     <div class='status-line ${severityClass(report.wallMs / Math.max(report.totals.files, 1), FILE_THRESHOLDS)}'></div>
@@ -221,9 +242,11 @@ async function main() {
   console.log('==================');
   console.log(`Wall clock:   ${fmt(report.wallMs)}`);
   console.log(
-    `Case time:    ${fmt(report.caseMs)} (${pct(report.caseMs, report.wallMs)} of wall clock)`,
+    `Case time:    ${fmt(report.caseMs)} (${pct(report.caseMs, report.wallMs)} of wall clock; >100% means files ran in parallel)`,
   );
-  console.log(`Unattributed: ${fmt(report.unattributedMs)}  setup/import/transform/pool startup`);
+  console.log(
+    `No test running: ${fmt(report.idleMs)}  setup/import/transform/pool startup`,
+  );
   console.log(
     `Tests:        ${report.totals.cases} cases in ${report.totals.files} files, ${report.totals.failed} failed\n`,
   );

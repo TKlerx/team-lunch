@@ -30,6 +30,8 @@ export default defineConfig({
           name: 'server',
           include: ['tests/server/**/*.test.ts'],
           environment: 'node',
+          // migrate once per run; setupFiles re-run per test file (see globalSetup.ts)
+          globalSetup: ['tests/server/globalSetup.ts'],
           setupFiles: ['tests/server/setup.ts'],
           fileParallelism: false,
           pool: 'forks',
