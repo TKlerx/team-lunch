@@ -49,6 +49,13 @@ describe('mealFeatures persistence', () => {
           tag: 'style:curry',
           provenance: 'keyword',
         },
+        {
+          menuItemId: item.id,
+          itemIdentityKey: 'chicken-korma',
+          officeLocationId: office.id,
+          tag: 'popular',
+          provenance: 'menu',
+        },
       ],
     });
 
@@ -61,6 +68,7 @@ describe('mealFeatures persistence', () => {
     });
 
     expect(tags).toEqual(expect.arrayContaining(['ingredient:chicken', 'style:curry']));
+    expect(tags).not.toContain('popular');
     expect(tags).toHaveLength(2);
   });
 
@@ -77,6 +85,15 @@ describe('mealFeatures persistence', () => {
     );
 
     await prisma.menuItemFeature.deleteMany({ where: { menuItemId: item.id } });
+    await prisma.menuItemFeature.create({
+      data: {
+        menuItemId: item.id,
+        itemIdentityKey: 'thai-chicken-curry',
+        officeLocationId: office.id,
+        tag: 'popular',
+        provenance: 'menu',
+      },
+    });
     const tags = await loadMenuItemFeatures({
       menuItemId: item.id,
       officeLocationId: office.id,

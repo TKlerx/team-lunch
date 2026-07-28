@@ -204,10 +204,10 @@ describe('FoodSelectionActiveView', () => {
 
     const card = within(document.getElementById('meal-item-item-safety')!);
     expect(card.getByRole('button', { name: 'Labels for Safety pizza' })).toBeInTheDocument();
-    expect(card.getByText('vegetarian')).toHaveClass('bg-accent-soft/45');
-    expect(card.getByText('gluten')).toHaveClass('bg-danger/35');
-    expect(card.getByText('milk')).toHaveClass('bg-danger/35');
-    expect(card.getByText('preservative')).toHaveClass('bg-warning/35');
+    expect(card.getByText('Tag: vegetarian')).toHaveClass('bg-accent-soft/45');
+    expect(card.getByText('Allergen: gluten')).toHaveClass('bg-danger/35');
+    expect(card.getByText('Allergen: milk')).toHaveClass('bg-danger/35');
+    expect(card.getByText('Additive: preservative')).toHaveClass('bg-warning/35');
   });
 
   it('shows item-label tooltips when any label kind is present', () => {
@@ -242,12 +242,12 @@ describe('FoodSelectionActiveView', () => {
 
     const safetyOnlyCard = within(document.getElementById('meal-item-item-safety-only')!);
     expect(safetyOnlyCard.getByRole('button', { name: 'Labels for Safety-only dish' })).toBeInTheDocument();
-    expect(safetyOnlyCard.getByText('sesame')).toHaveClass('bg-danger/35');
-    expect(safetyOnlyCard.getByText('colouring')).toHaveClass('bg-warning/35');
+    expect(safetyOnlyCard.getByText('Allergen: sesame')).toHaveClass('bg-danger/35');
+    expect(safetyOnlyCard.getByText('Additive: colouring')).toHaveClass('bg-warning/35');
 
     const tagsOnlyCard = within(document.getElementById('meal-item-item-tags-only')!);
     expect(tagsOnlyCard.getByRole('button', { name: 'Labels for Tags-only dish' })).toBeInTheDocument();
-    expect(tagsOnlyCard.getByText('vegan')).toHaveClass('bg-accent-soft/45');
+    expect(tagsOnlyCard.getByText('Tag: vegan')).toHaveClass('bg-accent-soft/45');
   });
 
   it('shows an item search field', () => {
@@ -352,22 +352,22 @@ describe('FoodSelectionActiveView', () => {
     renderView();
 
     const safetyControls = screen.getByRole('group', { name: /exclude safety labels/i });
-    expect(within(safetyControls).getAllByRole('button', { name: 'gluten' })).toHaveLength(1);
+    expect(within(safetyControls).getAllByRole('button', { name: 'Exclude allergen gluten' })).toHaveLength(1);
 
-    await user.click(within(safetyControls).getByRole('button', { name: 'gluten' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude allergen gluten' }));
     expect(screen.queryByText('Gluten pizza')).not.toBeInTheDocument();
     expect(screen.getByText('Preserved salad')).toBeInTheDocument();
     expect(screen.getByText('Fresh soup')).toBeInTheDocument();
 
-    await user.click(within(safetyControls).getByRole('button', { name: 'preservative' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude additive preservative' }));
     expect(screen.queryByText('Preserved salad')).not.toBeInTheDocument();
     expect(screen.getByText('Fresh soup')).toBeInTheDocument();
 
-    await user.click(within(safetyControls).getByRole('button', { name: 'gluten' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude allergen gluten' }));
     expect(screen.getByText('Gluten pizza')).toBeInTheDocument();
     expect(screen.queryByText('Preserved salad')).not.toBeInTheDocument();
 
-    await user.click(within(safetyControls).getByRole('button', { name: 'preservative' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude additive preservative' }));
     expect(screen.getByText('Preserved salad')).toBeInTheDocument();
   });
 
@@ -395,13 +395,13 @@ describe('FoodSelectionActiveView', () => {
     await user.click(screen.getByPlaceholderText(/search items/i));
     await user.type(screen.getByPlaceholderText(/search items/i), 'veg');
     const safetyControls = screen.getByRole('group', { name: /exclude safety labels/i });
-    await user.click(within(safetyControls).getByRole('button', { name: 'gluten' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude allergen gluten' }));
 
     expect(screen.getByText('Vegan curry')).toBeInTheDocument();
     expect(screen.queryByText('Vegan gluten bowl')).not.toBeInTheDocument();
     expect(screen.queryByText('Classic gluten pizza')).not.toBeInTheDocument();
 
-    await user.click(within(safetyControls).getByRole('button', { name: 'gluten' }));
+    await user.click(within(safetyControls).getByRole('button', { name: 'Exclude allergen gluten' }));
     expect(screen.getByText('Vegan gluten bowl')).toBeInTheDocument();
     expect(screen.queryByText('Classic gluten pizza')).not.toBeInTheDocument();
   });
@@ -426,7 +426,7 @@ describe('FoodSelectionActiveView', () => {
     renderView();
 
     await user.click(
-      within(screen.getByRole('group', { name: /exclude safety labels/i })).getByRole('button', { name: 'milk' }),
+      within(screen.getByRole('group', { name: /exclude safety labels/i })).getByRole('button', { name: 'Exclude allergen milk' }),
     );
     expect(screen.queryByText('Milk pasta')).not.toBeInTheDocument();
     expect(screen.getByText(/no matching items found/i)).toBeInTheDocument();
@@ -452,7 +452,7 @@ describe('FoodSelectionActiveView', () => {
     const view = renderView();
 
     await user.click(
-      within(screen.getByRole('group', { name: /exclude safety labels/i })).getByRole('button', { name: 'gluten' }),
+      within(screen.getByRole('group', { name: /exclude safety labels/i })).getByRole('button', { name: 'Exclude allergen gluten' }),
     );
     expect(screen.queryByText('Gluten pizza')).not.toBeInTheDocument();
 

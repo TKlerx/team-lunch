@@ -96,7 +96,7 @@ function parseSafetyLabelsInputs(allergensInput: string, additivesInput: string)
 function TagBadges({ tags }: { tags: string[] }) {
   return tags.map((tag) => (
     <span key={`tag:${tag}`} className="rounded-full bg-accent-soft/45 px-1.5 py-0.5 text-[10px] font-medium text-fg-muted">
-      {tag}
+      Tag: {tag}
     </span>
   ));
 }
@@ -105,7 +105,7 @@ function SafetyLabelBadges({ labels, tone }: { labels: string[]; tone: 'allergen
   const colorClass = tone === 'allergen' ? 'bg-danger/35' : 'bg-warning/35';
   return labels.map((item) => (
     <span key={`${tone}:${item}`} className={`rounded-full ${colorClass} px-1.5 py-0.5 text-[10px] font-medium text-fg-muted`}>
-      {item}
+      {tone === 'allergen' ? 'Allergen' : 'Additive'}: {item}
     </span>
   ));
 }

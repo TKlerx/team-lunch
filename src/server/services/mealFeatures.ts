@@ -287,6 +287,7 @@ export async function loadMenuItemFeatures(input: MenuItemFeatureLookup): Promis
     where: {
       menuItemId: input.menuItemId,
       officeLocationId: input.officeLocationId,
+      provenance: { in: ['keyword', 'ai'] },
     },
     orderBy: { createdAt: 'asc' },
     select: { tag: true },
@@ -301,6 +302,7 @@ export async function loadMenuItemFeatures(input: MenuItemFeatureLookup): Promis
       where: {
         officeLocationId: input.officeLocationId,
         itemIdentityKey: input.itemIdentityKey,
+        provenance: { in: ['keyword', 'ai'] },
       },
       orderBy: { createdAt: 'asc' },
       select: { tag: true },

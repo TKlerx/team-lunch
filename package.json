@@ -41,7 +41,7 @@
     "test:client": "vitest run --project client",
     "test:e2e": "playwright test",
     "duplication": "node scripts/check-duplication.mjs",
-    "audit:prod": "node scripts/check-production-audit.mjs",
+    "audit:prod": "pnpm audit --prod",
     "validate:precommit": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 precommit",
     "validate:prepush": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 prepush",
     "validate:full": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 full",
