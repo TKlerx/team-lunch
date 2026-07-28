@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem } from './helpers.js';
+import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -214,7 +213,7 @@ describe('FoodSelectionCompletedView', () => {
   });
 
   it('copies final order list to clipboard', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const writeTextMock = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
     renderView();
 
@@ -231,7 +230,7 @@ describe('FoodSelectionCompletedView', () => {
   });
 
   it('shows an error message when copy fails', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     Object.defineProperty(window.navigator, 'clipboard', {
       value: undefined,
       configurable: true,
@@ -254,7 +253,7 @@ describe('FoodSelectionCompletedView', () => {
   });
 
   it('lets the current user save rating plus optional feedback remark', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.selectOptions(screen.getByLabelText(/rating for margherita/i), '4');

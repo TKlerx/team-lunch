@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
@@ -22,6 +21,7 @@ vi.mock('../../src/client/api.js', () => ({
 }));
 
 import ShoppingList from '../../src/client/pages/ShoppingList.js';
+import { setupUser } from './helpers.js';
 
 function renderView() {
   return render(
@@ -93,7 +93,7 @@ describe('ShoppingList', () => {
   });
 
   it('adds a shopping list item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.type(screen.getByPlaceholderText(/coffee beans, oat milk/i), 'Printer paper');
@@ -103,7 +103,7 @@ describe('ShoppingList', () => {
   }, 15000);
 
   it('marks an item as bought', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /mark bought/i }));
@@ -112,7 +112,7 @@ describe('ShoppingList', () => {
   });
 
   it('marks all open items as bought with one action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       shoppingListItems: [

@@ -4,7 +4,22 @@
  */
 import React, { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 import type { Poll, FoodSelection, FoodOrder, Menu, MenuItem } from '../../src/lib/types.js';
+
+/**
+ * userEvent session for component tests. Use this instead of `userEvent.setup()`
+ * so the whole suite shares one configuration.
+ *
+ * `delay: null` drops user-event's simulated pause *between* events. The full
+ * event sequence per keystroke (keydown/keypress/input/keyup) still fires, so
+ * this is not the `fireEvent` shortcut — only the human typing speed is gone,
+ * worth ~15% of client test time. Pass options through for the rare test that
+ * needs different behaviour (e.g. `advanceTimers` alongside fake timers).
+ */
+export function setupUser(options: Parameters<typeof userEvent.setup>[0] = {}) {
+  return userEvent.setup({ delay: null, ...options });
+}
 
 /**
  * Simple wrapper that provides MemoryRouter for components using react-router.

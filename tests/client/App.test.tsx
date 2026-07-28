@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act, render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../src/client/App.js';
-import { makeFoodSelection, makeMenu, makePoll } from './helpers.js';
+import { makeFoodSelection, makeMenu, makePoll, setupUser } from './helpers.js';
 import type { Poll } from '../../src/lib/types.js';
 
 const mockDispatch = vi.fn();
@@ -127,7 +126,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('opens historical completed view when selecting history item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
 
     render(
       <MemoryRouter>
@@ -140,7 +139,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('opens historical completed view from /menus when selecting history item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
 
     render(
       <MemoryRouter
@@ -158,7 +157,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('dispatches START_NEW_TEAM_LUNCH when clicking Start new Team Lunch', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
 
     render(
       <MemoryRouter>
@@ -272,7 +271,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('navigates from /menus to the ongoing phase when clicking Cuisine poll in progress...', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       activePoll: { id: 'poll-1', status: 'active' },
       activeFoodSelection: null,
@@ -302,7 +301,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('allows returning from historical order to ongoing phase', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       activePoll: { id: 'poll-1', status: 'active' },
       activeFoodSelection: null,
@@ -378,7 +377,7 @@ describe('App layout with Orders rail', () => {
   });
 
   it('shows Cuisine poll in progress... during POLL_FINISHED transition and does not start new lunch', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppPhase.mockReturnValue('POLL_FINISHED');
     mockUseAppState.mockReturnValue({
       activePoll: null,

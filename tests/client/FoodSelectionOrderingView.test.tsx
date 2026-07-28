@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem } from './helpers.js';
+import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -113,7 +112,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('claims ordering responsibility before placing the order', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /i am placing the order/i }));
@@ -123,7 +122,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('submits place-order request with custom ETA', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceDeliveryOrder.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -177,7 +176,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('does not submit place-order request when confirmation is canceled', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -215,7 +214,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('shows validation error for invalid custom ETA and does not submit', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -305,7 +304,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('places a fallback order for an eligible missing voter', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(await screen.findByRole('button', { name: /place default meal/i }));
@@ -318,7 +317,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('pings a fallback candidate and labels the row as a default meal', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     expect(await screen.findByText(/default meal configured/i)).toBeInTheDocument();
@@ -334,7 +333,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('copies grouped order list with item numbers', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const writeTextMock = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
     renderView();
 
@@ -361,7 +360,7 @@ describe('FoodSelectionOrderingView', () => {
   });
 
   it('toggles processed checkmark for an order line', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockSetOrderProcessed.mockResolvedValue({});
     renderView();
 

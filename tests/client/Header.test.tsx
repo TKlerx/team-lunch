@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../../src/client/components/Header.js';
 import type { AuthMethod } from '../../src/lib/types.js';
+import { setupUser } from './helpers.js';
 
 function renderHeader(
   nickname: string | null = 'Alice',
@@ -71,7 +71,7 @@ describe('Header', () => {
   });
 
   it('calls onToggleNotifications when clicking notifications toggle', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onToggleNotifications = vi.fn();
     renderHeader('Alice', false, onToggleNotifications);
 
@@ -104,7 +104,7 @@ describe('Header', () => {
   });
 
   it('opens account dropdown when clicking nickname button', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice');
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -112,7 +112,7 @@ describe('Header', () => {
   });
 
   it('Settings menu item links to /settings', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice');
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -120,7 +120,7 @@ describe('Header', () => {
   });
 
   it('shows logout button in dropdown when onLogout is provided', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice', true, vi.fn(), vi.fn());
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -128,7 +128,7 @@ describe('Header', () => {
   });
 
   it('calls onLogout when clicking logout in dropdown', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const onLogout = vi.fn();
     renderHeader('Alice', true, vi.fn(), onLogout);
 
@@ -138,7 +138,7 @@ describe('Header', () => {
   });
 
   it('does not show logout button in dropdown when onLogout is not provided', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice');
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -146,7 +146,7 @@ describe('Header', () => {
   });
 
   it('shows Administration link in dropdown when isAdmin is true', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice', true, vi.fn(), undefined, true);
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -154,7 +154,7 @@ describe('Header', () => {
   });
 
   it('Administration link in dropdown points to /admin', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice', true, vi.fn(), undefined, true);
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -162,7 +162,7 @@ describe('Header', () => {
   });
 
   it('shows pending approval count badge in Administration menu item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice', true, vi.fn(), undefined, true, 3);
 
     await user.click(screen.getByRole('button', { name: /alice/i }));
@@ -170,7 +170,7 @@ describe('Header', () => {
   });
 
   it('closes dropdown when Escape is pressed', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderHeader('Alice');
 
     await user.click(screen.getByRole('button', { name: /alice/i }));

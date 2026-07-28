@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, within } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makePoll, makeMenu } from './helpers.js';
+import { makePoll, makeMenu, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -123,7 +122,7 @@ describe('PollActiveView', () => {
   });
 
   it('loads pre-vote recommendations with menu context and renders the result card', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRecommendPreVote.mockResolvedValue({
       source: 'pre_vote',
       pollId: 'poll-1',
@@ -155,7 +154,7 @@ describe('PollActiveView', () => {
   });
 
   it('calls castVote when clicking an unvoted menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCastVote.mockResolvedValue({});
     renderView();
 
@@ -169,7 +168,7 @@ describe('PollActiveView', () => {
   });
 
   it('calls withdrawVote when clicking a voted menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockWithdrawVote.mockResolvedValue({});
     renderView();
 
@@ -183,7 +182,7 @@ describe('PollActiveView', () => {
   });
 
   it('shows "Hide voting panel" button to collapse voting panel', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     const sitOut = screen.getByText(/hide voting panel/i);
@@ -205,7 +204,7 @@ describe('PollActiveView', () => {
   });
 
   it('calls abortPoll API from timer menu kill poll action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockAbortPoll.mockResolvedValue({});
     renderView();
 
@@ -219,7 +218,7 @@ describe('PollActiveView', () => {
   });
 
   it('hides kill poll action for non-admin users', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockIsAdminAuthenticatedUser.mockReturnValue(false);
     renderView();
 
@@ -228,7 +227,7 @@ describe('PollActiveView', () => {
   });
 
   it('ends poll from timer menu confirm completion action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockEndPoll.mockResolvedValue({});
     renderView();
 
@@ -242,7 +241,7 @@ describe('PollActiveView', () => {
   });
 
   it('updates poll timer from preset entry in timer menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdatePollTimer.mockResolvedValue({});
     renderView();
 
@@ -253,7 +252,7 @@ describe('PollActiveView', () => {
   });
 
   it('updates poll timer from manual minutes input', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdatePollTimer.mockResolvedValue({});
     renderView();
 
@@ -264,7 +263,7 @@ describe('PollActiveView', () => {
   });
 
   it('rejects out-of-range manual minutes without calling the API', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
@@ -275,7 +274,7 @@ describe('PollActiveView', () => {
   });
 
   it('closes timer menu when clicking outside', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /poll timer actions/i }));
@@ -287,7 +286,7 @@ describe('PollActiveView', () => {
   });
 
   it('shows a completion call to action when the poll timer has expired', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockEndPoll.mockResolvedValue({});
     mockUseCountdown.mockReturnValue(0);
 

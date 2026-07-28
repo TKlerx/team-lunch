@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem } from './helpers.js';
+import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -90,7 +89,7 @@ describe('FoodSelectionOvertimeView', () => {
   });
 
   it('calls extendFoodSelection with selected duration on Extend click', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockExtendFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -101,7 +100,7 @@ describe('FoodSelectionOvertimeView', () => {
   });
 
   it('calls completeFoodSelection on "Confirm" click', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCompleteFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -110,7 +109,7 @@ describe('FoodSelectionOvertimeView', () => {
   });
 
   it('shows API error on failure', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockExtendFoodSelection.mockRejectedValue(new Error('Server error'));
     renderView();
 

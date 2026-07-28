@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, within } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Administration from '../../src/client/pages/Administration.js';
 import type { OfficeLocation } from '../../src/lib/types.js';
+import { setupUser } from './helpers.js';
 
 function makeOffice(overrides: Partial<OfficeLocation> & Pick<OfficeLocation, 'id' | 'key' | 'name'>): OfficeLocation {
   return {
@@ -109,7 +109,7 @@ describe('Administration page', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -131,7 +131,7 @@ describe('Administration page', () => {
       return jsonResponse({ error: 'not found' }, 404);
     }));
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -165,7 +165,7 @@ describe('Administration page', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByText('Pending approvals');
@@ -190,7 +190,7 @@ describe('Administration page', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -227,7 +227,7 @@ describe('Administration page', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -271,7 +271,7 @@ describe('Administration page', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -328,7 +328,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -384,7 +384,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -447,7 +447,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -505,7 +505,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -555,7 +555,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -606,7 +606,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -664,7 +664,7 @@ describe('Administration user management', () => {
     const profileUpdated = vi.fn();
     window.addEventListener('team_lunch_auth_profile_updated', profileUpdated);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });
@@ -715,7 +715,7 @@ describe('Administration user management', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderAdministration();
 
     await screen.findByRole('heading', { name: /administration/i });

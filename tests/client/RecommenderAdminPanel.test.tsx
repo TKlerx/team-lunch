@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import RecommenderAdminPanel from '../../src/client/components/RecommenderAdminPanel.js';
+import { setupUser } from './helpers.js';
 
 const mockFetchRecommenderStatus = vi.fn();
 const mockTrainRecommenderModel = vi.fn();
@@ -48,7 +48,7 @@ describe('RecommenderAdminPanel', () => {
   });
 
   it('loads status and can train, evaluate, and toggle office controls', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockFetchRecommenderStatus.mockResolvedValue({
       activeModelVersion: 7,
       offices: [
@@ -116,7 +116,7 @@ describe('RecommenderAdminPanel', () => {
   });
 
   it('blocks learned mode when the margin stays below the gate', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockFetchRecommenderStatus.mockResolvedValueOnce({
       activeModelVersion: 7,
       offices: [
@@ -140,7 +140,7 @@ describe('RecommenderAdminPanel', () => {
   });
 
   it('reverts an office back to baseline immediately', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockFetchRecommenderStatus
       .mockResolvedValueOnce({
         activeModelVersion: 7,

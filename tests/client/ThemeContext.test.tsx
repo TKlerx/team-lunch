@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ThemeProvider, useTheme } from '../../src/client/context/ThemeContext.js';
+import { setupUser } from './helpers.js';
 
 // Controllable matchMedia('(prefers-color-scheme: dark)') mock.
 const media = {
@@ -60,7 +60,7 @@ describe('ThemeProvider', () => {
   });
 
   it('applies an explicit choice and persists it', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     render(
       <ThemeProvider>
         <Probe />
@@ -77,7 +77,7 @@ describe('ThemeProvider', () => {
   });
 
   it('follows live OS changes while on system', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     render(
       <ThemeProvider>
         <Probe />

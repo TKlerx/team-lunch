@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, within } from './testRender.js';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, makePoll } from './helpers.js';
+import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, makePoll, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
 import { initialAppState } from '../../src/client/context/AppContext.js';
 
@@ -256,7 +255,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('does not filter items when search has fewer than 3 characters', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.type(screen.getByPlaceholderText(/search items \(min\. 3 chars\)/i), 'ma');
@@ -266,7 +265,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('filters items when search has at least 3 characters', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.type(screen.getByPlaceholderText(/search items \(min\. 3 chars\)/i), 'mar');
@@ -276,7 +275,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('splits meals and beverages into tabs', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -304,7 +303,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('filters the active tab by selected tags using OR semantics', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -332,7 +331,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('hides items matching selected allergen or additive exclusions and restores them when toggled', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -372,7 +371,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('composes safety exclusions with tag and search filters', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -407,7 +406,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('applies exclusions in meal and beverage tabs and shows the filtered empty state', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -437,7 +436,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('does not persist safety exclusions after rerendering a new view or remounting', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -477,7 +476,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('loads existing anticipated-like marks and can clear them', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockFetchMealRecommendationMarks.mockResolvedValue({
       marks: [
         {
@@ -504,7 +503,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('calls placeOrder when clicking Add for an item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceOrder.mockResolvedValue({});
     renderView();
 
@@ -535,7 +534,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('asks for confirmation before adding an item with an ingredient alert', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockGetUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: ['pizza'],
@@ -552,7 +551,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('includes order comment when clicking Add', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceOrder.mockResolvedValue({});
     renderView();
 
@@ -563,7 +562,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('clears the order comment field after adding an item', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceOrder.mockResolvedValue({});
     renderView();
 
@@ -617,7 +616,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('allows removing own item directly from order list', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockWithdrawOrder.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -655,7 +654,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('calls withdrawOrder when clicking Withdraw', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockWithdrawOrder.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -729,7 +728,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('allows admin to ping users who have not ordered yet', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /ping missing users/i }));
@@ -776,7 +775,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('uses CTA button to complete meal collection when everyone already ordered', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCompleteFoodSelectionNow.mockResolvedValue({});
     mockUseAppState.mockReturnValue({
       ...initialAppState,
@@ -849,7 +848,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('opens timer action menu and confirms completion', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockCompleteFoodSelectionNow.mockResolvedValue({});
     renderView();
 
@@ -861,7 +860,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('updates food selection timer from preset entry in timer menu', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateFoodSelectionTimer.mockResolvedValue({});
     renderView();
 
@@ -872,7 +871,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('updates food selection timer from manual minutes input', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateFoodSelectionTimer.mockResolvedValue({});
     renderView();
 
@@ -883,7 +882,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('closes timer menu when clicking outside', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     renderView();
 
     await user.click(screen.getByRole('button', { name: /food selection timer actions/i }));
@@ -895,7 +894,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('calls abortFoodSelection from timer menu abort process action', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockAbortFoodSelection.mockResolvedValue({});
     renderView();
 
@@ -909,7 +908,7 @@ describe('FoodSelectionActiveView', () => {
   // ─── Meal recommendations ────────────────────────────────
 
   it('shows ranked recommendations when clicking "Recommend a meal"', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     let resolveRecommend: (value: unknown) => void = () => {};
     mockRecommendMeal.mockImplementation(
       () =>
@@ -960,7 +959,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('jumps to the matching meal card when clicking a recommendation', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRecommendMeal.mockResolvedValue({
       impressionId: 'impression-1',
       foodSelectionId: 'fs-1',
@@ -989,7 +988,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('shows exploratory recommendations when clicking "Explore something new"', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockExploreMeal.mockResolvedValue({
       impressionId: 'impression-2',
       foodSelectionId: 'fs-1',
@@ -1019,7 +1018,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('opens the onboarding dialog and can mark a candidate there', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockFetchMealRecommendationOnboardingCandidates.mockResolvedValue({
       candidates: [
         {
@@ -1048,7 +1047,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('shows an AI-assisted label when recommendations are AI-enriched', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRecommendMeal.mockResolvedValue({
       impressionId: 'impression-1',
       foodSelectionId: 'fs-1',
@@ -1077,7 +1076,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('shows a warning when recommendations fall back to deterministic', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRecommendMeal.mockResolvedValue({
       impressionId: 'impression-1',
       foodSelectionId: 'fs-1',
@@ -1107,7 +1106,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('shows an error message when the recommendation request fails', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockRecommendMeal.mockRejectedValue(new Error('Recommendation failed'));
     renderView();
 
@@ -1117,7 +1116,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('still allows placing an order after a failed recommendation request', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceOrder.mockResolvedValue({});
     mockRecommendMeal.mockRejectedValue(new Error('Recommendation failed'));
     renderView();
@@ -1130,7 +1129,7 @@ describe('FoodSelectionActiveView', () => {
   });
 
   it('does not affect order placement when recommendations are shown', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockPlaceOrder.mockResolvedValue({});
     mockRecommendMeal.mockResolvedValue({
       impressionId: 'impression-1',

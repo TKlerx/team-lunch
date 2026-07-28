@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import Settings from '../../src/client/pages/Settings.js';
+import { setupUser } from './helpers.js';
 
 const mockUseAdminOfficeContext = vi.fn();
 vi.mock('../../src/client/context/AdminOfficeContext.js', () => ({
@@ -90,7 +90,7 @@ describe('Settings', () => {
   });
 
   it('saves ingredient preferences from the settings-wide save button', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     render(<Settings />);
 
     const allergies = await screen.findByRole('textbox', { name: /ingredients to avoid/i });
@@ -115,7 +115,7 @@ describe('Settings', () => {
   });
 
   it('saves structured ingredient selections alongside free-text fallback', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     render(<Settings />);
 
     const avoidQuickPicks = await screen.findByRole('group', {
@@ -146,7 +146,7 @@ describe('Settings', () => {
   });
 
   it('saves a personal exploration style from the settings page', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: ['peanuts'],
@@ -172,7 +172,7 @@ describe('Settings', () => {
   });
 
   it('saves a personal recommendation count from the settings page', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUpdateUserPreferences.mockResolvedValue({
       userKey: 'Alice',
       allergies: ['peanuts'],
@@ -200,7 +200,7 @@ describe('Settings', () => {
   });
 
   it('stages office changes until settings are saved', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAdminOfficeContext.mockReturnValue({
       canSwitchOfficeLocation: true,
       officeLocations: [
@@ -222,7 +222,7 @@ describe('Settings', () => {
   });
 
   it('cancels staged settings changes', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     mockUseAdminOfficeContext.mockReturnValue({
       canSwitchOfficeLocation: true,
       officeLocations: [
@@ -246,7 +246,7 @@ describe('Settings', () => {
   });
 
   it('shows local account identity and saves display name', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ displayName: 'Alicia', displayNameSource: 'local' }),
@@ -295,7 +295,7 @@ describe('Settings', () => {
   });
 
   it('shows display-name validation errors before saving', async () => {
-    const user = userEvent.setup();
+    const user = setupUser();
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
 
