@@ -307,7 +307,7 @@ function Invoke-TrivyImageScan {
 
 $failures = @()
 
-if ($Phase -eq "precommit") {
+if ($Phase -in "all", "full", "precommit", "commit") {
     Invoke-ValidationStep "Text format (UTF-8, LF)" "pnpm run text-format" "text-format" "text format check failed" {
         "text format check passed"
     }
