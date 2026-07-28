@@ -96,6 +96,14 @@
 
 ---
 
+## Phase 7: Post-Merge Review Remediation
+
+- [x] T016 Restore fail-closed production auditing by using pnpm's native audit command and existing approved-exception policy.
+- [x] T017 Keep `provenance: "menu"` tags out of recommender feature loading and cover persisted and fallback paths.
+- [x] T018 Identify tags, allergens, and additives with visible text—not color alone—in menu management and food selection.
+
+---
+
 ## Dependencies & Execution Order
 
 ```text
@@ -137,4 +145,4 @@ US1 + US2 + US3 → T014 → T015
 - Do not put safety labels in `MenuItemFeature`; that model remains recommendation/tag data.
 - Do not add a catalogue, settings persistence, a new endpoint, or a new SSE event.
 - Before each task is marked complete, run its focused test; before feature completion run the full validation gate.
-- The existing production dependency audit currently reports unrelated locked dependency advisories; do not weaken validation or alter dependencies as part of this feature unless separately requested. `validate.ps1 all` on 2026-07-24 confirms the feature passes every other gate; `pnpm audit --prod` remains blocked by `find-my-way` and React Router advisory chains.
+- Production dependency auditing uses pnpm's native `auditConfig.ignoreGhsas` policy so approved unreachable advisories remain documented without a custom fail-open parser.

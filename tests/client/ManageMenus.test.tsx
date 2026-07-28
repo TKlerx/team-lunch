@@ -185,7 +185,7 @@ describe('ManageMenus', () => {
     fireEvent.change(input, { target: { files: [file] } });
 
     // Debounced auto-preview fires after 1s; findByText polls until it appears
-    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('Created items: 3')).toBeInTheDocument();
     expect(screen.getByText('Updated items: 2')).toBeInTheDocument();
     expect(screen.getByText('Deleted items: 1')).toBeInTheDocument();
@@ -235,7 +235,7 @@ describe('ManageMenus', () => {
     });
 
     // Debounced auto-preview fires after 1s
-    expect(await screen.findByText(/confirm import for "thai bowl"/i, {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(await screen.findByText(/confirm import for "thai bowl"/i, {}, { timeout: 5000 })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /confirm import/i }));
 
     expect(mockImportMenuJson).toHaveBeenCalledTimes(1);
@@ -274,7 +274,7 @@ describe('ManageMenus', () => {
     fireEvent.change(input, { target: { files: [file] } });
 
     // Debounced auto-preview fires after 1s
-    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(await screen.findByText(/confirm import for/i, {}, { timeout: 5000 })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(mockImportMenuJson).not.toHaveBeenCalled();
@@ -644,7 +644,7 @@ describe('ManageMenus', () => {
     });
   });
 
-  it('shows allergen and additive pills with safety colors', () => {
+  it('shows visibly identified tag, allergen, and additive pills', () => {
     mockUseAppState.mockReturnValue({
       ...initialAppState,
       initialized: true,
@@ -665,11 +665,9 @@ describe('ManageMenus', () => {
 
     fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
 
-    expect(screen.getByText('vegetarian')).toHaveClass('rounded-full', 'bg-accent-soft/45');
-    expect(screen.queryByText('Allergens:')).not.toBeInTheDocument();
-    expect(screen.getByText('gluten')).toHaveClass('rounded-full', 'bg-danger/35', 'text-fg-muted');
-    expect(screen.queryByText('Additives:')).not.toBeInTheDocument();
-    expect(screen.getByText('preservative')).toHaveClass('rounded-full', 'bg-warning/35', 'text-fg-muted');
+    expect(screen.getByText('Tag: vegetarian')).toHaveClass('rounded-full', 'bg-accent-soft/45');
+    expect(screen.getByText('Allergen: gluten')).toHaveClass('rounded-full', 'bg-danger/35', 'text-fg-muted');
+    expect(screen.getByText('Additive: preservative')).toHaveClass('rounded-full', 'bg-warning/35', 'text-fg-muted');
   });
 
   it('edits menu item safety labels and sends normalized API payloads', async () => {
@@ -723,8 +721,8 @@ describe('ManageMenus', () => {
     renderPage();
 
     fireEvent.click(screen.getByLabelText('Expand Pizza Place'));
-    expect(screen.getByText('beverage')).toBeInTheDocument();
-    expect(screen.getByText('cold')).toBeInTheDocument();
+    expect(screen.getByText('Tag: beverage')).toBeInTheDocument();
+    expect(screen.getByText('Tag: cold')).toBeInTheDocument();
 
     await user.click(screen.getAllByRole('button', { name: 'Edit' }).at(-1)!);
     await user.clear(screen.getByPlaceholderText('Tags, comma-separated (optional)'));

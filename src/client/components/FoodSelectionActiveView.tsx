@@ -147,10 +147,16 @@ const labelPillClasses: Record<LabelPillTone, string> = {
   additive: 'bg-warning/35',
 };
 
+const labelPillNames: Record<LabelPillTone, string> = {
+  tag: 'Tag',
+  allergen: 'Allergen',
+  additive: 'Additive',
+};
+
 function LabelPills({ labels, tone }: { labels: string[]; tone: LabelPillTone }) {
   return labels.map((label) => (
     <span key={`${tone}:${label}`} className={`rounded-full ${labelPillClasses[tone]} px-1.5 py-0.5 text-[10px] font-medium text-fg-muted`}>
-      {label}
+      {labelPillNames[tone]}: {label}
     </span>
   ));
 }
@@ -170,12 +176,13 @@ function SafetyFilterPill({
     <button
       type="button"
       aria-pressed={selected}
+      aria-label={`Exclude ${tone} ${label}`}
       onClick={onToggle}
       className={`relative overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium text-fg-muted transition-colors ${labelPillClasses[tone]} ${
         selected ? 'border-fg-muted/70' : 'border-transparent'
       }`}
     >
-      <span className="relative z-10">{label}</span>
+      <span className="relative z-10">{labelPillNames[tone]}: {label}</span>
       {selected ? <span aria-hidden className="absolute left-[-10%] top-1/2 h-px w-[120%] -rotate-12 bg-fg-muted/70" /> : null}
     </button>
   );
