@@ -3,6 +3,7 @@ import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
 import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
 import prisma from '../../src/server/db.js';
+import indianMenu from '../../import/menu/indian.json';
 
 // Suppress SSE broadcasts during tests
 vi.mock('../../src/server/sse.js', () => ({
@@ -383,6 +384,12 @@ describe('Menu service', () => {
     expect(result.menu.items[0].price).toBe(7.5);
   });
 
+  it('imports the full Indish menu within the transaction deadline', async () => {
+    const result = await menuService.importMenuFromJson(indianMenu);
+
+    expect(result.menu.items).toHaveLength(149);
+  }, 30_000);
+
   it('updates existing menu by name and replaces all existing items', async () => {
     const existing = await menuService.createMenu('Pizza Pronto');
     await menuService.createItem(existing.id, 'Old Item', 'Old Desc');
@@ -614,4 +621,3 @@ describe('Menu service', () => {
     expect(menus).toHaveLength(0);
   });
 });
-

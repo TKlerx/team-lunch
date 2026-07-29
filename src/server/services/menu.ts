@@ -305,6 +305,8 @@ function formatMenuItem(i: {
 }
 
 const itemOrderBy = [{ itemNumber: 'asc' as const }, { createdAt: 'asc' as const }, { id: 'asc' as const }];
+// ponytail: imports are atomic and can contain hundreds of items; batch further if 30s becomes insufficient.
+const importTransactionOptions = { timeout: 30_000 };
 
 // itemNumber is a VarChar, so the DB orderBy above sorts "1","10","100","2" lexicographically.
 // Re-sort in app code with a numeric-aware collator so "2" comes before "10".
@@ -1114,7 +1116,7 @@ export async function importMenuFromJson(
     });
 
     return { menu: formatMenu(createdWithItems), created: true, gapFillTargets };
-  });
+  }, importTransactionOptions);
 
   if (gapFillTargets.length > 0) {
     const aiFeatureTags = await requestAiFeatureTags(
@@ -1144,7 +1146,7 @@ export async function importMenuFromJson(
             })),
           });
         }
-      });
+      }, importTransactionOptions);
     }
   }
 

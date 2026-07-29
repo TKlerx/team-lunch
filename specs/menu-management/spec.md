@@ -87,6 +87,7 @@ A user imports a menu from a JSON file; import is atomic (all-or-nothing).
   snapshot.
 - **Price** out of range / >2 decimals / non-finite: rejected.
 - **Import partial failure**: never persists partial data.
+- **Large imports**: menus with hundreds of items remain atomic and complete without using Prisma's five-second default transaction deadline.
 
 ## Requirements
 
