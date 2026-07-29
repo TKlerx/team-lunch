@@ -390,6 +390,23 @@ describe('Menu service', () => {
     expect(result.menu.items).toHaveLength(149);
   }, 30_000);
 
+  it('refreshes an existing identity display-name snapshot on re-import', async () => {
+    const buildPayload = (itemName: string) => ({
+      menu: [
+        { name: 'Identity Menu', 'date-created': '2026-02-06T12:00:00Z' },
+        { category: 'All', items: [{ name: itemName, ingredients: 'Rice', price: 10 }] },
+      ],
+    });
+
+    await menuService.importMenuFromJson(buildPayload('Chicken Korma!!'));
+    await menuService.importMenuFromJson(buildPayload('CHICKEN korma'));
+
+    const identity = await prisma.menuItemIdentity.findFirstOrThrow({
+      where: { identityKey: 'chicken-korma' },
+    });
+    expect(identity.displayNameSnapshot).toBe('CHICKEN korma');
+  });
+
   it('imports the maximum supported 1000 items with bounded bulk writes', async () => {
     const items = Array.from({ length: 1_000 }, (_, index) => ({
       name: `Curry ${index + 1}`,

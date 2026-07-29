@@ -1,6 +1,6 @@
-import prisma from '../db.js';
+import prisma, { databaseSchema } from '../db.js';
 import { broadcast } from '../sse.js';
-import type { Prisma } from '../generated/client/client.js';
+import { Prisma } from '../generated/client/client.js';
 import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
 import { ensureMenuItemIdentity, normalizeMenuItemIdentityKey } from './mealItemIdentity.js';
 import { extractFeatures } from './mealFeatures.js';
@@ -397,7 +397,7 @@ async function findFormattedMenuItem(id: string): Promise<MenuItem> {
 
 type MenuItemDerivedDataDb = Pick<
   Prisma.TransactionClient,
-  'menuItem' | 'menuItemIdentity' | 'menuItemFeature'
+  'menuItem' | 'menuItemIdentity' | 'menuItemFeature' | '$executeRaw'
 >;
 
 type MenuItemGapFillTarget = {
@@ -459,6 +459,23 @@ async function createImportedMenuItemIdentities(
     data: identities.map((identity) => ({ officeLocationId, ...identity })),
     skipDuplicates: true,
   });
+
+  const values = Prisma.join(
+    identities.map(
+      ({ identityKey, displayNameSnapshot }) => Prisma.sql`(${identityKey}, ${displayNameSnapshot})`,
+    ),
+  );
+  const identityTable = Prisma.raw(
+    `${databaseSchema ? `"${databaseSchema.replaceAll('"', '""')}".` : ''}"menu_item_identities"`,
+  );
+  await db.$executeRaw`
+    UPDATE ${identityTable} AS identity
+    SET "display_name_snapshot" = incoming."display_name_snapshot"
+    FROM (VALUES ${values}) AS incoming("identity_key", "display_name_snapshot")
+    WHERE identity."office_location_id" = ${officeLocationId}::uuid
+      AND identity."identity_key" = incoming."identity_key"
+      AND identity."display_name_snapshot" IS DISTINCT FROM incoming."display_name_snapshot"
+  `;
 }
 
 async function syncImportedMenuDerivedData(
@@ -471,6 +488,7 @@ async function syncImportedMenuDerivedData(
   const items = await db.menuItem.findMany({
     where: { menuId },
     select: { id: true, name: true, description: true, itemIdentityKey: true },
+    orderBy: itemOrderBy,
   });
   const identities = new Map<string, { identityKey: string; displayNameSnapshot: string }>();
   const features: Prisma.MenuItemFeatureCreateManyInput[] = [];
