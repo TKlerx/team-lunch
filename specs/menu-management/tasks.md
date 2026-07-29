@@ -42,7 +42,7 @@ description: "Migrated task list — Menu Management (already implemented)"
 - [x] T018 [US4] Price/item-number rules (finite, 0–9999.99, ≤2 dp, item-number ≤40)
 - [x] T019 [US4] Case-insensitive menu match → create-or-replace-items; persist menu metadata
 - [x] T020 [US4] Import UI in `ManageMenus.tsx`; tests in `menu-routes.test.ts`
-- [x] T021 [US4] Allow large atomic imports to exceed Prisma's five-second transaction default; regress with the 149-item Indish fixture
+- [x] T021 [US4] Batch large atomic imports, reject more than 1,000 items before writing, translate transaction timeouts, and regress with the 149-item Indish fixture
 
 ## Identified Gaps
 

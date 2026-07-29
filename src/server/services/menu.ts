@@ -47,6 +47,9 @@ type MenuItemLabelsInput = {
   additives?: unknown;
 };
 
+const MAX_IMPORT_ITEMS = 1_000;
+const MENU_ITEM_FEATURE_BATCH_SIZE = 1_000;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -240,6 +243,15 @@ function parseMenuItemLabels(labels?: MenuItemLabelsInput | unknown[]): MenuItem
   return Array.isArray(labels) ? { tags: labels } : labels ?? {};
 }
 
+function validateImportItemCount(items: ImportItem[], violations: ImportMenuViolation[]): void {
+  if (items.length === 0) {
+    violations.push({ path: 'menu', message: 'import must contain at least one valid item' });
+  }
+  if (items.length > MAX_IMPORT_ITEMS) {
+    violations.push({ path: 'menu', message: `import must contain at most ${MAX_IMPORT_ITEMS} items` });
+  }
+}
+
 // ─── Formatters ────────────────────────────────────────────
 
 function formatMenu(m: {
@@ -305,8 +317,25 @@ function formatMenuItem(i: {
 }
 
 const itemOrderBy = [{ itemNumber: 'asc' as const }, { createdAt: 'asc' as const }, { id: 'asc' as const }];
-// ponytail: imports are atomic and can contain hundreds of items; batch further if 30s becomes insufficient.
 const importTransactionOptions = { timeout: 30_000 };
+
+async function runAtomicMenuImport<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+  try {
+    return await prisma.$transaction(operation, importTransactionOptions);
+  } catch (error) {
+    throwMenuImportError(error);
+  }
+}
+
+function throwMenuImportError(error: unknown): never {
+  if (isRecord(error) && error.code === 'P2028') {
+    throw Object.assign(
+      new Error('Menu import timed out before it could be saved. No changes were applied; please try again.'),
+      { statusCode: 503 },
+    );
+  }
+  throw error;
+}
 
 // itemNumber is a VarChar, so the DB orderBy above sorts "1","10","100","2" lexicographically.
 // Re-sort in app code with a numeric-aware collator so "2" comes before "10".
@@ -366,7 +395,10 @@ async function findFormattedMenuItem(id: string): Promise<MenuItem> {
   return formatMenuItem(item);
 }
 
-type MenuItemDerivedDataDb = Pick<Prisma.TransactionClient, 'menuItem' | 'menuItemIdentity' | 'menuItemFeature'>;
+type MenuItemDerivedDataDb = Pick<
+  Prisma.TransactionClient,
+  'menuItem' | 'menuItemIdentity' | 'menuItemFeature'
+>;
 
 type MenuItemGapFillTarget = {
   menuItemId: string;
@@ -407,48 +439,73 @@ async function syncMenuItemDerivedData(
   return null;
 }
 
-async function syncMenuItemsDerivedData(
+async function createMenuItemFeaturesInBatches(
   db: MenuItemDerivedDataDb,
-  menuId: string,
-  officeLocationId: string,
-): Promise<MenuItemGapFillTarget[]> {
-  const items = await db.menuItem.findMany({
-    where: { menuId },
-    select: { id: true, name: true, description: true },
-    orderBy: itemOrderBy,
-  });
-
-  const gapFillTargets: MenuItemGapFillTarget[] = [];
-  for (const item of items) {
-    const gapFillTarget = await syncMenuItemDerivedData(db, item, officeLocationId);
-    if (gapFillTarget) {
-      gapFillTargets.push(gapFillTarget);
-    }
+  data: Prisma.MenuItemFeatureCreateManyInput[],
+): Promise<void> {
+  for (let offset = 0; offset < data.length; offset += MENU_ITEM_FEATURE_BATCH_SIZE) {
+    await db.menuItemFeature.createMany({ data: data.slice(offset, offset + MENU_ITEM_FEATURE_BATCH_SIZE) });
   }
-
-  return gapFillTargets;
 }
 
-async function syncImportedMenuTags(
+async function createImportedMenuItemIdentities(
+  db: MenuItemDerivedDataDb,
+  officeLocationId: string,
+  identities: Array<{ identityKey: string; displayNameSnapshot: string }>,
+): Promise<void> {
+  if (identities.length === 0) return;
+
+  await db.menuItemIdentity.createMany({
+    data: identities.map((identity) => ({ officeLocationId, ...identity })),
+    skipDuplicates: true,
+  });
+}
+
+async function syncImportedMenuDerivedData(
   db: MenuItemDerivedDataDb,
   menuId: string,
   officeLocationId: string,
   importedItems: ImportItem[],
-): Promise<void> {
+): Promise<MenuItemGapFillTarget[]> {
   const importedByName = new Map(importedItems.map((item) => [item.name.toLocaleLowerCase(), item]));
   const items = await db.menuItem.findMany({
     where: { menuId },
-    select: { id: true, name: true },
+    select: { id: true, name: true, description: true, itemIdentityKey: true },
   });
+  const identities = new Map<string, { identityKey: string; displayNameSnapshot: string }>();
+  const features: Prisma.MenuItemFeatureCreateManyInput[] = [];
+  const gapFillTargets: MenuItemGapFillTarget[] = [];
 
   for (const item of items) {
-    await replaceMenuTags(
-      db,
-      item,
-      officeLocationId,
-      importedByName.get(item.name.toLocaleLowerCase())?.tags ?? [],
-    );
+    const identityKey = item.itemIdentityKey;
+    if (!identityKey) {
+      throw Object.assign(new Error('Menu item name must contain at least one alphanumeric character'), {
+        statusCode: 400,
+      });
+    }
+
+    identities.set(identityKey, { identityKey, displayNameSnapshot: item.name });
+    const keywordTags = extractFeatures(item.name, item.description);
+    if (keywordTags.length === 0) {
+      gapFillTargets.push({ menuItemId: item.id, itemName: item.name, description: item.description });
+    }
+    for (const tag of keywordTags) {
+      features.push({ menuItemId: item.id, itemIdentityKey: identityKey, officeLocationId, tag, provenance: 'keyword' });
+    }
+    for (const tag of importedByName.get(item.name.toLocaleLowerCase())?.tags ?? []) {
+      features.push({
+        menuItemId: item.id,
+        itemIdentityKey: identityKey,
+        officeLocationId,
+        tag,
+        provenance: MENU_TAG_PROVENANCE,
+      });
+    }
   }
+
+  await createImportedMenuItemIdentities(db, officeLocationId, [...identities.values()]);
+  await createMenuItemFeaturesInBatches(db, features);
+  return gapFillTargets;
 }
 
 async function createImportedMenuItems(
@@ -459,6 +516,7 @@ async function createImportedMenuItems(
   await db.menuItem.createMany({
     data: items.map((item) => ({
       menuId,
+      itemIdentityKey: normalizeMenuItemIdentityKey(item.name),
       itemNumber: item.itemNumber,
       name: item.name,
       description: item.description,
@@ -684,9 +742,7 @@ function parseMenuImportPayload(payload: unknown): {
     }
   }
 
-  if (items.length === 0) {
-    violations.push({ path: 'menu', message: 'import must contain at least one valid item' });
-  }
+  validateImportItemCount(items, violations);
 
   const seen = new Map<string, number>();
   items.forEach((item, index) => {
@@ -1062,7 +1118,7 @@ export async function importMenuFromJson(
   const resolvedOfficeLocationId = await resolveMenuOfficeLocationId(officeLocationId);
   const { parsed } = await previewImport(payload, resolvedOfficeLocationId);
 
-  const { menu, created, gapFillTargets } = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const { menu, created, gapFillTargets } = await runAtomicMenuImport(async (tx) => {
     const existing = await findMenuByName(tx.menu, resolvedOfficeLocationId, parsed.name);
 
     if (existing) {
@@ -1082,8 +1138,12 @@ export async function importMenuFromJson(
 
       await createImportedMenuItems(tx, existing.id, parsed.items);
 
-      const gapFillTargets = await syncMenuItemsDerivedData(tx, existing.id, resolvedOfficeLocationId);
-      await syncImportedMenuTags(tx, existing.id, resolvedOfficeLocationId, parsed.items);
+      const gapFillTargets = await syncImportedMenuDerivedData(
+        tx,
+        existing.id,
+        resolvedOfficeLocationId,
+        parsed.items,
+      );
 
       const updated = await tx.menu.findUniqueOrThrow({
         where: { id: existing.id },
@@ -1107,8 +1167,12 @@ export async function importMenuFromJson(
 
     await createImportedMenuItems(tx, createdMenu.id, parsed.items);
 
-    const gapFillTargets = await syncMenuItemsDerivedData(tx, createdMenu.id, resolvedOfficeLocationId);
-    await syncImportedMenuTags(tx, createdMenu.id, resolvedOfficeLocationId, parsed.items);
+    const gapFillTargets = await syncImportedMenuDerivedData(
+      tx,
+      createdMenu.id,
+      resolvedOfficeLocationId,
+      parsed.items,
+    );
 
     const createdWithItems = await tx.menu.findUniqueOrThrow({
       where: { id: createdMenu.id },
@@ -1116,7 +1180,7 @@ export async function importMenuFromJson(
     });
 
     return { menu: formatMenu(createdWithItems), created: true, gapFillTargets };
-  }, importTransactionOptions);
+  });
 
   if (gapFillTargets.length > 0) {
     const aiFeatureTags = await requestAiFeatureTags(
@@ -1129,24 +1193,18 @@ export async function importMenuFromJson(
     );
 
     if (aiFeatureTags) {
-      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        for (const target of gapFillTargets) {
-          const tags = aiFeatureTags.get(target.itemName) ?? [];
-          if (tags.length === 0) {
-            continue;
-          }
-
-          await tx.menuItemFeature.createMany({
-            data: tags.map((tag) => ({
+      await createMenuItemFeaturesInBatches(
+        prisma,
+        gapFillTargets.flatMap((target) =>
+          (aiFeatureTags.get(target.itemName) ?? []).map((tag) => ({
               menuItemId: target.menuItemId,
               itemIdentityKey: normalizeMenuItemIdentityKey(target.itemName),
               officeLocationId: resolvedOfficeLocationId,
               tag,
               provenance: 'ai',
-            })),
-          });
-        }
-      }, importTransactionOptions);
+          })),
+        ),
+      );
     }
   }
 
@@ -1173,4 +1231,4 @@ export async function previewMenuImportFromJson(
   };
 }
 
-export { formatMenu, formatMenuItem };
+export { formatMenu, formatMenuItem, throwMenuImportError };

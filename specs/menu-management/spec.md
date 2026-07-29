@@ -87,7 +87,7 @@ A user imports a menu from a JSON file; import is atomic (all-or-nothing).
   snapshot.
 - **Price** out of range / >2 decimals / non-finite: rejected.
 - **Import partial failure**: never persists partial data.
-- **Large imports**: menus with hundreds of items remain atomic and complete without using Prisma's five-second default transaction deadline.
+- **Large imports**: imports of up to 1,000 items use bounded bulk writes; larger payloads are rejected before writing, and transaction timeouts report that no changes were applied.
 
 ## Requirements
 
