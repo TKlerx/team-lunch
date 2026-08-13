@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import supertest from 'supertest';
-import ExcelJS from 'exceljs';
 import { buildApp } from '../../src/server/index.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
@@ -98,9 +97,15 @@ describe('food order rating and export routes', () => {
     await app.close();
   });
 
-  it('exports own orders and ratings as xlsx', async () => {
+  it('exports own orders and ratings as CSV', async () => {
     const { selectionId, orderId } = await createCompletedSelectionWithOrder('alice@example.com');
-    await foodSelectionService.rateOrder(selectionId, orderId, 'alice@example.com', 5, 'Would order again');
+    await foodSelectionService.rateOrder(
+      selectionId,
+      orderId,
+      'alice@example.com',
+      5,
+      '=2+2, "Would order again"',
+    );
     const app = await buildApp();
     await app.ready();
 
@@ -115,20 +120,13 @@ describe('food order rating and export routes', () => {
       })
       .expect(200);
 
-    expect(res.headers['content-type']).toContain(
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    expect(res.headers['content-disposition']).toContain('.xlsx');
+    expect(res.headers['content-type']).toContain('text/csv');
+    expect(res.headers['content-disposition']).toContain('.csv');
 
-    const workbook = new ExcelJS.Workbook();
-    const bytes = Uint8Array.from(res.body as Uint8Array);
-    await workbook.xlsx.load(bytes.buffer);
-    const sheet = workbook.getWorksheet('Orders');
-    expect(sheet).toBeDefined();
-    expect(sheet?.rowCount).toBeGreaterThanOrEqual(2);
-    expect(String(sheet?.getRow(2).getCell(5).value ?? '')).toContain('Pad Thai');
-    expect(String(sheet?.getRow(2).getCell(7).value ?? '')).toContain('5');
-    expect(String(sheet?.getRow(2).getCell(8).value ?? '')).toContain('Would order again');
+    const csv = (res.body as Buffer).toString('utf8');
+    expect(csv).toContain('"Completed Date","Ordered At","Menu","Item Number","Meal"');
+    expect(csv).toContain('"Pad Thai"');
+    expect(csv).toContain('"5","\'=2+2, ""Would order again"""');
 
     await app.close();
   });

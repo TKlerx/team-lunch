@@ -16,7 +16,7 @@ selection per office blocks new lunch cycles.
 
 **Language/Version**: TypeScript (ESM) on Node.js
 
-**Primary Dependencies**: Fastify 5, Prisma 6 (FoodSelection/FoodOrder), SSE manager, `exceljs` (rating export), Microsoft Graph mail (`notificationEmail.ts`)
+**Primary Dependencies**: Fastify 5, Prisma 6 (FoodSelection/FoodOrder), SSE manager, Microsoft Graph mail (`notificationEmail.ts`)
 
 **Storage**: PostgreSQL — PostgreSQL Prisma schema
 

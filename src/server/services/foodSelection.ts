@@ -7,7 +7,6 @@ import type {
   PingFallbackCandidateResponse,
 } from '../../lib/types.js';
 import { isLikelyEmail, sendEmail } from './notificationEmail.js';
-import ExcelJS from 'exceljs';
 import { ensureDefaultOfficeLocation, validateOfficeLocationId } from './officeLocation.js';
 
 // ─── Timer management ──────────────────────────────────────
@@ -1134,7 +1133,13 @@ export async function setOrderDelivered(
   return formatted;
 }
 
-export async function exportOrdersForUserXlsx(nickname: string, actor?: OrderActor): Promise<Buffer> {
+function csvCell(value: string | number): string {
+  const text = String(value);
+  const safeText = /^[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replaceAll('"', '""')}"`;
+}
+
+export async function exportOrdersForUserCsv(nickname: string, actor?: OrderActor): Promise<string> {
   const identity = resolveOrderIdentity(nickname, actor);
 
   const orders = await prisma.foodOrder.findMany({
@@ -1146,34 +1151,21 @@ export async function exportOrdersForUserXlsx(nickname: string, actor?: OrderAct
     orderBy: [{ orderedAt: 'desc' }],
   });
 
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet('Orders');
-  sheet.columns = [
-    { header: 'Completed Date', key: 'completedDate', width: 20 },
-    { header: 'Ordered At', key: 'orderedAt', width: 20 },
-    { header: 'Menu', key: 'menuName', width: 24 },
-    { header: 'Item Number', key: 'itemNumber', width: 14 },
-    { header: 'Meal', key: 'itemName', width: 28 },
-    { header: 'Comment', key: 'notes', width: 30 },
-    { header: 'Rating', key: 'rating', width: 10 },
-    { header: 'Feedback', key: 'feedbackComment', width: 40 },
+  const rows: (string | number)[][] = [
+    ['Completed Date', 'Ordered At', 'Menu', 'Item Number', 'Meal', 'Comment', 'Rating', 'Feedback'],
+    ...orders.map((order) => [
+      order.selection.completedAt?.toISOString() ?? '',
+      order.orderedAt.toISOString(),
+      order.selection.menuName,
+      order.item?.itemNumber ?? '',
+      order.itemName,
+      order.notes ?? '',
+      order.rating ?? '',
+      order.feedbackComment ?? '',
+    ]),
   ];
 
-  for (const order of orders) {
-    sheet.addRow({
-      completedDate: order.selection.completedAt ? order.selection.completedAt.toISOString() : '',
-      orderedAt: order.orderedAt.toISOString(),
-      menuName: order.selection.menuName,
-      itemNumber: order.item?.itemNumber ?? '',
-      itemName: order.itemName,
-      notes: order.notes ?? '',
-      rating: order.rating ?? '',
-      feedbackComment: order.feedbackComment ?? '',
-    });
-  }
-
-  const buffer = await workbook.xlsx.writeBuffer();
-  return Buffer.from(buffer);
+  return `\uFEFF${rows.map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
 export async function completeFoodSelectionNow(

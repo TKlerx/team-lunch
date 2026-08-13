@@ -55,7 +55,7 @@ description: "Migrated task list — Food Selection Lifecycle (already implement
 ## Phase 7: User Story 5 — Feedback & export (P3)
 
 - [x] T027 [US5] Per-order rating (1–5) + optional remark; keep 5 most recent completed
-- [x] T028 [US5] Excel export via `exceljs`
+- [x] T028 [US5] CSV export without a spreadsheet dependency
 - [x] T029 [US5] Tests: `food-order-rating-export.test.ts`
 
 ## Phase 8: Cross-cutting

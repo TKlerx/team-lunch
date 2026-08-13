@@ -497,7 +497,7 @@ export function setOrderDelivered(
   });
 }
 
-export async function exportMyOrdersExcel(nickname: string): Promise<Blob> {
+export async function exportMyOrdersCsv(nickname: string): Promise<Blob> {
   void nickname;
   const url = apiPath('/food-selections/export/mine');
   const res = await fetch(url);
