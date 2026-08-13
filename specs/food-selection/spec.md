@@ -153,7 +153,7 @@ After completion each user rates and optionally remarks on their own order.
 
 - Models `FoodSelection`, `FoodOrder` present in both Prisma schemas.
 - Name snapshots (`menu_name`, `item_name`) stored alongside FKs.
-- Excel export uses `exceljs` (see `food-order-rating-export.test.ts`).
+- Order/rating export uses CSV (see `food-order-rating-export.test.ts`).
 
 ### Scope Flags
 

@@ -124,8 +124,8 @@ export default function FoodSelectionCompletedView({
     if (!actorLabel) return;
     setExportState('idle');
     try {
-      const blob = await api.exportMyOrdersExcel(actorLabel);
-      const fileName = `team-lunch-orders-${actorLabel.replace(/[^a-zA-Z0-9._-]/g, '_') || 'user'}.xlsx`;
+      const blob = await api.exportMyOrdersCsv(actorLabel);
+      const fileName = `team-lunch-orders-${actorLabel.replace(/[^a-zA-Z0-9._-]/g, '_') || 'user'}.csv`;
       const url = window.URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -283,13 +283,13 @@ export default function FoodSelectionCompletedView({
             onClick={() => void handleExport()}
             className="w-full border-accent bg-accent-soft px-3 text-accent-fg hover:bg-accent-soft"
           >
-            Export my orders & ratings (Excel)
+            Export my orders & ratings (CSV)
           </Button>
           {exportState === 'done' && (
-            <p className="text-center text-xs text-accent-fg">Excel export downloaded.</p>
+            <p className="text-center text-xs text-accent-fg">CSV export downloaded.</p>
           )}
           {exportState === 'error' && (
-            <p className="text-center text-xs text-danger-fg">Could not export Excel file.</p>
+            <p className="text-center text-xs text-danger-fg">Could not export CSV file.</p>
           )}
           <OrderCopyStatus status={copyStatus} />
         </div>

@@ -791,25 +791,22 @@ function registerQuickStartAndExportRoutes(app: FastifyInstance) {
     },
   );
 
-  // GET /api/food-selections/export/mine — export own orders/ratings as Excel
+  // GET /api/food-selections/export/mine — export own orders/ratings as CSV
   app.get<{ Querystring: { nickname?: string } }>(
     '/api/food-selections/export/mine',
     async (req, reply) => {
       try {
         const actor = await requireAuthenticatedActor(req.headers.cookie);
-        const workbook = await foodSelectionService.exportOrdersForUserXlsx(
+        const csv = await foodSelectionService.exportOrdersForUserCsv(
           actor.displayNameSnapshot,
           actor,
         );
         const safeNickname = actor.displayNameSnapshot.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const fileName = `team-lunch-orders-${safeNickname || 'user'}.xlsx`;
+        const fileName = `team-lunch-orders-${safeNickname || 'user'}.csv`;
 
-        reply.header(
-          'Content-Type',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        );
+        reply.header('Content-Type', 'text/csv; charset=utf-8');
         reply.header('Content-Disposition', `attachment; filename="${fileName}"`);
-        return reply.send(workbook);
+        return reply.send(csv);
       } catch (err) {
         return sendServiceError(reply, err);
       }
