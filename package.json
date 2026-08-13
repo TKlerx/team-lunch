@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.1.2",
+  "packageManager": "pnpm@11.8.0",
   "engines": {
     "node": ">=24 <25",
     "pnpm": ">=11 <12"
@@ -102,19 +102,6 @@
     "typescript": "^5.7.3",
     "vite": "^8.1.5",
     "vitest": "^3.0.7"
-  },
-  "pnpm": {
-    "overrides": {
-      "effect": "3.21.0"
-    },
-    "onlyBuiltDependencies": [
-      "@prisma/client",
-      "@prisma/engines",
-      "prisma",
-      "esbuild",
-      "@swc/core",
-      "sharp"
-    ]
   },
   "description": "Team Lunch is a collaborative lunch coordination app for teams. It helps a group pick a place to eat, collect everyone's order, and track delivery status in real time.",
   "main": "eslint.config.js",
