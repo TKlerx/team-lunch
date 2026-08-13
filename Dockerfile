@@ -3,7 +3,7 @@ FROM node:24-alpine AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
+RUN corepack enable && corepack prepare pnpm@11.1.2 --activate
 
 ARG VITE_BASE_PATH=/
 ENV VITE_BASE_PATH=${VITE_BASE_PATH}
@@ -32,7 +32,7 @@ ENV NODE_ENV=production
 
 RUN apk upgrade --no-cache
 
-RUN corepack enable && corepack prepare pnpm@11.1.0 --activate
+RUN corepack enable && corepack prepare pnpm@11.1.2 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
