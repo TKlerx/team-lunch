@@ -90,7 +90,7 @@
     "eslint": "^10.7.0",
     "eslint-plugin-sonarjs": "^4.0.0",
     "jscpd": "^5.0.11",
-    "jsdom": "^26.0.0",
+    "jsdom": "^30.0.1",
     "only-allow": "1.2.2",
     "png-to-ico": "^3.0.1",
     "postcss": "8.5.25",
