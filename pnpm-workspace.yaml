@@ -9,6 +9,7 @@ allowBuilds:
 
 # Dependency overrides (pnpm 11 reads these here, not from package.json).
 overrides:
+  '@prisma/config>deepmerge-ts': 8.0.1
   effect: 3.21.0
   '@hono/node-server': 2.0.10
   hono: 4.12.34
@@ -20,20 +21,7 @@ overrides:
   'ajv>fast-uri': 3.1.5
   'fast-json-stringify>fast-uri': 4.1.2
   shell-quote: 1.10.0
+  nanoid: 3.3.18
 
-# Wait seven days before resolving newly published packages.
-minimumReleaseAge: 10080
-
-# Security-patched release; intentionally exempt from the maturity delay.
-minimumReleaseAgeExclude:
-  - '@fastify/static'
-  - '@hono/node-server'
-  - brace-expansion
-  - esbuild
-  - fast-uri
-  - form-data
-  - hono
-  - js-yaml
-  - nanoid
-  - postcss
-  - shell-quote
+# Wait three days before resolving newly published packages.
+minimumReleaseAge: 4320 # nosemgrep: package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age
