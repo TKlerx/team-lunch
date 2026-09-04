@@ -43,7 +43,7 @@
     "pretest:timing": "node ./scripts/prisma-generate-safe.mjs",
     "test:timing": "vitest run --reporter=json --outputFile=reports/test-timing/raw.json && node scripts/test-timing-report.mjs",
     "duplication": "node scripts/check-duplication.mjs",
-    "audit:prod": "pnpm audit --prod",
+    "audit:prod": "pnpm audit --prod --no-optional",
     "validate:precommit": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 precommit",
     "validate:prepush": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 prepush",
     "validate:full": "pwsh -NoProfile -ExecutionPolicy Bypass -File validate.ps1 full",
