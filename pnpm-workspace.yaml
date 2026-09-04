@@ -9,6 +9,7 @@ allowBuilds:
 
 # Dependency overrides (pnpm 11 reads these here, not from package.json).
 overrides:
+  'prisma>mysql2': 3.23.1
   '@prisma/config>deepmerge-ts': 8.0.1
   effect: 3.21.0
   '@hono/node-server': 2.0.10
@@ -17,9 +18,9 @@ overrides:
   'minimatch@5>brace-expansion': 2.1.4
   'minimatch@10>brace-expansion': 5.0.9
   valibot: ^1.4.2
-  '@fastify/ajv-compiler>fast-uri': 3.1.5
-  'ajv>fast-uri': 3.1.5
-  'fast-json-stringify>fast-uri': 4.1.2
+  '@fastify/ajv-compiler>fast-uri': 3.1.6
+  'ajv>fast-uri': 3.1.6
+  'fast-json-stringify>fast-uri': 4.1.3
   shell-quote: 1.10.0
   nanoid: 3.3.18
 
