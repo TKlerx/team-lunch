@@ -9,6 +9,7 @@ allowBuilds:
 
 # Dependency overrides (pnpm 11 reads these here, not from package.json).
 overrides:
+  'prisma>mysql2': 3.23.1
   '@prisma/config>deepmerge-ts': 8.0.1
   effect: 3.21.0
   '@hono/node-server': 2.0.10
