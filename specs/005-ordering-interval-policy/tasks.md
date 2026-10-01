@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T003 are complete and validated; continue with T004.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T004 are complete and validated; Phase 2 is complete. Stop before Phase 3; T005 is next when resumed.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -13,7 +13,7 @@
 ## Phase 2: Foundational (Shared Decision)
 
 - [x] T003 Implement validated office-local calendar/date-boundary helpers in `src/server/services/officeTime.ts` using native Date/Intl; add runnable tests in `tests/server/office-time.test.ts` for strict dates, Monday, unknown zones, year/leap rollover, DST midnight conversion, fractional offsets, and server/office timezone mismatch.
-- [ ] T004 Implement current-block/eligibility calculation, indexed completedAt existence query, before-anchor handling, Unrestricted short circuit, and reason/snapshot validation in `src/server/services/orderingPolicy.ts`; add `tests/server/ordering-policy.test.ts` for all five modes, Friday-to-Wednesday, empty elapsed blocks/no carryover, completion not placement, boundary equality, future anchors, exceptions/no future debt, and office isolation.
+- [x] T004 Implement current-block/eligibility calculation, indexed completedAt existence query, before-anchor handling, Unrestricted short circuit, and reason/snapshot validation in `src/server/services/orderingPolicy.ts`; add `tests/server/ordering-policy.test.ts` for all five modes, Friday-to-Wednesday, empty elapsed blocks/no carryover, completion not placement, boundary equality, future anchors, exceptions/no future debt, and office isolation.
 
 **Checkpoint**: One tested evaluator is available to creation, scheduling, and availability UI; no business policy is duplicated client-side.
 
@@ -111,6 +111,16 @@ that leaves quick starts or automatic creation unguarded.
 - `pnpm exec vitest run --project server tests/server/office-time.test.ts` passed 53/53 tests covering strict/impossible dates, Monday, unknown zones, year/leap rollover, 167/169-hour DST weeks, skipped/repeated midnight, fractional offsets, and three server timezone settings distinct from office timezones.
 - `pwsh -File ./validate.ps1 all` passed every gate, 83 files / 978 tests, with 87.8% line and 79.76% branch coverage. No complexity baseline changes or validation bypasses.
 - T003 is complete; T004 remains unchecked. No commit created.
+
+### T004 — 2026-10-01
+
+- T003 committed as `46743bf` (`feat: add office-local calendar helpers`) before starting this task; the pre-commit hook passed.
+- Added `src/server/services/orderingPolicy.ts` with server-owned office-scoped evaluation, independently converted calendar-block boundaries, one indexed completion evidence lookup (`status=completed`, `completedAt` in `[start,end)`), future-anchor handling, and an Unrestricted short circuit. Invalid settings, clocks, unavailable offices, and DB failures propagate errors instead of fabricating eligibility.
+- Added trimmed 1–500-character justification validation and a server-derived exception snapshot builder using the existing signed actor type. Missing reasons on noncompliance produce a typed 409 warning; malformed supplied reasons return 400. Eligible/Unrestricted decisions do not produce stale exceptions. Creation guards, route error forwarding, settings validation, scheduler wiring, and snapshot projections remain deferred to their tasks.
+- `pnpm typecheck` passed. Focused `pnpm exec vitest run --project server tests/server/ordering-policy.test.ts tests/server/office-time.test.ts` passed 98/98 tests (45 evaluator/snapshot tests plus 53 calendar tests). Coverage includes all five modes, Friday-to-Wednesday, no carryover, completion versus placement, half-open boundary equality, future anchors, DST/year/leap rollover, office isolation, exceptions/no future debt, retained-history re-evaluation, validation failures, and immutable snapshot values.
+- Initial focused runs exposed test-harness issues: duplicate office fixture names and Prisma proxy-method spies that require explicit call-through/restoration. Fixed only the new fixtures. Simplified optional completion branches and split oversized test groups so `pnpm complexity` passed without changing its baseline.
+- `pwsh -File ./validate.ps1 all` passed all gates, 84 files / 1,023 tests, with 87.85% line and 79.87% branch coverage. No dependency, migration, validation bypass, or Phase 3 implementation was added.
+- Phase 2 is complete. T005 remains unchecked; stopped before Phase 3. T004 is not committed.
 
 ## Planning Validation
 
