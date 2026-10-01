@@ -6,6 +6,10 @@ the user observes and steers. For new features, run the spec-kit phases
 (`specify → plan → tasks → implement`); implementation then proceeds one checked
 task at a time from `tasks.md`.
 
+<!-- SPECKIT START -->
+Active feature plan: `specs/005-ordering-interval-policy/plan.md`.
+<!-- SPECKIT END -->
+
 ### Typical Development Workflow
 
 1. **Intake** — review `specs/BACKLOG.md`; add new unstructured requests there before promoting them.

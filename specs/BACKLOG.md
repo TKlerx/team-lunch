@@ -1,6 +1,6 @@
 # Specs Backlog
 
-**Last Updated**: 2026-06-19
+**Last Updated**: 2026-10-01
 
 This backlog is the canonical intake list for unstructured feature wishes before
 they become numbered specs.
@@ -25,6 +25,19 @@ they become numbered specs.
 | BACKLOG-006 | Live Entra account verification | Backlog | - | Manual tenant/app-registration validation that mocked tests cannot cover. |
 | BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
 | BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
+| BACKLOG-009 | Office ordering interval policy | Promoted | [005-ordering-interval-policy](005-ordering-interval-policy/spec.md) | Fixed office-local calendar periods, pre-poll soft warning with recorded exceptions, scheduler compliance, and landing countdown. |
+
+## BACKLOG-009 notes — Office ordering interval policy
+
+Promoted to [005-ordering-interval-policy](005-ordering-interval-policy/spec.md).
+Office admins configure Unrestricted or one completed lunch per fixed 1/2/3/4-week
+period, an office timezone, and a starting Monday at 00:00. Default is weekly.
+Unused opportunities expire; exceptions do not shift period boundaries. Count
+successful lunches by `completedAt`, not placement time. Check before all manual
+poll/quick starts: Cancel is default; authorized starters can proceed with a
+recorded justification. Automatic polls never override. The landing page shows
+policy availability/countdown. Restricted-only fields are disabled and not
+evaluated in Unrestricted mode; validate settings on both client and server.
 
 ## BACKLOG-007 notes — Prisma 7 production verification
 

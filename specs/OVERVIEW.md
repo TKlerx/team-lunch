@@ -1,6 +1,6 @@
 # Specs Overview
 
-**Last Updated**: 2026-06-19
+**Last Updated**: 2026-10-01
 
 This overview tracks spec completeness and implementation status for epics in
 `specs/`.
@@ -45,6 +45,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
 | 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
+| 005 | ordering-interval-policy | Planned | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
@@ -64,12 +65,13 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **Menu safety labels**: Planned as [004-menu-safety-labels](004-menu-safety-labels/spec.md), promoted from [BACKLOG-008](BACKLOG.md). Ready for implementation planning.
-2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
-3. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
-4. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
-5. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
-6. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
+1. **Office ordering interval policy**: Active user-directed work in [005-ordering-interval-policy](005-ordering-interval-policy/spec.md), promoted from [BACKLOG-009](BACKLOG.md). Spec, plan, and tasks are ready on `005-ordering-interval-policy`; start with T001. Implementation has not started.
+2. **Menu safety labels reconciliation**: [004-menu-safety-labels](004-menu-safety-labels/spec.md) still has a Planned overview status although its task list is fully checked. Review existing completion evidence before updating its status.
+3. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
+4. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
+5. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
+6. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
+7. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
 
 ## Notes
 
