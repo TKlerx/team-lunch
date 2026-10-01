@@ -1292,3 +1292,5 @@ prop('POST:/api/menus/import/preview',method,post).
 prop('POST:/api/menus/import/preview',mutates_state,false).
 prop('POST:/api/menus/import/preview',requires_auth,true).
 prop('POST:/api/menus/import/preview',path,'/api/menus/import/preview').
+entity(officeTime,service).
+rel(officeLocation,depends_on,officeTime).

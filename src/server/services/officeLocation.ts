@@ -1,4 +1,5 @@
 import prisma from '../db.js';
+import { parseCalendarDate, validateMondayDate, validateTimeZone } from './officeTime.js';
 import { serviceError } from '../routes/routeUtils.js';
 import type {
   OfficeLocation,
@@ -320,11 +321,38 @@ export async function validateOfficeLocationId(officeLocationId: string): Promis
   return formatOfficeLocation(location);
 }
 
+function validateOrderingSettings(location: OfficeLocation, settings: UpdateOfficeLocationSettingsRequest) {
+  const orderingIntervalWeeks = settings.orderingIntervalWeeks === undefined
+    ? location.orderingIntervalWeeks : settings.orderingIntervalWeeks;
+  if (![0, 1, 2, 3, 4].includes(orderingIntervalWeeks)) {
+    throw serviceError('Ordering interval must be 0, 1, 2, 3, or 4 weeks', 400);
+  }
+  const timeZone = settings.timeZone === undefined ? location.timeZone : settings.timeZone;
+  const orderingAnchorDate = orderingIntervalWeeks === 0 || settings.orderingAnchorDate === undefined
+    ? location.orderingAnchorDate : settings.orderingAnchorDate;
+  try {
+    validateTimeZone(timeZone);
+    if (orderingIntervalWeeks !== 0) validateMondayDate(orderingAnchorDate);
+  } catch (err) {
+    if (err instanceof RangeError) throw serviceError(err.message, 400);
+    throw err;
+  }
+  return {
+    orderingIntervalWeeks,
+    timeZone,
+    orderingAnchorDate: parseCalendarDate(orderingAnchorDate),
+  };
+}
+
 export async function updateOfficeLocationSettings(
   officeLocationId: string,
   settings: UpdateOfficeLocationSettingsRequest,
 ): Promise<OfficeLocation> {
   const location = await validateOfficeLocationId(officeLocationId);
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+    throw serviceError('Office settings must be an object', 400);
+  }
+  const orderingSettings = validateOrderingSettings(location, settings);
   const autoStartPollEnabled = settings.autoStartPollEnabled === true;
   const autoStartPollWeekdays = validateAutoStartWeekdays(settings.autoStartPollWeekdays);
   const autoStartPollFinishTime = validateAutoStartFinishTime(settings.autoStartPollFinishTime);
@@ -346,6 +374,7 @@ export async function updateOfficeLocationSettings(
       autoStartPollWeekdays,
       autoStartPollFinishTime,
       defaultFoodSelectionDurationMinutes,
+      ...orderingSettings,
       updatedAt: new Date(),
     },
   });

@@ -37,6 +37,8 @@ import type {
   RecommenderTrainResponse,
   CreateMenuItemRequest,
   UpdateMenuItemRequest,
+  OfficeLocation,
+  UpdateOfficeLocationSettingsRequest,
 } from '../lib/types.js';
 import { withBasePath, withOfficeLocationContext } from './config.js';
 
@@ -95,6 +97,16 @@ export function normalizePreferenceTerms(terms: string[]): string[] {
   }
 
   return result;
+}
+
+export function updateOfficeLocationSettings(
+  officeId: string,
+  settings: UpdateOfficeLocationSettingsRequest,
+): Promise<{ office: OfficeLocation }> {
+  return request(withBasePath(`/api/auth/offices/${encodeURIComponent(officeId)}/settings`), {
+    method: 'POST',
+    body: JSON.stringify(settings),
+  });
 }
 
 // ─── Menu API ──────────────────────────────────────────────

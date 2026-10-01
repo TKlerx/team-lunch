@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T004 are complete and validated; Phase 2 is complete. Stop before Phase 3; T005 is next when resumed.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T005 are complete and validated. T005 settings persistence is complete; stop before T006 Administration UI.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -22,7 +22,7 @@
 **Goal**: Admins save validated per-office settings and disable policy without losing the anchor.
 **Independent Test**: Save/reload two differently configured offices, submit invalid settings, then disable/re-enable one office.
 
-- [ ] T005 [US1] Extend settings validation and atomic persistence in `src/server/services/officeLocation.ts`, thin forwarding in `src/server/routes/auth.ts`, and typed settings calls in `src/client/api.ts`; test exact enum/types, Monday/date/zone validation, older-payload preservation, future anchors, disabled-anchor retention, and authorization in `tests/server/office-location-service.test.ts` and focused route tests in `tests/server/ordering-policy-settings.test.ts`.
+- [x] T005 [US1] Extend settings validation and atomic persistence in `src/server/services/officeLocation.ts`, thin forwarding in `src/server/routes/auth.ts`, and typed settings calls in `src/client/api.ts`; test exact enum/types, Monday/date/zone validation, older-payload preservation, future anchors, disabled-anchor retention, and authorization in `tests/server/office-location-service.test.ts` and focused route tests in `tests/server/ordering-policy-settings.test.ts`.
 - [ ] T006 [US1] Extend drafts/change detection/save payloads and native interval/date/timezone controls in `src/client/pages/Administration.tsx`; disable and explain the anchor in Unrestricted, retain its value, keep office timezone editable, and add save/reload/invalid-input/non-admin tests in `tests/client/Administration.test.tsx`.
 
 ## Phase 4: User Story 2 - Warn and Record Exceptions (P1)
@@ -121,6 +121,16 @@ that leaves quick starts or automatic creation unguarded.
 - Initial focused runs exposed test-harness issues: duplicate office fixture names and Prisma proxy-method spies that require explicit call-through/restoration. Fixed only the new fixtures. Simplified optional completion branches and split oversized test groups so `pnpm complexity` passed without changing its baseline.
 - `pwsh -File ./validate.ps1 all` passed all gates, 84 files / 1,023 tests, with 87.85% line and 79.87% branch coverage. No dependency, migration, validation bypass, or Phase 3 implementation was added.
 - Phase 2 is complete. T005 remains unchecked; stopped before Phase 3. T004 is not committed.
+
+### T005 — 2026-10-01
+
+- Confirmed T001–T004 were committed and the working tree was clean before starting. Extended office settings validation using the existing shared request contract and `officeTime.ts` helpers; exact numeric 0/1/2/3/4 intervals, IANA zones, and strict Monday calendar dates are validated before the single atomic settings update. Future Mondays are accepted.
+- Omitted policy fields preserve stored values. Unrestricted mode ignores incoming anchor edits, retains the stored anchor, and still validates timezone; re-enabling validates the effective anchor. Invalid policy fields do not update scheduling, duration, policy, or timestamps.
+- The auth settings route already forwards the full shared request and enforces signed-session/global-admin authorization; reused it unchanged rather than adding redundant forwarding. Added the typed settings call in `src/client/api.ts`; Administration wiring remains T006. Existing admins can configure any addressed active office; office-scoped admin roles remain BACKLOG-004.
+- Extended service tests and added focused settings-route tests for types/values, invalid dates/zones, future anchors, omission, disable/re-enable, authorization, missing/inactive offices, and office isolation. Focused tests passed 68/68; `pnpm typecheck` passed.
+- First aggregate run passed all 1,074 tests and every gate except the test-group function-length ratchet. Split the new route test groups without changing the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate, 85 files / 1,074 tests, with 87.84% line and 79.98% branch coverage.
+- Selectively rehashed the four unchanged agent-derived office-service facts and recorded its calendar-helper dependency. `faim validate` passed with no errors/warnings; 153 stale derived facts remain (scanner-owned/pre-existing freshness work is deferred to T017, not silently rehashed). Refreshed continuity with `pnpm continuity:update` to point at T006.
+- No UI, creation enforcement, scheduling enforcement, SSE invalidation, dependency, migration, or commit added. T006 remains unchecked.
 
 ## Planning Validation
 

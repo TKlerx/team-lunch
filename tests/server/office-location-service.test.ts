@@ -11,7 +11,77 @@ import {
   updateOfficeLocationSettings,
 } from '../../src/server/services/officeLocation.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
-import type { OrderingIntervalWeeks } from '../../src/lib/types.js';
+import type { UpdateOfficeLocationSettingsRequest, OrderingIntervalWeeks } from '../../src/lib/types.js';
+
+const settingsPayload: UpdateOfficeLocationSettingsRequest = {
+  autoStartPollEnabled: false,
+  autoStartPollWeekdays: [],
+  autoStartPollFinishTime: null,
+  defaultFoodSelectionDurationMinutes: 20,
+};
+
+const invalidPolicyFields = [
+  ...[-1, 5, 1.5, '1', null, true, [], {}].map((orderingIntervalWeeks) => ({ orderingIntervalWeeks })),
+  ...['', 'Not/AZone', '+01:00', ' Europe/Vienna ', null, 12, {}, []].map((timeZone) => ({ timeZone })),
+  ...['2026-02-30', '2026-10-01', '2026-9-07', '2026-09-07T00:00:00Z', '0000-01-03', '', null, 12, {}, []]
+    .map((orderingAnchorDate) => ({ orderingAnchorDate })),
+];
+
+describe('office ordering settings validation', () => {
+  beforeEach(cleanDatabase);
+  afterAll(disconnectDatabase);
+
+  it.each<OrderingIntervalWeeks>([0, 1, 2, 3, 4])('saves exact interval %i and accepts future Mondays', async (orderingIntervalWeeks) => {
+    const office = await createOfficeLocation('Policy Office');
+    const updated = await updateOfficeLocationSettings(office.id, {
+      ...settingsPayload, orderingIntervalWeeks, timeZone: 'Europe/Vienna', orderingAnchorDate: '2099-01-05',
+    });
+    expect(updated).toMatchObject({
+      orderingIntervalWeeks, timeZone: 'Europe/Vienna',
+      orderingAnchorDate: orderingIntervalWeeks === 0 ? office.orderingAnchorDate : '2099-01-05',
+    });
+  });
+
+  it.each(invalidPolicyFields)('rejects invalid policy field %j without changing any settings', async (field) => {
+    const office = await createOfficeLocation('Policy Office');
+    const before = await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } });
+    await expect(updateOfficeLocationSettings(office.id, {
+      ...settingsPayload, ...field,
+    } as UpdateOfficeLocationSettingsRequest)).rejects.toMatchObject({ statusCode: 400 });
+    expect(await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } })).toEqual(before);
+  });
+
+  it('retains policy values for older clients and individually omitted fields', async () => {
+    const office = await createOfficeLocation('Policy Office');
+    const policy = { orderingIntervalWeeks: 3 as const, timeZone: 'Europe/Vienna', orderingAnchorDate: '2099-01-05' };
+    await updateOfficeLocationSettings(office.id, { ...settingsPayload, ...policy });
+    expect(await updateOfficeLocationSettings(office.id, settingsPayload)).toMatchObject(policy);
+    expect(await updateOfficeLocationSettings(office.id, { ...settingsPayload, orderingIntervalWeeks: 4 }))
+      .toMatchObject({ ...policy, orderingIntervalWeeks: 4 });
+  });
+
+  it.each(['2099-01-12', 'not a date', null, 12, {}])('ignores disabled anchor edits %j and re-enables with the retained Monday', async (orderingAnchorDate) => {
+    const office = await createOfficeLocation('Policy Office');
+    await updateOfficeLocationSettings(office.id, { ...settingsPayload, orderingAnchorDate: '2099-01-05' });
+    expect(await updateOfficeLocationSettings(office.id, {
+      ...settingsPayload, orderingIntervalWeeks: 0, timeZone: 'Pacific/Honolulu', orderingAnchorDate,
+    } as UpdateOfficeLocationSettingsRequest)).toMatchObject({ orderingIntervalWeeks: 0, orderingAnchorDate: '2099-01-05' });
+    expect(await updateOfficeLocationSettings(office.id, { ...settingsPayload, orderingIntervalWeeks: 2 }))
+      .toMatchObject({ orderingIntervalWeeks: 2, orderingAnchorDate: '2099-01-05', timeZone: 'Pacific/Honolulu' });
+  });
+
+  it('validates timezone while unrestricted and submitted anchor when re-enabling', async () => {
+    const office = await createOfficeLocation('Policy Office');
+    await updateOfficeLocationSettings(office.id, { ...settingsPayload, orderingIntervalWeeks: 0 });
+    const before = await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } });
+    await expect(updateOfficeLocationSettings(office.id, { ...settingsPayload, timeZone: 'Not/AZone' }))
+      .rejects.toMatchObject({ statusCode: 400 });
+    await expect(updateOfficeLocationSettings(office.id, {
+      ...settingsPayload, orderingIntervalWeeks: 1, orderingAnchorDate: '2099-01-06',
+    })).rejects.toMatchObject({ statusCode: 400 });
+    expect(await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } })).toEqual(before);
+  });
+});
 
 describe('office location service', () => {
   beforeEach(async () => {
