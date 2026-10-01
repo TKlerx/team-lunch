@@ -116,12 +116,12 @@ export default async function pollRoutes(app: FastifyInstance) {
   // GET /api/polls/:id — get a specific poll for direct/historical URLs
   app.get<{ Params: { id: string } }>('/api/polls/:id', async (req, reply) => {
     try {
-      await requireAuthenticatedActor(req.headers.cookie);
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
       );
-      return reply.send(await pollService.getPoll(req.params.id, officeLocationId));
+      return reply.send(await pollService.getPoll(req.params.id, officeLocationId, actor.isAdmin));
     } catch (err) {
       return sendServiceError(reply, err);
     }

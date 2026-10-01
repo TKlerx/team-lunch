@@ -616,9 +616,14 @@ export async function getActivePoll(officeLocationId?: string): Promise<Poll | n
   return poll ? formatPoll(poll) : null;
 }
 
-export async function getPoll(pollId: string, officeLocationId?: string): Promise<Poll> {
+export async function getPoll(
+  pollId: string, officeLocationId?: string, isAdmin = false,
+): Promise<Poll> {
   const poll = await fetchPollOrThrow(pollId, officeLocationId);
-  return formatPoll(poll);
+  return {
+    ...formatPoll(poll),
+    ...(isAdmin ? { orderingPolicyException: poll.orderingPolicyException as Poll['orderingPolicyException'] } : {}),
+  };
 }
 
 export async function getLatestCompletedPoll(officeLocationId?: string): Promise<Poll | null> {

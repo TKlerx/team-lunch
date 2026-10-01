@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Ordering-policy exceptions are projected only by admin REST poll detail and food-selection detail/history services, after the route resolves signed role and selected-office authorization. Food selections read the original Poll snapshot; public `formatPoll`/`formatFoodSelection` remain snapshot-free for start responses and initial/live SSE. `GET /api/food-selections/:id` is the authenticated office-scoped detail read.
+
 - Docker images and local tooling target Node.js 24 LTS (`node:24-alpine`); keep local Node on 24.x to match CI and production.
 - After any Prisma schema change, run `pnpm prisma migrate dev` before running server tests; otherwise tests may fail with missing DB column errors even if TypeScript compiles.
 - Server tests run against a dedicated Postgres schema (`TEST_DATABASE_SCHEMA`, default `team_lunch_test`) and migrate it automatically in test setup; app data in `public` is preserved unless `TEST_DATABASE_SCHEMA` is set to `public`.

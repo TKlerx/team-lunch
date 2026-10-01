@@ -123,16 +123,32 @@ function registerSelectionOverviewRoutes(app: FastifyInstance) {
     }
   });
 
+}
+
+function registerSelectionHistoryRoutes(app: FastifyInstance) {
   // GET /api/food-selections/history — latest completed selections (most recent first)
   app.get('/api/food-selections/history', async (req, reply) => {
     try {
-      await requireAuthenticatedActor(req.headers.cookie);
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
       );
-      const history = await foodSelectionService.getCompletedFoodSelectionsHistory(5, officeLocationId);
+      const history = await foodSelectionService.getCompletedFoodSelectionsHistory(5, officeLocationId, actor.isAdmin);
       return reply.send(history);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.get<{ Params: { id: string } }>('/api/food-selections/:id', async (req, reply) => {
+    try {
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      return reply.send(await foodSelectionService.getFoodSelection(req.params.id, officeLocationId, actor.isAdmin));
     } catch (err) {
       return sendServiceError(reply, err);
     }
@@ -820,6 +836,7 @@ function registerQuickStartAndExportRoutes(app: FastifyInstance) {
 
 export default async function foodSelectionRoutes(app: FastifyInstance) {
   registerSelectionOverviewRoutes(app);
+  registerSelectionHistoryRoutes(app);
   registerOrderingRoutes(app);
   registerSelectionLifecycleRoutes(app);
   registerSelectionCompletionRoutes(app);
