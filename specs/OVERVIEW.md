@@ -65,7 +65,7 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **Office ordering interval policy**: Active user-directed work in [005-ordering-interval-policy](005-ordering-interval-policy/spec.md), promoted from [BACKLOG-009](BACKLOG.md). T001–T005 persistence/defaults, shared contracts, office-local calendar helpers, policy evaluation/snapshots, and atomic settings validation are implemented and validated on `005-ordering-interval-policy`. Stopped before T006; resume with Administration settings UI. Creation enforcement, scheduler integration, and UI remain pending.
+1. **Office ordering interval policy**: Active user-directed work in [005-ordering-interval-policy](005-ordering-interval-policy/spec.md), promoted from [BACKLOG-009](BACKLOG.md). T001–T006 persistence/defaults, shared contracts, office-local calendar helpers, policy evaluation/snapshots, atomic settings validation, and Administration settings UI are implemented and validated on `005-ordering-interval-policy`. T006 is uncommitted; stopped before T007 creation enforcement. Creation enforcement, warning dialogs, scheduler integration, and availability UI remain pending.
 2. **Menu safety labels reconciliation**: [004-menu-safety-labels](004-menu-safety-labels/spec.md) still has a Planned overview status although its task list is fully checked. Review existing completion evidence before updating its status.
 3. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
 4. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.

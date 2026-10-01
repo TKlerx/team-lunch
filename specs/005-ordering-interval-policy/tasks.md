@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T005 are complete and validated. T005 settings persistence is complete; stop before T006 Administration UI.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T006 are complete and validated. T006 Administration settings UI is complete; stop before T007 creation enforcement.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -23,7 +23,7 @@
 **Independent Test**: Save/reload two differently configured offices, submit invalid settings, then disable/re-enable one office.
 
 - [x] T005 [US1] Extend settings validation and atomic persistence in `src/server/services/officeLocation.ts`, thin forwarding in `src/server/routes/auth.ts`, and typed settings calls in `src/client/api.ts`; test exact enum/types, Monday/date/zone validation, older-payload preservation, future anchors, disabled-anchor retention, and authorization in `tests/server/office-location-service.test.ts` and focused route tests in `tests/server/ordering-policy-settings.test.ts`.
-- [ ] T006 [US1] Extend drafts/change detection/save payloads and native interval/date/timezone controls in `src/client/pages/Administration.tsx`; disable and explain the anchor in Unrestricted, retain its value, keep office timezone editable, and add save/reload/invalid-input/non-admin tests in `tests/client/Administration.test.tsx`.
+- [x] T006 [US1] Extend drafts/change detection/save payloads and native interval/date/timezone controls in `src/client/pages/Administration.tsx`; disable and explain the anchor in Unrestricted, retain its value, keep office timezone editable, and add save/reload/invalid-input/non-admin tests in `tests/client/Administration.test.tsx`.
 
 ## Phase 4: User Story 2 - Warn and Record Exceptions (P1)
 
@@ -131,6 +131,15 @@ that leaves quick starts or automatic creation unguarded.
 - First aggregate run passed all 1,074 tests and every gate except the test-group function-length ratchet. Split the new route test groups without changing the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate, 85 files / 1,074 tests, with 87.84% line and 79.98% branch coverage.
 - Selectively rehashed the four unchanged agent-derived office-service facts and recorded its calendar-helper dependency. `faim validate` passed with no errors/warnings; 153 stale derived facts remain (scanner-owned/pre-existing freshness work is deferred to T017, not silently rehashed). Refreshed continuity with `pnpm continuity:update` to point at T006.
 - No UI, creation enforcement, scheduling enforcement, SSE invalidation, dependency, migration, or commit added. T006 remains unchecked.
+
+### T006 — 2026-10-01
+
+- Started from a clean working tree with T005 committed as `d9f4b5a`. Extended per-office drafts, change detection, native interval/date/timezone controls, and save payloads in `src/client/pages/Administration.tsx`, reusing `updateOfficeLocationSettings` and shared contracts. Exactly Unrestricted and 1/2/3/4 weeks are offered; invalid intervals, IANA timezones, and strict non-Monday/impossible dates block saving. Future Monday anchors are accepted.
+- Unrestricted disables and explains the anchor, omits it from requests, and preserves its unsaved draft even after settings refreshes. Timezone remains independently editable/validated. Re-enabling validates the retained effective anchor; ignored anchor differences do not make Unrestricted settings dirty. Existing scheduling and duration settings are unchanged.
+- Extended `tests/client/Administration.test.tsx` with 19 cases covering all interval save/reload paths, future anchors, changes/reversions, invalid inputs, disable/save/re-enable retention, unrestricted timezone editing, office isolation across refreshes, and non-admin behavior. Focused `pnpm exec vitest run --project client tests/client/Administration.test.tsx` passed 36/36 tests.
+- First aggregate run exposed three new complexity/function-length warnings. Reduced the validation branch count and split controls/test groups without raising the baseline. Final `pwsh -File ./validate.ps1 all` passed all gates: 85 files / 1,093 tests, 87.99% line and 80.22% branch coverage.
+- Refreshed scanner-owned project memory with `pnpm faim:deps`; reviewed and rehashed the two unchanged pre-existing mealFeatures agent facts. `faim validate` passed with no errors/warnings and `faim stale` reported no stale facts. Refreshed continuity docs with `pnpm continuity:update`.
+- T006 is complete and uncommitted. Stopped before T007; no creation enforcement, warning dialogs, scheduler integration, availability UI, dependency, or migration added.
 
 ## Planning Validation
 

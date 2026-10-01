@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, within } from './testRender.js';
+import { render, screen, within, fireEvent, waitFor } from './testRender.js';
 import { MemoryRouter } from 'react-router-dom';
 import Administration from '../../src/client/pages/Administration.js';
 import type { OfficeLocation } from '../../src/lib/types.js';
@@ -294,6 +294,202 @@ describe('Administration page', () => {
     expect(
       screen.getByRole('combobox', { name: /default food selection duration for berlin/i }),
     ).toHaveValue('20');
+  });
+});
+
+function mockOffices(initial = [makeOffice({ id: 'office-1', key: 'default', name: 'Default Office' })]) {
+    let offices = initial;
+    const saves = vi.fn();
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith('/api/auth/config')) {
+        return jsonResponse({ auth: { ...baseAdminConfig, officeLocations: offices } });
+      }
+      const office = offices.find((entry) => url.endsWith(`/api/auth/offices/${entry.id}/settings`));
+      if (office && init?.method === 'POST') {
+        const payload = JSON.parse(String(init.body));
+        saves(office.id, payload);
+        const updated = { ...office, ...payload };
+        offices = offices.map((entry) => entry.id === office.id ? updated : entry);
+        return jsonResponse({ office: updated });
+      }
+      return jsonResponse({ error: 'not found' }, 404);
+    }));
+    return saves;
+}
+
+describe('Administration ordering policy persistence', () => {
+  it.each([0, 1, 2, 3, 4])('saves and reloads interval %s with timezone and future Monday', async (weeks) => {
+    const saves = mockOffices();
+    const user = setupUser();
+    const view = renderAdministration();
+    const interval = await screen.findByLabelText('Ordering interval for default');
+    expect(within(interval).getAllByRole('option').map((option) => option.textContent))
+      .toEqual(['Unrestricted', '1 week', '2 weeks', '3 weeks', '4 weeks']);
+    const save = screen.getByLabelText('Save office settings for default');
+    expect(save).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Ordering anchor date for default'), { target: { value: '2099-03-02' } });
+    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: 'Europe/Vienna' } });
+    await user.selectOptions(interval, String(weeks));
+    await user.click(save);
+    await waitFor(() => expect(save).toBeDisabled());
+    expect(saves).toHaveBeenCalledWith('office-1', {
+      autoStartPollEnabled: false,
+      autoStartPollWeekdays: [],
+      autoStartPollFinishTime: null,
+      defaultFoodSelectionDurationMinutes: 30,
+      orderingIntervalWeeks: weeks,
+      timeZone: 'Europe/Vienna',
+      ...(weeks === 0 ? {} : { orderingAnchorDate: '2099-03-02' }),
+    });
+    view.unmount();
+    renderAdministration();
+    expect(await screen.findByLabelText('Ordering interval for default')).toHaveValue(String(weeks));
+    expect(screen.getByLabelText('Office timezone for default')).toHaveValue('Europe/Vienna');
+    expect(screen.getByLabelText('Ordering anchor date for default'))
+      .toHaveValue(weeks === 0 ? '2026-02-23' : '2099-03-02');
+    expect(screen.getByLabelText('Save office settings for default')).toBeDisabled();
+  });
+
+  it('detects changes and reversions independently for all policy fields', async () => {
+    mockOffices();
+    const user = setupUser();
+    renderAdministration();
+    const interval = await screen.findByLabelText('Ordering interval for default');
+    const save = screen.getByLabelText('Save office settings for default');
+    await user.selectOptions(interval, '2');
+    expect(save).toBeEnabled();
+    await user.selectOptions(interval, '1');
+    expect(save).toBeDisabled();
+    for (const [label, changed, original] of [
+      ['Office timezone for default', 'Europe/Vienna', 'UTC'],
+      ['Ordering anchor date for default', '2099-03-02', '2026-02-23'],
+    ]) {
+      fireEvent.change(screen.getByLabelText(label), { target: { value: changed } });
+      expect(save).toBeEnabled();
+      fireEvent.change(screen.getByLabelText(label), { target: { value: original } });
+      expect(save).toBeDisabled();
+    }
+  });
+
+});
+
+describe('Administration ordering policy validation', () => {
+  it.each(['', 'Mars/Olympus', '+02:00'])('rejects invalid timezone %j even while unrestricted', async (zone) => {
+    const saves = mockOffices();
+    const user = setupUser();
+    renderAdministration();
+    await user.selectOptions(await screen.findByLabelText('Ordering interval for default'), '0');
+    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: zone } });
+    expect(screen.getByRole('alert')).toHaveTextContent('valid IANA timezone');
+    await user.click(screen.getByLabelText('Save office settings for default'));
+    expect(saves).not.toHaveBeenCalled();
+  });
+
+  it.each(['', '2026-02-24', '2026-02-30', '0000-01-03', '2026-2-23'])('rejects invalid restricted anchor %j', async (anchor) => {
+    const saves = mockOffices();
+    const user = setupUser();
+    renderAdministration();
+    await screen.findByLabelText('Ordering interval for default');
+    fireEvent.change(screen.getByLabelText('Ordering anchor date for default'), { target: { value: anchor } });
+    expect(screen.getByRole('alert')).toHaveTextContent('valid Monday calendar date');
+    await user.click(screen.getByLabelText('Save office settings for default'));
+    expect(saves).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unsupported interval rather than treating an empty choice as Unrestricted', async () => {
+    const saves = mockOffices();
+    renderAdministration();
+    const interval = await screen.findByLabelText('Ordering interval for default');
+    fireEvent.change(interval, { target: { value: '5' } });
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose Unrestricted or 1, 2, 3, or 4 weeks');
+    expect(screen.getByLabelText('Save office settings for default')).toBeDisabled();
+    expect(saves).not.toHaveBeenCalled();
+  });
+
+});
+
+describe('Administration ordering policy anchor retention', () => {
+  it('retains an unsaved anchor across disabling, saving timezone, and re-enabling', async () => {
+    const saves = mockOffices();
+    const user = setupUser();
+    renderAdministration();
+    const interval = await screen.findByLabelText('Ordering interval for default');
+    const anchor = screen.getByLabelText('Ordering anchor date for default');
+    const save = screen.getByLabelText('Save office settings for default');
+    fireEvent.change(anchor, { target: { value: '2099-03-02' } });
+    await user.selectOptions(interval, '0');
+    expect(anchor).toBeDisabled();
+    expect(anchor).toHaveAccessibleDescription(/Not evaluated while Unrestricted/);
+    expect(screen.getByLabelText('Office timezone for default')).toBeEnabled();
+    await user.click(save);
+    await waitFor(() => expect(save).toBeDisabled());
+    expect(anchor).toHaveValue('2099-03-02');
+    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: 'Asia/Kathmandu' } });
+    expect(save).toBeEnabled();
+    await user.click(save);
+    await waitFor(() => expect(save).toBeDisabled());
+    expect(saves.mock.calls[1][1]).toMatchObject({ orderingIntervalWeeks: 0, timeZone: 'Asia/Kathmandu' });
+    expect(saves.mock.calls[1][1]).not.toHaveProperty('orderingAnchorDate');
+    await user.selectOptions(interval, '2');
+    expect(anchor).toBeEnabled();
+    expect(anchor).toHaveValue('2099-03-02');
+    await user.click(save);
+    await waitFor(() => expect(save).toBeDisabled());
+    expect(saves.mock.calls[2][1]).toMatchObject({ orderingIntervalWeeks: 2, orderingAnchorDate: '2099-03-02' });
+  });
+
+  it('ignores invalid retained anchors while unrestricted but validates them on re-enabling', async () => {
+    const saves = mockOffices();
+    const user = setupUser();
+    renderAdministration();
+    const interval = await screen.findByLabelText('Ordering interval for default');
+    fireEvent.change(screen.getByLabelText('Ordering anchor date for default'), { target: { value: '2026-02-24' } });
+    await user.selectOptions(interval, '0');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    const save = screen.getByLabelText('Save office settings for default');
+    await user.click(save);
+    await waitFor(() => expect(save).toBeDisabled());
+    await user.selectOptions(interval, '1');
+    expect(screen.getByLabelText('Ordering anchor date for default')).toHaveValue('2026-02-24');
+    expect(screen.getByRole('alert')).toHaveTextContent('valid Monday calendar date');
+    expect(save).toBeDisabled();
+    expect(saves).toHaveBeenCalledTimes(1);
+  });
+
+});
+
+describe('Administration ordering policy isolation and access', () => {
+  it('keeps office drafts and saved policies isolated across refreshes', async () => {
+    const saves = mockOffices([
+      makeOffice({ id: 'office-1', key: 'default', name: 'Default Office' }),
+      makeOffice({ id: 'office-2', key: 'berlin', name: 'Berlin', orderingIntervalWeeks: 4, timeZone: 'Europe/Berlin' }),
+    ]);
+    const user = setupUser();
+    renderAdministration();
+    await user.selectOptions(await screen.findByLabelText('Ordering interval for default'), '2');
+    fireEvent.change(screen.getByLabelText('Office timezone for berlin'), { target: { value: 'Europe/Vienna' } });
+    await user.click(screen.getByLabelText('Save office settings for berlin'));
+    await waitFor(() => expect(screen.getByLabelText('Save office settings for berlin')).toBeDisabled());
+    expect(screen.getByLabelText('Ordering interval for default')).toHaveValue('2');
+    expect(screen.getByLabelText('Office timezone for default')).toHaveValue('UTC');
+    expect(screen.getByLabelText('Save office settings for default')).toBeEnabled();
+    expect(saves).toHaveBeenCalledTimes(1);
+    expect(saves).toHaveBeenCalledWith('office-2', expect.objectContaining({ orderingIntervalWeeks: 4, timeZone: 'Europe/Vienna' }));
+    await user.click(screen.getByLabelText('Save office settings for default'));
+    await waitFor(() => expect(screen.getByLabelText('Save office settings for default')).toBeDisabled());
+    expect(screen.getByLabelText('Ordering interval for berlin')).toHaveValue('4');
+    expect(screen.getByLabelText('Office timezone for berlin')).toHaveValue('Europe/Vienna');
+  });
+
+  it('does not expose settings or send mutations for non-admin users', async () => {
+    const fetchMock = vi.fn(async () => jsonResponse({ auth: { ...baseAdminConfig, isAdmin: false } }));
+    vi.stubGlobal('fetch', fetchMock);
+    renderAdministration();
+    expect(await screen.findByText(/access denied/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Ordering interval for default')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Save office settings for default')).not.toBeInTheDocument();
+    expect(fetchMock.mock.calls).toHaveLength(1);
   });
 });
 
