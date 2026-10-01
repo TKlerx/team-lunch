@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Admin ordering-policy detail panels use explicit office-scoped, no-store REST reads rather than shared SSE/history state, whose absent private fields do not establish that no exception exists. Private panel state is keyed by office/record/auth identity and cleared on access loss; stored timezone/profile snapshots, not current office/profile settings, drive historical display.
+
 - Ordering-policy exceptions are projected only by admin REST poll detail and food-selection detail/history services, after the route resolves signed role and selected-office authorization. Food selections read the original Poll snapshot; public `formatPoll`/`formatFoodSelection` remain snapshot-free for start responses and initial/live SSE. `GET /api/food-selections/:id` is the authenticated office-scoped detail read.
 
 - Docker images and local tooling target Node.js 24 LTS (`node:24-alpine`); keep local Node on 24.x to match CI and production.

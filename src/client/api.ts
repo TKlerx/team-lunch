@@ -244,8 +244,8 @@ export function fetchOrderingPolicy(): Promise<OrderingPolicyAvailability> {
   return request<OrderingPolicyAvailability>(apiPath('/polls/ordering-policy'), { cache: 'no-store' });
 }
 
-export function fetchPoll(pollId: string): Promise<Poll> {
-  return request<Poll>(apiPath(`/polls/${pollId}`));
+export function fetchPoll(pollId: string, officeLocationId?: string): Promise<Poll> {
+  return request<Poll>(withOfficeLocationContext(`/api/polls/${encodeURIComponent(pollId)}`, officeLocationId), { cache: 'no-store' });
 }
 
 export function castVote(pollId: string, menuId: string, nickname: string): Promise<Poll> {
@@ -585,6 +585,10 @@ export function abortFoodSelection(selectionId: string): Promise<FoodSelection> 
   return request<FoodSelection>(apiPath(`/food-selections/${selectionId}/abort`), {
     method: 'POST',
   });
+}
+
+export function fetchFoodSelection(selectionId: string, officeLocationId: string): Promise<FoodSelection> {
+  return request<FoodSelection>(withOfficeLocationContext(`/api/food-selections/${encodeURIComponent(selectionId)}`, officeLocationId), { cache: 'no-store' });
 }
 
 export function fetchFoodSelectionsHistory(): Promise<FoodSelection[]> {

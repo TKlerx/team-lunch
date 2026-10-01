@@ -12,6 +12,7 @@ import {
   resolveOrderPrice,
 } from '../utils/orderCopy.js';
 import OrderCopyStatus from './OrderCopyStatus.js';
+import OrderingPolicyExceptionDetails from './OrderingPolicyExceptionDetails.js';
 import { Button } from './ui/Button.js';
 import { Input } from './ui/Input.js';
 import { Select } from './ui/Select.js';
@@ -177,6 +178,8 @@ export default function FoodSelectionCompletedView({
             {arrivalComparison}
           </p>
         )}
+
+        <OrderingPolicyExceptionDetails kind="food-selection" recordId={selection.id} />
 
         {/* Order summary */}
         {selection.orders.length === 0 ? (

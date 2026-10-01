@@ -487,7 +487,7 @@ describe('App layout with Orders rail', () => {
     );
 
     expect(await screen.findByTestId('historical-poll-view')).toHaveTextContent('poll-history');
-    expect(mockFetchPoll).toHaveBeenCalledWith('poll-history');
+    expect(mockFetchPoll).toHaveBeenCalledWith('poll-history', undefined);
   });
 
   it('shows an unavailable message for missing poll URLs', async () => {
@@ -513,7 +513,7 @@ describe('App layout with Orders rail', () => {
     );
 
     expect(await screen.findByRole('heading', { name: /poll unavailable/i })).toBeInTheDocument();
-    expect(mockFetchPoll).toHaveBeenCalledWith('poll-stale');
+    expect(mockFetchPoll).toHaveBeenCalledWith('poll-stale', undefined);
   });
 
   it('renders the live food-selection view for a matching food-selection URL', () => {

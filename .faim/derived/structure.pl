@@ -1399,3 +1399,17 @@ prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id').
 prop('GET:/api/food-selections/:id',mutates_state,false).
 prop('GET:/api/food-selections/:id',requires_auth,true).
 rel(foodSelections_route,exposes,'GET:/api/food-selections/:id').
+entity('src/client/components/OrderingPolicyExceptionDetails.tsx',module).
+entity('tests/client/OrderingPolicyHistory.test.tsx',module).
+rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/lib/types.ts').
+rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/api.ts').
+rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/auth.ts').
+rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx').
+rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx').
+rel('src/client/App.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'src/client/App.tsx').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'src/client/components/FoodSelectionCompletedView.tsx').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'src/client/context/AppContext.tsx').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'src/lib/types.ts').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'src/client/auth.ts').
+rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx').
