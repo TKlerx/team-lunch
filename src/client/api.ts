@@ -39,18 +39,35 @@ import type {
   UpdateMenuItemRequest,
   OfficeLocation,
   UpdateOfficeLocationSettingsRequest,
+  OrderingPolicyAvailability,
+  OrderingPolicyWarningResponse,
+  StartPollRequest,
+  QuickStartFoodSelectionRequest,
 } from '../lib/types.js';
 import { withBasePath, withOfficeLocationContext } from './config.js';
 
 type ApiErrorBody = {
   error?: string;
   violations?: ImportMenuViolation[];
+  code?: string;
+  orderingPolicy?: OrderingPolicyAvailability;
 };
 
 type RequestError = Error & {
   status?: number;
   body?: ApiErrorBody;
 };
+
+export class OrderingPolicyWarningError extends Error {
+  readonly code = 'ORDERING_POLICY_WARNING';
+  readonly orderingPolicy: OrderingPolicyAvailability;
+
+  constructor(public body: OrderingPolicyWarningResponse, public status: number) {
+    super(body.error);
+    this.name = 'OrderingPolicyWarningError';
+    this.orderingPolicy = body.orderingPolicy;
+  }
+}
 
 // ─── Generic helpers ───────────────────────────────────────
 
@@ -68,6 +85,9 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     const err = new Error(body.error ?? res.statusText) as RequestError;
     err.status = res.status;
     err.body = body;
+    if (body.code === 'ORDERING_POLICY_WARNING' && body.orderingPolicy && typeof body.error === 'string') {
+      throw new OrderingPolicyWarningError(body as OrderingPolicyWarningResponse, res.status);
+    }
     throw err;
   }
   if (res.status === 204) return undefined as T;
@@ -211,12 +231,17 @@ export function deleteMenuItem(menuId: string, itemId: string): Promise<void> {
 export function startPoll(
   description: string,
   durationMinutes: number,
-  excludedMenuJustifications?: Array<{ menuId: string; reason: string }>,
+  excludedMenuJustifications?: StartPollRequest['excludedMenuJustifications'],
+  orderingPolicyJustification?: StartPollRequest['orderingPolicyJustification'],
 ): Promise<Poll> {
   return request<Poll>(apiPath('/polls'), {
     method: 'POST',
-    body: JSON.stringify({ description, durationMinutes, excludedMenuJustifications }),
+    body: JSON.stringify({ description, durationMinutes, excludedMenuJustifications, orderingPolicyJustification } satisfies StartPollRequest),
   });
+}
+
+export function fetchOrderingPolicy(): Promise<OrderingPolicyAvailability> {
+  return request<OrderingPolicyAvailability>(apiPath('/polls/ordering-policy'), { cache: 'no-store' });
 }
 
 export function fetchPoll(pollId: string): Promise<Poll> {
@@ -582,10 +607,13 @@ export function confirmFoodArrival(selectionId: string): Promise<FoodSelection> 
   });
 }
 
-export function quickStartFoodSelection(durationMinutes: number): Promise<FoodSelection> {
+export function quickStartFoodSelection(
+  durationMinutes: number,
+  orderingPolicyJustification?: QuickStartFoodSelectionRequest['orderingPolicyJustification'],
+): Promise<FoodSelection> {
   return request<FoodSelection>(apiPath('/food-selections/quick-start'), {
     method: 'POST',
-    body: JSON.stringify({ durationMinutes }),
+    body: JSON.stringify({ durationMinutes, orderingPolicyJustification } satisfies QuickStartFoodSelectionRequest),
   });
 }
 

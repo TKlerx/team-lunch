@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import * as pollService from '../services/poll.js';
+import { evaluateOrderingPolicy } from '../services/orderingPolicy.js';
 import prisma from '../db.js';
 import { sendServiceError, serviceError } from './routeUtils.js';
 import { getAuthSessionFromCookieHeader } from '../services/authSession.js';
@@ -92,6 +93,21 @@ export default async function pollRoutes(app: FastifyInstance) {
       const poll = await pollService.getActivePoll(officeLocationId);
       if (!poll) return reply.status(404).send({ error: 'No active poll' });
       return reply.send(poll);
+    } catch (err) {
+      return sendServiceError(reply, err);
+    }
+  });
+
+  app.get('/api/polls/ordering-policy', async (req, reply) => {
+    reply.header('Cache-Control', 'no-store');
+    try {
+      await requireAuthenticatedActor(req.headers.cookie);
+      const officeLocationId = await resolveOfficeLocationIdFromCookie(
+        req.headers.cookie,
+        readRequestedOfficeLocationId(req.query),
+      );
+      const { availability } = await evaluateOrderingPolicy(officeLocationId);
+      return reply.send(availability);
     } catch (err) {
       return sendServiceError(reply, err);
     }

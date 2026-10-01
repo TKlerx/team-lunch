@@ -407,6 +407,7 @@ entity('tests/client/app-context.test.ts',module).
 entity('tests/client/helpers.tsx',module).
 entity('tests/client/dashboard-utils.test.ts',module).
 entity('tests/client/menuItemTags.test.ts',module).
+entity('tests/client/ordering-policy-api.test.ts',module).
 entity('tests/client/setup.ts',module).
 entity('tests/client/useAppPhase.test.ts',module).
 entity('tests/client/usePhaseNotifications.test.ts',module).
@@ -454,6 +455,7 @@ entity('tests/server/notification-email.test.ts',module).
 entity('tests/server/office-location-service.test.ts',module).
 entity('tests/server/office-poll-schedule.test.ts',module).
 entity('tests/server/office-time.test.ts',module).
+entity('tests/server/ordering-policy-routes.test.ts',module).
 entity('tests/server/ordering-policy-settings.test.ts',module).
 entity('tests/server/ordering-policy-starts.test.ts',module).
 entity('tests/server/ordering-policy.test.ts',module).
@@ -586,6 +588,7 @@ rel('src/server/services/poll.ts',depends_on,'src/server/services/pollCreation.t
 rel('src/server/services/poll.ts',depends_on,'src/server/services/foodSelection.ts').
 rel('src/server/services/poll.ts',depends_on,'src/server/routes/authIdentity.ts').
 rel('src/server/routes/polls.ts',depends_on,'src/server/services/poll.ts').
+rel('src/server/routes/polls.ts',depends_on,'src/server/services/orderingPolicy.ts').
 rel('src/server/routes/polls.ts',depends_on,'src/server/db.ts').
 rel('src/server/routes/polls.ts',depends_on,'src/server/routes/routeUtils.ts').
 rel('src/server/routes/polls.ts',depends_on,'src/server/services/authSession.ts').
@@ -936,6 +939,9 @@ rel('tests/client/helpers.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/dashboard-utils.test.ts',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/dashboard-utils.test.ts',depends_on,'src/client/utils/dashboard.ts').
 rel('tests/client/menuItemTags.test.ts',depends_on,'src/lib/menuItemTags.ts').
+rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts').
+rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts').
+rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts').
 rel('tests/client/useAppPhase.test.ts',depends_on,'src/client/hooks/useAppPhase.ts').
 rel('tests/client/useAppPhase.test.ts',depends_on,'src/client/context/AppContext.tsx').
 rel('tests/client/useAppPhase.test.ts',depends_on,'src/lib/types.ts').
@@ -1165,6 +1171,13 @@ rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/
 rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts').
 rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts').
 rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/index.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/db.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/services/authSession.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/services/officeLocation.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/services/orderingPolicy.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'tests/server/helpers/db.ts').
+rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/lib/types.ts').
 rel('tests/server/ordering-policy-settings.test.ts',depends_on,'src/server/index.ts').
 rel('tests/server/ordering-policy-settings.test.ts',depends_on,'src/server/db.ts').
 rel('tests/server/ordering-policy-settings.test.ts',depends_on,'src/server/services/authSession.ts').
@@ -1350,3 +1363,10 @@ rel('tests/client/ThemeContext.test.tsx',depends_on,'src/client/context/ThemeCon
 rel('tests/client/ThemeContext.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/ToastContext.test.tsx',depends_on,'src/client/context/ToastContext.tsx').
 rel('tests/client/ToastContext.test.tsx',depends_on,'tests/client/helpers.tsx').
+entity('GET:/api/polls/ordering-policy',endpoint).
+prop('GET:/api/polls/ordering-policy',method,get).
+prop('GET:/api/polls/ordering-policy',path,'/api/polls/ordering-policy').
+prop('GET:/api/polls/ordering-policy',mutates_state,false).
+prop('GET:/api/polls/ordering-policy',requires_auth,true).
+rel(polls_route,exposes,'GET:/api/polls/ordering-policy').
+rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts').
