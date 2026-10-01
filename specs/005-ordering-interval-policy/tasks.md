@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001 and T002 are complete and validated; continue with T003.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T003 are complete and validated; continue with T004.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -12,7 +12,7 @@
 
 ## Phase 2: Foundational (Shared Decision)
 
-- [ ] T003 Implement validated office-local calendar/date-boundary helpers in `src/server/services/officeTime.ts` using native Date/Intl; add runnable tests in `tests/server/office-time.test.ts` for strict dates, Monday, unknown zones, year/leap rollover, DST midnight conversion, fractional offsets, and server/office timezone mismatch.
+- [x] T003 Implement validated office-local calendar/date-boundary helpers in `src/server/services/officeTime.ts` using native Date/Intl; add runnable tests in `tests/server/office-time.test.ts` for strict dates, Monday, unknown zones, year/leap rollover, DST midnight conversion, fractional offsets, and server/office timezone mismatch.
 - [ ] T004 Implement current-block/eligibility calculation, indexed completedAt existence query, before-anchor handling, Unrestricted short circuit, and reason/snapshot validation in `src/server/services/orderingPolicy.ts`; add `tests/server/ordering-policy.test.ts` for all five modes, Friday-to-Wednesday, empty elapsed blocks/no carryover, completion not placement, boundary equality, future anchors, exceptions/no future debt, and office isolation.
 
 **Checkpoint**: One tested evaluator is available to creation, scheduling, and availability UI; no business policy is duplicated client-side.
@@ -102,6 +102,15 @@ that leaves quick starts or automatic creation unguarded.
 - Updated Administration/AuthGate typed fixtures. First aggregate run passed all 925 tests but failed the complexity ratchet because three new nullish fallback branches pushed each fixture builder over the threshold. Replaced them with defaults plus override spreads; baseline unchanged.
 - `pnpm typecheck` passed; focused office-service tests passed 17/17; focused Administration/AuthGate tests passed 25/25. Final `pwsh -File ./validate.ps1 all` passed all gates, 82 files / 925 tests, with 87.74% line and 79.62% branch coverage.
 - Refreshed five unchanged agent-derived office-service/shared-module facts; `faim validate` passed with no errors/warnings. Scanner-owned freshness work remains deferred to T017. T002 is not committed.
+
+### T003 — 2026-10-01
+
+- Confirmed T001/T002 are committed as `4f568da` and `2fcb568`; the working tree was clean before T003.
+- Added native Date/Intl helpers in `src/server/services/officeTime.ts` for strict calendar dates (years 0001–9999), Monday/timezone validation, calendar-day arithmetic/differences, office-local date/weekday/hour/minute extraction, and local-day boundaries. No dependency, policy evaluator, settings enforcement, or scheduler wiring was added.
+- Local-midnight conversion finds the first instant of the requested office date: skipped midnight advances to the first valid time, repeated midnight selects the earlier occurrence, and a wholly skipped date fails explicitly. Weekly boundaries are converted independently rather than adding elapsed 168-hour durations.
+- `pnpm exec vitest run --project server tests/server/office-time.test.ts` passed 53/53 tests covering strict/impossible dates, Monday, unknown zones, year/leap rollover, 167/169-hour DST weeks, skipped/repeated midnight, fractional offsets, and three server timezone settings distinct from office timezones.
+- `pwsh -File ./validate.ps1 all` passed every gate, 83 files / 978 tests, with 87.8% line and 79.76% branch coverage. No complexity baseline changes or validation bypasses.
+- T003 is complete; T004 remains unchecked. No commit created.
 
 ## Planning Validation
 
