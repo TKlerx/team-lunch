@@ -186,6 +186,13 @@ async function buildUniqueOfficeKey(baseKey: string): Promise<string> {
   return `${baseKey}-${suffix}`;
 }
 
+function defaultOrderingPolicy() {
+  const monday = new Date();
+  monday.setUTCHours(0, 0, 0, 0);
+  monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+  return { orderingIntervalWeeks: 1, timeZone: 'UTC', orderingAnchorDate: monday };
+}
+
 export async function ensureDefaultOfficeLocation(): Promise<OfficeLocation> {
   const location = await prisma.officeLocation.upsert({
     where: { key: DEFAULT_OFFICE_KEY },
@@ -193,6 +200,7 @@ export async function ensureDefaultOfficeLocation(): Promise<OfficeLocation> {
       key: DEFAULT_OFFICE_KEY,
       name: DEFAULT_OFFICE_NAME,
       isActive: true,
+      ...defaultOrderingPolicy(),
     },
     update: {
       isActive: true,
@@ -230,6 +238,7 @@ export async function createOfficeLocation(name: string): Promise<OfficeLocation
       autoStartPollWeekdays: [],
       autoStartPollFinishTime: null,
       defaultFoodSelectionDurationMinutes: 30,
+      ...defaultOrderingPolicy(),
     },
   });
 
