@@ -133,6 +133,37 @@ describe('food order rating and export routes', () => {
     await app.close();
   });
 
+  it('round-trips extended XLSX formatting that generates UUIDs', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('UUID compatibility');
+    sheet.addRows([[1], [2], [3]]);
+    const formatting: ExcelJS.ConditionalFormattingOptions = {
+      ref: 'A1:A3',
+      rules: [{
+        type: 'iconSet',
+        iconSet: '3Stars',
+        priority: 1,
+        cfvo: [
+          { type: 'percent', value: 0 },
+          { type: 'percent', value: 33 },
+          { type: 'percent', value: 67 },
+        ],
+      }],
+    };
+    sheet.addConditionalFormatting(formatting);
+
+    const bytes = await workbook.xlsx.writeBuffer();
+    const restored = new ExcelJS.Workbook();
+    await restored.xlsx.load(bytes);
+    const restoredSheet = restored.getWorksheet('UUID compatibility');
+    expect(restoredSheet?.getCell('A3').value).toBe(3);
+    expect(formatting.rules[0]).toMatchObject({
+      type: 'iconSet',
+      iconSet: '3Stars',
+      x14Id: expect.stringMatching(/^\{[0-9A-F-]{36}\}$/),
+    });
+  });
+
   it('rejects a too-long feedback comment', async () => {
     const { selectionId, orderId } = await createCompletedSelectionWithOrder('alice@example.com');
     const app = await buildApp();
