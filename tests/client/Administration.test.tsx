@@ -7,6 +7,10 @@ import { setupUser } from './helpers.js';
 
 function makeOffice(overrides: Partial<OfficeLocation> & Pick<OfficeLocation, 'id' | 'key' | 'name'>): OfficeLocation {
   return {
+    orderingIntervalWeeks: 1,
+    timeZone: 'UTC',
+    orderingAnchorDate: '2026-02-23',
+    ...overrides,
     id: overrides.id,
     key: overrides.key,
     name: overrides.name,
@@ -15,6 +19,7 @@ function makeOffice(overrides: Partial<OfficeLocation> & Pick<OfficeLocation, 'i
     autoStartPollWeekdays: overrides.autoStartPollWeekdays ?? [],
     autoStartPollFinishTime: overrides.autoStartPollFinishTime ?? null,
     defaultFoodSelectionDurationMinutes: overrides.defaultFoodSelectionDurationMinutes ?? 30,
+
     createdAt: overrides.createdAt ?? '2026-03-01T00:00:00Z',
     updatedAt: overrides.updatedAt ?? '2026-03-01T00:00:00Z',
   };

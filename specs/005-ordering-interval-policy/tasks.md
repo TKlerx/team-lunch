@@ -3,12 +3,12 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001 is complete and validated; continue with T002.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001 and T002 are complete and validated; continue with T003.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
 - [x] T001 Add interval/timezone/Monday fields, nullable Poll exception JSON, completion lookup index, and safe editable default backfill in `prisma/schema.prisma` and a new LF migration under `prisma/migrations/`; update office creation/default-upsert/seeds and fixture defaults in `src/server/services/officeLocation.ts` and `tests/server/helpers/db.ts` as required, apply migration and regenerate client, and test existing/new office defaults in `tests/server/office-location-service.test.ts`.
-- [ ] T002 Extend office settings, public availability, policy-warning, and admin exception contracts in `src/lib/types.ts` and serialization in `src/server/services/officeLocation.ts`; update affected test fixtures and add serialization/default coverage in `tests/server/office-location-service.test.ts` so all consumers typecheck.
+- [x] T002 Extend office settings, public availability, policy-warning, and admin exception contracts in `src/lib/types.ts` and serialization in `src/server/services/officeLocation.ts`; update affected test fixtures and add serialization/default coverage in `tests/server/office-location-service.test.ts` so all consumers typecheck.
 
 ## Phase 2: Foundational (Shared Decision)
 
@@ -93,6 +93,15 @@ that leaves quick starts or automatic creation unguarded.
 - First `pwsh -File ./validate.ps1 all` passed all non-test gates but failed an unrelated Settings input-clear test. That client file passed all 11 tests in isolation; no unrelated code was changed. Aggregate rerun passed all gates, 82 files / 919 tests, with 87.71% line and 79.6% branch coverage.
 - Refreshed the four unchanged agent-derived office-service dependency facts; `faim validate` passed with no errors/warnings. Scanner-owned and other pre-existing stale facts remain for selective refresh in T017.
 - Policy enforcement and public serialization remain intentionally deferred to subsequent tasks; this is not a complete feature rollout. No commit created.
+
+### T002 — 2026-10-01
+
+- T001 committed as `4f568da` (`feat: add office ordering policy storage`) before beginning T002.
+- Added shared interval, public availability, warning, and exception contracts in `src/lib/types.ts`. Office responses require the persisted settings; update requests keep new settings optional for older clients. Normal/quick-start requests have an optional justification, and poll/selection shapes have optional admin-only exception fields. No endpoint, validation, enforcement, private-data projection, or SSE behavior was enabled ahead of its task.
+- Office serialization returns the stored interval/timezone and a `YYYY-MM-DD` anchor without converting the calendar date into the office zone. Tests cover all five interval choices, new/default offices, read/list/rename/update/deactivate paths, and retention under older settings payloads.
+- Updated Administration/AuthGate typed fixtures. First aggregate run passed all 925 tests but failed the complexity ratchet because three new nullish fallback branches pushed each fixture builder over the threshold. Replaced them with defaults plus override spreads; baseline unchanged.
+- `pnpm typecheck` passed; focused office-service tests passed 17/17; focused Administration/AuthGate tests passed 25/25. Final `pwsh -File ./validate.ps1 all` passed all gates, 82 files / 925 tests, with 87.74% line and 79.62% branch coverage.
+- Refreshed five unchanged agent-derived office-service/shared-module facts; `faim validate` passed with no errors/warnings. Scanner-owned freshness work remains deferred to T017. T002 is not committed.
 
 ## Planning Validation
 

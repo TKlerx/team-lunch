@@ -102,8 +102,8 @@ derivation_query(entity(officeContext,service), "What are the import dependencie
 derived_at(entity(officeContext,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(officeLocation,service), agent_scan).
 source_files(entity(officeLocation,service), ['src/server/services/officeLocation.ts']).
-source_hash(entity(officeLocation,service), 'sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d').
-source_file_hashes(entity(officeLocation,service), ['sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d']).
+source_hash(entity(officeLocation,service), 'sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622').
+source_file_hashes(entity(officeLocation,service), ['sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622']).
 derivation_query(entity(officeLocation,service), "What are the import dependencies between server modules?").
 derived_at(entity(officeLocation,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(officePollSchedule,service), agent_scan).
@@ -600,20 +600,20 @@ derivation_query(rel(menu,depends_on,lib_types), "What are the import dependenci
 derived_at(rel(menu,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,db), agent_scan).
 source_files(rel(officeLocation,depends_on,db), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,db), 'sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d').
-source_file_hashes(rel(officeLocation,depends_on,db), ['sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d']).
+source_hash(rel(officeLocation,depends_on,db), 'sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622').
+source_file_hashes(rel(officeLocation,depends_on,db), ['sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622']).
 derivation_query(rel(officeLocation,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,routeUtils), agent_scan).
 source_files(rel(officeLocation,depends_on,routeUtils), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,routeUtils), 'sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d').
-source_file_hashes(rel(officeLocation,depends_on,routeUtils), ['sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d']).
+source_hash(rel(officeLocation,depends_on,routeUtils), 'sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622').
+source_file_hashes(rel(officeLocation,depends_on,routeUtils), ['sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622']).
 derivation_query(rel(officeLocation,depends_on,routeUtils), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,lib_types), agent_scan).
 source_files(rel(officeLocation,depends_on,lib_types), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,lib_types), 'sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d').
-source_file_hashes(rel(officeLocation,depends_on,lib_types), ['sha256:4aa8fc2cec5494970dbada95939d60d44692d3aa9e978090530aaf60193e811d']).
+source_hash(rel(officeLocation,depends_on,lib_types), 'sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622').
+source_file_hashes(rel(officeLocation,depends_on,lib_types), ['sha256:f74acf937deea73adccc4948c056b3d9e654ec29bcc89ed71d5338c12e463622']).
 derivation_query(rel(officeLocation,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeContext,depends_on,authSession), agent_scan).
@@ -1231,8 +1231,8 @@ derivation_query(entity(userPreferences,service), "server module dependency grap
 derived_at(entity(userPreferences,service), '2026-07-06T11:46:53Z', agent).
 derived_from(entity(lib_types,module), agent_scan).
 source_files(entity(lib_types,module), ['src/lib/types.ts']).
-source_hash(entity(lib_types,module), 'sha256:37aee27dd9616e615630ea1787c725579a7f44f64a296bbbda248ab35e3ec758').
-source_file_hashes(entity(lib_types,module), ['sha256:37aee27dd9616e615630ea1787c725579a7f44f64a296bbbda248ab35e3ec758']).
+source_hash(entity(lib_types,module), 'sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da').
+source_file_hashes(entity(lib_types,module), ['sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da']).
 derivation_query(entity(lib_types,module), "server module dependency graph").
 derived_at(entity(lib_types,module), '2026-07-06T11:46:54Z', agent).
 derived_from(entity(routeUtils,module), agent_scan).

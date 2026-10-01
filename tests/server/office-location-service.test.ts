@@ -5,10 +5,13 @@ import {
   createOfficeLocation,
   deactivateOfficeLocation,
   ensureDefaultOfficeLocation,
+  listOfficeLocations,
   renameOfficeLocation,
+  validateOfficeLocationId,
   updateOfficeLocationSettings,
 } from '../../src/server/services/officeLocation.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
+import type { OrderingIntervalWeeks } from '../../src/lib/types.js';
 
 describe('office location service', () => {
   beforeEach(async () => {
@@ -39,6 +42,11 @@ describe('office location service', () => {
       expect(stored.orderingIntervalWeeks).toBe(1);
       expect(stored.timeZone).toBe('UTC');
       expect(stored.orderingAnchorDate).toEqual(monday);
+      expect(office).toMatchObject({
+        orderingIntervalWeeks: 1,
+        timeZone: 'UTC',
+        orderingAnchorDate: monday.toISOString().slice(0, 10),
+      });
     }
   });
 
@@ -53,6 +61,43 @@ describe('office location service', () => {
     await ensureDefaultOfficeLocation();
     expect(await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } }))
       .toMatchObject(settings);
+  });
+
+  it.each<OrderingIntervalWeeks>([0, 1, 2, 3, 4])('serializes stored %i-week policy settings as calendar dates on reads and updates', async (orderingIntervalWeeks) => {
+    const office = await ensureDefaultOfficeLocation();
+    const settings = {
+      orderingIntervalWeeks,
+      timeZone: 'Pacific/Honolulu',
+      orderingAnchorDate: '2026-09-07',
+    };
+    await prisma.officeLocation.update({
+      where: { id: office.id },
+      data: { ...settings, orderingAnchorDate: new Date('2026-09-07T00:00:00Z') },
+    });
+    expect(await ensureDefaultOfficeLocation()).toMatchObject(settings);
+    expect(await validateOfficeLocationId(office.id)).toMatchObject(settings);
+    expect((await listOfficeLocations()).find((entry) => entry.id === office.id)).toMatchObject(settings);
+    expect(await renameOfficeLocation(office.id, 'Renamed Office')).toMatchObject(settings);
+    expect(await updateOfficeLocationSettings(office.id, {
+      autoStartPollEnabled: false,
+      autoStartPollWeekdays: [],
+      autoStartPollFinishTime: null,
+      defaultFoodSelectionDurationMinutes: 20,
+    })).toMatchObject(settings);
+  });
+
+  it('serializes retained policy settings after office deactivation', async () => {
+    const office = await createOfficeLocation('Retired Office');
+    const settings = {
+      orderingIntervalWeeks: 2,
+      timeZone: 'Europe/Vienna',
+      orderingAnchorDate: '2026-09-07',
+    };
+    await prisma.officeLocation.update({
+      where: { id: office.id },
+      data: { ...settings, orderingAnchorDate: new Date('2026-09-07T00:00:00Z') },
+    });
+    expect(await deactivateOfficeLocation(office.id)).toMatchObject({ ...settings, isActive: false });
   });
 
   it('backfills pre-existing rows and supplies dynamic defaults for direct inserts', async () => {

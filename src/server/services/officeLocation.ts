@@ -2,6 +2,7 @@ import prisma from '../db.js';
 import { serviceError } from '../routes/routeUtils.js';
 import type {
   OfficeLocation,
+  OrderingIntervalWeeks,
   OfficeWeekday,
   UpdateOfficeLocationSettingsRequest,
 } from '../../lib/types.js';
@@ -27,6 +28,9 @@ function formatOfficeLocation(location: {
   autoStartPollWeekdays: unknown;
   autoStartPollFinishTime: string | null;
   defaultFoodSelectionDurationMinutes: number;
+  orderingIntervalWeeks: number;
+  timeZone: string;
+  orderingAnchorDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }): OfficeLocation {
@@ -39,6 +43,9 @@ function formatOfficeLocation(location: {
     autoStartPollWeekdays: normalizeStoredWeekdays(location.autoStartPollWeekdays),
     autoStartPollFinishTime: location.autoStartPollFinishTime,
     defaultFoodSelectionDurationMinutes: location.defaultFoodSelectionDurationMinutes,
+    orderingIntervalWeeks: location.orderingIntervalWeeks as OrderingIntervalWeeks,
+    timeZone: location.timeZone,
+    orderingAnchorDate: location.orderingAnchorDate.toISOString().slice(0, 10),
     createdAt: location.createdAt.toISOString(),
     updatedAt: location.updatedAt.toISOString(),
   };

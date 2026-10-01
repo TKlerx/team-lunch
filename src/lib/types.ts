@@ -48,8 +48,44 @@ export interface OfficeLocation {
   autoStartPollWeekdays: OfficeWeekday[];
   autoStartPollFinishTime: string | null;
   defaultFoodSelectionDurationMinutes: number;
+  orderingIntervalWeeks: OrderingIntervalWeeks;
+  timeZone: string;
+  orderingAnchorDate: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export type OrderingIntervalWeeks = 0 | 1 | 2 | 3 | 4;
+
+export type OrderingPolicyStatus = 'unrestricted' | 'eligible' | 'period_used' | 'not_started';
+
+export interface OrderingPolicyAvailability {
+  officeLocationId: string;
+  evaluatedAt: string;
+  intervalWeeks: OrderingIntervalWeeks;
+  timeZone: string;
+  anchorDate: string;
+  status: OrderingPolicyStatus;
+  blockStart: string | null;
+  blockEnd: string | null;
+  nextEligibleAt: string | null;
+}
+
+export interface OrderingPolicyException {
+  reason: string;
+  actorKey: string;
+  actorEmail: string;
+  displayNameSnapshot: string;
+  decidedAt: string;
+  intervalWeeks: Exclude<OrderingIntervalWeeks, 0>;
+  timeZone: string;
+  anchorDate: string;
+  blockStart: string | null;
+  blockEnd: string | null;
+  nextEligibleAt: string;
+  violation: 'period_used' | 'not_started';
+  previousCompletedSelectionId: string | null;
+  previousCompletedAt: string | null;
 }
 
 export type OfficeWeekday =
@@ -86,6 +122,8 @@ export interface Poll {
   winnerMenuName: string | null;
   winnerSelectedRandomly: boolean;
   createdAt: string;
+  // Admin REST only; omitted from non-admin responses and public SSE.
+  orderingPolicyException?: OrderingPolicyException | null;
   excludedMenuJustifications: PollExcludedMenuJustification[];
   votes: PollVote[];
   voteCounts: Record<string, number>;
@@ -125,6 +163,8 @@ export interface FoodSelection {
   etaSetAt: string | null;
   deliveryDueAt: string | null;
   createdAt: string;
+  // Admin REST only; projected from the originating poll.
+  orderingPolicyException?: OrderingPolicyException | null;
   orders: FoodOrder[];
 }
 
@@ -469,6 +509,7 @@ export interface ImportMenuPreviewResponse {
 }
 
 export interface StartPollRequest {
+  orderingPolicyJustification?: string;
   description: string;
   durationMinutes: number;
   excludedMenuJustifications?: Array<{
@@ -538,6 +579,7 @@ export interface UpdateRemainingTimerRequest {
 }
 
 export interface QuickStartFoodSelectionRequest {
+  orderingPolicyJustification?: string;
   durationMinutes: number;
 }
 
@@ -611,6 +653,10 @@ export interface LocalLoginResponse {
 }
 
 export interface UpdateOfficeLocationSettingsRequest {
+  // Omitted fields preserve stored values for older clients.
+  orderingIntervalWeeks?: OrderingIntervalWeeks;
+  timeZone?: string;
+  orderingAnchorDate?: string;
   autoStartPollEnabled: boolean;
   autoStartPollWeekdays: OfficeWeekday[];
   autoStartPollFinishTime: string | null;
@@ -621,6 +667,11 @@ export interface UpdateOfficeLocationSettingsRequest {
 
 export interface ErrorResponse {
   error: string;
+}
+
+export interface OrderingPolicyWarningResponse extends ErrorResponse {
+  code: 'ORDERING_POLICY_WARNING';
+  orderingPolicy: OrderingPolicyAvailability;
 }
 
 // ─── SSE Event Types ───────────────────────────────────────
