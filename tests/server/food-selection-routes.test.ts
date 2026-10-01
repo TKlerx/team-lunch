@@ -601,6 +601,8 @@ describe('Food selection routes (integration)', () => {
   // ─── GET /api/food-selections/history ───────────────────
 
   it('returns completed food selection history (most recent first)', async () => {
+    const office = await ensureDefaultOfficeLocation();
+    await prisma.officeLocation.update({ where: { id: office.id }, data: { orderingIntervalWeeks: 0 } });
     const { poll } = await createFinishedPoll();
     const organizerHeaders = await adminAuthHeaders();
     const first = await startFoodSelection(poll.id);

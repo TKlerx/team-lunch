@@ -1,11 +1,33 @@
 import prisma from '../db.js';
 import type { Poll, PollVote } from '../../lib/types.js';
+import type { AuthenticatedActor } from '../routes/authIdentity.js';
+import {
+  evaluateOrderingPolicy, buildOrderingPolicyException, validateOrderingPolicyJustification,
+} from './orderingPolicy.js';
 import {
   ensureDefaultOfficeLocation,
   validateOfficeLocationId,
 } from './officeLocation.js';
 
 export const pollInclude = { votes: true, excludedMenus: true } as const;
+
+export type OrderingPolicyStart =
+  | { source: 'manual'; actor: Pick<AuthenticatedActor, 'actorKey' | 'actorEmail' | 'displayNameSnapshot'>; justification?: unknown }
+  | { source: 'scheduled'; justification?: unknown };
+
+export async function checkOrderingPolicyStart(
+  officeLocationId: string,
+  start: OrderingPolicyStart = { source: 'scheduled' },
+) {
+  const justification = validateOrderingPolicyJustification(start.justification);
+  const evaluation = await evaluateOrderingPolicy(officeLocationId);
+  // Scheduled/internal callers cannot turn a justification into a manual override.
+  return buildOrderingPolicyException(
+    evaluation,
+    start.source === 'manual' ? start.actor : { actorKey: '', actorEmail: '', displayNameSnapshot: '' },
+    start.source === 'manual' ? justification : undefined,
+  );
+}
 
 // ponytail: late-bound callback so timer management stays in this low-layer module
 let onPollExpired: (pollId: string) => void = () => {};
@@ -244,8 +266,9 @@ export async function createPollRecord(
   durationMinutes: number,
   excludedMenuJustifications?: Array<{ menuId: string; reason: string }>,
   officeLocationId?: string,
-  createdBy?: string | null,
+  creator?: string | null | OrderingPolicyStart,
 ): Promise<{ poll: Poll; resolvedOfficeLocationId: string }> {
+  const policyStart = typeof creator === 'object' && creator !== null ? creator : undefined;
   const trimmed = description.trim();
   if (!trimmed || trimmed.length > 120) {
     throw Object.assign(new Error('Description must be 1–120 characters'), { statusCode: 400 });
@@ -259,13 +282,15 @@ export async function createPollRecord(
     resolvedOfficeLocationId,
   );
 
+  const exception = await checkOrderingPolicyStart(resolvedOfficeLocationId, policyStart);
   const now = new Date();
   const endsAt = new Date(now.getTime() + durationMinutes * 60 * 1000);
 
   const poll = await prisma.poll.create({
     data: {
       officeLocationId: resolvedOfficeLocationId,
-      createdBy: normalizeCreatorKey(createdBy),
+      createdBy: normalizeCreatorKey(policyStart?.source === 'manual' ? policyStart.actor.actorKey : typeof creator === 'string' ? creator : null),
+      ...(exception ? { orderingPolicyException: { ...exception } } : {}),
       description: trimmed,
       status: 'active',
       startedAt: now,

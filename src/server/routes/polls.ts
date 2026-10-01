@@ -36,11 +36,6 @@ async function requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader: strin
   return { actorKey: actor.actorKey, isAdmin: actor.isAdmin };
 }
 
-async function resolveOptionalApprovedActor(
-  cookieHeader: string | undefined,
-): Promise<{ actorKey: string | null; isAdmin: boolean } | null> {
-  return requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
-}
 
 async function requireAdminOrPollCreator(
   cookieHeader: string | undefined,
@@ -68,7 +63,7 @@ export default async function pollRoutes(app: FastifyInstance) {
   // POST /api/polls — start a new poll
   app.post<{ Body: StartPollRequest }>('/api/polls', async (req, reply) => {
     try {
-      const actor = await resolveOptionalApprovedActor(req.headers.cookie);
+      const actor = await requireAuthenticatedActor(req.headers.cookie);
       const officeLocationId = await resolveOfficeLocationIdFromCookie(
         req.headers.cookie,
         readRequestedOfficeLocationId(req.query),
@@ -78,7 +73,7 @@ export default async function pollRoutes(app: FastifyInstance) {
         req.body.durationMinutes,
         req.body.excludedMenuJustifications,
         officeLocationId,
-        actor?.actorKey,
+        { source: 'manual', actor, justification: req.body.orderingPolicyJustification },
       );
       return reply.status(201).send(poll);
     } catch (err) {

@@ -753,7 +753,7 @@ function registerQuickStartAndExportRoutes(app: FastifyInstance) {
     '/api/food-selections/quick-start',
     async (req, reply) => {
       try {
-        const actor = await resolveOptionalApprovedActor(req.headers.cookie);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -775,7 +775,8 @@ function registerQuickStartAndExportRoutes(app: FastifyInstance) {
         const menu = menus[0];
 
         // Auto-create a finished poll for the single menu
-        const poll = await pollService.createAutoFinishedPoll(menu.id, menu.name, officeLocationId);
+        const policyStart = { source: 'manual' as const, actor, justification: req.body.orderingPolicyJustification };
+        const poll = await pollService.createAutoFinishedPoll(menu.id, menu.name, officeLocationId, policyStart);
 
         // Start food selection using the auto-created poll
         const selection = await foodSelectionService.startFoodSelection(
