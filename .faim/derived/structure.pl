@@ -292,6 +292,13 @@ prop('POST:/api/menus/import/preview',path,'/api/menus/import/preview').
 entity(officeTime,service).
 rel(officeLocation,depends_on,officeTime).
 rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts').
+entity('GET:/api/polls/ordering-policy',endpoint).
+prop('GET:/api/polls/ordering-policy',method,get).
+prop('GET:/api/polls/ordering-policy',path,'/api/polls/ordering-policy').
+prop('GET:/api/polls/ordering-policy',mutates_state,false).
+prop('GET:/api/polls/ordering-policy',requires_auth,true).
+rel(polls_route,exposes,'GET:/api/polls/ordering-policy').
+rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts').
 entity('src/lib/types.ts',module).
 entity('src/client/config.ts',module).
 entity('src/client/api.ts',module).
@@ -377,6 +384,7 @@ entity('src/client/context/ToastContext.tsx',module).
 entity('src/client/components/PollFinishedView.tsx',module).
 entity('src/client/components/NoMenusView.tsx',module).
 entity('src/client/components/ui/Card.tsx',module).
+entity('src/client/components/OrderingPolicyNotice.tsx',module).
 entity('src/client/components/PollIdleView.tsx',module).
 entity('src/client/components/TimerActionHeader.tsx',module).
 entity('src/client/components/ui/ConfirmDialog.tsx',module).
@@ -489,6 +497,7 @@ entity('tests/client/ManageMenus.test.tsx',module).
 entity('tests/client/MealOnboardingDialog.test.tsx',module).
 entity('tests/client/Modal.test.tsx',module).
 entity('tests/client/NoMenusView.test.tsx',module).
+entity('tests/client/OrderingPolicyNotice.test.tsx',module).
 entity('tests/client/OrdersRail.test.tsx',module).
 entity('tests/client/PollActiveView.test.tsx',module).
 entity('tests/client/PollFinishedView.test.tsx',module).
@@ -753,6 +762,9 @@ rel('src/client/components/PollFinishedView.tsx',depends_on,'src/client/context/
 rel('src/client/components/PollFinishedView.tsx',depends_on,'src/lib/types.ts').
 rel('src/client/components/PollFinishedView.tsx',depends_on,'src/client/lib/errorMessage.ts').
 rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts').
+rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts').
+rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx').
+rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx').
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts').
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts').
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx').
@@ -765,6 +777,7 @@ rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/u
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx').
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx').
 rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts').
+rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx').
 rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx').
 rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Modal.tsx').
 rel('src/client/components/ui/ConfirmDialog.tsx',depends_on,'src/client/components/ui/Button.tsx').
@@ -1328,6 +1341,9 @@ rel('tests/client/MealOnboardingDialog.test.tsx',depends_on,'tests/client/helper
 rel('tests/client/MealOnboardingDialog.test.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/Modal.test.tsx',depends_on,'src/client/components/ui/Modal.tsx').
 rel('tests/client/NoMenusView.test.tsx',depends_on,'src/client/components/NoMenusView.tsx').
+rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx').
+rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts').
+rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/OrdersRail.test.tsx',depends_on,'src/client/components/OrdersRail.tsx').
 rel('tests/client/OrdersRail.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/PollActiveView.test.tsx',depends_on,'tests/client/testRender.tsx').
@@ -1344,7 +1360,9 @@ rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx').
 rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx').
+rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts').
 rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx').
+rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts').
 rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx').
 rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/PollTiedView.test.tsx',depends_on,'src/client/context/AppContext.tsx').
@@ -1363,10 +1381,3 @@ rel('tests/client/ThemeContext.test.tsx',depends_on,'src/client/context/ThemeCon
 rel('tests/client/ThemeContext.test.tsx',depends_on,'tests/client/helpers.tsx').
 rel('tests/client/ToastContext.test.tsx',depends_on,'src/client/context/ToastContext.tsx').
 rel('tests/client/ToastContext.test.tsx',depends_on,'tests/client/helpers.tsx').
-entity('GET:/api/polls/ordering-policy',endpoint).
-prop('GET:/api/polls/ordering-policy',method,get).
-prop('GET:/api/polls/ordering-policy',path,'/api/polls/ordering-policy').
-prop('GET:/api/polls/ordering-policy',mutates_state,false).
-prop('GET:/api/polls/ordering-policy',requires_auth,true).
-rel(polls_route,exposes,'GET:/api/polls/ordering-policy').
-rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts').

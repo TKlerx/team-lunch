@@ -2229,10 +2229,10 @@ derivation_query(entity('src/client/components/ui/Card.tsx',module), "import gra
 derived_at(entity('src/client/components/ui/Card.tsx',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/client/components/PollIdleView.tsx',module), scanner_scan).
 source_files(entity('src/client/components/PollIdleView.tsx',module), ['src/client/components/PollIdleView.tsx']).
-source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(entity('src/client/components/PollIdleView.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/components/PollIdleView.tsx',module), '2026-10-01T11:44:13Z', agent).
+derived_at(entity('src/client/components/PollIdleView.tsx',module), '2026-10-01T12:03:21Z', agent).
 derived_from(entity('src/client/components/TimerActionHeader.tsx',module), scanner_scan).
 source_files(entity('src/client/components/TimerActionHeader.tsx',module), ['src/client/components/TimerActionHeader.tsx']).
 source_hash(entity('src/client/components/TimerActionHeader.tsx',module), 'sha256:ec10adceb6b90391be8f71e55435df780e1731fa5f358593c7cc4b1899815d69').
@@ -2919,10 +2919,10 @@ derivation_query(entity('tests/client/PollFinishedView.test.tsx',module), "impor
 derived_at(entity('tests/client/PollFinishedView.test.tsx',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('tests/client/PollIdleView.test.tsx',module), scanner_scan).
 source_files(entity('tests/client/PollIdleView.test.tsx',module), ['tests/client/PollIdleView.test.tsx']).
-source_hash(entity('tests/client/PollIdleView.test.tsx',module), 'sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7').
-source_file_hashes(entity('tests/client/PollIdleView.test.tsx',module), ['sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7']).
+source_hash(entity('tests/client/PollIdleView.test.tsx',module), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(entity('tests/client/PollIdleView.test.tsx',module), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
 derivation_query(entity('tests/client/PollIdleView.test.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('tests/client/PollIdleView.test.tsx',module), '2026-10-01T11:44:13Z', agent).
+derived_at(entity('tests/client/PollIdleView.test.tsx',module), '2026-10-01T12:03:21Z', agent).
 derived_from(entity('tests/client/PollTiedView.test.tsx',module), scanner_scan).
 source_files(entity('tests/client/PollTiedView.test.tsx',module), ['tests/client/PollTiedView.test.tsx']).
 source_hash(entity('tests/client/PollTiedView.test.tsx',module), 'sha256:485c1ca9ee5ccce3805938a44b3ab3bbae29f1e917db26332352575689724b59').
@@ -4485,76 +4485,76 @@ derivation_query(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/
 derived_at(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), scanner_scan).
 source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), 'sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['sha256:26b52a141bfe107cad670917fce3ad2a0813564d979e7ca85f80640b5fcd3e2a']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
 derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), '2026-10-01T11:44:13Z', agent).
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
 source_files(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/TimerActionHeader.tsx']).
 source_hash(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:ec10adceb6b90391be8f71e55435df780e1731fa5f358593c7cc4b1899815d69').
@@ -8013,28 +8013,28 @@ derivation_query(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/li
 derived_at(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
 derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), scanner_scan).
 source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
 derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), '2026-10-01T11:44:14Z', agent).
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), scanner_scan).
 source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), 'sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
 derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T11:44:14Z', agent).
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
 derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T11:44:14Z', agent).
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), scanner_scan).
 source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), 'sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['sha256:10b76f1c8ddb1d35ef879638e81b08d91bf01c572b403cb2a66752730e8404c7']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
 derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), '2026-10-01T11:44:14Z', agent).
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), scanner_scan).
 source_files(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['tests/client/PollTiedView.test.tsx']).
 source_hash(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:485c1ca9ee5ccce3805938a44b3ab3bbae29f1e917db26332352575689724b59').
@@ -8185,3 +8185,69 @@ source_hash(rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts'),
 source_file_hashes(rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts'), ['sha256:101c88fc9c5d0ee5ab96a9e5600159c5e9db04ff244a5441659092ba2f2d8116', 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:f5710fb0e6f86df486e4eccfa85276b482c812eb0c5b584d09932c5587dcf95b']).
 derivation_query(rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts'), "T008 public availability authenticates and reuses selected-office authorization and shared policy evaluation").
 derived_at(rel(polls_route,depends_on,'src/server/services/orderingPolicy.ts'), '2026-10-01T11:44:34Z', agent).
+derived_from(entity('src/client/components/OrderingPolicyNotice.tsx',module), scanner_scan).
+source_files(entity('src/client/components/OrderingPolicyNotice.tsx',module), ['src/client/components/OrderingPolicyNotice.tsx']).
+source_hash(entity('src/client/components/OrderingPolicyNotice.tsx',module), 'sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91').
+source_file_hashes(entity('src/client/components/OrderingPolicyNotice.tsx',module), ['sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91']).
+derivation_query(entity('src/client/components/OrderingPolicyNotice.tsx',module), "import graph (scip-typescript)").
+derived_at(entity('src/client/components/OrderingPolicyNotice.tsx',module), '2026-10-01T12:03:21Z', agent).
+derived_from(entity('tests/client/OrderingPolicyNotice.test.tsx',module), scanner_scan).
+source_files(entity('tests/client/OrderingPolicyNotice.test.tsx',module), ['tests/client/OrderingPolicyNotice.test.tsx']).
+source_hash(entity('tests/client/OrderingPolicyNotice.test.tsx',module), 'sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f').
+source_file_hashes(entity('tests/client/OrderingPolicyNotice.test.tsx',module), ['sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f']).
+derivation_query(entity('tests/client/OrderingPolicyNotice.test.tsx',module), "import graph (scip-typescript)").
+derived_at(entity('tests/client/OrderingPolicyNotice.test.tsx',module), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/OrderingPolicyNotice.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), 'sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91').
+source_file_hashes(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), ['sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91']).
+derivation_query(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
+derived_at(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/OrderingPolicyNotice.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91').
+source_file_hashes(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91']).
+derivation_query(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph (scip-typescript)").
+derived_at(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['src/client/components/OrderingPolicyNotice.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), 'sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91').
+source_file_hashes(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91']).
+derivation_query(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), "import graph (scip-typescript)").
+derived_at(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), "import graph (scip-typescript)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), scanner_scan).
+source_files(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['tests/client/OrderingPolicyNotice.test.tsx']).
+source_hash(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), 'sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f').
+source_file_hashes(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f']).
+derivation_query(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), "import graph (scip-typescript)").
+derived_at(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), ['tests/client/OrderingPolicyNotice.test.tsx']).
+source_hash(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), 'sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f').
+source_file_hashes(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f']).
+derivation_query(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
+derived_at(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), scanner_scan).
+source_files(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), ['tests/client/OrderingPolicyNotice.test.tsx']).
+source_hash(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), 'sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f').
+source_file_hashes(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f']).
+derivation_query(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
+derived_at(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), '2026-10-01T12:03:21Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
