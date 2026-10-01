@@ -11,14 +11,15 @@ allowBuilds:
 overrides:
   effect: 3.21.0
   '@hono/node-server': 2.0.10
-  hono: 4.12.27
-  'minimatch@3>brace-expansion': 1.1.16
-  'minimatch@5>brace-expansion': 2.1.2
-  'minimatch@10>brace-expansion': 5.0.8
+  hono: 4.13.7
+  'minimatch@3>brace-expansion': 1.1.21
+  'minimatch@5>brace-expansion': 2.1.7
+  'minimatch@10>brace-expansion': 5.0.12
   valibot: ^1.4.2
-  '@fastify/ajv-compiler>fast-uri': 3.1.4
-  'ajv>fast-uri': 3.1.4
-  'fast-json-stringify>fast-uri': 4.1.1
+  '@fastify/ajv-compiler>fast-uri': 3.1.8
+  'ajv>fast-uri': 3.1.8
+  'fast-json-stringify>fast-uri': 4.1.5
+  'prisma>mysql2': 3.23.1
 
 # Wait seven days before resolving newly published packages.
 minimumReleaseAge: 10080
@@ -28,6 +29,10 @@ minimumReleaseAgeExclude:
   - '@fastify/static'
   - '@hono/node-server'
   - brace-expansion
+  - fastify
+  - fast-uri
+  - hono
+  - mysql2
 
 # Audit policy.
 # GHSA-mh99-v99m-4gvg: ExcelJS 4.4.0 is the only available release and depends
