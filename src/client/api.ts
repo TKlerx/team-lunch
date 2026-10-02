@@ -240,8 +240,11 @@ export function startPoll(
   });
 }
 
-export function fetchOrderingPolicy(): Promise<OrderingPolicyAvailability> {
-  return request<OrderingPolicyAvailability>(apiPath('/polls/ordering-policy'), { cache: 'no-store' });
+export function fetchOrderingPolicy(officeLocationId?: string): Promise<OrderingPolicyAvailability> {
+  return request<OrderingPolicyAvailability>(
+    withOfficeLocationContext('/api/polls/ordering-policy', officeLocationId),
+    { cache: 'no-store' },
+  );
 }
 
 export function fetchPoll(pollId: string, officeLocationId?: string): Promise<Poll> {

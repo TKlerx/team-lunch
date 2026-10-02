@@ -43,6 +43,16 @@ describe('ordering policy API', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('/api/polls/ordering-policy?officeLocationId=office-2');
   });
 
+  it('explicitly scopes reads independently of mutable stored office context', async () => {
+    localStorage.setItem('team_lunch_auth_role', 'admin');
+    localStorage.setItem(ADMIN_OFFICE_LOCATION_STORAGE_KEY, 'office-2');
+    respond(availability);
+    await fetchOrderingPolicy('office-1');
+    expect(fetchMock).toHaveBeenCalledWith('/api/polls/ordering-policy?officeLocationId=office-1', {
+      headers: {}, cache: 'no-store',
+    });
+  });
+
   it('does not grant regular users an admin-stored office override', async () => {
     localStorage.setItem('team_lunch_auth_role', 'user');
     localStorage.setItem(ADMIN_OFFICE_LOCATION_STORAGE_KEY, 'office-2');

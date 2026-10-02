@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { useAppDispatch } from '../context/AppContext.js';
+import { useAppDispatch, useOrderingPolicyRefreshHandler, unavailableOrderingPolicy } from '../context/AppContext.js';
+import { createOrderingPolicyConnection } from './useOrderingPolicy.js';
+import { getAuthenticatedActorKey, getAuthenticatedAuthMethod } from '../auth.js';
 import { sendBrowserNotification } from './usePhaseNotifications.js';
 import type {
   InitialStatePayload,
@@ -72,10 +74,22 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
   const dispatch = useAppDispatch();
   const dispatchRef = useRef(dispatch);
   dispatchRef.current = dispatch;
+  const policyRefreshHandler = useOrderingPolicyRefreshHandler();
+  const officeLocationId = selectedOfficeLocationId?.trim() || null;
+  const actorKey = getAuthenticatedActorKey();
+  const authMethod = getAuthenticatedAuthMethod();
+  const currentScope = useRef({ officeLocationId, actorKey, authMethod });
+  currentScope.current = { officeLocationId, actorKey, authMethod };
 
   useEffect(() => {
     let isMounted = true;
+    const isCurrent = () => isMounted && currentScope.current.officeLocationId === officeLocationId &&
+      currentScope.current.actorKey === actorKey && currentScope.current.authMethod === authMethod &&
+      getAuthenticatedActorKey() === actorKey && getAuthenticatedAuthMethod() === authMethod;
+    const policy = createOrderingPolicyConnection(actorKey && authMethod ? officeLocationId : null, dispatch, isCurrent);
+    policyRefreshHandler.current = policy.refresh;
     dispatchRef.current({ type: 'RESET_TO_INITIAL_STATE' });
+    void policy.reconnect();
 
     const fetchHealthStatus = async () => {
       try {
@@ -87,6 +101,7 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
         }
 
         if (!isHealthResponse(payload)) {
+          policy.cancel();
           dispatchRef.current({ type: 'RESET_TO_INITIAL_STATE' });
           return;
         }
@@ -119,34 +134,47 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     }, 2000);
 
     // Fetch menus list (not included in SSE initial_state)
-    fetchJsonArray<Menu>(withOfficeLocationContext('/api/menus', selectedOfficeLocationId))
+    fetchJsonArray<Menu>(withOfficeLocationContext('/api/menus', officeLocationId))
       .then((menus) => dispatchRef.current({ type: 'SET_MENUS', payload: menus }))
       .catch(() => {
         /* menu fetch failure is non-fatal — SSE events will provide updates */
       });
 
     fetchJsonArray<FoodSelection>(
-      withOfficeLocationContext('/api/food-selections/history', selectedOfficeLocationId),
+      withOfficeLocationContext('/api/food-selections/history', officeLocationId),
     )
       .then((history) => dispatchRef.current({ type: 'SET_COMPLETED_HISTORY', payload: history }))
       .catch(() => {
         /* history fetch failure is non-fatal — initial_state or later events will sync */
       });
 
-    fetchJsonArray<ShoppingListItem>(withOfficeLocationContext('/api/shopping-list', selectedOfficeLocationId))
+    fetchJsonArray<ShoppingListItem>(withOfficeLocationContext('/api/shopping-list', officeLocationId))
       .then((items) => dispatchRef.current({ type: 'SET_SHOPPING_LIST', payload: items }))
       .catch(() => {
         /* shopping-list fetch failure is non-fatal — later SSE events will sync */
       });
 
     // Connect to SSE endpoint
-    const es = new EventSource(withOfficeLocationContext('/api/events', selectedOfficeLocationId));
+    const es = new EventSource(withOfficeLocationContext('/api/events', officeLocationId));
+
+    es.addEventListener('ordering_policy_changed', (e: MessageEvent) => {
+      if (!isCurrent()) return;
+      try {
+        const payload = JSON.parse(e.data) as { officeLocationId?: string };
+        if (payload?.officeLocationId === officeLocationId) void policy.refresh();
+      } catch {
+        // Malformed invalidation cannot establish availability or select an office.
+      }
+    });
 
     es.addEventListener('initial_state', (e: MessageEvent) => {
+      if (!isCurrent()) return;
       try {
         const payload = JSON.parse(e.data) as InitialStatePayload;
         dispatchRef.current({ type: 'INITIAL_STATE', payload });
+        policy.hydrate(payload.orderingPolicy);
       } catch {
+        policy.cancel();
         dispatchRef.current({ type: 'RESET_TO_INITIAL_STATE' });
       }
     });
@@ -336,6 +364,9 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
       if (!currentActorKey || currentActorKey.trim().toLowerCase() !== payload.actorKey.trim().toLowerCase()) {
         return;
       }
+      if (!isCurrent()) return;
+      policy.cancel();
+      dispatchRef.current({ type: 'RESET_TO_INITIAL_STATE' });
       localStorage.removeItem('team_lunch_auth_method');
       localStorage.removeItem('team_lunch_auth_role');
       localStorage.removeItem('team_lunch_actor_key');
@@ -344,18 +375,29 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     });
 
     // ── Connection status ──────────────────────────────
+    let refreshOnOpen = false;
     es.onopen = () => {
+      if (!isCurrent()) return;
       dispatchRef.current({ type: 'SET_CONNECTED', payload: true });
+      if (refreshOnOpen) void policy.reconnect();
+      refreshOnOpen = true;
     };
 
     es.onerror = () => {
+      if (!isCurrent()) return;
+      refreshOnOpen = true;
       dispatchRef.current({ type: 'SET_CONNECTED', payload: false });
     };
 
     return () => {
       isMounted = false;
+      policy.cancel();
+      if (policyRefreshHandler.current === policy.refresh) {
+        policyRefreshHandler.current = null;
+        dispatchRef.current({ type: 'SET_ORDERING_POLICY', payload: unavailableOrderingPolicy });
+      }
       window.clearInterval(healthInterval);
       es.close();
     };
-  }, [selectedOfficeLocationId]);
+  }, [officeLocationId, actorKey, authMethod, dispatch, policyRefreshHandler]);
 }

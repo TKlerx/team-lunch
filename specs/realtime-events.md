@@ -92,4 +92,7 @@ data: <json>\n
 - Hydrate state from `initial_state`.
 - Update reducers per event type.
 - Browser SSE reconnect handles transient disconnects and receives freshly evaluated policy availability.
-- T014 will add client policy state/refetch handling for `ordering_policy_changed`, reconnect, and office changes; T015 will add countdown/boundary refresh. These consumers are not yet implemented.
+- `useSSE` owns the single policy subscription. It loads explicit-office availability on office/auth changes, refetches on matching `ordering_policy_changed` and reconnect, and accepts first-connect public hydration (including explicit null).
+- `useOrderingPolicy()` exposes office-scoped availability/loading/error plus a stable awaitable `refresh()` without creating another connection. Loading/failure means unavailable, not eligible.
+- Request sequencing and office/auth cleanup discard superseded and old-scope results. Reconnect REST reads remain authoritative over delayed hydration snapshots; legacy absent policy fields leave the REST read intact.
+- T015 will add landing availability/countdown UI and call the existing refresh API at boundary expiry; this UI is not yet implemented.
