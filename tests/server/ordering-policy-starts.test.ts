@@ -155,6 +155,46 @@ afterAll(async () => {
   }
 });
 
+describe('food-selection transitions cannot reuse a completed lunch poll', () => {
+  function startSelection(pollId: string) {
+    return app.inject({
+      method: 'POST', url: `/api/food-selections?officeLocationId=${officeId}`,
+      headers: { cookie: cookie() }, payload: { pollId, durationMinutes: 10 },
+    });
+  }
+
+  it.each([1, 0])('rejects a consumed poll without side effects for interval %s', async interval => {
+    await setPolicy(interval);
+    const previous = await retainedSelection();
+    await prisma.poll.update({
+      where: { id: previous.pollId },
+      data: { winnerMenuId: menu.id, winnerMenuName: menu.name },
+    });
+    const before = await effects();
+    resetNotifications();
+    const response = await startSelection(previous.pollId);
+    expect(response.statusCode).toBe(409);
+    expect(response.json()).toEqual({ error: 'This poll has already been used for a completed lunch' });
+    await expectNoEffects(before);
+  });
+
+  it('allows an existing poll to continue when policy settings change before food selection', async () => {
+    const poll = await pollService.createAutoFinishedPoll(menu.id, menu.name, officeId);
+    await setPolicy(1, '2026-10-05');
+    expect((await evaluateOrderingPolicy(officeId)).availability.status).toBe('not_started');
+    expect((await startSelection(poll.id)).statusCode).toBe(201);
+  });
+
+  it('allows retrying an aborted selection from the same poll', async () => {
+    const previous = await retainedSelection('aborted', null);
+    await prisma.poll.update({
+      where: { id: previous.pollId },
+      data: { winnerMenuId: menu.id, winnerMenuName: menu.name },
+    });
+    expect((await startSelection(previous.pollId)).statusCode).toBe(201);
+  });
+});
+
 for (const path of paths) {
   describe(`ordering policy manual ${path.name}`, () => {
     it('rejects a used period with the full typed warning and no side effects', async () => {

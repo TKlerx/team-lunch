@@ -500,18 +500,20 @@ export async function startFoodSelection(
     );
   }
 
-  // Check for existing non-final food selection
+  // Check for an ongoing selection or a completed lunch that already used this poll.
   const existing = await prisma.foodSelection.findFirst({
     where: {
       officeLocationId: resolvedOfficeLocationId,
-      status: { in: ['active', 'overtime', 'ordering', 'delivering', 'delivery_due'] },
+      OR: [
+        { status: { in: ['active', 'overtime', 'ordering', 'delivering', 'delivery_due'] } },
+        { pollId, status: 'completed' },
+      ],
     },
   });
   if (existing) {
-    throw Object.assign(
-      new Error('A food selection is already in progress'),
-      { statusCode: 409 },
-    );
+    throw Object.assign(new Error(existing.status === 'completed'
+      ? 'This poll has already been used for a completed lunch'
+      : 'A food selection is already in progress'), { statusCode: 409 });
   }
 
   const now = new Date();
