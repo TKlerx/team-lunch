@@ -13,7 +13,7 @@ pnpm exec prisma generate
 Run migration commands only once schema changes exist; these are implementation
 instructions, not actions already performed in the documentation phase.
 
-## Focused checks (planned tests)
+## Focused checks
 
 ```sh
 pnpm exec vitest run --project server tests/server/ordering-policy.test.ts tests/server/office-location-service.test.ts tests/server/poll-routes.test.ts tests/server/office-poll-schedule.test.ts
@@ -21,9 +21,16 @@ pnpm exec vitest run --project client tests/client/Administration.test.tsx tests
 pwsh -File ./validate.ps1 all
 ```
 
-The ordering-policy and OrderingPolicyNotice suites are planned additions; the
-other listed suites already exist. Each task names its actual focused check in
-its completion notes.
+These suites now exist. Each task names its actual focused check in its
+completion notes. Phase 6's focused availability/warning checks are:
+
+```sh
+pnpm exec vitest run --project client tests/client/OrderingPolicyAvailability.test.tsx tests/client/PollIdleView.test.tsx tests/client/OrderingPolicyNotice.test.tsx tests/client/useOrderingPolicy.test.tsx
+```
+
+On 2026-10-02, this check passed 81 tests and the aggregate gate passed all
+1,471 tests. Phase 6 is complete; the full manual acceptance checklist below
+remains T016 work and has not been marked complete.
 
 ## T012 validation while PostgreSQL is unavailable
 

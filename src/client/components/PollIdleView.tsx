@@ -22,6 +22,7 @@ import { Select } from './ui/Select.js';
 import { sectionTitleClass } from './ui/Section.js';
 import { getErrorMessage } from '../lib/errorMessage.js';
 import OrderingPolicyNotice from './OrderingPolicyNotice.js';
+import OrderingPolicyAvailability from './OrderingPolicyAvailability.js';
 
 const POLL_DURATIONS = [5, 10, 15, 30, 45, 60, 120, 240, 480, 720] as const;
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
@@ -597,6 +598,7 @@ export default function PollIdleView({
 
       <div className="grid min-h-0 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-4">
+          <OrderingPolicyAvailability />
           {menusWithItems.length === 1 ? (
             <SingleMenuQuickStart
               menuName={menusWithItems[0].name}

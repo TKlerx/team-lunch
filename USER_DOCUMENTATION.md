@@ -26,6 +26,25 @@ the interval restriction, not the other scheduling guards.
 If daylight saving skips the configured finish time, no scheduled poll starts
 for that time. If the clock repeats it, the earlier occurrence is used.
 
+## Landing Availability
+
+The landing page shows the selected office's current ordering policy above the
+start controls:
+
+- **Ready to start**: the server confirms the current period has an available opportunity; normal permissions and active-lunch checks still apply.
+- **Unrestricted**: no interval restriction applies.
+- **Next eligible start**: days, hours and minutes until the next period or future policy anchor, with the exact date/time and office timezone.
+- **Checking / unavailable**: the server has not confirmed current availability. Use **Retry availability check** if needed; this is never treated as Ready.
+
+The display refreshes after policy changes, arrival confirmation, reconnect and
+office changes. At a countdown or eligible-period boundary it asks the server
+again rather than assuming eligibility. The target is policy availability, not
+a scheduled poll start.
+
+Manual starts remain available to authorized starters. If a start would violate
+the current policy, the server requires the existing warning/justification flow;
+the availability card neither bypasses nor replaces that check.
+
 ## Phase CTAs
 
 ### Poll active

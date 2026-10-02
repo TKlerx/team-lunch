@@ -95,4 +95,5 @@ data: <json>\n
 - `useSSE` owns the single policy subscription. It loads explicit-office availability on office/auth changes, refetches on matching `ordering_policy_changed` and reconnect, and accepts first-connect public hydration (including explicit null).
 - `useOrderingPolicy()` exposes office-scoped availability/loading/error plus a stable awaitable `refresh()` without creating another connection. Loading/failure means unavailable, not eligible.
 - Request sequencing and office/auth cleanup discard superseded and old-scope results. Reconnect REST reads remain authoritative over delayed hydration snapshots; legacy absent policy fields leave the REST read intact.
-- T015 will add landing availability/countdown UI and call the existing refresh API at boundary expiry; this UI is not yet implemented.
+- Landing availability displays server-owned Ready/Unrestricted or a days/hours/minutes countdown with the exact office-local target. Restricted target expiry and eligible blockEnd request fresh policy; expiry itself never implies eligibility or poll creation.
+- Automatic expiry refresh runs once per office/boundary, survives loading/failure without a retry loop, and rearms for new targets. Unavailable states offer an explicit retry. Countdown ticks are not live-announced; office/target changes clean up old timers.

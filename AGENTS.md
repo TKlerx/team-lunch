@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Landing ordering availability reuses `useCountdown` but never infers eligibility from expiry. Restricted next-eligible targets and eligible block ends trigger one server refresh per office/boundary; the attempted boundary survives loading/failure to prevent refetch loops, and explicit retry handles recovery. Countdown ticks are not live-announced.
+
 - `useSSE` owns the client ordering-policy subscription; `useOrderingPolicy()` exposes shared office-scoped availability/loading/error and a stable awaitable refresh without adding listeners. Policy REST calls pass explicit office context. Office/auth cleanup and request sequencing reject late results; reconnect REST reads take precedence over delayed unsequenced hydration. Loading/errors clear availability rather than imply eligibility.
 
 - SSE initial hydration now includes public office policy availability; `orderingPolicy: null` means evaluation is unavailable, never eligible. Effective policy settings changes and successful arrival confirmation emit office-scoped `ordering_policy_changed` invalidation only. Settings bind their notification callback from SSE to avoid a runtime cycle; private exception snapshots/evidence remain REST-only.

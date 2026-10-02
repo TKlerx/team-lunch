@@ -115,6 +115,31 @@ describe('PollIdleView', () => {
     expect(screen.getByText(/cheeseburger \(2\)/i)).toBeInTheDocument();
   });
 
+  it('shows unavailable policy without hiding or disabling the existing manual start', () => {
+    renderView();
+    expect(screen.getByText('Ordering availability unavailable')).toBeInTheDocument();
+    expect(screen.queryByText('Ready to start')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /start new team lunch/i })).toBeEnabled();
+  });
+
+  it('shows server-owned readiness above the unchanged start controls', () => {
+    const state = mockUseAppState();
+    mockUseAppState.mockReturnValue({
+      ...state,
+      orderingPolicy: {
+        officeLocationId: 'office-1', loading: false, error: null,
+        availability: {
+          ...policyWarning().orderingPolicy,
+          status: 'eligible', nextEligibleAt: null,
+          blockEnd: '2099-10-19T00:00:00Z',
+        },
+      },
+    });
+    renderView();
+    expect(screen.getByText('Ready to start')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /start new team lunch/i })).toBeEnabled();
+  });
+
   it('shows meals waiting for rating and opens the selection when requested', async () => {
     const user = setupUser();
     const onOpenHistorySelection = vi.fn();

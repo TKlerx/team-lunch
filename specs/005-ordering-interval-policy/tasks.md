@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T013 are complete, validated, and committed at HEAD `f2a0aec`. T014 client availability state/refetch handling is complete, validated, and uncommitted. Next task: T015 landing availability/countdown. FAIM updates are explicitly deferred for this session.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T014 are complete, validated, and committed at HEAD `47ea2f1`. T015 landing availability/countdown is complete, validated, and uncommitted; Phase 6 is complete. Next task: T016 cross-cutting acceptance/validation. FAIM updates are explicitly deferred for this session.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -50,7 +50,7 @@
 
 - [x] T013 [US4] Include public policy availability in initial hydration and emit scoped `ordering_policy_changed` after relevant settings saves/arrival confirmation in `src/server/sse.ts`, `src/server/services/officeLocation.ts`, and `src/server/services/foodSelection.ts`; add scoped hydration/invalidation/privacy tests in `tests/server/ordering-policy-realtime.test.ts` and document the event in `specs/realtime-events.md`.
 - [x] T014 [US4] Add office-scoped availability state/refetch handling in `src/client/context/AppContext.tsx`, `src/client/hooks/useSSE.ts`, and a small `src/client/hooks/useOrderingPolicy.ts` if needed; refresh on invalidation/reconnect/office change and discard old-office responses, with cleanup/error/loading tests in `tests/client/useOrderingPolicy.test.tsx`.
-- [ ] T015 [US4] Show prominent Ready to start/Unrestricted/countdown with exact office-local target in `src/client/components/PollIdleView.tsx` or the shared `src/client/components/OrderingPolicyNotice.tsx`; reuse `src/client/hooks/useCountdown.ts` timing, add multi-day formatting and expiry recheck without claiming automatic poll creation, and test ticks/rollover/future anchor/unavailable state/office switch in `tests/client/PollIdleView.test.tsx`.
+- [x] T015 [US4] Show prominent Ready to start/Unrestricted/countdown with exact office-local target in `src/client/components/PollIdleView.tsx` or the shared `src/client/components/OrderingPolicyNotice.tsx`; reuse `src/client/hooks/useCountdown.ts` timing, add multi-day formatting and expiry recheck without claiming automatic poll creation, and test ticks/rollover/future anchor/unavailable state/office switch in `tests/client/PollIdleView.test.tsx`.
 
 ## Phase 7: Polish and Cross-Cutting Validation
 
@@ -213,6 +213,15 @@ that leaves quick starts or automatic creation unguarded.
 - `fetchOrderingPolicy(officeLocationId?)` now supports explicit office context rather than relying on mutable localStorage, preserving no-argument compatibility. Added 19 hook/integration tests in `tests/client/useOrderingPolicy.test.tsx` and explicit-office API coverage in `tests/client/ordering-policy-api.test.ts`.
 - `pnpm exec vitest run --project client tests/client/useOrderingPolicy.test.tsx tests/client/ordering-policy-api.test.ts` passed 42/42. The full client suite passed 485 tests. Typecheck, lint, architecture, complexity and function-size checks passed without raising the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate: 93 files / 1,455 tests, 88.62% line and 81.69% branch coverage.
 - Updated realtime client behavior, contracts, status/discoveries and regenerated continuity docs. T014 is complete and uncommitted; stopped before T015. No countdown/UI, server changes, dependencies, migrations, or FAIM updates/validation; memory work remains deferred at the user's request.
+
+### T015 — 2026-10-02
+
+- Started from clean T014 HEAD `47ea2f1` after the user authorized its commit. Added `OrderingPolicyAvailability.tsx` above the existing landing start controls in `PollIdleView.tsx`, using existing Card/Button styling and the shared `useOrderingPolicy()` state rather than duplicating policy logic or subscriptions.
+- Displays server-owned Ready to start or Unrestricted, or a days/hours/minutes countdown with the exact next instant formatted in the stored office timezone. Future anchors explain the policy start; used periods explain the completed lunch. Availability does not promise an automatic poll start; existing permissions/activity guards and manual/quick-start exception flows remain unchanged. Loading/errors/mismatched offices/missing boundaries never fabricate Ready.
+- Reuses unchanged `useCountdown()` timing. Restricted target expiry and an eligible period's blockEnd trigger one server recheck per office/boundary; expiry never derives eligibility locally. The attempted boundary survives loading/failure to prevent refetch loops, new boundaries rearm it, and explicit retry supports recovery. Countdown updates use a non-live timer; status headings announce politely. Office/target changes remount the countdown and dispose old timers.
+- Added 14 tests in `tests/client/OrderingPolicyAvailability.test.tsx` for ticks/exact timezone display, future anchor, Ready/Unrestricted, expired snapshots/Strict Mode, rollover/new targets, loading/errors/wrong-office data, retry, switch/cleanup and nearer boundaries. Two new `PollIdleView` tests confirm availability integration without disabling manual starts.
+- `pnpm exec vitest run --project client tests/client/OrderingPolicyAvailability.test.tsx tests/client/PollIdleView.test.tsx tests/client/OrderingPolicyNotice.test.tsx tests/client/useOrderingPolicy.test.tsx` passed 81/81. Typecheck, lint, architecture, complexity and function-size checks passed without raising the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate: 94 files / 1,471 tests, 88.70% line and 81.86% branch coverage.
+- Updated user/realtime/contract documentation and status, then regenerated continuity docs. Phase 6 is complete; T015 is uncommitted. Stopped before T016/T017: cross-cutting manual acceptance and final reconciliation are not marked done. No dependency, migration, server, or FAIM changes; memory updates/validation remain deferred at the user's request.
 
 ## Planning Validation
 
