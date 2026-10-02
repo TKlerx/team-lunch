@@ -204,7 +204,7 @@ function defaultOrderingPolicy() {
   const monday = new Date();
   monday.setUTCHours(0, 0, 0, 0);
   monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
-  return { orderingIntervalWeeks: 1, timeZone: 'UTC', orderingAnchorDate: monday };
+  return { orderingIntervalWeeks: 1, timeZone: 'Europe/Berlin', orderingAnchorDate: monday };
 }
 
 export async function ensureDefaultOfficeLocation(): Promise<OfficeLocation> {

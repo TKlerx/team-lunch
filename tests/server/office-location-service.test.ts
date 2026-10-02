@@ -102,7 +102,7 @@ describe('office location service', () => {
     expect(second.key).toBe('berlin-mitte-2');
   });
 
-  it('initializes new and default offices to weekly UTC with their creation-week Monday', async () => {
+  it('initializes new and default offices to weekly Berlin time with their creation-week Monday', async () => {
     const offices = [await createOfficeLocation('Weekly Office'), await ensureDefaultOfficeLocation()];
     for (const office of offices) {
       const stored = await prisma.officeLocation.findUniqueOrThrow({ where: { id: office.id } });
@@ -110,11 +110,11 @@ describe('office location service', () => {
       monday.setUTCHours(0, 0, 0, 0);
       monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
       expect(stored.orderingIntervalWeeks).toBe(1);
-      expect(stored.timeZone).toBe('UTC');
+      expect(stored.timeZone).toBe('Europe/Berlin');
       expect(stored.orderingAnchorDate).toEqual(monday);
       expect(office).toMatchObject({
         orderingIntervalWeeks: 1,
-        timeZone: 'UTC',
+        timeZone: 'Europe/Berlin',
         orderingAnchorDate: monday.toISOString().slice(0, 10),
       });
     }
@@ -200,7 +200,7 @@ describe('office location service', () => {
   it('keeps direct office creation compatible and rejects invalid interval and weekday in the database', async () => {
     const office = await prisma.officeLocation.create({ data: { key: 'direct', name: 'Direct' } });
     expect(office.orderingIntervalWeeks).toBe(1);
-    expect(office.timeZone).toBe('UTC');
+    expect(office.timeZone).toBe('Europe/Berlin');
     expect(office.orderingAnchorDate.getUTCDay()).toBe(1);
     await expect(prisma.officeLocation.update({
       where: { id: office.id }, data: { orderingIntervalWeeks: 5 },

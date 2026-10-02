@@ -20,7 +20,7 @@ model OfficeLocation {
   autoStartPollFinishTime            String?  @map("auto_start_poll_finish_time") @db.VarChar(5)
   defaultFoodSelectionDurationMinutes Int     @default(30) @map("default_food_selection_duration_minutes")
   orderingIntervalWeeks              Int      @default(1) @map("ordering_interval_weeks")
-  timeZone                           String   @default("UTC") @map("time_zone") @db.VarChar(100)
+  timeZone                           String   @default("Europe/Berlin") @map("time_zone") @db.VarChar(100)
   orderingAnchorDate                 DateTime @default(dbgenerated("(date_trunc('week'::text, (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text)))::date")) @map("ordering_anchor_date") @db.Date
   createdAt                          DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt                          DateTime @updatedAt @map("updated_at") @db.Timestamptz()

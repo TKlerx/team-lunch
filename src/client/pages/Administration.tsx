@@ -37,6 +37,7 @@ const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
   { value: "sunday", label: "Sun" },
 ];
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
+const OFFICE_TIME_ZONES = ["UTC", ...Intl.supportedValuesOf("timeZone")];
 
 type AdminAuth = AuthConfigResponse["auth"];
 type AdminUser = AdminAuth["users"][number];
@@ -1427,16 +1428,21 @@ function OrderingPolicyControls({
       </label>
       <label className="text-sm text-fg">
         Office timezone (IANA)
-        <input
-          type="text"
+        <select
           aria-label={`Office timezone for ${location.key}`}
           aria-describedby={error ? errorId : undefined}
           value={draft.timeZone}
           onChange={(event) => patchDraft({ timeZone: event.target.value })}
-          placeholder="Europe/Vienna"
           required
           className={controlClass}
-        />
+        >
+          {!OFFICE_TIME_ZONES.includes(draft.timeZone) && (
+            <option value={draft.timeZone}>{draft.timeZone}</option>
+          )}
+          {OFFICE_TIME_ZONES.map((zone) => (
+            <option key={zone} value={zone}>{zone}</option>
+          ))}
+        </select>
       </label>
       <OrderingAnchorControl location={location} draft={draft} patchDraft={patchDraft} errorId={error ? errorId : ""} />
       {error && <p id={errorId} role="alert" className="text-sm text-danger-fg lg:col-span-3">{error}</p>}

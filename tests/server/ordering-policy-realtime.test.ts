@@ -182,12 +182,12 @@ it('reinterprets retained completions on settings saves and hydrates future anch
 
 it('does not invalidate unchanged, omitted, unrelated or unrestricted ignored-anchor saves', async () => {
   const stream = connect();
-  await save({ orderingIntervalWeeks: 1, timeZone: 'UTC', orderingAnchorDate: '2026-09-28' });
+  await save({ orderingIntervalWeeks: 1, timeZone: 'Europe/Berlin', orderingAnchorDate: '2026-09-28' });
   expect(events(stream, 'ordering_policy_changed')).toEqual([]);
   await save({ orderingIntervalWeeks: 0 });
   stream.writes.length = 0;
   await save({});
-  await save({ orderingIntervalWeeks: 0, timeZone: 'UTC', orderingAnchorDate: 'invalid ignored anchor' });
+  await save({ orderingIntervalWeeks: 0, timeZone: 'Europe/Berlin', orderingAnchorDate: 'invalid ignored anchor' });
   await save({ defaultFoodSelectionDurationMinutes: 20, autoStartPollEnabled: true,
     autoStartPollWeekdays: ['monday'], autoStartPollFinishTime: '12:00' });
   expect(events(stream, 'ordering_policy_changed')).toEqual([]);

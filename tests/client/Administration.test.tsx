@@ -318,6 +318,23 @@ function mockOffices(initial = [makeOffice({ id: 'office-1', key: 'default', nam
     return saves;
 }
 
+describe('Administration timezone dropdown', () => {
+  it('offers native timezone choices and preserves a saved alias', async () => {
+    mockOffices([makeOffice({ id: 'office-1', key: 'default', name: 'Default Office', timeZone: 'US/Eastern' })]);
+    const user = setupUser();
+    renderAdministration();
+    const timezone = await screen.findByRole('combobox', { name: 'Office timezone for default' });
+    expect(timezone).toHaveValue('US/Eastern');
+    for (const zone of ['UTC', 'Europe/Berlin', 'Europe/Vienna', 'US/Eastern']) {
+      expect(within(timezone).getByRole('option', { name: zone })).toBeInTheDocument();
+    }
+    await user.selectOptions(timezone, 'Europe/Berlin');
+    expect(timezone).toHaveValue('Europe/Berlin');
+    await user.click(screen.getByLabelText('Save office settings for default'));
+    await waitFor(() => expect(screen.getByLabelText('Save office settings for default')).toBeDisabled());
+  });
+});
+
 describe('Administration ordering policy persistence', () => {
   it.each([0, 1, 2, 3, 4])('saves and reloads interval %s with timezone and future Monday', async (weeks) => {
     const saves = mockOffices();
@@ -329,7 +346,7 @@ describe('Administration ordering policy persistence', () => {
     const save = screen.getByLabelText('Save office settings for default');
     expect(save).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Ordering anchor date for default'), { target: { value: '2099-03-02' } });
-    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: 'Europe/Vienna' } });
+    await user.selectOptions(screen.getByLabelText('Office timezone for default'), 'Europe/Vienna');
     await user.selectOptions(interval, String(weeks));
     await user.click(save);
     await waitFor(() => expect(save).toBeDisabled());
@@ -376,11 +393,10 @@ describe('Administration ordering policy persistence', () => {
 
 describe('Administration ordering policy validation', () => {
   it.each(['', 'Mars/Olympus', '+02:00'])('rejects invalid timezone %j even while unrestricted', async (zone) => {
-    const saves = mockOffices();
+    const saves = mockOffices([makeOffice({ id: 'office-1', key: 'default', name: 'Default Office', timeZone: zone })]);
     const user = setupUser();
     renderAdministration();
     await user.selectOptions(await screen.findByLabelText('Ordering interval for default'), '0');
-    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: zone } });
     expect(screen.getByRole('alert')).toHaveTextContent('valid IANA timezone');
     await user.click(screen.getByLabelText('Save office settings for default'));
     expect(saves).not.toHaveBeenCalled();
@@ -425,11 +441,11 @@ describe('Administration ordering policy anchor retention', () => {
     await user.click(save);
     await waitFor(() => expect(save).toBeDisabled());
     expect(anchor).toHaveValue('2099-03-02');
-    fireEvent.change(screen.getByLabelText('Office timezone for default'), { target: { value: 'Asia/Kathmandu' } });
+    await user.selectOptions(screen.getByLabelText('Office timezone for default'), 'Asia/Tokyo');
     expect(save).toBeEnabled();
     await user.click(save);
     await waitFor(() => expect(save).toBeDisabled());
-    expect(saves.mock.calls[1][1]).toMatchObject({ orderingIntervalWeeks: 0, timeZone: 'Asia/Kathmandu' });
+    expect(saves.mock.calls[1][1]).toMatchObject({ orderingIntervalWeeks: 0, timeZone: 'Asia/Tokyo' });
     expect(saves.mock.calls[1][1]).not.toHaveProperty('orderingAnchorDate');
     await user.selectOptions(interval, '2');
     expect(anchor).toBeEnabled();

@@ -146,7 +146,7 @@ according to policy, without implying that an actual scheduled poll will start t
 
 ## Assumptions
 
-- Default timezone is UTC until an admin chooses the office timezone; no browser/server-zone inference is persisted. New offices default to the Monday of their creation week; existing offices to the migration week's Monday in UTC. These are editable initialization values, not hardcoded recurrence anchors.
+- New offices default to Europe/Berlin; existing saved timezones are preserved. Admins choose an IANA timezone from a native dropdown, including UTC and any saved alias; no browser/server-zone inference is persisted. New offices default to the Monday of their creation week; existing offices to the migration week's Monday in UTC. These are editable initialization values, not hardcoded recurrence anchors.
 - The confirmed future-anchor behavior postpones compliant starts until that Monday; it does not make the preceding dates unrestricted.
 - Count completions already retained, including those predating configuration if they fall in the evaluated period.
 - Successful creation records an exception only if policy is actually noncompliant at the server's decision time; a stale warning must not create a false exception.

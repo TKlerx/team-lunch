@@ -57,6 +57,12 @@
 - [x] T016 Run scenarios and focused commands in `specs/005-ordering-interval-policy/quickstart.md`, then `pwsh -File ./validate.ps1 all`; fix feature-caused failures, verify accessibility/privacy and no new runtime dependency, and record actual command results/blockers in `specs/005-ordering-interval-policy/tasks.md`.
 - [x] T017 Update `USER_DOCUMENTATION.md`, `specs/OVERVIEW.md`, and implementation discoveries in `AGENTS.md`; selectively refresh affected `.faim` derived facts without changing axioms, run FAIM validation, and regenerate `specs/CURRENT-WORK.md`/`specs/RECONCILIATION.md` with `pnpm continuity:update` after task completion.
 
+## Follow-up Fix
+
+- [x] T018 Replace the admin timezone text input with a native IANA dropdown preserving UTC/saved aliases; default new offices to Europe/Berlin in service and database without modifying existing office settings. Add client/server regression coverage and run the aggregate gate. Do not update FAIM memory per user instruction.
+
+T018 validation (2026-10-02): Administration tests passed (37), office-location service tests passed (55), and `pwsh -File ./validate.ps1 all` passed (95 files / 1,484 tests; Vitest 4.1.11 coverage: 85.89% lines / 77.10% branches). Updated the realtime unchanged-settings regression for the new Berlin default. The additive migration changes only the database default; saved office timezones remain untouched. Dev `prisma migrate dev` was blocked by P1001 at localhost:5433; the dedicated test DB was healthy and its setup applied migrations successfully. Regenerated Prisma client. FAIM was not updated. User subsequently reported successful manual testing before authorizing the commit.
+
 ## Dependencies and Execution Order
 
 ```text

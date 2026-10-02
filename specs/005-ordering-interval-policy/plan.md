@@ -61,7 +61,7 @@ Existing integration points:
 
 ## Implementation Decisions
 
-1. Initialize weekly settings with UTC and the current week's Monday, both editable; never derive an office zone from a browser. Preserve saved anchors while unrestricted.
+1. Initialize new offices with weekly settings, Europe/Berlin and the current UTC week's Monday, all editable; never derive an office zone from a browser. Preserve existing saved timezones and saved anchors while unrestricted. Admin timezone choices use a native dropdown populated from Intl.supportedValuesOf, with UTC and saved aliases included.
 2. Compute calendar-day offsets in the office zone, divide by `7 * intervalWeeks`, then convert each boundary's local Monday independently into UTC. Do not add elapsed 168-hour durations. Before the anchor, return `not_started` with the anchor as next availability.
 3. Query existence of `status=completed` with non-null `completedAt` in `[start,end)` and the same office. An exception does not move blocks or add future debt.
 4. Add a server preflight read for UX, but gate normal poll creation and auto-finished quick-start creation again using a shared service guard. Server-side source discriminator (`manual`/`scheduled`) is not trusted from request bodies. Manual calls pass the authenticated actor plus optional reason; scheduled calls cannot override.
