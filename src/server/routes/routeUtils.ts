@@ -8,6 +8,14 @@ interface ServiceError extends Error {
   statusCode?: number;
   retryAfterSeconds?: number;
   violations?: unknown;
+  code?: string;
+  orderingPolicy?: import('../../lib/types.js').OrderingPolicyAvailability;
+}
+
+function orderingPolicyWarningFields(error: ServiceError) {
+  return error.code === 'ORDERING_POLICY_WARNING'
+    ? { code: error.code, orderingPolicy: error.orderingPolicy }
+    : {};
 }
 
 /**
@@ -31,7 +39,7 @@ export function sendServiceError(reply: FastifyReply, err: unknown): FastifyRepl
   if (e.violations) {
     body.violations = e.violations;
   }
-  return reply.status(statusCode).send(body);
+  return reply.status(statusCode).send({ ...body, ...orderingPolicyWarningFields(e) });
 }
 
 /**

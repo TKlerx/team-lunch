@@ -1,6 +1,6 @@
 # Specs Overview
 
-**Last Updated**: 2026-06-19
+**Last Updated**: 2026-10-02
 
 This overview tracks spec completeness and implementation status for epics in
 `specs/`.
@@ -45,6 +45,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
 | 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
+| 005 | ordering-interval-policy | Done | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
@@ -64,7 +65,7 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **Menu safety labels**: Planned as [004-menu-safety-labels](004-menu-safety-labels/spec.md), promoted from [BACKLOG-008](BACKLOG.md). Ready for implementation planning.
+1. **Menu safety labels reconciliation**: [004-menu-safety-labels](004-menu-safety-labels/spec.md) still has a Planned overview status although its task list is fully checked. Review existing completion evidence before updating its status.
 2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
 3. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
 4. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
@@ -73,6 +74,7 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Notes
 
+- `005-ordering-interval-policy` is complete: all 17 tasks cover persistence/defaults, validated per-office settings, office-local fixed-calendar evaluation, signed manual exceptions, admin-only immutable REST snapshots, compliant office-local scheduling, public SSE availability and boundary-refreshed landing countdowns. Phase 7 passed 458 focused server tests, 165 focused client tests and the aggregate/full gates (1,471 tests, approximately 88.70% line / 81.86% branch coverage), including the pinned Trivy image scan and three general Playwright smoke tests. Selective FAIM source/test refresh resumed without axiom changes. Actual two-browser policy and visual/screen-reader acceptance are not claimed; coverage/rollout caveats are in [quickstart.md](005-ordering-interval-policy/quickstart.md). No unchecked tasks remain in 005; Phase 7 changes await user-authorized commit.
 - `001-canonical-routes` is implemented; the spec status is marked `Done`.
 - `002-ai-meal-recommendations` is marked `Delegated` because its intent was superseded and delivered by [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
 - `food-selection` is marked `Mostly Done` because its migrated task list still calls out verification gaps around pruning-era tests and timer edge assertions, even though the feature is broadly shipped.

@@ -35,7 +35,7 @@ export default defineConfig({
           setupFiles: ['tests/server/setup.ts'],
           fileParallelism: false,
           pool: 'forks',
-          poolOptions: { forks: { singleFork: true } },
+          maxWorkers: 1,
         },
       },
       {

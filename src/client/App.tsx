@@ -5,6 +5,7 @@ import DatabaseConnectionModal from './components/DatabaseConnectionModal.js';
 import OrdersRail from './components/OrdersRail.js';
 import FoodSelectionCompletedView from './components/FoodSelectionCompletedView.js';
 import PollFinishedView from './components/PollFinishedView.js';
+import OrderingPolicyExceptionDetails from './components/OrderingPolicyExceptionDetails.js';
 import MainView from './pages/MainView.js';
 import ManageMenus from './pages/ManageMenus.js';
 import ShoppingList from './pages/ShoppingList.js';
@@ -356,11 +357,17 @@ function PollRouteView({
   });
 
   if (matchesVisiblePoll) {
-    return <MainView phase={phase} onOpenHistorySelection={onOpenHistorySelection} />;
+    return <>
+      <OrderingPolicyExceptionDetails kind="poll" recordId={pollId!} />
+      <MainView phase={phase} onOpenHistorySelection={onOpenHistorySelection} />
+    </>;
   }
 
   if (lookup.poll) {
-    return <PollFinishedView poll={lookup.poll} readOnly />;
+    return <>
+      <OrderingPolicyExceptionDetails kind="poll" recordId={lookup.poll.id} />
+      <PollFinishedView poll={lookup.poll} readOnly />
+    </>;
   }
 
   if (!initialized || lookup.loading) {
@@ -409,12 +416,16 @@ function useHistoricalPollLookup({
   initialized: boolean;
   skip: boolean;
 }): { poll: Poll | null; loading: boolean; failed: boolean } {
+  const { selectedOfficeLocationId, isAdmin } = useAdminOfficeContext();
+  const scope = JSON.stringify([pollId, selectedOfficeLocationId, isAdmin, getAuthenticatedAuthMethod(), localStorage.getItem(ACTOR_KEY_STORAGE_KEY)]);
+  const [loadedScope, setLoadedScope] = useState(scope);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadedScope(scope);
     setPoll(null);
     setFailed(false);
 
@@ -426,9 +437,13 @@ function useHistoricalPollLookup({
     }
 
     setLoading(true);
-    void api.fetchPoll(pollId)
+    void api.fetchPoll(pollId, selectedOfficeLocationId ?? undefined)
       .then((loadedPoll) => {
-        if (!cancelled) setPoll(loadedPoll);
+        if (!cancelled) {
+          const publicPoll = { ...loadedPoll };
+          delete publicPoll.orderingPolicyException;
+          setPoll(publicPoll);
+        }
       })
       .catch(() => {
         if (!cancelled) setFailed(true);
@@ -440,9 +455,9 @@ function useHistoricalPollLookup({
     return () => {
       cancelled = true;
     };
-  }, [pollId, initialized, skip]);
+  }, [pollId, initialized, skip, selectedOfficeLocationId, scope]);
 
-  return { poll, loading, failed };
+  return loadedScope === scope ? { poll, loading, failed } : { poll: null, loading: true, failed: false };
 }
 
 function FoodSelectionRouteView({

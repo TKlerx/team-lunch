@@ -1,10 +1,18 @@
 import prisma from '../db.js';
+import { parseCalendarDate, validateMondayDate, validateTimeZone } from './officeTime.js';
 import { serviceError } from '../routes/routeUtils.js';
 import type {
   OfficeLocation,
+  OrderingIntervalWeeks,
   OfficeWeekday,
   UpdateOfficeLocationSettingsRequest,
 } from '../../lib/types.js';
+
+// Late-bound by SSE, which already depends on this service for hydration.
+let onOrderingPolicyChanged: (officeLocationId: string) => void = () => {};
+export function setOrderingPolicyChangedHandler(handler: typeof onOrderingPolicyChanged): void {
+  onOrderingPolicyChanged = handler;
+}
 
 const DEFAULT_OFFICE_KEY = 'default';
 const DEFAULT_OFFICE_NAME = 'Default Office';
@@ -27,6 +35,9 @@ function formatOfficeLocation(location: {
   autoStartPollWeekdays: unknown;
   autoStartPollFinishTime: string | null;
   defaultFoodSelectionDurationMinutes: number;
+  orderingIntervalWeeks: number;
+  timeZone: string;
+  orderingAnchorDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }): OfficeLocation {
@@ -39,6 +50,9 @@ function formatOfficeLocation(location: {
     autoStartPollWeekdays: normalizeStoredWeekdays(location.autoStartPollWeekdays),
     autoStartPollFinishTime: location.autoStartPollFinishTime,
     defaultFoodSelectionDurationMinutes: location.defaultFoodSelectionDurationMinutes,
+    orderingIntervalWeeks: location.orderingIntervalWeeks as OrderingIntervalWeeks,
+    timeZone: location.timeZone,
+    orderingAnchorDate: location.orderingAnchorDate.toISOString().slice(0, 10),
     createdAt: location.createdAt.toISOString(),
     updatedAt: location.updatedAt.toISOString(),
   };
@@ -186,6 +200,13 @@ async function buildUniqueOfficeKey(baseKey: string): Promise<string> {
   return `${baseKey}-${suffix}`;
 }
 
+function defaultOrderingPolicy() {
+  const monday = new Date();
+  monday.setUTCHours(0, 0, 0, 0);
+  monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+  return { orderingIntervalWeeks: 1, timeZone: 'Europe/Berlin', orderingAnchorDate: monday };
+}
+
 export async function ensureDefaultOfficeLocation(): Promise<OfficeLocation> {
   const location = await prisma.officeLocation.upsert({
     where: { key: DEFAULT_OFFICE_KEY },
@@ -193,6 +214,7 @@ export async function ensureDefaultOfficeLocation(): Promise<OfficeLocation> {
       key: DEFAULT_OFFICE_KEY,
       name: DEFAULT_OFFICE_NAME,
       isActive: true,
+      ...defaultOrderingPolicy(),
     },
     update: {
       isActive: true,
@@ -230,6 +252,7 @@ export async function createOfficeLocation(name: string): Promise<OfficeLocation
       autoStartPollWeekdays: [],
       autoStartPollFinishTime: null,
       defaultFoodSelectionDurationMinutes: 30,
+      ...defaultOrderingPolicy(),
     },
   });
 
@@ -304,11 +327,38 @@ export async function validateOfficeLocationId(officeLocationId: string): Promis
   return formatOfficeLocation(location);
 }
 
+function validateOrderingSettings(location: OfficeLocation, settings: UpdateOfficeLocationSettingsRequest) {
+  const orderingIntervalWeeks = settings.orderingIntervalWeeks === undefined
+    ? location.orderingIntervalWeeks : settings.orderingIntervalWeeks;
+  if (![0, 1, 2, 3, 4].includes(orderingIntervalWeeks)) {
+    throw serviceError('Ordering interval must be 0, 1, 2, 3, or 4 weeks', 400);
+  }
+  const timeZone = settings.timeZone === undefined ? location.timeZone : settings.timeZone;
+  const orderingAnchorDate = orderingIntervalWeeks === 0 || settings.orderingAnchorDate === undefined
+    ? location.orderingAnchorDate : settings.orderingAnchorDate;
+  try {
+    validateTimeZone(timeZone);
+    if (orderingIntervalWeeks !== 0) validateMondayDate(orderingAnchorDate);
+  } catch (err) {
+    if (err instanceof RangeError) throw serviceError(err.message, 400);
+    throw err;
+  }
+  return {
+    orderingIntervalWeeks,
+    timeZone,
+    orderingAnchorDate: parseCalendarDate(orderingAnchorDate),
+  };
+}
+
 export async function updateOfficeLocationSettings(
   officeLocationId: string,
   settings: UpdateOfficeLocationSettingsRequest,
 ): Promise<OfficeLocation> {
   const location = await validateOfficeLocationId(officeLocationId);
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+    throw serviceError('Office settings must be an object', 400);
+  }
+  const orderingSettings = validateOrderingSettings(location, settings);
   const autoStartPollEnabled = settings.autoStartPollEnabled === true;
   const autoStartPollWeekdays = validateAutoStartWeekdays(settings.autoStartPollWeekdays);
   const autoStartPollFinishTime = validateAutoStartFinishTime(settings.autoStartPollFinishTime);
@@ -330,9 +380,18 @@ export async function updateOfficeLocationSettings(
       autoStartPollWeekdays,
       autoStartPollFinishTime,
       defaultFoodSelectionDurationMinutes,
+      ...orderingSettings,
       updatedAt: new Date(),
     },
   });
+
+  if ([
+    updated.orderingIntervalWeeks !== location.orderingIntervalWeeks,
+    updated.timeZone !== location.timeZone,
+    updated.orderingAnchorDate.toISOString().slice(0, 10) !== location.orderingAnchorDate,
+  ].some(Boolean)) {
+    onOrderingPolicyChanged(location.id);
+  }
 
   return formatOfficeLocation(updated);
 }

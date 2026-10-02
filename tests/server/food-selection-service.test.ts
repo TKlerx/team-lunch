@@ -4,7 +4,7 @@ import * as foodSelectionService from '../../src/server/services/foodSelection.j
 import * as pollService from '../../src/server/services/poll.js';
 import * as menuService from '../../src/server/services/menu.js';
 import * as userMenuDefaultsService from '../../src/server/services/userMenuDefaults.js';
-import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
+import { createOfficeLocation, ensureDefaultOfficeLocation } from '../../src/server/services/officeLocation.js';
 import prisma from '../../src/server/db.js';
 
 // Suppress SSE broadcasts during tests
@@ -985,6 +985,8 @@ describe('Food selection service', () => {
 
   describe('food-selection persistence', () => {
     it('keeps all completed food selections beyond 5', async () => {
+      const office = await ensureDefaultOfficeLocation();
+      await prisma.officeLocation.update({ where: { id: office.id }, data: { orderingIntervalWeeks: 0 } });
       const selectionIds: string[] = [];
 
       for (let i = 0; i < 6; i++) {
@@ -1057,6 +1059,8 @@ describe('Food selection service', () => {
     });
 
     it('getCompletedFoodSelectionsHistory returns most recent first', async () => {
+      const office = await ensureDefaultOfficeLocation();
+      await prisma.officeLocation.update({ where: { id: office.id }, data: { orderingIntervalWeeks: 0 } });
       const first = await createActiveFoodSelection();
       await foodSelectionService.expireFoodSelection(first.selection.id);
       await foodSelectionService.completeFoodSelection(first.selection.id);

@@ -500,18 +500,20 @@ export async function startFoodSelection(
     );
   }
 
-  // Check for existing non-final food selection
+  // Check for an ongoing selection or a completed lunch that already used this poll.
   const existing = await prisma.foodSelection.findFirst({
     where: {
       officeLocationId: resolvedOfficeLocationId,
-      status: { in: ['active', 'overtime', 'ordering', 'delivering', 'delivery_due'] },
+      OR: [
+        { status: { in: ['active', 'overtime', 'ordering', 'delivering', 'delivery_due'] } },
+        { pollId, status: 'completed' },
+      ],
     },
   });
   if (existing) {
-    throw Object.assign(
-      new Error('A food selection is already in progress'),
-      { statusCode: 409 },
-    );
+    throw Object.assign(new Error(existing.status === 'completed'
+      ? 'This poll has already been used for a completed lunch'
+      : 'A food selection is already in progress'), { statusCode: 409 });
   }
 
   const now = new Date();
@@ -1342,18 +1344,39 @@ export async function getLatestCompletedFoodSelection(
   return selection ? formatFoodSelection(selection) : null;
 }
 
+export async function getFoodSelection(
+  selectionId: string, officeLocationId: string, isAdmin = false,
+): Promise<FoodSelection> {
+  const resolvedOfficeLocationId = await resolveFoodSelectionOfficeLocationId(officeLocationId);
+  const selection = await prisma.foodSelection.findFirst({
+    where: { id: selectionId, officeLocationId: resolvedOfficeLocationId },
+    include: { orders: true, poll: { select: { orderingPolicyException: true } } },
+  });
+  if (!selection) {
+    throw Object.assign(new Error('Food selection not found'), { statusCode: 404 });
+  }
+  return {
+    ...formatFoodSelection(selection),
+    ...(isAdmin ? { orderingPolicyException: selection.poll.orderingPolicyException as FoodSelection['orderingPolicyException'] } : {}),
+  };
+}
+
 export async function getCompletedFoodSelectionsHistory(
   limit = 5,
   officeLocationId?: string,
+  isAdmin = false,
 ): Promise<FoodSelection[]> {
   const resolvedOfficeLocationId = await resolveFoodSelectionOfficeLocationId(officeLocationId);
   const selections = await prisma.foodSelection.findMany({
     where: { officeLocationId: resolvedOfficeLocationId, status: 'completed' },
-    include: { orders: true },
+    include: { orders: true, poll: { select: { orderingPolicyException: true } } },
     orderBy: [{ completedAt: 'desc' }, { createdAt: 'desc' }],
     take: limit,
   });
-  return selections.map(formatFoodSelection);
+  return selections.map(selection => ({
+    ...formatFoodSelection(selection),
+    ...(isAdmin ? { orderingPolicyException: selection.poll.orderingPolicyException as FoodSelection['orderingPolicyException'] } : {}),
+  }));
 }
 
 export async function updateCompletedFoodSelectionEta(
@@ -1425,7 +1448,7 @@ export async function confirmFoodArrival(
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_completed', { foodSelection: formatted }, selection.officeLocationId);
-
+  broadcast('ordering_policy_changed', { officeLocationId: selection.officeLocationId }, selection.officeLocationId);
 
   return formatted;
 }

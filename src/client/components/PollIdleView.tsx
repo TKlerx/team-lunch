@@ -1,6 +1,6 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { FoodSelection, Poll } from '../../lib/types.js';
+import type { FoodSelection, OrderingPolicyWarningResponse, Poll } from '../../lib/types.js';
 import * as api from '../api.js';
 import { useAppState } from '../context/AppContext.js';
 import { useToast } from '../context/ToastContext.js';
@@ -21,6 +21,8 @@ import { Input } from './ui/Input.js';
 import { Select } from './ui/Select.js';
 import { sectionTitleClass } from './ui/Section.js';
 import { getErrorMessage } from '../lib/errorMessage.js';
+import OrderingPolicyNotice from './OrderingPolicyNotice.js';
+import OrderingPolicyAvailability from './OrderingPolicyAvailability.js';
 
 const POLL_DURATIONS = [5, 10, 15, 30, 45, 60, 120, 240, 480, 720] as const;
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
@@ -319,26 +321,36 @@ function SingleMenuQuickStart({
   const [duration, setDuration] = useState<number>(defaultDuration);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const pending = useRef(false);
+  const [policyWarning, setPolicyWarning] = useState<{ warning: OrderingPolicyWarningResponse; revision: number } | null>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
     setDuration(defaultDuration);
   }, [defaultDuration]);
 
-  const handleQuickStart = async (event: FormEvent) => {
-    event.preventDefault();
+  const handleQuickStart = async (justification?: string) => {
+    if (pending.current || (policyWarning && justification === undefined)) return;
     if (!actorLabel) {
       setError('Sign in first');
       return;
     }
 
+    pending.current = true;
     setSubmitting(true);
     try {
-      await api.quickStartFoodSelection(duration);
+      await api.quickStartFoodSelection(duration, justification);
+      setPolicyWarning(null);
       setError('');
     } catch (err) {
-      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start food selection') });
+      if (err instanceof api.OrderingPolicyWarningError) {
+        setPolicyWarning((previous) => ({ warning: err.body, revision: (previous?.revision ?? 0) + 1 }));
+      } else {
+        setPolicyWarning(null);
+        showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start food selection') });
+      }
     } finally {
+      pending.current = false;
       setSubmitting(false);
     }
   };
@@ -349,7 +361,7 @@ function SingleMenuQuickStart({
         Only one menu is currently available, so the lunch flow can skip straight to ordering.
       </p>
       <p className="mb-4 text-base font-semibold text-fg">{menuName}</p>
-      <form onSubmit={(event) => void handleQuickStart(event)} className="space-y-4">
+      <form onSubmit={(event) => { event.preventDefault(); void handleQuickStart(); }} className="space-y-4">
         <div>
           <label htmlFor="quick-duration" className="mb-1 block text-sm font-medium text-fg">
             Duration
@@ -379,6 +391,15 @@ function SingleMenuQuickStart({
           {submitting ? 'Starting...' : 'Start Food Selection'}
         </Button>
       </form>
+      {policyWarning && (
+        <OrderingPolicyNotice
+          key={policyWarning.revision}
+          warning={policyWarning.warning}
+          pending={submitting}
+          onCancel={() => setPolicyWarning(null)}
+          onProceed={(reason) => void handleQuickStart(reason)}
+        />
+      )}
     </DashboardCard>
   );
 }
@@ -394,10 +415,12 @@ function PollStartForm({
   const [excludedReasons, setExcludedReasons] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const pending = useRef(false);
+  const [policyWarning, setPolicyWarning] = useState<{ warning: OrderingPolicyWarningResponse; revision: number } | null>(null);
   const { showToast } = useToast();
 
-  const handleStart = async (event: FormEvent) => {
-    event.preventDefault();
+  const handleStart = async (justification?: string) => {
+    if (pending.current || (policyWarning && justification === undefined)) return;
 
     const trimmed = description.trim();
     if (!trimmed) {
@@ -422,22 +445,30 @@ function PollStartForm({
       return;
     }
 
+    pending.current = true;
     setSubmitting(true);
     try {
-      await api.startPoll(trimmed, duration, excludedMenuJustifications);
+      await api.startPoll(trimmed, duration, excludedMenuJustifications, justification);
+      setPolicyWarning(null);
       setDescription('');
       setExcludedReasons({});
       setError('');
     } catch (err) {
-      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start poll') });
+      if (err instanceof api.OrderingPolicyWarningError) {
+        setPolicyWarning((previous) => ({ warning: err.body, revision: (previous?.revision ?? 0) + 1 }));
+      } else {
+        setPolicyWarning(null);
+        showToast({ tone: 'error', message: getErrorMessage(err, 'Could not start poll') });
+      }
     } finally {
+      pending.current = false;
       setSubmitting(false);
     }
   };
 
   return (
     <DashboardCard title="Start New Team Lunch">
-      <form onSubmit={(event) => void handleStart(event)} className="space-y-4">
+      <form onSubmit={(event) => { event.preventDefault(); void handleStart(); }} className="space-y-4">
         <div>
           <label htmlFor="poll-desc" className="mb-1 block text-sm font-medium text-fg">
             Description
@@ -525,6 +556,15 @@ function PollStartForm({
           {submitting ? 'Starting...' : 'Start new Team Lunch'}
         </Button>
       </form>
+      {policyWarning && (
+        <OrderingPolicyNotice
+          key={policyWarning.revision}
+          warning={policyWarning.warning}
+          pending={submitting}
+          onCancel={() => setPolicyWarning(null)}
+          onProceed={(reason) => void handleStart(reason)}
+        />
+      )}
     </DashboardCard>
   );
 }
@@ -558,6 +598,7 @@ export default function PollIdleView({
 
       <div className="grid min-h-0 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-4">
+          <OrderingPolicyAvailability />
           {menusWithItems.length === 1 ? (
             <SingleMenuQuickStart
               menuName={menusWithItems[0].name}

@@ -6,6 +6,10 @@ the user observes and steers. For new features, run the spec-kit phases
 (`specify → plan → tasks → implement`); implementation then proceeds one checked
 task at a time from `tasks.md`.
 
+<!-- SPECKIT START -->
+Active feature plan: `specs/005-ordering-interval-policy/plan.md`.
+<!-- SPECKIT END -->
+
 ### Typical Development Workflow
 
 1. **Intake** — review `specs/BACKLOG.md`; add new unstructured requests there before promoting them.
@@ -68,9 +72,32 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Upstream pnpm 11.21.0/tooling integration moves Vitest to v4: use top-level `maxWorkers: 1` for the serial server fork pool instead of removed `poolOptions.forks.singleFork`. Vitest 4 coverage results should be recorded with their runner version rather than silently substituted for historical Vitest 3 metrics.
+
+- The Docker runner now includes public browser assets via the builder and uses Node's native fetch healthcheck against its PORT/internal `/api/health`; only `status: ok` is healthy, not HTTP 200 with degraded DB connectivity. `deploy.sh` waits at most 120 seconds for app health before reporting success. The internal health route remains valid with BASE_PATH.
+
+- Fresh local Docker installs can use `docker compose up --build -d --wait --wait-timeout 180`, then `docker compose run --rm -e AUTH_ADMIN_EMAIL migrate pnpm auth:seed` to provision the admin from `.env` (generated password printed once). The builder-based migrate image has seed tooling; the slim app image does not. The fresh-install deploy-wrapper override, optional Compose feature env forwarding, and broader hardening remain deliberately deferred in BACKLOG-007/README.
+
+- Ordering-policy acceptance coverage is mapped to all ten quickstart scenarios in `specs/005-ordering-interval-policy/quickstart.md`. `validate.ps1 full` runs three general Playwright smoke tests, not policy-specific two-browser or screen-reader acceptance; do not present that gate as manual UI verification.
+
+- FAIM's built-in import scan does not resolve this repo's `.js` specifiers to `.ts`/`.tsx` sources. Selective scanner-fact regeneration must resolve those extensions before CLI import/add; do not rehash scanner-owned facts merely because existing edge names look unchanged. Ordering-policy source/test facts were refreshed in T017 without changing axioms; the pre-existing untracked `entity(faim,tool)` notice is not a policy validation failure.
+
+- Landing ordering availability reuses `useCountdown` but never infers eligibility from expiry. Restricted next-eligible targets and eligible block ends trigger one server refresh per office/boundary; the attempted boundary survives loading/failure to prevent refetch loops, and explicit retry handles recovery. Countdown ticks are not live-announced.
+
+- `useSSE` owns the client ordering-policy subscription; `useOrderingPolicy()` exposes shared office-scoped availability/loading/error and a stable awaitable refresh without adding listeners. Policy REST calls pass explicit office context. Office/auth cleanup and request sequencing reject late results; reconnect REST reads take precedence over delayed unsequenced hydration. Loading/errors clear availability rather than imply eligibility.
+
+- SSE initial hydration now includes public office policy availability; `orderingPolicy: null` means evaluation is unavailable, never eligible. Effective policy settings changes and successful arrival confirmation emit office-scoped `ordering_policy_changed` invalidation only. Settings bind their notification callback from SSE to avoid a runtime cycle; private exception snapshots/evidence remain REST-only.
+
+- Scheduled polls now interpret weekdays, finish times, daily deduplication markers, and activity windows in the office timezone. Nonexistent DST finish clocks skip the day; repeated clocks use the earlier instant. Scheduler tests freeze only Date to align the supplied check time with creation's server-clock policy recheck; native timers remain live. If test PostgreSQL is unreachable and Docker is stopped, focused server tests and aggregate coverage abort in global setup: start Docker, then `pnpm db:test:up`; do not mark a task shipped based on non-test gates alone.
+
+- Admin ordering-policy detail panels use explicit office-scoped, no-store REST reads rather than shared SSE/history state, whose absent private fields do not establish that no exception exists. Private panel state is keyed by office/record/auth identity and cleared on access loss; stored timezone/profile snapshots, not current office/profile settings, drive historical display.
+
+- Ordering-policy exceptions are projected only by admin REST poll detail and food-selection detail/history services, after the route resolves signed role and selected-office authorization. Food selections read the original Poll snapshot; public `formatPoll`/`formatFoodSelection` remain snapshot-free for start responses and initial/live SSE. `GET /api/food-selections/:id` is the authenticated office-scoped detail read.
+
 - Docker images and local tooling target Node.js 24 LTS (`node:24-alpine`); keep local Node on 24.x to match CI and production.
 - After any Prisma schema change, run `pnpm prisma migrate dev` before running server tests; otherwise tests may fail with missing DB column errors even if TypeScript compiles.
 - Server tests run against a dedicated Postgres schema (`TEST_DATABASE_SCHEMA`, default `team_lunch_test`) and migrate it automatically in test setup; app data in `public` is preserved unless `TEST_DATABASE_SCHEMA` is set to `public`.
+- When limiting Vitest with `VITEST_MAX_WORKERS`, use `1`: this environment variable overrides the server project's single-worker setting, and higher values let database cleanup interfere across suites.
 - Server test table cleanup (`deleteMany` via `tests/server/helpers/db.ts`) is now guarded by a setup runtime flag (`SERVER_TEST_RUNTIME=true`), so cleanup cannot run outside server test runtime.
 - When adding a new persisted Prisma model used by server tests, extend `tests/server/helpers/db.ts` cleanup immediately; otherwise integration tests can leak rows between cases and fail non-deterministically.
 - Local `pnpm dev` can fail with `EADDRINUSE :3000` (and client-side Vite proxy `ECONNREFUSED`) if a stale `tsx watch src/server/index.ts` process is still listening; run `pnpm ports:check` to terminate blockers before restarting.
@@ -112,6 +139,11 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Do not delete migration directories that were already applied in your dev DB; Prisma will report drift/divergence (`P3015`) if a recorded migration folder is missing locally.
 - Prisma 7 is engine-free: there is no `query_engine-windows.dll.node`, so the old Windows EPERM/`--no-engine` workaround no longer applies. The generated client is plain TypeScript under `src/server/generated/client` and connects through a driver adapter wired in `src/server/db.ts` (PostgreSQL → `@prisma/adapter-pg`).
 - The `?schema=` URL parameter is ignored by the node-postgres driver adapter; `src/server/db.ts` parses it and passes it to `PrismaPg` as the `schema` option so Prisma model queries hit the same schema migrations ran against. Raw SQL does not inherit that schema and must qualify tables with the exported `databaseSchema`. Connection URLs for the CLI/Schema Engine (migrate/db push) come from `prisma.config.ts` (`datasource.url = env("DATABASE_URL")`), not from a `url` in `schema.prisma` (v7 removed it).
+- Prisma delegate methods are exposed through proxies; Vitest spies on them need explicit call-through to a saved method plus explicit restoration afterward. Default spy/restoration behavior can return `undefined` or delete the delegate method (covered in `tests/server/ordering-policy.test.ts`).
+- `src/server/services/officeTime.ts` keeps date-only arithmetic in UTC and extracts office-local dates/clocks through explicit Intl timezones. Convert each calendar boundary independently (DST weeks can be 167/169 hours); local midnight means the first valid instant of the date, choosing the earlier occurrence when repeated and rejecting wholly skipped dates.
+- PostgreSQL normalizes dynamic date defaults with explicit `::text` casts; match `pg_get_expr` in Prisma's `dbgenerated` expression to avoid repeated no-op migration prompts. Office policy anchors default to the current UTC week's Monday, including direct DB creation callers.
+- PrismaPg's schema option qualifies model queries but does not make `current_schema()` authoritative for raw SQL metadata queries; use the schema from `TEST_DATABASE_URL_EFFECTIVE` when asserting test database columns/indexes.
+
 - Food-selection no-order reminders for voters are scheduled from `FOOD_SELECTION_REMINDER_MINUTES_BEFORE` (default `5`) and only target vote nicknames that are valid email addresses.
 - Microsoft Graph mail delivery now reuses the Entra app registration (`ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET`, `ENTRA_TENANT_ID`) and requires `GRAPH_MAIL_SENDER`; if Graph mail is not configured, approval/poll/reminder notifications are skipped without failing core flows.
 - Real Graph-mail smoke delivery is test-gated by `GRAPH_MAIL_TEST_RECIPIENT`; when unset, `tests/server/notification-email.test.ts` does not send any real mail.
@@ -124,6 +156,7 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - Repo hooks now live in `.githooks`; run `git config core.hooksPath .githooks` after clone so pre-commit/pre-push use the split validation phases. `pre-merge-commit` always runs `pwsh -File ./validate.ps1 full`.
 - Semgrep runs from a project-local Python venv (`.venv/Scripts/semgrep`); run `pwsh -File ./setup.ps1` to create the venv and install semgrep alongside pnpm dependencies.
 - Semgrep's CLI version is pinned in `requirements-semgrep.txt`; update that pin deliberately while keeping `--config auto` for current security rules. GitHub Actions are pinned to Node 24-native commit SHAs with version comments in `.github/workflows/ci.yml`.
+- Pinned Semgrep 1.171.0 can fail on this Windows host with `Unix_error: Invalid argument socketpair`; use the same pinned Linux scanner or the Linux CI gate rather than suppressing the security check. Docker scans of managed worktrees also need their Git metadata mounted with `GIT_DIR`, `GIT_COMMON_DIR`, and `GIT_WORK_TREE` set explicitly.
 - `validate.ps1` now runs `pnpm audit --prod`, so the dependency gate tracks production/runtime vulnerabilities without failing on dev-only tooling advisories such as `sharp-cli`.
 - `validate.ps1 full` builds `team-lunch:trivy-scan` and scans it with the official Trivy Docker image pinned by digest (`aquasec/trivy@sha256:016eae51fdcf989332a5404af7e8f625cd5d95d7c0907a221d080a996f556500`, Trivy `0.71.0` manifest list). Use `TRIVY_IMAGE` only for deliberate scanner updates.
 - Runtime Docker images should remove Corepack/pnpm caches after production dependency install; Trivy scans those cached packages too, even though they are not needed to run the app.
@@ -142,7 +175,15 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - `src/server/services/mealFeatures.ts` adds content-based per-person ranking: a curated ingredient/style keyword taxonomy (EN+DE) tags each item, a per-user `TasteProfile` is learned from order history, and the new `taste_match` signal scores unrated current-menu items by feature overlap with the profile (`SCORE_TASTE_PER_POINT=8`, clamped ±`SCORE_TASTE_MAX=40`). The profile blends explicit ratings (`rating-3`, confidence 1) with **implicit feedback** — every order is a mild positive vote for its features (`IMPLICIT_ORDER_VALUE=1`, confidence `0.4`) via a confidence-weighted mean, so the sparse weekly-ordering / rarely-rated regime still produces signal. Activates when `ratedCount >= TASTE_PROFILE_MIN_RATINGS(2)` OR `orderCount >= TASTE_PROFILE_MIN_ORDERS(4)`; below that, ranking keeps the exact-item-name behavior. Profile features come from item *name* only (history retains no description), so the taxonomy vocabulary is the shared space between history and current items. Modeling in feature space (not item space) is deliberate: menus churn weekly so classic user×item CF hits item cold-start on exactly today's menu; features stay dense and stable. Next candidate upgrades: persisted/AI-tagged item features at import, factorization machines, or a contextual bandit over features.
 - Side dishes and drinks are course-tagged separately from flavor tags (`course:side`, `course:drink`); safe, explore, and pre-vote recommendations filter those items out as primary candidates, but their orders/ratings remain in history so they can still inform flavor preferences. The filter is intentionally conservative and falls back to the original list if every candidate is non-meal course-tagged.
 - Menu item writes now sync stable identity plus keyword feature tags immediately in `src/server/services/menu.ts`, so tests and downstream services can assume `menu_items.item_identity_key`, `menu_item_identities`, and `menu_item_features` are populated after manual create/update/import flows.
+- Office settings updates validate effective ordering policy fields before one atomic write; omitted policy fields preserve stored values, Unrestricted ignores submitted anchors but still validates timezone, and restricted mode validates the effective Monday. The existing settings route uses global-admin authorization (office-scoped admin roles remain backlog work).
+- Administration office settings refreshes preserve per-office drafts; Unrestricted saves omit the anchor and ignore anchor-only changes, so unsaved anchor edits survive in the current page but a full reload restores the persisted anchor. Re-enabling validates the retained draft before saving.
+- Poll creation now rechecks ordering policy immediately before its create write. Legacy/internal calls default to non-overridable scheduled behavior; HTTP starts explicitly pass signed manual actors. History/retention tests creating multiple completed lunches in one period must configure Unrestricted rather than bypass the guard. Quick starts check active/overtime food selections before writing their originating Poll.
+- Food-selection starts reject polls already used for a completed lunch, including in Unrestricted mode; unfinished lunch transitions and aborted-selection retries remain allowed without re-evaluating policy mid-process.
+- `GET /api/polls/ordering-policy` authenticates before office resolution and returns only the evaluator's public `availability`; its `Cache-Control: no-store` header also covers errors. Client `OrderingPolicyWarningError` exposes the warning code/current availability while retaining ordinary Error message/status/body handling. Approved non-admin users without office assignments remain blocked by existing approval rules.
+- `OrderingPolicyNotice` reuses Modal's first-focusable default, so Cancel must precede the justification field. Each fresh start-policy warning remounts the notice to clear its reason and restore Cancel focus; pending justified requests disable dismissal, and start handlers use synchronous ref guards to prevent duplicate requests before React rerenders.
+- Upstream replaced personal XLSX exports with quoted, formula-escaped CSV and removed ExcelJS. Keep the CSV export contract and ordering-policy snapshot privacy tests; the old ExcelJS UUID compatibility test/override no longer applies.
 - Menu imports batch identity creation and feature inserts inside one atomic transaction, accept at most 1,000 items, and translate Prisma transaction expiry into a user-facing no-changes-applied error.
+
 
 ---
 

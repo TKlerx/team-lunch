@@ -131,6 +131,20 @@ describe('food order rating and export routes', () => {
     await app.close();
   });
 
+  it('keeps private policy exceptions and other users out of personal CSV exports', async () => {
+    const { selectionId } = await createCompletedSelectionWithOrder('alice@example.com');
+    const selection = await prisma.foodSelection.findUniqueOrThrow({ where: { id: selectionId } });
+    await prisma.poll.update({
+      where: { id: selection.pollId! },
+      data: { orderingPolicyException: { reason: 'private override reason', actorEmail: 'private@example.com' } },
+    });
+    const csv = await foodSelectionService.exportOrdersForUserCsv('alice@example.com');
+    expect(csv).toContain('Pad Thai');
+    expect(csv).not.toContain('private override reason');
+    expect(csv).not.toContain('private@example.com');
+    expect(await foodSelectionService.exportOrdersForUserCsv('bob@example.com')).not.toContain('Pad Thai');
+  });
+
   it('rejects a too-long feedback comment', async () => {
     const { selectionId, orderId } = await createCompletedSelectionWithOrder('alice@example.com');
     const app = await buildApp();

@@ -17,6 +17,8 @@ import {
   clearAllTimers,
   getActiveTimers,
   createPollRecord,
+  checkOrderingPolicyStart,
+  type OrderingPolicyStart,
   registerPollExpiryHandler,
   registerPollStartedHandler,
   announcePollStarted,
@@ -258,14 +260,14 @@ export async function startPoll(
   durationMinutes: number,
   excludedMenuJustifications?: Array<{ menuId: string; reason: string }>,
   officeLocationId?: string,
-  createdBy?: string | null,
+  creator?: string | null | OrderingPolicyStart,
 ): Promise<Poll> {
   const { poll, resolvedOfficeLocationId } = await createPollRecord(
     description,
     durationMinutes,
     excludedMenuJustifications,
     officeLocationId,
-    createdBy,
+    creator,
   );
 
   await announcePollStarted(poll, resolvedOfficeLocationId);
@@ -614,9 +616,14 @@ export async function getActivePoll(officeLocationId?: string): Promise<Poll | n
   return poll ? formatPoll(poll) : null;
 }
 
-export async function getPoll(pollId: string, officeLocationId?: string): Promise<Poll> {
+export async function getPoll(
+  pollId: string, officeLocationId?: string, isAdmin = false,
+): Promise<Poll> {
   const poll = await fetchPollOrThrow(pollId, officeLocationId);
-  return formatPoll(poll);
+  return {
+    ...formatPoll(poll),
+    ...(isAdmin ? { orderingPolicyException: poll.orderingPolicyException as Poll['orderingPolicyException'] } : {}),
+  };
 }
 
 export async function getLatestCompletedPoll(officeLocationId?: string): Promise<Poll | null> {
@@ -637,15 +644,26 @@ export async function createAutoFinishedPoll(
   menuId: string,
   menuName: string,
   officeLocationId?: string,
+  policyStart?: OrderingPolicyStart,
 ): Promise<Poll> {
   const resolvedOfficeLocationId = await resolvePollOfficeLocationId(officeLocationId);
   await ensureNoPollInProgress(resolvedOfficeLocationId);
+  const existingSelection = await prisma.foodSelection.findFirst({
+    where: { officeLocationId: resolvedOfficeLocationId, status: { in: ['active', 'overtime'] } },
+    select: { id: true },
+  });
+  if (existingSelection) {
+    throw Object.assign(new Error('A food selection is already in progress'), { statusCode: 409 });
+  }
+  const exception = await checkOrderingPolicyStart(resolvedOfficeLocationId, policyStart);
 
   const now = new Date();
 
   const poll = await prisma.poll.create({
     data: {
       officeLocationId: resolvedOfficeLocationId,
+      createdBy: policyStart?.source === 'manual' ? normalizeCreatorKey(policyStart.actor.actorKey) : null,
+      ...(exception ? { orderingPolicyException: { ...exception } } : {}),
       description: `Auto-selected: ${menuName}`,
       status: 'finished',
       startedAt: now,

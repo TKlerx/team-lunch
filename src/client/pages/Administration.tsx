@@ -7,6 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import { Link } from "react-router-dom";
+import { updateOfficeLocationSettings } from "../api.js";
 import {
   getAuthenticatedActorKey,
   setAuthenticatedDisplayName,
@@ -22,6 +23,7 @@ import {
   type AuthConfigResponse,
   type OfficeLocation,
   type OfficeWeekday,
+  type OrderingIntervalWeeks,
 } from "../../lib/types.js";
 import { getErrorMessage } from "../lib/errorMessage.js";
 
@@ -35,11 +37,15 @@ const OFFICE_WEEKDAY_OPTIONS: Array<{ value: OfficeWeekday; label: string }> = [
   { value: "sunday", label: "Sun" },
 ];
 const FOOD_DURATIONS = [1, 5, 10, 15, 20, 25, 30] as const;
+const OFFICE_TIME_ZONES = ["UTC", ...Intl.supportedValuesOf("timeZone")];
 
 type AdminAuth = AuthConfigResponse["auth"];
 type AdminUser = AdminAuth["users"][number];
 
 type OfficeSettingsDraft = {
+  orderingIntervalWeeks: OrderingIntervalWeeks;
+  timeZone: string;
+  orderingAnchorDate: string;
   autoStartPollEnabled: boolean;
   autoStartPollWeekdays: OfficeWeekday[];
   autoStartPollFinishTime: string;
@@ -136,6 +142,9 @@ function orderWeekdays(weekdays: OfficeWeekday[]): OfficeWeekday[] {
 
 function initialOfficeSettings(location: OfficeLocation): OfficeSettingsDraft {
   return {
+    orderingIntervalWeeks: location.orderingIntervalWeeks,
+    timeZone: location.timeZone,
+    orderingAnchorDate: location.orderingAnchorDate,
     autoStartPollEnabled: location.autoStartPollEnabled,
     autoStartPollWeekdays: orderWeekdays(location.autoStartPollWeekdays),
     autoStartPollFinishTime: location.autoStartPollFinishTime ?? "",
@@ -149,6 +158,10 @@ function settingsChanged(
   draft: OfficeSettingsDraft,
 ): boolean {
   return (
+    draft.orderingIntervalWeeks !== location.orderingIntervalWeeks ||
+    draft.timeZone !== location.timeZone ||
+    (draft.orderingIntervalWeeks !== 0 &&
+      draft.orderingAnchorDate !== location.orderingAnchorDate) ||
     draft.autoStartPollEnabled !== location.autoStartPollEnabled ||
     draft.autoStartPollFinishTime !==
       (location.autoStartPollFinishTime ?? "") ||
@@ -275,6 +288,30 @@ function syncOfficeDrafts(auth: AdminAuth, drafts: AdminDrafts): void {
       ]),
     ),
   );
+}
+
+function orderingSettingsError(draft: OfficeSettingsDraft): string {
+  if (![0, 1, 2, 3, 4].includes(draft.orderingIntervalWeeks)) {
+    return "Choose Unrestricted or 1, 2, 3, or 4 weeks.";
+  }
+  try {
+    if (!draft.timeZone || /^[+-]/.test(draft.timeZone)) throw new RangeError();
+    new Intl.DateTimeFormat("en", { timeZone: draft.timeZone });
+  } catch {
+    return "Enter a valid IANA timezone (for example Europe/Vienna or UTC).";
+  }
+  if (draft.orderingIntervalWeeks === 0) return "";
+  const anchor = draft.orderingAnchorDate;
+  const date = new Date(`${anchor}T00:00:00.000Z`);
+  if (
+    !/^(?!0000)\d{4}-\d{2}-\d{2}$/.test(anchor) ||
+    !Number.isFinite(date.getTime()) ||
+    date.toISOString().slice(0, 10) !== anchor ||
+    date.getUTCDay() !== 1
+  ) {
+    return "Choose a valid Monday calendar date (YYYY-MM-DD).";
+  }
+  return "";
 }
 
 function useAdminConfig() {
@@ -550,21 +587,16 @@ function useOfficeActions(
       officeId,
       () => {
         const draft = drafts.officeSettingsDrafts[officeId];
-        return requestAdmin(
-          `/api/auth/offices/${officeId}/settings`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              autoStartPollEnabled: draft?.autoStartPollEnabled ?? false,
-              autoStartPollWeekdays: draft?.autoStartPollWeekdays ?? [],
-              autoStartPollFinishTime:
-                draft?.autoStartPollFinishTime?.trim() || null,
-              defaultFoodSelectionDurationMinutes:
-                draft?.defaultFoodSelectionDurationMinutes ?? 30,
-            }),
-          },
-          "Failed to update office settings",
-        ).then(() => undefined);
+        if (!draft) throw new Error("Office settings are unavailable");
+        const error = orderingSettingsError(draft);
+        if (error) throw new Error(error);
+        return updateOfficeLocationSettings(officeId, {
+          ...draft,
+          autoStartPollFinishTime: draft.autoStartPollFinishTime.trim() || null,
+          // ponytail: omit the disabled anchor, preserving its draft for re-enabling.
+          orderingAnchorDate:
+            draft.orderingIntervalWeeks === 0 ? undefined : draft.orderingAnchorDate,
+        }).then(() => undefined);
       },
       "Office settings update failed",
     );
@@ -1279,6 +1311,7 @@ function OfficeSettingsEditor({
   >;
   onSave: () => void;
 }) {
+  const policyError = orderingSettingsError(settingsDraft);
   const patchDraft = (patch: Partial<OfficeSettingsDraft>) =>
     setOfficeSettingsDrafts((current) => ({
       ...current,
@@ -1327,6 +1360,13 @@ function OfficeSettingsEditor({
             />
           </label>
         </div>
+        <OrderingPolicyControls
+          location={location}
+          draft={settingsDraft}
+          disabled={updating || !location.isActive}
+          patchDraft={patchDraft}
+          error={policyError}
+        />
         <FoodDurationSelect
           location={location}
           settingsDraft={settingsDraft}
@@ -1337,7 +1377,7 @@ function OfficeSettingsEditor({
           <button
             type="button"
             aria-label={`Save office settings for ${location.key}`}
-            disabled={updating || !location.isActive || !changed}
+            disabled={updating || !location.isActive || !changed || !!policyError}
             onClick={onSave}
             className="rounded border border-success bg-success-soft px-3 py-2 text-xs font-medium text-success-fg hover:bg-success-soft disabled:opacity-60"
           >
@@ -1346,6 +1386,96 @@ function OfficeSettingsEditor({
         </div>
       </div>
     </div>
+  );
+}
+
+function OrderingPolicyControls({
+  location,
+  draft,
+  disabled,
+  patchDraft,
+  error,
+}: {
+  location: OfficeLocation;
+  draft: OfficeSettingsDraft;
+  disabled: boolean;
+  patchDraft: (patch: Partial<OfficeSettingsDraft>) => void;
+  error: string;
+}) {
+  const errorId = `ordering-error-${location.id}`;
+  const controlClass = "w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted";
+  return (
+    <fieldset className="grid gap-3 lg:grid-cols-3" disabled={disabled}>
+      <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+        Ordering policy
+      </legend>
+      <label className="text-sm text-fg">
+        Ordering interval
+        <select
+          aria-label={`Ordering interval for ${location.key}`}
+          aria-describedby={error ? errorId : undefined}
+          value={String(draft.orderingIntervalWeeks)}
+          onChange={(event) => patchDraft({
+            orderingIntervalWeeks: (event.target.value === "" ? NaN : Number(event.target.value)) as OrderingIntervalWeeks,
+          })}
+          className={controlClass}
+        >
+          <option value={0}>Unrestricted</option>
+          {[1, 2, 3, 4].map((weeks) => (
+            <option key={weeks} value={weeks}>{weeks} {weeks === 1 ? "week" : "weeks"}</option>
+          ))}
+        </select>
+      </label>
+      <label className="text-sm text-fg">
+        Office timezone (IANA)
+        <select
+          aria-label={`Office timezone for ${location.key}`}
+          aria-describedby={error ? errorId : undefined}
+          value={draft.timeZone}
+          onChange={(event) => patchDraft({ timeZone: event.target.value })}
+          required
+          className={controlClass}
+        >
+          {!OFFICE_TIME_ZONES.includes(draft.timeZone) && (
+            <option value={draft.timeZone}>{draft.timeZone}</option>
+          )}
+          {OFFICE_TIME_ZONES.map((zone) => (
+            <option key={zone} value={zone}>{zone}</option>
+          ))}
+        </select>
+      </label>
+      <OrderingAnchorControl location={location} draft={draft} patchDraft={patchDraft} errorId={error ? errorId : ""} />
+      {error && <p id={errorId} role="alert" className="text-sm text-danger-fg lg:col-span-3">{error}</p>}
+    </fieldset>
+  );
+}
+
+function OrderingAnchorControl({ location, draft, patchDraft, errorId }: {
+  location: OfficeLocation;
+  draft: OfficeSettingsDraft;
+  patchDraft: (patch: Partial<OfficeSettingsDraft>) => void;
+  errorId: string;
+}) {
+  const anchorHelpId = `ordering-anchor-help-${location.id}`;
+  return (
+    <label className="text-sm text-fg">
+      Starting Monday
+      <input
+        type="date"
+        aria-label={`Ordering anchor date for ${location.key}`}
+        aria-describedby={`${anchorHelpId} ${errorId}`.trim()}
+        value={draft.orderingAnchorDate}
+        disabled={draft.orderingIntervalWeeks === 0}
+        required={draft.orderingIntervalWeeks !== 0}
+        onChange={(event) => patchDraft({ orderingAnchorDate: event.target.value })}
+        className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none disabled:bg-surface-muted"
+      />
+      <span id={anchorHelpId} className="mt-1 block text-xs text-fg-muted">
+        {draft.orderingIntervalWeeks === 0
+          ? "Not evaluated while Unrestricted. The anchor is retained for re-enabling."
+          : "Choose a Monday; future starting dates are allowed."}
+      </span>
+    </label>
   );
 }
 

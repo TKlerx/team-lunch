@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, type Dispatch, type ReactNode } from 'react';
+import React, { createContext, useCallback, useContext, useReducer, useRef, type Dispatch, type ReactNode } from 'react';
 import type {
   Poll,
   FoodSelection,
@@ -7,11 +7,24 @@ import type {
   MenuItem,
   InitialStatePayload,
   ShoppingListItem,
+  OrderingPolicyAvailability,
 } from '../../lib/types.js';
 
 // ─── State shape ───────────────────────────────────────────
 
+export interface OrderingPolicyState {
+  officeLocationId: string | null;
+  availability: OrderingPolicyAvailability | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export const unavailableOrderingPolicy: OrderingPolicyState = {
+  officeLocationId: null, availability: null, loading: false, error: null,
+};
+
 export interface AppState {
+  orderingPolicy: OrderingPolicyState;
   activePoll: Poll | null;
   activeFoodSelection: FoodSelection | null;
   latestCompletedPoll: Poll | null;
@@ -27,6 +40,7 @@ export interface AppState {
 }
 
 export const initialAppState: AppState = {
+  orderingPolicy: unavailableOrderingPolicy,
   activePoll: null,
   activeFoodSelection: null,
   latestCompletedPoll: null,
@@ -144,6 +158,7 @@ function withdrawActiveOrder(
 // ─── Actions ───────────────────────────────────────────────
 
 export type AppAction =
+  | { type: 'SET_ORDERING_POLICY'; payload: OrderingPolicyState }
   | { type: 'INITIAL_STATE'; payload: InitialStatePayload }
   | { type: 'SET_MENUS'; payload: Menu[] }
   | { type: 'SET_SHOPPING_LIST'; payload: ShoppingListItem[] }
@@ -206,6 +221,9 @@ export type AppAction =
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
+    case 'SET_ORDERING_POLICY':
+      return { ...state, orderingPolicy: action.payload };
+
     case 'INITIAL_STATE':
       return {
         ...state,
@@ -490,12 +508,29 @@ const AppDispatchContext = createContext<Dispatch<AppAction>>(() => {
   /* noop default */
 });
 
+type PolicyRefresh = () => Promise<OrderingPolicyAvailability | null>;
+const OrderingPolicyRefreshContext = createContext<React.MutableRefObject<PolicyRefresh | null>>({ current: null });
+
+export function useOrderingPolicyRefreshHandler() {
+  return useContext(OrderingPolicyRefreshContext);
+}
+
+export function useOrderingPolicyRefresh(): PolicyRefresh {
+  const handler = useOrderingPolicyRefreshHandler();
+  return useCallback(() => handler.current?.() ?? Promise.resolve(null), [handler]);
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialAppState);
+  const policyRefresh = useRef<PolicyRefresh | null>(null);
 
   return (
     <AppStateContext.Provider value={state}>
-      <AppDispatchContext.Provider value={dispatch}>{children}</AppDispatchContext.Provider>
+      <AppDispatchContext.Provider value={dispatch}>
+        <OrderingPolicyRefreshContext.Provider value={policyRefresh}>
+          {children}
+        </OrderingPolicyRefreshContext.Provider>
+      </AppDispatchContext.Provider>
     </AppStateContext.Provider>
   );
 }
