@@ -1,7 +1,7 @@
 # Contracts: Office Ordering Interval Policy
 
 All paths are relative to existing BASE_PATH. Shared shapes belong in
-`src/lib/types.ts`. This document describes proposed additions, not existing APIs.
+`src/lib/types.ts`. This document describes the implemented ordering-policy APIs.
 
 ## Office settings
 

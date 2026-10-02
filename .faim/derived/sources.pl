@@ -42,8 +42,8 @@ derivation_query(entity(entraOidc,service), "What are the import dependencies be
 derived_at(entity(entraOidc,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(foodSelection,service), agent_scan).
 source_files(entity(foodSelection,service), ['src/server/services/foodSelection.ts']).
-source_hash(entity(foodSelection,service), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(entity(foodSelection,service), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(entity(foodSelection,service), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(entity(foodSelection,service), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(entity(foodSelection,service), "What are the import dependencies between server modules?").
 derived_at(entity(foodSelection,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(localAuth,service), agent_scan).
@@ -102,14 +102,14 @@ derivation_query(entity(officeContext,service), "What are the import dependencie
 derived_at(entity(officeContext,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(officeLocation,service), agent_scan).
 source_files(entity(officeLocation,service), ['src/server/services/officeLocation.ts']).
-source_hash(entity(officeLocation,service), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(entity(officeLocation,service), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
+source_hash(entity(officeLocation,service), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(entity(officeLocation,service), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
 derivation_query(entity(officeLocation,service), "What are the import dependencies between server modules?").
 derived_at(entity(officeLocation,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(officePollSchedule,service), agent_scan).
 source_files(entity(officePollSchedule,service), ['src/server/services/officePollSchedule.ts']).
-source_hash(entity(officePollSchedule,service), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(entity(officePollSchedule,service), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
+source_hash(entity(officePollSchedule,service), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(entity(officePollSchedule,service), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
 derivation_query(entity(officePollSchedule,service), "What are the import dependencies between server modules?").
 derived_at(entity(officePollSchedule,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(poll,service), agent_scan).
@@ -138,8 +138,8 @@ derivation_query(entity(userMenuDefaults,service), "What are the import dependen
 derived_at(entity(userMenuDefaults,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(sse,module), agent_scan).
 source_files(entity(sse,module), ['src/server/sse.ts']).
-source_hash(entity(sse,module), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(entity(sse,module), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
+source_hash(entity(sse,module), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(entity(sse,module), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(entity(sse,module), "What are the import dependencies between server modules?").
 derived_at(entity(sse,module), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(auth_route,route), agent_scan).
@@ -222,32 +222,32 @@ derivation_query(rel(localAuth,depends_on,routeUtils), "What are the import depe
 derived_at(rel(localAuth,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,db), agent_scan).
 source_files(rel(foodSelection,depends_on,db), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,db), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel(foodSelection,depends_on,db), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(rel(foodSelection,depends_on,db), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel(foodSelection,depends_on,db), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(rel(foodSelection,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,sse), agent_scan).
 source_files(rel(foodSelection,depends_on,sse), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,sse), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel(foodSelection,depends_on,sse), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(rel(foodSelection,depends_on,sse), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel(foodSelection,depends_on,sse), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(rel(foodSelection,depends_on,sse), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,sse), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,lib_types), agent_scan).
 source_files(rel(foodSelection,depends_on,lib_types), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,lib_types), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel(foodSelection,depends_on,lib_types), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(rel(foodSelection,depends_on,lib_types), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel(foodSelection,depends_on,lib_types), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(rel(foodSelection,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,notificationEmail), agent_scan).
 source_files(rel(foodSelection,depends_on,notificationEmail), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,notificationEmail), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel(foodSelection,depends_on,notificationEmail), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(rel(foodSelection,depends_on,notificationEmail), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel(foodSelection,depends_on,notificationEmail), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(rel(foodSelection,depends_on,notificationEmail), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,notificationEmail), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,officeLocation), agent_scan).
 source_files(rel(foodSelection,depends_on,officeLocation), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,officeLocation), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel(foodSelection,depends_on,officeLocation), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
+source_hash(rel(foodSelection,depends_on,officeLocation), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel(foodSelection,depends_on,officeLocation), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
 derivation_query(rel(foodSelection,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(authAudit,depends_on,db), agent_scan).
@@ -600,20 +600,20 @@ derivation_query(rel(menu,depends_on,lib_types), "What are the import dependenci
 derived_at(rel(menu,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,db), agent_scan).
 source_files(rel(officeLocation,depends_on,db), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,db), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel(officeLocation,depends_on,db), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
+source_hash(rel(officeLocation,depends_on,db), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel(officeLocation,depends_on,db), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
 derivation_query(rel(officeLocation,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,routeUtils), agent_scan).
 source_files(rel(officeLocation,depends_on,routeUtils), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,routeUtils), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel(officeLocation,depends_on,routeUtils), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
+source_hash(rel(officeLocation,depends_on,routeUtils), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel(officeLocation,depends_on,routeUtils), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
 derivation_query(rel(officeLocation,depends_on,routeUtils), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,lib_types), agent_scan).
 source_files(rel(officeLocation,depends_on,lib_types), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,lib_types), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel(officeLocation,depends_on,lib_types), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
+source_hash(rel(officeLocation,depends_on,lib_types), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel(officeLocation,depends_on,lib_types), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
 derivation_query(rel(officeLocation,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(officeLocation,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeContext,depends_on,authSession), agent_scan).
@@ -642,20 +642,20 @@ derivation_query(rel(officeContext,depends_on,routeUtils), "What are the import 
 derived_at(rel(officeContext,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,db), agent_scan).
 source_files(rel(officePollSchedule,depends_on,db), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,db), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel(officePollSchedule,depends_on,db), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
+source_hash(rel(officePollSchedule,depends_on,db), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,db), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
 derivation_query(rel(officePollSchedule,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,officeLocation), agent_scan).
 source_files(rel(officePollSchedule,depends_on,officeLocation), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,officeLocation), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel(officePollSchedule,depends_on,officeLocation), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
+source_hash(rel(officePollSchedule,depends_on,officeLocation), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,officeLocation), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
 derivation_query(rel(officePollSchedule,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officePollSchedule,depends_on,lib_types), agent_scan).
 source_files(rel(officePollSchedule,depends_on,lib_types), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,lib_types), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel(officePollSchedule,depends_on,lib_types), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
+source_hash(rel(officePollSchedule,depends_on,lib_types), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,lib_types), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
 derivation_query(rel(officePollSchedule,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(officePollSchedule,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeRecommenderSettings,depends_on,db), agent_scan).
@@ -768,20 +768,20 @@ derivation_query(rel(userMenuDefaults,depends_on,lib_types), "What are the impor
 derived_at(rel(userMenuDefaults,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,db), agent_scan).
 source_files(rel(sse,depends_on,db), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,db), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel(sse,depends_on,db), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
+source_hash(rel(sse,depends_on,db), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel(sse,depends_on,db), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(rel(sse,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,lib_types), agent_scan).
 source_files(rel(sse,depends_on,lib_types), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,lib_types), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel(sse,depends_on,lib_types), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
+source_hash(rel(sse,depends_on,lib_types), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel(sse,depends_on,lib_types), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(rel(sse,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(sse,depends_on,officeLocation), agent_scan).
 source_files(rel(sse,depends_on,officeLocation), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,officeLocation), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel(sse,depends_on,officeLocation), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
+source_hash(rel(sse,depends_on,officeLocation), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel(sse,depends_on,officeLocation), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(rel(sse,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(sse,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(auth_route,depends_on,lib_types), agent_scan).
@@ -1158,14 +1158,14 @@ derivation_query(rel(poll,depends_on,pollCreation), "what does poll.ts import fr
 derived_at(rel(poll,depends_on,pollCreation), '2026-07-01T11:07:36Z', agent).
 derived_from(rel(officePollSchedule,depends_on,pollCreation), agent_scan).
 source_files(rel(officePollSchedule,depends_on,pollCreation), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel(officePollSchedule,depends_on,pollCreation), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel(officePollSchedule,depends_on,pollCreation), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
+source_hash(rel(officePollSchedule,depends_on,pollCreation), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,pollCreation), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
 derivation_query(rel(officePollSchedule,depends_on,pollCreation), "what does officePollSchedule import?").
 derived_at(rel(officePollSchedule,depends_on,pollCreation), '2026-07-01T11:07:45Z', agent).
 derived_from(rel(sse,depends_on,pollCreation), agent_scan).
 source_files(rel(sse,depends_on,pollCreation), ['src/server/sse.ts']).
-source_hash(rel(sse,depends_on,pollCreation), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel(sse,depends_on,pollCreation), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
+source_hash(rel(sse,depends_on,pollCreation), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel(sse,depends_on,pollCreation), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(rel(sse,depends_on,pollCreation), "what does sse.ts import from pollCreation?").
 derived_at(rel(sse,depends_on,pollCreation), '2026-07-01T11:08:10Z', agent).
 derivation_query(rel(officePollSchedule,depends_on,pollCreation), "What are the import dependencies between server modules?").
@@ -1231,8 +1231,8 @@ derivation_query(entity(userPreferences,service), "server module dependency grap
 derived_at(entity(userPreferences,service), '2026-07-06T11:46:53Z', agent).
 derived_from(entity(lib_types,module), agent_scan).
 source_files(entity(lib_types,module), ['src/lib/types.ts']).
-source_hash(entity(lib_types,module), 'sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da').
-source_file_hashes(entity(lib_types,module), ['sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da']).
+source_hash(entity(lib_types,module), 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe').
+source_file_hashes(entity(lib_types,module), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
 derivation_query(entity(lib_types,module), "server module dependency graph").
 derived_at(entity(lib_types,module), '2026-07-06T11:46:54Z', agent).
 derived_from(entity(routeUtils,module), agent_scan).
@@ -1701,14 +1701,14 @@ derivation_query(prop('POST:/api/menus/import/preview',path,'/api/menus/import/p
 derived_at(prop('POST:/api/menus/import/preview',path,'/api/menus/import/preview'), '2026-07-28T06:47:15Z', agent).
 derived_from(entity(officeTime,service), agent_scan).
 source_files(entity(officeTime,service), ['src/server/services/officeTime.ts']).
-source_hash(entity(officeTime,service), 'sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6').
-source_file_hashes(entity(officeTime,service), ['sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6']).
+source_hash(entity(officeTime,service), 'sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e').
+source_file_hashes(entity(officeTime,service), ['sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e']).
 derivation_query(entity(officeTime,service), "What calendar helpers does office settings validation reuse?").
 derived_at(entity(officeTime,service), '2026-10-01T10:06:37Z', agent).
 derived_from(rel(officeLocation,depends_on,officeTime), agent_scan).
 source_files(rel(officeLocation,depends_on,officeTime), ['src/server/services/officeLocation.ts']).
-source_hash(rel(officeLocation,depends_on,officeTime), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel(officeLocation,depends_on,officeTime), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
+source_hash(rel(officeLocation,depends_on,officeTime), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel(officeLocation,depends_on,officeTime), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
 derivation_query(rel(officeLocation,depends_on,officeTime), "What calendar helpers does office settings validation reuse?").
 derived_at(rel(officeLocation,depends_on,officeTime), '2026-10-01T10:06:38Z', agent).
 derived_from(rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts'), agent_scan).
@@ -1717,24 +1717,12 @@ source_hash(rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts')
 source_file_hashes(rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts'), ['sha256:afb117d1ba1cc51fadc290af56b4309798ea56b4a67fedaf56aaa96b7e91d522']).
 derivation_query(rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts'), "Which shared evaluator guards every poll creation before writes?").
 derived_at(rel(pollCreation,depends_on,'src/server/services/orderingPolicy.ts'), '2026-10-01T11:17:33Z', agent).
-derived_from(entity('src/lib/types.ts',module), scanner_scan).
-source_files(entity('src/lib/types.ts',module), ['src/lib/types.ts']).
-source_hash(entity('src/lib/types.ts',module), 'sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da').
-source_file_hashes(entity('src/lib/types.ts',module), ['sha256:e6230c68022d35f7372cb7798ba935ecad1268a45c164fce06203b2a033ff3da']).
-derivation_query(entity('src/lib/types.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/lib/types.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/client/config.ts',module), scanner_scan).
 source_files(entity('src/client/config.ts',module), ['src/client/config.ts']).
 source_hash(entity('src/client/config.ts',module), 'sha256:a9a9eb153ddf696f9ccab7629bd668b6c21ca83d3aaf6f94be70d6c2e55c2247').
 source_file_hashes(entity('src/client/config.ts',module), ['sha256:a9a9eb153ddf696f9ccab7629bd668b6c21ca83d3aaf6f94be70d6c2e55c2247']).
 derivation_query(entity('src/client/config.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/config.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/client/api.ts',module), scanner_scan).
-source_files(entity('src/client/api.ts',module), ['src/client/api.ts']).
-source_hash(entity('src/client/api.ts',module), 'sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539').
-source_file_hashes(entity('src/client/api.ts',module), ['sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539']).
-derivation_query(entity('src/client/api.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/api.ts',module), '2026-10-01T13:19:06Z', agent).
 derived_from(entity('src/client/auth.ts',module), scanner_scan).
 source_files(entity('src/client/auth.ts',module), ['src/client/auth.ts']).
 source_hash(entity('src/client/auth.ts',module), 'sha256:1e435122bf8e167eb269950e912797f134037729e28c64d2f5d8582dcf5e1775').
@@ -1747,12 +1735,6 @@ source_hash(entity('src/client/vite-env.d.ts',module), 'sha256:7a95a1fa6d5a50cee
 source_file_hashes(entity('src/client/vite-env.d.ts',module), ['sha256:7a95a1fa6d5a50ceeabee130a9b9ad76d0e5e987c79846d5a1fef0294955b080']).
 derivation_query(entity('src/client/vite-env.d.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/vite-env.d.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/client/context/AppContext.tsx',module), scanner_scan).
-source_files(entity('src/client/context/AppContext.tsx',module), ['src/client/context/AppContext.tsx']).
-source_hash(entity('src/client/context/AppContext.tsx',module), 'sha256:dbfb61df07266f03bad484af2b7e702b9b2be6aebd1f7879cf49ba9ee5cfe401').
-source_file_hashes(entity('src/client/context/AppContext.tsx',module), ['sha256:dbfb61df07266f03bad484af2b7e702b9b2be6aebd1f7879cf49ba9ee5cfe401']).
-derivation_query(entity('src/client/context/AppContext.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/context/AppContext.tsx',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/client/hooks/useAppPhase.ts',module), scanner_scan).
 source_files(entity('src/client/hooks/useAppPhase.ts',module), ['src/client/hooks/useAppPhase.ts']).
 source_hash(entity('src/client/hooks/useAppPhase.ts',module), 'sha256:67f090831ec65eb77461cbb5411164b3304117359e32b788de814c5da89bf44a').
@@ -1777,12 +1759,6 @@ source_hash(entity('src/client/hooks/usePhaseNotifications.ts',module), 'sha256:
 source_file_hashes(entity('src/client/hooks/usePhaseNotifications.ts',module), ['sha256:44d4ccf1651f3b99e5ab95d539aa1d281eeff31293bc203d11a9b499f25b6d02']).
 derivation_query(entity('src/client/hooks/usePhaseNotifications.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/hooks/usePhaseNotifications.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/client/hooks/useSSE.ts',module), scanner_scan).
-source_files(entity('src/client/hooks/useSSE.ts',module), ['src/client/hooks/useSSE.ts']).
-source_hash(entity('src/client/hooks/useSSE.ts',module), 'sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc').
-source_file_hashes(entity('src/client/hooks/useSSE.ts',module), ['sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc']).
-derivation_query(entity('src/client/hooks/useSSE.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/hooks/useSSE.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/client/lib/cn.ts',module), scanner_scan).
 source_files(entity('src/client/lib/cn.ts',module), ['src/client/lib/cn.ts']).
 source_hash(entity('src/client/lib/cn.ts',module), 'sha256:60ed48bc4f6848b17787edbaefc92a5cfc113a36fa03e644e7ce11945ef84ae3').
@@ -1831,24 +1807,12 @@ source_hash(entity('src/server/db.ts',module), 'sha256:917b065d04ea3c21368011ef0
 source_file_hashes(entity('src/server/db.ts',module), ['sha256:917b065d04ea3c21368011ef0e65a94ce81c5e5d84b7901f0d9663842bff494e']).
 derivation_query(entity('src/server/db.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/db.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/services/officeTime.ts',module), scanner_scan).
-source_files(entity('src/server/services/officeTime.ts',module), ['src/server/services/officeTime.ts']).
-source_hash(entity('src/server/services/officeTime.ts',module), 'sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6').
-source_file_hashes(entity('src/server/services/officeTime.ts',module), ['sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6']).
-derivation_query(entity('src/server/services/officeTime.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/services/officeTime.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/routes/routeUtils.ts',module), scanner_scan).
 source_files(entity('src/server/routes/routeUtils.ts',module), ['src/server/routes/routeUtils.ts']).
 source_hash(entity('src/server/routes/routeUtils.ts',module), 'sha256:fc1284394050f5eb1f1b0a4bf6803700f31753a4f6ba276e6d09b4f6aaf8f8bc').
 source_file_hashes(entity('src/server/routes/routeUtils.ts',module), ['sha256:fc1284394050f5eb1f1b0a4bf6803700f31753a4f6ba276e6d09b4f6aaf8f8bc']).
 derivation_query(entity('src/server/routes/routeUtils.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/routes/routeUtils.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/services/officeLocation.ts',module), scanner_scan).
-source_files(entity('src/server/services/officeLocation.ts',module), ['src/server/services/officeLocation.ts']).
-source_hash(entity('src/server/services/officeLocation.ts',module), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(entity('src/server/services/officeLocation.ts',module), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
-derivation_query(entity('src/server/services/officeLocation.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/services/officeLocation.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/services/authSession.ts',module), scanner_scan).
 source_files(entity('src/server/services/authSession.ts',module), ['src/server/services/authSession.ts']).
 source_hash(entity('src/server/services/authSession.ts',module), 'sha256:68010d96e45b8cba9a087228e52570c33d7e878ebacfa03f4aa200434bcf64c5').
@@ -1903,12 +1867,6 @@ source_hash(entity('src/server/services/pollCreation.ts',module), 'sha256:afb117
 source_file_hashes(entity('src/server/services/pollCreation.ts',module), ['sha256:afb117d1ba1cc51fadc290af56b4309798ea56b4a67fedaf56aaa96b7e91d522']).
 derivation_query(entity('src/server/services/pollCreation.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/services/pollCreation.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/sse.ts',module), scanner_scan).
-source_files(entity('src/server/sse.ts',module), ['src/server/sse.ts']).
-source_hash(entity('src/server/sse.ts',module), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(entity('src/server/sse.ts',module), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
-derivation_query(entity('src/server/sse.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/sse.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/services/mealItemIdentity.ts',module), scanner_scan).
 source_files(entity('src/server/services/mealItemIdentity.ts',module), ['src/server/services/mealItemIdentity.ts']).
 source_hash(entity('src/server/services/mealItemIdentity.ts',module), 'sha256:f935d69c551ba4e476c59d0b9f223f9b55f60c4256cd08cc28ffe32f777de872').
@@ -1945,12 +1903,6 @@ source_hash(entity('src/server/routes/menus.ts',module), 'sha256:a35d4b9b9a4a929
 source_file_hashes(entity('src/server/routes/menus.ts',module), ['sha256:a35d4b9b9a4a929d08ba0eefce89d532219e404f5075d8745d8e02e95d6c569e']).
 derivation_query(entity('src/server/routes/menus.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/routes/menus.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/services/foodSelection.ts',module), scanner_scan).
-source_files(entity('src/server/services/foodSelection.ts',module), ['src/server/services/foodSelection.ts']).
-source_hash(entity('src/server/services/foodSelection.ts',module), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(entity('src/server/services/foodSelection.ts',module), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(entity('src/server/services/foodSelection.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/services/foodSelection.ts',module), '2026-10-01T12:42:12Z', agent).
 derived_from(entity('src/server/services/poll.ts',module), scanner_scan).
 source_files(entity('src/server/services/poll.ts',module), ['src/server/services/poll.ts']).
 source_hash(entity('src/server/services/poll.ts',module), 'sha256:bab677bdd7299119d6cfafc88319bbdc8b1f9ab75e635e9b0c3bd018a47178f2').
@@ -2083,12 +2035,6 @@ source_hash(entity('src/server/routes/shoppingList.ts',module), 'sha256:e34aec52
 source_file_hashes(entity('src/server/routes/shoppingList.ts',module), ['sha256:e34aec52bcea6173e3637e82622b3e3f69f88f7e152963c16680f33c1a1a875c']).
 derivation_query(entity('src/server/routes/shoppingList.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/routes/shoppingList.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/services/officePollSchedule.ts',module), scanner_scan).
-source_files(entity('src/server/services/officePollSchedule.ts',module), ['src/server/services/officePollSchedule.ts']).
-source_hash(entity('src/server/services/officePollSchedule.ts',module), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(entity('src/server/services/officePollSchedule.ts',module), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
-derivation_query(entity('src/server/services/officePollSchedule.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/services/officePollSchedule.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/index.ts',module), scanner_scan).
 source_files(entity('src/server/index.ts',module), ['src/server/index.ts']).
 source_hash(entity('src/server/index.ts',module), 'sha256:7320afe5abcf7c465dc809c8332de01ee2a3e583ddeb9cc777a09bb9fbd4e0c6').
@@ -2227,12 +2173,6 @@ source_hash(entity('src/client/components/ui/Card.tsx',module), 'sha256:3ebc9048
 source_file_hashes(entity('src/client/components/ui/Card.tsx',module), ['sha256:3ebc904892db75b6ee11bcf43de86122332ee2bfec2d7ad4991e6ae703511e0b']).
 derivation_query(entity('src/client/components/ui/Card.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Card.tsx',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/client/components/PollIdleView.tsx',module), scanner_scan).
-source_files(entity('src/client/components/PollIdleView.tsx',module), ['src/client/components/PollIdleView.tsx']).
-source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(entity('src/client/components/PollIdleView.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/components/PollIdleView.tsx',module), '2026-10-01T12:03:21Z', agent).
 derived_from(entity('src/client/components/TimerActionHeader.tsx',module), scanner_scan).
 source_files(entity('src/client/components/TimerActionHeader.tsx',module), ['src/client/components/TimerActionHeader.tsx']).
 source_hash(entity('src/client/components/TimerActionHeader.tsx',module), 'sha256:ec10adceb6b90391be8f71e55435df780e1731fa5f358593c7cc4b1899815d69').
@@ -2407,12 +2347,6 @@ source_hash(entity('tests/client/menuItemTags.test.ts',module), 'sha256:c7d15565
 source_file_hashes(entity('tests/client/menuItemTags.test.ts',module), ['sha256:c7d1556562d061ccdeca22d6b2839d9b0e3fd959a89c00aa0f5aedcec0af3bfd']).
 derivation_query(entity('tests/client/menuItemTags.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/client/menuItemTags.test.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/client/ordering-policy-api.test.ts',module), scanner_scan).
-source_files(entity('tests/client/ordering-policy-api.test.ts',module), ['tests/client/ordering-policy-api.test.ts']).
-source_hash(entity('tests/client/ordering-policy-api.test.ts',module), 'sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7').
-source_file_hashes(entity('tests/client/ordering-policy-api.test.ts',module), ['sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7']).
-derivation_query(entity('tests/client/ordering-policy-api.test.ts',module), "import graph (scip-typescript)").
-derived_at(entity('tests/client/ordering-policy-api.test.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('tests/client/setup.ts',module), scanner_scan).
 source_files(entity('tests/client/setup.ts',module), ['tests/client/setup.ts']).
 source_hash(entity('tests/client/setup.ts',module), 'sha256:0bde200a63d27c9c0481c4548ef6ed875236cd37f18fce0b860f8c539a6e840a').
@@ -2683,18 +2617,6 @@ source_hash(entity('tests/server/office-location-service.test.ts',module), 'sha2
 source_file_hashes(entity('tests/server/office-location-service.test.ts',module), ['sha256:b36918e4016f26c4c87123c574e6a7c1d4a04269b3b7bfda8cbab862fb28e19c']).
 derivation_query(entity('tests/server/office-location-service.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/server/office-location-service.test.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/server/office-poll-schedule.test.ts',module), scanner_scan).
-source_files(entity('tests/server/office-poll-schedule.test.ts',module), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(entity('tests/server/office-poll-schedule.test.ts',module), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(entity('tests/server/office-poll-schedule.test.ts',module), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(entity('tests/server/office-poll-schedule.test.ts',module), "import graph (scip-typescript)").
-derived_at(entity('tests/server/office-poll-schedule.test.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/server/office-time.test.ts',module), scanner_scan).
-source_files(entity('tests/server/office-time.test.ts',module), ['tests/server/office-time.test.ts']).
-source_hash(entity('tests/server/office-time.test.ts',module), 'sha256:8f892d37c90a6d271e2c25efc6d4e79aee9e30ed208d4cb3352dd4047faeee07').
-source_file_hashes(entity('tests/server/office-time.test.ts',module), ['sha256:8f892d37c90a6d271e2c25efc6d4e79aee9e30ed208d4cb3352dd4047faeee07']).
-derivation_query(entity('tests/server/office-time.test.ts',module), "import graph (scip-typescript)").
-derived_at(entity('tests/server/office-time.test.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('tests/server/ordering-policy-routes.test.ts',module), scanner_scan).
 source_files(entity('tests/server/ordering-policy-routes.test.ts',module), ['tests/server/ordering-policy-routes.test.ts']).
 source_hash(entity('tests/server/ordering-policy-routes.test.ts',module), 'sha256:f5710fb0e6f86df486e4eccfa85276b482c812eb0c5b584d09932c5587dcf95b').
@@ -2917,12 +2839,6 @@ source_hash(entity('tests/client/PollFinishedView.test.tsx',module), 'sha256:705
 source_file_hashes(entity('tests/client/PollFinishedView.test.tsx',module), ['sha256:705b4d5e1bef083b2eabd633dab31214658353f0160f82e9ef242f741f794797']).
 derivation_query(entity('tests/client/PollFinishedView.test.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('tests/client/PollFinishedView.test.tsx',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/client/PollIdleView.test.tsx',module), scanner_scan).
-source_files(entity('tests/client/PollIdleView.test.tsx',module), ['tests/client/PollIdleView.test.tsx']).
-source_hash(entity('tests/client/PollIdleView.test.tsx',module), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(entity('tests/client/PollIdleView.test.tsx',module), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(entity('tests/client/PollIdleView.test.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('tests/client/PollIdleView.test.tsx',module), '2026-10-01T12:03:21Z', agent).
 derived_from(entity('tests/client/PollTiedView.test.tsx',module), scanner_scan).
 source_files(entity('tests/client/PollTiedView.test.tsx',module), ['tests/client/PollTiedView.test.tsx']).
 source_hash(entity('tests/client/PollTiedView.test.tsx',module), 'sha256:485c1ca9ee5ccce3805938a44b3ab3bbae29f1e917db26332352575689724b59').
@@ -2959,30 +2875,12 @@ source_hash(entity('tests/client/ToastContext.test.tsx',module), 'sha256:f4585bc
 source_file_hashes(entity('tests/client/ToastContext.test.tsx',module), ['sha256:f4585bcfb6cfa71120cf79410176a95e13cf95277e924fd6a26e26a887f8283e']).
 derivation_query(entity('tests/client/ToastContext.test.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('tests/client/ToastContext.test.tsx',module), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['src/client/api.ts']).
-source_hash(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), 'sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539').
-source_file_hashes(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539']).
-derivation_query(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/api.ts',depends_on,'src/client/config.ts'), scanner_scan).
-source_files(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['src/client/api.ts']).
-source_hash(rel('src/client/api.ts',depends_on,'src/client/config.ts'), 'sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539').
-source_file_hashes(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['sha256:450bafdf1cb79e45d1f8e5124092cc496e3386d76f095b1a9bb3d077bddc2539']).
-derivation_query(rel('src/client/api.ts',depends_on,'src/client/config.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/api.ts',depends_on,'src/client/config.ts'), '2026-10-01T13:19:06Z', agent).
 derived_from(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), scanner_scan).
 source_files(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), ['src/client/auth.ts']).
 source_hash(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), 'sha256:1e435122bf8e167eb269950e912797f134037729e28c64d2f5d8582dcf5e1775').
 source_file_hashes(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), ['sha256:1e435122bf8e167eb269950e912797f134037729e28c64d2f5d8582dcf5e1775']).
 derivation_query(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/auth.ts',depends_on,'src/client/config.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), ['src/client/context/AppContext.tsx']).
-source_hash(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), 'sha256:dbfb61df07266f03bad484af2b7e702b9b2be6aebd1f7879cf49ba9ee5cfe401').
-source_file_hashes(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), ['sha256:dbfb61df07266f03bad484af2b7e702b9b2be6aebd1f7879cf49ba9ee5cfe401']).
-derivation_query(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/client/hooks/useAppPhase.ts',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
 source_files(rel('src/client/hooks/useAppPhase.ts',depends_on,'src/client/context/AppContext.tsx'), ['src/client/hooks/useAppPhase.ts']).
 source_hash(rel('src/client/hooks/useAppPhase.ts',depends_on,'src/client/context/AppContext.tsx'), 'sha256:67f090831ec65eb77461cbb5411164b3304117359e32b788de814c5da89bf44a').
@@ -3001,30 +2899,6 @@ source_hash(rel('src/client/hooks/usePhaseNotifications.ts',depends_on,'src/lib/
 source_file_hashes(rel('src/client/hooks/usePhaseNotifications.ts',depends_on,'src/lib/types.ts'), ['sha256:44d4ccf1651f3b99e5ab95d539aa1d281eeff31293bc203d11a9b499f25b6d02']).
 derivation_query(rel('src/client/hooks/usePhaseNotifications.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/hooks/usePhaseNotifications.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
-source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), ['src/client/hooks/useSSE.ts']).
-source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), 'sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc').
-source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), ['sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc']).
-derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), scanner_scan).
-source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), ['src/client/hooks/useSSE.ts']).
-source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), 'sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc').
-source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), ['sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc']).
-derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), ['src/client/hooks/useSSE.ts']).
-source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), 'sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc').
-source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), ['sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc']).
-derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), scanner_scan).
-source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), ['src/client/hooks/useSSE.ts']).
-source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), 'sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc').
-source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), ['sha256:6eb3a3c146e79d08201efb14b795ae625777697e2114799f8b5343da58df30cc']).
-derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/client/utils/dashboard.ts',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/client/utils/dashboard.ts',depends_on,'src/lib/types.ts'), ['src/client/utils/dashboard.ts']).
 source_hash(rel('src/client/utils/dashboard.ts',depends_on,'src/lib/types.ts'), 'sha256:c08b1594c53f324622a0f41e3da500a9350f4c5c3cd32d90032ba1a5db5e6d24').
@@ -3043,42 +2917,12 @@ source_hash(rel('src/server/buildInfo.ts',depends_on,'src/lib/types.ts'), 'sha25
 source_file_hashes(rel('src/server/buildInfo.ts',depends_on,'src/lib/types.ts'), ['sha256:a2bf676d57336694cb438f70daaf8efbe3f6e283a28272e1db1df49dbe9b45e3']).
 derivation_query(rel('src/server/buildInfo.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/buildInfo.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officeTime.ts']).
-source_hash(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), 'sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6').
-source_file_hashes(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), ['sha256:435f9d6f897260c73f93180c223bab2185538c08539a98a2762c5e63975a82b6']).
-derivation_query(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), scanner_scan).
 source_files(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), ['src/server/routes/routeUtils.ts']).
 source_hash(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), 'sha256:fc1284394050f5eb1f1b0a4bf6803700f31753a4f6ba276e6d09b4f6aaf8f8bc').
 source_file_hashes(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), ['sha256:fc1284394050f5eb1f1b0a4bf6803700f31753a4f6ba276e6d09b4f6aaf8f8bc']).
 derivation_query(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/routes/routeUtils.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), ['src/server/services/officeLocation.ts']).
-source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
-derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), scanner_scan).
-source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), ['src/server/services/officeLocation.ts']).
-source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
-derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), scanner_scan).
-source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), ['src/server/services/officeLocation.ts']).
-source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
-derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officeLocation.ts']).
-source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), 'sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0').
-source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), ['sha256:3a2013e80bb15e0c520ee727db8a231358c382863d59db5256646c3ac651c0a0']).
-derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/server/services/localAuth.ts',depends_on,'src/server/db.ts'), scanner_scan).
 source_files(rel('src/server/services/localAuth.ts',depends_on,'src/server/db.ts'), ['src/server/services/localAuth.ts']).
 source_hash(rel('src/server/services/localAuth.ts',depends_on,'src/server/db.ts'), 'sha256:de80203e2ade729f099feffe7c866227c77899e5298caf69d4b2abd9fced838c').
@@ -3247,30 +3091,6 @@ source_hash(rel('src/server/services/pollCreation.ts',depends_on,'src/server/ser
 source_file_hashes(rel('src/server/services/pollCreation.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:afb117d1ba1cc51fadc290af56b4309798ea56b4a67fedaf56aaa96b7e91d522']).
 derivation_query(rel('src/server/services/pollCreation.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/services/pollCreation.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), ['src/server/sse.ts']).
-source_hash(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
-derivation_query(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), ['src/server/sse.ts']).
-source_hash(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
-derivation_query(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/sse.ts']).
-source_hash(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
-derivation_query(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), scanner_scan).
-source_files(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), ['src/server/sse.ts']).
-source_hash(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), 'sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede').
-source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), ['sha256:ab97a56dd233c663907492fe6d4b9abb1e033b3ea9e8b6f0d2a5e38edcaa7ede']).
-derivation_query(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/server/services/mealItemIdentity.ts',depends_on,'src/server/db.ts'), scanner_scan).
 source_files(rel('src/server/services/mealItemIdentity.ts',depends_on,'src/server/db.ts'), ['src/server/services/mealItemIdentity.ts']).
 source_hash(rel('src/server/services/mealItemIdentity.ts',depends_on,'src/server/db.ts'), 'sha256:f935d69c551ba4e476c59d0b9f223f9b55f60c4256cd08cc28ffe32f777de872').
@@ -3403,36 +3223,6 @@ source_hash(rel('src/server/routes/menus.ts',depends_on,'src/lib/types.ts'), 'sh
 source_file_hashes(rel('src/server/routes/menus.ts',depends_on,'src/lib/types.ts'), ['sha256:a35d4b9b9a4a929d08ba0eefce89d532219e404f5075d8745d8e02e95d6c569e']).
 derivation_query(rel('src/server/routes/menus.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/routes/menus.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T12:42:12Z', agent).
 derived_from(rel('src/server/services/poll.ts',depends_on,'src/server/db.ts'), scanner_scan).
 source_files(rel('src/server/services/poll.ts',depends_on,'src/server/db.ts'), ['src/server/services/poll.ts']).
 source_hash(rel('src/server/services/poll.ts',depends_on,'src/server/db.ts'), 'sha256:bab677bdd7299119d6cfafc88319bbdc8b1f9ab75e635e9b0c3bd018a47178f2').
@@ -4093,30 +3883,6 @@ source_hash(rel('src/server/routes/shoppingList.ts',depends_on,'src/lib/types.ts
 source_file_hashes(rel('src/server/routes/shoppingList.ts',depends_on,'src/lib/types.ts'), ['sha256:e34aec52bcea6173e3637e82622b3e3f69f88f7e152963c16680f33c1a1a875c']).
 derivation_query(rel('src/server/routes/shoppingList.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/routes/shoppingList.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
-derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
-derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), scanner_scan).
-source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
-derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officePollSchedule.ts']).
-source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), 'sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89').
-source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), ['sha256:af64e99f0c14f84ac09ccf864f64fe037cda790ad304551b49da44d7c9c7ef89']).
-derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/server/index.ts',depends_on,'src/server/sse.ts'), scanner_scan).
 source_files(rel('src/server/index.ts',depends_on,'src/server/sse.ts'), ['src/server/index.ts']).
 source_hash(rel('src/server/index.ts',depends_on,'src/server/sse.ts'), 'sha256:7320afe5abcf7c465dc809c8332de01ee2a3e583ddeb9cc777a09bb9fbd4e0c6').
@@ -4483,78 +4249,6 @@ source_hash(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/c
 source_file_hashes(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:3ebc904892db75b6ee11bcf43de86122332ee2bfec2d7ad4991e6ae703511e0b']).
 derivation_query(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Card.tsx',depends_on,'src/client/lib/cn.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
 source_files(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/TimerActionHeader.tsx']).
 source_hash(rel('src/client/components/TimerActionHeader.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:ec10adceb6b90391be8f71e55435df780e1731fa5f358593c7cc4b1899815d69').
@@ -5599,24 +5293,6 @@ source_hash(rel('tests/client/menuItemTags.test.ts',depends_on,'src/lib/menuItem
 source_file_hashes(rel('tests/client/menuItemTags.test.ts',depends_on,'src/lib/menuItemTags.ts'), ['sha256:c7d1556562d061ccdeca22d6b2839d9b0e3fd959a89c00aa0f5aedcec0af3bfd']).
 derivation_query(rel('tests/client/menuItemTags.test.ts',depends_on,'src/lib/menuItemTags.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/client/menuItemTags.test.ts',depends_on,'src/lib/menuItemTags.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), scanner_scan).
-source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), ['tests/client/ordering-policy-api.test.ts']).
-source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), 'sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7').
-source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), ['sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7']).
-derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), ['tests/client/ordering-policy-api.test.ts']).
-source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), 'sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7').
-source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), ['sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7']).
-derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), scanner_scan).
-source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), ['tests/client/ordering-policy-api.test.ts']).
-source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), 'sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7').
-source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), ['sha256:709dd964bd5162325629b3ec4c199ccdf8981cc42e55a47ab3502a094ee452f7']).
-derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), '2026-10-01T11:44:14Z', agent).
 derived_from(rel('tests/client/useAppPhase.test.ts',depends_on,'src/client/hooks/useAppPhase.ts'), scanner_scan).
 source_files(rel('tests/client/useAppPhase.test.ts',depends_on,'src/client/hooks/useAppPhase.ts'), ['tests/client/useAppPhase.test.ts']).
 source_hash(rel('tests/client/useAppPhase.test.ts',depends_on,'src/client/hooks/useAppPhase.ts'), 'sha256:84594c8d63ffbce46f999b1795dc8e9f7d9567be70a91e23cb6ac73b221b8039').
@@ -6943,54 +6619,6 @@ source_hash(rel('tests/server/office-location-service.test.ts',depends_on,'src/l
 source_file_hashes(rel('tests/server/office-location-service.test.ts',depends_on,'src/lib/types.ts'), ['sha256:b36918e4016f26c4c87123c574e6a7c1d4a04269b3b7bfda8cbab862fb28e19c']).
 derivation_query(rel('tests/server/office-location-service.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/office-location-service.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['tests/server/office-poll-schedule.test.ts']).
-source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), 'sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990').
-source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['sha256:e2e80c440aee8635106563d91c2836001e80e00f8a839d57aaecb2753ad31990']).
-derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), scanner_scan).
-source_files(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), ['tests/server/office-time.test.ts']).
-source_hash(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), 'sha256:8f892d37c90a6d271e2c25efc6d4e79aee9e30ed208d4cb3352dd4047faeee07').
-source_file_hashes(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), ['sha256:8f892d37c90a6d271e2c25efc6d4e79aee9e30ed208d4cb3352dd4047faeee07']).
-derivation_query(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), '2026-10-01T11:44:14Z', agent).
 derived_from(rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/index.ts'), scanner_scan).
 source_files(rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/index.ts'), ['tests/server/ordering-policy-routes.test.ts']).
 source_hash(rel('tests/server/ordering-policy-routes.test.ts',depends_on,'src/server/index.ts'), 'sha256:f5710fb0e6f86df486e4eccfa85276b482c812eb0c5b584d09932c5587dcf95b').
@@ -8011,30 +7639,6 @@ source_hash(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/typ
 source_file_hashes(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:705b4d5e1bef083b2eabd633dab31214658353f0160f82e9ef242f741f794797']).
 derivation_query(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/client/PollFinishedView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), scanner_scan).
 source_files(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['tests/client/PollTiedView.test.tsx']).
 source_hash(rel('tests/client/PollTiedView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:485c1ca9ee5ccce3805938a44b3ab3bbae29f1e917db26332352575689724b59').
@@ -8215,12 +7819,6 @@ source_hash(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src
 source_file_hashes(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), ['sha256:e66a5d774eabce6f3289b7c0d3775ee9a71edb66f22ba113cb6936e6c8f95d91']).
 derivation_query(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/OrderingPolicyNotice.tsx',depends_on,'src/client/components/ui/Modal.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), scanner_scan).
-source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['src/client/components/PollIdleView.tsx']).
-source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), 'sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775').
-source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['sha256:4f4dbc18b0b3dac6c4e1ee8f6d043b56daaedb681f1895c64df9ffb137830775']).
-derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), '2026-10-01T12:03:21Z', agent).
 derived_from(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), scanner_scan).
 source_files(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['tests/client/OrderingPolicyNotice.test.tsx']).
 source_hash(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), 'sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f').
@@ -8239,18 +7837,6 @@ source_hash(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/c
 source_file_hashes(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:0bcb13b494b76120a0f24b9fb0de2f2544cb943d90ca30394e06c841d4cdf42f']).
 derivation_query(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
 derived_at(rel('tests/client/OrderingPolicyNotice.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), '2026-10-01T12:03:21Z', agent).
-derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['tests/client/PollIdleView.test.tsx']).
-source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), 'sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82').
-source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:ff7efc3ed87e30e7ec071a057c4390c373bd817962007a51aade5185ea78ab82']).
-derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T12:03:21Z', agent).
 derived_from(entity('tests/server/ordering-policy-history.test.ts',module), scanner_scan).
 source_files(entity('tests/server/ordering-policy-history.test.ts',module), ['tests/server/ordering-policy-history.test.ts']).
 source_hash(entity('tests/server/ordering-policy-history.test.ts',module), 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8').
@@ -8325,38 +7911,38 @@ derivation_query(rel('tests/server/ordering-policy-history.test.ts',depends_on,'
 derived_at(rel('tests/server/ordering-policy-history.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T12:42:13Z', agent).
 derived_from(entity('GET:/api/food-selections/:id',endpoint), agent_scan).
 source_files(entity('GET:/api/food-selections/:id',endpoint), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(entity('GET:/api/food-selections/:id',endpoint), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(entity('GET:/api/food-selections/:id',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(entity('GET:/api/food-selections/:id',endpoint), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(entity('GET:/api/food-selections/:id',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(entity('GET:/api/food-selections/:id',endpoint), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(entity('GET:/api/food-selections/:id',endpoint), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',method,get), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',method,get), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',method,get), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(prop('GET:/api/food-selections/:id',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',method,get), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(prop('GET:/api/food-selections/:id',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',method,get), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',method,get), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',mutates_state,false), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',mutates_state,false), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',mutates_state,false), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(prop('GET:/api/food-selections/:id',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',mutates_state,false), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(prop('GET:/api/food-selections/:id',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',mutates_state,false), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',mutates_state,false), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',requires_auth,true), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',requires_auth,true), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',requires_auth,true), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(prop('GET:/api/food-selections/:id',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',requires_auth,true), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(prop('GET:/api/food-selections/:id',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',requires_auth,true), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',requires_auth,true), '2026-10-01T12:43:15Z', agent).
 derived_from(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), agent_scan).
 source_files(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), 'sha256:51087d4fa224d9d5033f51611c0213c09376539495459be9a48f4e3921f4a2b6').
-source_file_hashes(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:e529b20888e8170908b9b2682bee4eec1c8ecef1b1c5a35b9a52baf7067f4c66', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
+source_file_hashes(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), '2026-10-01T12:43:15Z', agent).
 derived_from(entity('src/client/components/OrderingPolicyExceptionDetails.tsx',module), scanner_scan).
@@ -8443,3 +8029,639 @@ source_hash(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/
 source_file_hashes(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:b541ee329ccb4b2270f3b4bb6b5341b5362afaa50a0ceebfefe058bb7193fd25']).
 derivation_query(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
 derived_at(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T13:19:07Z', agent).
+derived_from(entity('src/client/api.ts',module), scanner_scan).
+source_files(entity('src/client/api.ts',module), ['src/client/api.ts']).
+source_hash(entity('src/client/api.ts',module), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
+source_file_hashes(entity('src/client/api.ts',module), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
+derivation_query(entity('src/client/api.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/api.ts',module), '2026-10-02T07:16:36Z', agent).
+derived_from(rel('src/client/api.ts',depends_on,'src/client/config.ts'), scanner_scan).
+source_files(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['src/client/api.ts']).
+source_hash(rel('src/client/api.ts',depends_on,'src/client/config.ts'), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
+source_file_hashes(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
+derivation_query(rel('src/client/api.ts',depends_on,'src/client/config.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/api.ts',depends_on,'src/client/config.ts'), '2026-10-02T07:16:37Z', agent).
+derived_from(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['src/client/api.ts']).
+source_hash(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
+source_file_hashes(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
+derivation_query(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:16:38Z', agent).
+derived_from(entity('src/client/context/AppContext.tsx',module), scanner_scan).
+source_files(entity('src/client/context/AppContext.tsx',module), ['src/client/context/AppContext.tsx']).
+source_hash(entity('src/client/context/AppContext.tsx',module), 'sha256:bbd4c9b8254d013c418ced25570c7f95c51316eb68128f829761c72b4b05453c').
+source_file_hashes(entity('src/client/context/AppContext.tsx',module), ['sha256:bbd4c9b8254d013c418ced25570c7f95c51316eb68128f829761c72b4b05453c']).
+derivation_query(entity('src/client/context/AppContext.tsx',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/context/AppContext.tsx',module), '2026-10-02T07:16:39Z', agent).
+derived_from(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), ['src/client/context/AppContext.tsx']).
+source_hash(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), 'sha256:bbd4c9b8254d013c418ced25570c7f95c51316eb68128f829761c72b4b05453c').
+source_file_hashes(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), ['sha256:bbd4c9b8254d013c418ced25570c7f95c51316eb68128f829761c72b4b05453c']).
+derivation_query(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/context/AppContext.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T07:16:39Z', agent).
+derived_from(entity('src/client/hooks/useSSE.ts',module), scanner_scan).
+source_files(entity('src/client/hooks/useSSE.ts',module), ['src/client/hooks/useSSE.ts']).
+source_hash(entity('src/client/hooks/useSSE.ts',module), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(entity('src/client/hooks/useSSE.ts',module), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(entity('src/client/hooks/useSSE.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/hooks/useSSE.ts',module), '2026-10-02T07:16:40Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/auth.ts'), '2026-10-02T07:16:41Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/config.ts'), '2026-10-02T07:16:42Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/context/AppContext.tsx'), '2026-10-02T07:16:43Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/useOrderingPolicy.ts'), '2026-10-02T07:16:44Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/client/hooks/usePhaseNotifications.ts'), '2026-10-02T07:16:45Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), ['src/client/hooks/useSSE.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), 'sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4']).
+derivation_query(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useSSE.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:16:46Z', agent).
+derived_from(entity('src/client/components/PollIdleView.tsx',module), scanner_scan).
+source_files(entity('src/client/components/PollIdleView.tsx',module), ['src/client/components/PollIdleView.tsx']).
+source_hash(entity('src/client/components/PollIdleView.tsx',module), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(entity('src/client/components/PollIdleView.tsx',module), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(entity('src/client/components/PollIdleView.tsx',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/components/PollIdleView.tsx',module), '2026-10-02T07:16:46Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/api.ts'), '2026-10-02T07:16:47Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/auth.ts'), '2026-10-02T07:16:48Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyAvailability.tsx'), '2026-10-02T07:16:49Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/OrderingPolicyNotice.tsx'), '2026-10-02T07:16:50Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-02T07:16:51Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-10-02T07:16:52Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-02T07:16:53Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Section.tsx'), '2026-10-02T07:16:54Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-02T07:16:56Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-02T07:16:57Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/context/ToastContext.tsx'), '2026-10-02T07:16:58Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/lib/errorMessage.ts'), '2026-10-02T07:16:59Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/client/utils/dashboard.ts'), '2026-10-02T07:17:00Z', agent).
+derived_from(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/PollIdleView.tsx']).
+source_hash(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), 'sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c').
+source_file_hashes(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), ['sha256:7871d4058c2e6d471d0b055f26806b6b48952954754e23ef1a58bde443e4981c']).
+derivation_query(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/PollIdleView.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:01Z', agent).
+derived_from(entity('src/lib/types.ts',module), scanner_scan).
+source_files(entity('src/lib/types.ts',module), ['src/lib/types.ts']).
+source_hash(entity('src/lib/types.ts',module), 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe').
+source_file_hashes(entity('src/lib/types.ts',module), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(entity('src/lib/types.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/lib/types.ts',module), '2026-10-02T07:17:02Z', agent).
+derived_from(entity('src/server/services/foodSelection.ts',module), scanner_scan).
+source_files(entity('src/server/services/foodSelection.ts',module), ['src/server/services/foodSelection.ts']).
+source_hash(entity('src/server/services/foodSelection.ts',module), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(entity('src/server/services/foodSelection.ts',module), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(entity('src/server/services/foodSelection.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/server/services/foodSelection.ts',module), '2026-10-02T07:17:03Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:05Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:17:06Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), '2026-10-02T07:17:07Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T07:17:08Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), '2026-10-02T07:17:09Z', agent).
+derived_from(entity('src/server/services/officeLocation.ts',module), scanner_scan).
+source_files(entity('src/server/services/officeLocation.ts',module), ['src/server/services/officeLocation.ts']).
+source_hash(entity('src/server/services/officeLocation.ts',module), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(entity('src/server/services/officeLocation.ts',module), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
+derivation_query(entity('src/server/services/officeLocation.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/server/services/officeLocation.ts',module), '2026-10-02T07:17:10Z', agent).
+derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officeLocation.ts']).
+source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
+derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:11Z', agent).
+derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), ['src/server/services/officeLocation.ts']).
+source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
+derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:17:12Z', agent).
+derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), scanner_scan).
+source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), ['src/server/services/officeLocation.ts']).
+source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
+derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/routes/routeUtils.ts'), '2026-10-02T07:17:13Z', agent).
+derived_from(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), scanner_scan).
+source_files(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), ['src/server/services/officeLocation.ts']).
+source_hash(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
+source_file_hashes(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705']).
+derivation_query(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officeLocation.ts',depends_on,'src/server/services/officeTime.ts'), '2026-10-02T07:17:14Z', agent).
+derived_from(entity('src/server/services/officePollSchedule.ts',module), scanner_scan).
+source_files(entity('src/server/services/officePollSchedule.ts',module), ['src/server/services/officePollSchedule.ts']).
+source_hash(entity('src/server/services/officePollSchedule.ts',module), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(entity('src/server/services/officePollSchedule.ts',module), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(entity('src/server/services/officePollSchedule.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/server/services/officePollSchedule.ts',module), '2026-10-02T07:17:15Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:16Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:17:17Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T07:17:18Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/officeTime.ts'), '2026-10-02T07:17:20Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/orderingPolicy.ts'), '2026-10-02T07:17:21Z', agent).
+derived_from(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), scanner_scan).
+source_files(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officePollSchedule.ts',depends_on,'src/server/services/pollCreation.ts'), '2026-10-02T07:17:22Z', agent).
+derived_from(entity('src/server/services/officeTime.ts',module), scanner_scan).
+source_files(entity('src/server/services/officeTime.ts',module), ['src/server/services/officeTime.ts']).
+source_hash(entity('src/server/services/officeTime.ts',module), 'sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e').
+source_file_hashes(entity('src/server/services/officeTime.ts',module), ['sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e']).
+derivation_query(entity('src/server/services/officeTime.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/server/services/officeTime.ts',module), '2026-10-02T07:17:24Z', agent).
+derived_from(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), ['src/server/services/officeTime.ts']).
+source_hash(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), 'sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e').
+source_file_hashes(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), ['sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e']).
+derivation_query(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/services/officeTime.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:25Z', agent).
+derived_from(entity('src/server/sse.ts',module), scanner_scan).
+source_files(entity('src/server/sse.ts',module), ['src/server/sse.ts']).
+source_hash(entity('src/server/sse.ts',module), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(entity('src/server/sse.ts',module), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(entity('src/server/sse.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/server/sse.ts',module), '2026-10-02T07:17:26Z', agent).
+derived_from(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), ['src/server/sse.ts']).
+source_hash(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/sse.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:27Z', agent).
+derived_from(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), ['src/server/sse.ts']).
+source_hash(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/sse.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:17:28Z', agent).
+derived_from(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/sse.ts']).
+source_hash(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/sse.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T07:17:29Z', agent).
+derived_from(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), scanner_scan).
+source_files(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), ['src/server/sse.ts']).
+source_hash(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/sse.ts',depends_on,'src/server/services/orderingPolicy.ts'), '2026-10-02T07:17:30Z', agent).
+derived_from(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), scanner_scan).
+source_files(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), ['src/server/sse.ts']).
+source_hash(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/server/sse.ts',depends_on,'src/server/services/pollCreation.ts'), '2026-10-02T07:17:32Z', agent).
+derived_from(entity('src/client/hooks/useOrderingPolicy.ts',module), scanner_scan).
+source_files(entity('src/client/hooks/useOrderingPolicy.ts',module), ['src/client/hooks/useOrderingPolicy.ts']).
+source_hash(entity('src/client/hooks/useOrderingPolicy.ts',module), 'sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402').
+source_file_hashes(entity('src/client/hooks/useOrderingPolicy.ts',module), ['sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402']).
+derivation_query(entity('src/client/hooks/useOrderingPolicy.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/hooks/useOrderingPolicy.ts',module), '2026-10-02T07:17:33Z', agent).
+derived_from(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), ['src/client/hooks/useOrderingPolicy.ts']).
+source_hash(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), 'sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402').
+source_file_hashes(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), ['sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402']).
+derivation_query(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/api.ts'), '2026-10-02T07:17:34Z', agent).
+derived_from(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
+source_files(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), ['src/client/hooks/useOrderingPolicy.ts']).
+source_hash(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), 'sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402').
+source_file_hashes(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), ['sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402']).
+derivation_query(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/client/context/AppContext.tsx'), '2026-10-02T07:17:35Z', agent).
+derived_from(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), ['src/client/hooks/useOrderingPolicy.ts']).
+source_hash(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), 'sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402').
+source_file_hashes(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), ['sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402']).
+derivation_query(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/hooks/useOrderingPolicy.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:36Z', agent).
+derived_from(entity('src/client/components/OrderingPolicyAvailability.tsx',module), scanner_scan).
+source_files(entity('src/client/components/OrderingPolicyAvailability.tsx',module), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(entity('src/client/components/OrderingPolicyAvailability.tsx',module), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(entity('src/client/components/OrderingPolicyAvailability.tsx',module), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(entity('src/client/components/OrderingPolicyAvailability.tsx',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(entity('src/client/components/OrderingPolicyAvailability.tsx',module), '2026-10-02T07:17:37Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-02T07:17:38Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/components/ui/Card.tsx'), '2026-10-02T07:17:39Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useCountdown.ts'), '2026-10-02T07:17:40Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/client/hooks/useOrderingPolicy.ts'), '2026-10-02T07:17:41Z', agent).
+derived_from(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/OrderingPolicyAvailability.tsx']).
+source_hash(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), 'sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8').
+source_file_hashes(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), ['sha256:04e396e1f58548917fdb59716cbb21577f68c0f1bc8ec601e49d3debacdd5da8']).
+derivation_query(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
+derived_at(rel('src/client/components/OrderingPolicyAvailability.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:42Z', agent).
+derived_from(entity(orderingPolicy,service), agent_scan).
+source_files(entity(orderingPolicy,service), ['src/server/services/orderingPolicy.ts']).
+source_hash(entity(orderingPolicy,service), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(entity(orderingPolicy,service), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(entity(orderingPolicy,service), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(entity(orderingPolicy,service), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,db), agent_scan).
+source_files(rel(orderingPolicy,depends_on,db), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,db), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,db), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,db), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,db), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,routeUtils), agent_scan).
+source_files(rel(orderingPolicy,depends_on,routeUtils), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,routeUtils), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,routeUtils), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,routeUtils), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,routeUtils), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,authIdentity), agent_scan).
+source_files(rel(orderingPolicy,depends_on,authIdentity), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,authIdentity), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,authIdentity), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,authIdentity), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,authIdentity), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,lib_types), agent_scan).
+source_files(rel(orderingPolicy,depends_on,lib_types), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,lib_types), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,lib_types), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,lib_types), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,lib_types), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,officeLocation), agent_scan).
+source_files(rel(orderingPolicy,depends_on,officeLocation), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,officeLocation), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,officeLocation), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,officeLocation), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,officeLocation), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,depends_on,officeTime), agent_scan).
+source_files(rel(orderingPolicy,depends_on,officeTime), ['src/server/services/orderingPolicy.ts']).
+source_hash(rel(orderingPolicy,depends_on,officeTime), 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18').
+source_file_hashes(rel(orderingPolicy,depends_on,officeTime), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18']).
+derivation_query(rel(orderingPolicy,depends_on,officeTime), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,depends_on,officeTime), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(officeTime,depends_on,lib_types), agent_scan).
+source_files(rel(officeTime,depends_on,lib_types), ['src/server/services/officeTime.ts']).
+source_hash(rel(officeTime,depends_on,lib_types), 'sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e').
+source_file_hashes(rel(officeTime,depends_on,lib_types), ['sha256:f65a7fbaf95dc54024542de2a1a6f7342fbb09a8e6bb38cc2d2e0ed604af8c4e']).
+derivation_query(rel(officeTime,depends_on,lib_types), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(officeTime,depends_on,lib_types), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(officePollSchedule,depends_on,orderingPolicy), agent_scan).
+source_files(rel(officePollSchedule,depends_on,orderingPolicy), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel(officePollSchedule,depends_on,orderingPolicy), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,orderingPolicy), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel(officePollSchedule,depends_on,orderingPolicy), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(officePollSchedule,depends_on,orderingPolicy), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(officePollSchedule,depends_on,officeTime), agent_scan).
+source_files(rel(officePollSchedule,depends_on,officeTime), ['src/server/services/officePollSchedule.ts']).
+source_hash(rel(officePollSchedule,depends_on,officeTime), 'sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf').
+source_file_hashes(rel(officePollSchedule,depends_on,officeTime), ['sha256:85f56b9ce9b1584bf8bab352df711e5651ce3009f52fde34faef9c4903a8bcdf']).
+derivation_query(rel(officePollSchedule,depends_on,officeTime), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(officePollSchedule,depends_on,officeTime), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(sse,depends_on,orderingPolicy), agent_scan).
+source_files(rel(sse,depends_on,orderingPolicy), ['src/server/sse.ts']).
+source_hash(rel(sse,depends_on,orderingPolicy), 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055').
+source_file_hashes(rel(sse,depends_on,orderingPolicy), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel(sse,depends_on,orderingPolicy), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(sse,depends_on,orderingPolicy), '2026-10-02T07:19:07Z', agent).
+derived_from(entity('OrderingPolicyAvailability',type), agent_scan).
+source_files(entity('OrderingPolicyAvailability',type), ['src/lib/types.ts']).
+source_hash(entity('OrderingPolicyAvailability',type), 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe').
+source_file_hashes(entity('OrderingPolicyAvailability',type), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(entity('OrderingPolicyAvailability',type), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(entity('OrderingPolicyAvailability',type), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(lib_types,declares,'OrderingPolicyAvailability'), agent_scan).
+source_files(rel(lib_types,declares,'OrderingPolicyAvailability'), ['src/lib/types.ts']).
+source_hash(rel(lib_types,declares,'OrderingPolicyAvailability'), 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe').
+source_file_hashes(rel(lib_types,declares,'OrderingPolicyAvailability'), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(rel(lib_types,declares,'OrderingPolicyAvailability'), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(lib_types,declares,'OrderingPolicyAvailability'), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), agent_scan).
+source_files(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), ['src/server/services/orderingPolicy.ts', 'src/lib/types.ts']).
+source_hash(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), 'sha256:1a98ab93b10e6b0cd5dc4390742482984e6557e694a7313916a8b5348762bd12').
+source_file_hashes(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), ['sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18', 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(orderingPolicy,uses,'OrderingPolicyAvailability'), '2026-10-02T07:19:07Z', agent).
+derived_from(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), agent_scan).
+source_files(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), ['src/server/routes/polls.ts', 'src/server/services/orderingPolicy.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'src/lib/types.ts']).
+source_hash(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), 'sha256:a2db9d2b09c2e83d340caac2c2d4d7b002755a5a83d8b773fe7f873bf2d31525').
+source_file_hashes(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), ['sha256:af550cc4911780f9786909eefee1ffb23f3ca728f67084eecb356e0329ce87bc', 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel('GET:/api/polls/ordering-policy',uses,'OrderingPolicyAvailability'), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(sse,uses,'OrderingPolicyAvailability'), agent_scan).
+source_files(rel(sse,uses,'OrderingPolicyAvailability'), ['src/server/sse.ts', 'src/server/services/orderingPolicy.ts', 'src/lib/types.ts']).
+source_hash(rel(sse,uses,'OrderingPolicyAvailability'), 'sha256:29db031889f47e60276b1969d246bbcb3be9965022320c41d8f05efef9ca8fec').
+source_file_hashes(rel(sse,uses,'OrderingPolicyAvailability'), ['sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:940ffbd1a9173ee174f87dbcecb5154ca9b44436ec46529b82bb6d4a6ea43d18', 'sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
+derivation_query(rel(sse,uses,'OrderingPolicyAvailability'), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(sse,uses,'OrderingPolicyAvailability'), '2026-10-02T07:19:07Z', agent).
+derived_from(entity(ordering_policy_changed,event), agent_scan).
+source_files(entity(ordering_policy_changed,event), ['src/lib/types.ts', 'src/server/sse.ts', 'src/server/services/foodSelection.ts']).
+source_hash(entity(ordering_policy_changed,event), 'sha256:fb1102aa2f10e48b6de056e1ec7903e6203e15814803005efe55b88ed2c9cd32').
+source_file_hashes(entity(ordering_policy_changed,event), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(entity(ordering_policy_changed,event), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(entity(ordering_policy_changed,event), '2026-10-02T07:19:07Z', agent).
+derived_from(prop(ordering_policy_changed,scoped_by,office_location), agent_scan).
+source_files(prop(ordering_policy_changed,scoped_by,office_location), ['src/lib/types.ts', 'src/server/sse.ts', 'src/server/services/foodSelection.ts']).
+source_hash(prop(ordering_policy_changed,scoped_by,office_location), 'sha256:fb1102aa2f10e48b6de056e1ec7903e6203e15814803005efe55b88ed2c9cd32').
+source_file_hashes(prop(ordering_policy_changed,scoped_by,office_location), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+derivation_query(prop(ordering_policy_changed,scoped_by,office_location), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(prop(ordering_policy_changed,scoped_by,office_location), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(officeLocation,emits,ordering_policy_changed), agent_scan).
+source_files(rel(officeLocation,emits,ordering_policy_changed), ['src/server/services/officeLocation.ts', 'src/server/sse.ts']).
+source_hash(rel(officeLocation,emits,ordering_policy_changed), 'sha256:5adb8c0e8bf9f5bf71c5ac5f8d710962b1c1ff5335e5bc9243859b57bcce76c5').
+source_file_hashes(rel(officeLocation,emits,ordering_policy_changed), ['sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel(officeLocation,emits,ordering_policy_changed), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(officeLocation,emits,ordering_policy_changed), '2026-10-02T07:19:07Z', agent).
+derived_from(rel(foodSelection,emits,ordering_policy_changed), agent_scan).
+source_files(rel(foodSelection,emits,ordering_policy_changed), ['src/server/services/foodSelection.ts', 'src/server/sse.ts']).
+source_hash(rel(foodSelection,emits,ordering_policy_changed), 'sha256:2f648d9813ccdb5ee863a3ec1324ba7ae3739251ed0cdc9cd967fedf1860bc25').
+source_file_hashes(rel(foodSelection,emits,ordering_policy_changed), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+derivation_query(rel(foodSelection,emits,ordering_policy_changed), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel(foodSelection,emits,ordering_policy_changed), '2026-10-02T07:19:07Z', agent).
+derived_from(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), agent_scan).
+source_files(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), ['src/client/hooks/useSSE.ts', 'src/client/hooks/useOrderingPolicy.ts']).
+source_hash(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), 'sha256:3b5c8734a536b8b6cef3c3cd04c40d48cdc24d594337ccda739f6bacbecda5db').
+source_file_hashes(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), ['sha256:68230312c282227368abd2b3ead9884e7a472844dc14651073072df0988bf0f4', 'sha256:31cdd3933fe472a0b60832b84156eb7b8003dd8c60f65ac88ae851f02d040402']).
+derivation_query(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
+derived_at(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), '2026-10-02T07:19:07Z', agent).
+derived_from(entity('tests/client/ordering-policy-api.test.ts',module), scanner_scan).
+source_files(entity('tests/client/ordering-policy-api.test.ts',module), ['tests/client/ordering-policy-api.test.ts']).
+source_hash(entity('tests/client/ordering-policy-api.test.ts',module), 'sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43').
+source_file_hashes(entity('tests/client/ordering-policy-api.test.ts',module), ['sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43']).
+derivation_query(entity('tests/client/ordering-policy-api.test.ts',module), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(entity('tests/client/ordering-policy-api.test.ts',module), '2026-10-02T07:23:11Z', agent).
+derived_from(entity('tests/server/office-poll-schedule.test.ts',module), scanner_scan).
+source_files(entity('tests/server/office-poll-schedule.test.ts',module), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(entity('tests/server/office-poll-schedule.test.ts',module), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(entity('tests/server/office-poll-schedule.test.ts',module), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(entity('tests/server/office-poll-schedule.test.ts',module), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(entity('tests/server/office-poll-schedule.test.ts',module), '2026-10-02T07:23:12Z', agent).
+derived_from(entity('tests/server/office-time.test.ts',module), scanner_scan).
+source_files(entity('tests/server/office-time.test.ts',module), ['tests/server/office-time.test.ts']).
+source_hash(entity('tests/server/office-time.test.ts',module), 'sha256:b3247a886531dc546b2baf5baa883d3958107679d24a6f8aed9dd7e7508925be').
+source_file_hashes(entity('tests/server/office-time.test.ts',module), ['sha256:b3247a886531dc546b2baf5baa883d3958107679d24a6f8aed9dd7e7508925be']).
+derivation_query(entity('tests/server/office-time.test.ts',module), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(entity('tests/server/office-time.test.ts',module), '2026-10-02T07:23:12Z', agent).
+derived_from(entity('tests/client/PollIdleView.test.tsx',module), scanner_scan).
+source_files(entity('tests/client/PollIdleView.test.tsx',module), ['tests/client/PollIdleView.test.tsx']).
+source_hash(entity('tests/client/PollIdleView.test.tsx',module), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(entity('tests/client/PollIdleView.test.tsx',module), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(entity('tests/client/PollIdleView.test.tsx',module), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(entity('tests/client/PollIdleView.test.tsx',module), '2026-10-02T07:23:13Z', agent).
+derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), ['tests/client/ordering-policy-api.test.ts']).
+source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), 'sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43').
+source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), ['sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43']).
+derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/api.ts'), '2026-10-02T07:23:14Z', agent).
+derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), ['tests/client/ordering-policy-api.test.ts']).
+source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), 'sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43').
+source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), ['sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43']).
+derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:23:15Z', agent).
+derived_from(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), scanner_scan).
+source_files(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), ['tests/client/ordering-policy-api.test.ts']).
+source_hash(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), 'sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43').
+source_file_hashes(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), ['sha256:4b290bc461f63448991ffd48fd8cc82c7d7f63204d98c27cba3415f03e7c8d43']).
+derivation_query(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/ordering-policy-api.test.ts',depends_on,'src/client/config.ts'), '2026-10-02T07:23:16Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/sse.ts'), '2026-10-02T07:23:17Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:23:18Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-02T07:23:19Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T07:23:20Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/poll.ts'), '2026-10-02T07:23:21Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/server/services/officePollSchedule.ts'), '2026-10-02T07:23:22Z', agent).
+derived_from(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['tests/server/office-poll-schedule.test.ts']).
+source_hash(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), 'sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff').
+source_file_hashes(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), ['sha256:4cd7198ac1406c9867a0ac0240c4c47611124f4acfdf7b884e2994e3d91933ff']).
+derivation_query(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-poll-schedule.test.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:23:23Z', agent).
+derived_from(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), scanner_scan).
+source_files(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), ['tests/server/office-time.test.ts']).
+source_hash(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), 'sha256:b3247a886531dc546b2baf5baa883d3958107679d24a6f8aed9dd7e7508925be').
+source_file_hashes(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), ['sha256:b3247a886531dc546b2baf5baa883d3958107679d24a6f8aed9dd7e7508925be']).
+derivation_query(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/server/office-time.test.ts',depends_on,'src/server/services/officeTime.ts'), '2026-10-02T07:23:24Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/testRender.tsx'), '2026-10-02T07:23:25Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-02T07:23:25Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-02T07:23:26Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/components/PollIdleView.tsx'), '2026-10-02T07:23:27Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/client/api.ts'), '2026-10-02T07:23:28Z', agent).
+derived_from(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['tests/client/PollIdleView.test.tsx']).
+source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), 'sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e').
+source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
+derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
+derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T07:23:29Z', agent).

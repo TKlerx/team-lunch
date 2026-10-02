@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T014 are complete, validated, and committed at HEAD `47ea2f1`. T015 landing availability/countdown is complete, validated, and uncommitted; Phase 6 is complete. Next task: T016 cross-cutting acceptance/validation. FAIM updates are explicitly deferred for this session.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. All 17 tasks are complete. T001–T015 are committed at starting HEAD `2c6cbca`; T016/T017 are validated and await user-authorized commit. Previously deferred FAIM refresh is complete with unchanged axioms. No unchecked tasks remain; use `specs/OVERVIEW.md` Current Priority for continuation.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -54,8 +54,8 @@
 
 ## Phase 7: Polish and Cross-Cutting Validation
 
-- [ ] T016 Run scenarios and focused commands in `specs/005-ordering-interval-policy/quickstart.md`, then `pwsh -File ./validate.ps1 all`; fix feature-caused failures, verify accessibility/privacy and no new runtime dependency, and record actual command results/blockers in `specs/005-ordering-interval-policy/tasks.md`.
-- [ ] T017 Update `USER_DOCUMENTATION.md`, `specs/OVERVIEW.md`, and implementation discoveries in `AGENTS.md`; selectively refresh affected `.faim` derived facts without changing axioms, run FAIM validation, and regenerate `specs/CURRENT-WORK.md`/`specs/RECONCILIATION.md` with `pnpm continuity:update` after task completion.
+- [x] T016 Run scenarios and focused commands in `specs/005-ordering-interval-policy/quickstart.md`, then `pwsh -File ./validate.ps1 all`; fix feature-caused failures, verify accessibility/privacy and no new runtime dependency, and record actual command results/blockers in `specs/005-ordering-interval-policy/tasks.md`.
+- [x] T017 Update `USER_DOCUMENTATION.md`, `specs/OVERVIEW.md`, and implementation discoveries in `AGENTS.md`; selectively refresh affected `.faim` derived facts without changing axioms, run FAIM validation, and regenerate `specs/CURRENT-WORK.md`/`specs/RECONCILIATION.md` with `pnpm continuity:update` after task completion.
 
 ## Dependencies and Execution Order
 
@@ -222,6 +222,23 @@ that leaves quick starts or automatic creation unguarded.
 - Added 14 tests in `tests/client/OrderingPolicyAvailability.test.tsx` for ticks/exact timezone display, future anchor, Ready/Unrestricted, expired snapshots/Strict Mode, rollover/new targets, loading/errors/wrong-office data, retry, switch/cleanup and nearer boundaries. Two new `PollIdleView` tests confirm availability integration without disabling manual starts.
 - `pnpm exec vitest run --project client tests/client/OrderingPolicyAvailability.test.tsx tests/client/PollIdleView.test.tsx tests/client/OrderingPolicyNotice.test.tsx tests/client/useOrderingPolicy.test.tsx` passed 81/81. Typecheck, lint, architecture, complexity and function-size checks passed without raising the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate: 94 files / 1,471 tests, 88.70% line and 81.86% branch coverage.
 - Updated user/realtime/contract documentation and status, then regenerated continuity docs. Phase 6 is complete; T015 is uncommitted. Stopped before T016/T017: cross-cutting manual acceptance and final reconciliation are not marked done. No dependency, migration, server, or FAIM changes; memory updates/validation remain deferred at the user's request.
+
+### T016 — 2026-10-02
+
+- Started from clean HEAD `2c6cbca`; T015 was already committed. Spec-kit prerequisites resolved this feature; the requirements checklist passed all 16 items. `pnpm db:test:up` confirmed the dedicated PostgreSQL container healthy. No schema changes or dev migration/reset were needed.
+- Ran the quickstart's focused server/client checks plus the feature's calendar, settings, starts, API, history, realtime, availability and hook suites: 10 server files / 458 tests and 7 client files / 165 tests passed. Exact reproducible commands and the ten-scenario coverage mapping are in `quickstart.md`.
+- `pwsh -File ./validate.ps1 all` passed text-format, typecheck, lint, architecture, complexity, function-size, duplication, Semgrep, production audit and coverage: 94 files / 1,471 tests, 88.70% line / 81.86% branch coverage. `pwsh -File ./validate.ps1 full` also passed every gate, including the pinned Trivy image scan and all 3 Playwright production-server smoke tests; that run reported 88.69% line / 81.84% branch coverage.
+- Verified all ten acceptance scenarios through existing controlled-clock service/route tests and component/hook tests. Reviewed Cancel-first focus, keyboard trapping/restoration/dismissal, labelled justification and non-live countdown; signed admin/office-scoped REST projection and snapshot-free public SSE/formatters remain covered. Feature history changes neither `package.json` nor `pnpm-lock.yaml`; no runtime dependency was added. No feature-caused failures or environment blockers were found.
+- Acceptance scope: these are automated scenario checks and code review, not a claim that a human exercised the manual checklist. Actual two-browser policy refresh and visual/screen-reader acceptance were not performed; the three existing E2E tests are general smoke coverage, not ordering-policy browser scenarios. Those optional rollout checks remain explicitly documented in `quickstart.md`.
+- T016 is complete; no source/test changes or commits. Proceeded to T017 only after focused, aggregate and full validation passed.
+
+### T017 — 2026-10-02
+
+- Expanded `USER_DOCUMENTATION.md` with admin per-office configuration/defaults, calendar/completion semantics, future anchors, Unrestricted retention/re-enabling, both manual start paths, default Cancel/explicit 1–500-character reasons, immutable admin exception visibility and no future debt. Existing schedule/landing sections remain. Updated `spec.md` and `specs/OVERVIEW.md` to Done, reconciled BACKLOG-009 to Delivered, and corrected the contract's obsolete proposed-API wording. Next priority is menu safety labels reconciliation, not an unchecked 005 task.
+- Recorded acceptance-scope and FAIM import-resolution discoveries in `AGENTS.md`. Refreshed only affected derived source/test facts through CLI commands, resolving `.js` specifiers to `.ts`/`.tsx` before regenerating scanner facts. Refreshed 48 existing source scanner facts, added 16, refreshed 21 test scanner facts, and guarded rehash of 29 inspected unchanged agent facts. Added 21 durable evaluator/calendar/public-availability/scoped-event facts. Existing authenticated non-mutating availability endpoint facts were already fresh. Temporary scanner artifacts were removed; no axioms or application sources changed.
+- From the repository root, `faim validate` passed with zero errors/warnings; `faim status` reported 293 entities, 94 properties, 1,108 relationships, 11 requirements, zero stale facts, zero schema errors/violations, and unchanged axioms. The pre-existing untracked `entity(faim,tool)` notice (`W-0601`) remains; it is not a new policy validation failure. The axiom checksum remains `0cc75494ae7622332fe1f66cccbb1a3f5f845af7a98b10f78ea8683ce54c4a27`.
+- Final `pwsh -File ./validate.ps1 all` after documentation/memory updates passed every gate: 94 files / 1,471 tests, 88.68% line / 81.82% branch coverage. T016's full Trivy/Playwright gate also passed; no source/dependency changes occurred afterward. `git diff --check` passed.
+- Archived the prior continuation snapshot with date/time/reason in `specs/TODO-TRACE.md`, then regenerated `specs/CURRENT-WORK.md` and `specs/RECONCILIATION.md` with `pnpm continuity:update` after marking T017 complete. Phase 7 and all feature tasks are complete. No commits, migrations, runtime dependencies, or unrelated feature implementation.
 
 ## Planning Validation
 

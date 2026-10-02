@@ -2,7 +2,7 @@
 
 **Feature Branch**: `005-ordering-interval-policy`
 **Created**: 2026-10-01
-**Status**: Planned
+**Status**: Done
 **Backlog**: [BACKLOG-009](../BACKLOG.md)
 **Input**: Admin-configurable office-local calendar periods with one completed lunch per period, soft manual exceptions, compliant scheduling, and a visible landing-page countdown.
 

@@ -72,6 +72,10 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Ordering-policy acceptance coverage is mapped to all ten quickstart scenarios in `specs/005-ordering-interval-policy/quickstart.md`. `validate.ps1 full` runs three general Playwright smoke tests, not policy-specific two-browser or screen-reader acceptance; do not present that gate as manual UI verification.
+
+- FAIM's built-in import scan does not resolve this repo's `.js` specifiers to `.ts`/`.tsx` sources. Selective scanner-fact regeneration must resolve those extensions before CLI import/add; do not rehash scanner-owned facts merely because existing edge names look unchanged. Ordering-policy source/test facts were refreshed in T017 without changing axioms; the pre-existing untracked `entity(faim,tool)` notice is not a policy validation failure.
+
 - Landing ordering availability reuses `useCountdown` but never infers eligibility from expiry. Restricted next-eligible targets and eligible block ends trigger one server refresh per office/boundary; the attempted boundary survives loading/failure to prevent refetch loops, and explicit retry handles recovery. Countdown ticks are not live-announced.
 
 - `useSSE` owns the client ordering-policy subscription; `useOrderingPolicy()` exposes shared office-scoped availability/loading/error and a stable awaitable refresh without adding listeners. Policy REST calls pass explicit office context. Office/auth cleanup and request sequencing reject late results; reconnect REST reads take precedence over delayed unsequenced hydration. Loading/errors clear availability rather than imply eligibility.

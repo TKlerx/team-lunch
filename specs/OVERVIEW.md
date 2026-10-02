@@ -45,7 +45,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 002 | ai-meal-recommendations | Delegated | Y | Y | Y | Y | Y | Y | - |
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
 | 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
-| 005 | ordering-interval-policy | Partial | Y | Y | Y | Y | Y | Y | Y |
+| 005 | ordering-interval-policy | Done | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
@@ -65,16 +65,16 @@ This overview tracks spec completeness and implementation status for epics in
 
 ## Current Priority
 
-1. **Office ordering interval policy**: Active user-directed work in [005-ordering-interval-policy](005-ordering-interval-policy/spec.md), promoted from [BACKLOG-009](BACKLOG.md). T001–T011 persistence/defaults, shared contracts, office-local calendar helpers, policy evaluation/snapshots, atomic settings validation, Administration settings UI, server-side normal/quick-start enforcement, authenticated no-store availability/client API handling, accessible explicit-justification warnings, admin-only office-scoped REST exception detail/history, and scope-isolated admin exception UI are implemented and validated on `005-ordering-interval-policy`. T001–T014 are committed at HEAD `47ea2f1`, including scheduler compliance, public SSE hydration/invalidation and office/auth-scoped client availability refresh with stale-response protection. T015 landing Ready/Unrestricted/countdown UI, exact office-local target and expiry recheck are complete, validated, and uncommitted. Phase 6 is complete: focused tests passed 81/81 and the aggregate gate passed all checks (1,471 tests; 88.70% line / 81.86% branch coverage). Next task is T016 cross-cutting acceptance/validation, followed by T017 final reconciliation; these Phase 7 tasks remain unchecked. FAIM updates are deferred at the user's request.
-2. **Menu safety labels reconciliation**: [004-menu-safety-labels](004-menu-safety-labels/spec.md) still has a Planned overview status although its task list is fully checked. Review existing completion evidence before updating its status.
-3. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
-4. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
-5. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
-6. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
-7. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
+1. **Menu safety labels reconciliation**: [004-menu-safety-labels](004-menu-safety-labels/spec.md) still has a Planned overview status although its task list is fully checked. Review existing completion evidence before updating its status.
+2. **Ordering claim timeout and recovery**: Backlog as [BACKLOG-003](BACKLOG.md). Not implemented; promote to a focused food-selection spec update before building.
+3. **Office-scoped admin roles**: Backlog as [BACKLOG-004](BACKLOG.md). Needs role and authorization model design before promotion.
+4. **Poll concurrency inside one office**: Backlog as [BACKLOG-005](BACKLOG.md). Conflicts with the current single-active-poll-per-office spec until explicitly re-scoped.
+5. **Live Entra account verification**: Backlog as [BACKLOG-006](BACKLOG.md). Manual tenant/app-registration verification, not product implementation.
+6. **Prisma 7 production verification**: Backlog as [BACKLOG-007](BACKLOG.md). Production smoke checklist for deployment/runtime behavior.
 
 ## Notes
 
+- `005-ordering-interval-policy` is complete: all 17 tasks cover persistence/defaults, validated per-office settings, office-local fixed-calendar evaluation, signed manual exceptions, admin-only immutable REST snapshots, compliant office-local scheduling, public SSE availability and boundary-refreshed landing countdowns. Phase 7 passed 458 focused server tests, 165 focused client tests and the aggregate/full gates (1,471 tests, approximately 88.70% line / 81.86% branch coverage), including the pinned Trivy image scan and three general Playwright smoke tests. Selective FAIM source/test refresh resumed without axiom changes. Actual two-browser policy and visual/screen-reader acceptance are not claimed; coverage/rollout caveats are in [quickstart.md](005-ordering-interval-policy/quickstart.md). No unchecked tasks remain in 005; Phase 7 changes await user-authorized commit.
 - `001-canonical-routes` is implemented; the spec status is marked `Done`.
 - `002-ai-meal-recommendations` is marked `Delegated` because its intent was superseded and delivered by [003-learned-meal-recommender](003-learned-meal-recommender/spec.md).
 - `food-selection` is marked `Mostly Done` because its migrated task list still calls out verification gaps around pruning-era tests and timer edge assertions, even though the feature is broadly shipped.
