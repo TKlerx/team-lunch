@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- SSE initial hydration now includes public office policy availability; `orderingPolicy: null` means evaluation is unavailable, never eligible. Effective policy settings changes and successful arrival confirmation emit office-scoped `ordering_policy_changed` invalidation only. Settings bind their notification callback from SSE to avoid a runtime cycle; private exception snapshots/evidence remain REST-only.
+
 - Scheduled polls now interpret weekdays, finish times, daily deduplication markers, and activity windows in the office timezone. Nonexistent DST finish clocks skip the day; repeated clocks use the earlier instant. Scheduler tests freeze only Date to align the supplied check time with creation's server-clock policy recheck; native timers remain live. If test PostgreSQL is unreachable and Docker is stopped, focused server tests and aggregate coverage abort in global setup: start Docker, then `pnpm db:test:up`; do not mark a task shipped based on non-test gates alone.
 
 - Admin ordering-policy detail panels use explicit office-scoped, no-store REST reads rather than shared SSE/history state, whose absent private fields do not establish that no exception exists. Private panel state is keyed by office/record/auth identity and cleared on access loss; stored timezone/profile snapshots, not current office/profile settings, drive historical display.

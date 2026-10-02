@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T011 are complete, validated, and committed at HEAD `3373283`. T012 scheduler integration is complete, validated, and uncommitted. Next task: T013 SSE availability/invalidation. FAIM updates are explicitly deferred for this session.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T012 are complete, validated, and committed at HEAD `0050e61`. T013 SSE availability/invalidation is complete, validated, and uncommitted. Next task: T014 client availability state/refetch handling. FAIM updates are explicitly deferred for this session.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -48,7 +48,7 @@
 **Goal**: Selected-office availability stays visible and fresh without exposing audit metadata.
 **Independent Test**: Complete a lunch, remotely change policy, switch offices and cross a boundary without reload.
 
-- [ ] T013 [US4] Include public policy availability in initial hydration and emit scoped `ordering_policy_changed` after relevant settings saves/arrival confirmation in `src/server/sse.ts`, `src/server/services/officeLocation.ts`, and `src/server/services/foodSelection.ts`; add scoped hydration/invalidation/privacy tests in `tests/server/ordering-policy-realtime.test.ts` and document the event in `specs/realtime-events.md`.
+- [x] T013 [US4] Include public policy availability in initial hydration and emit scoped `ordering_policy_changed` after relevant settings saves/arrival confirmation in `src/server/sse.ts`, `src/server/services/officeLocation.ts`, and `src/server/services/foodSelection.ts`; add scoped hydration/invalidation/privacy tests in `tests/server/ordering-policy-realtime.test.ts` and document the event in `specs/realtime-events.md`.
 - [ ] T014 [US4] Add office-scoped availability state/refetch handling in `src/client/context/AppContext.tsx`, `src/client/hooks/useSSE.ts`, and a small `src/client/hooks/useOrderingPolicy.ts` if needed; refresh on invalidation/reconnect/office change and discard old-office responses, with cleanup/error/loading tests in `tests/client/useOrderingPolicy.test.tsx`.
 - [ ] T015 [US4] Show prominent Ready to start/Unrestricted/countdown with exact office-local target in `src/client/components/PollIdleView.tsx` or the shared `src/client/components/OrderingPolicyNotice.tsx`; reuse `src/client/hooks/useCountdown.ts` timing, add multi-day formatting and expiry recheck without claiming automatic poll creation, and test ticks/rollover/future anchor/unavailable state/office switch in `tests/client/PollIdleView.test.tsx`.
 
@@ -197,6 +197,14 @@ that leaves quick starts or automatic creation unguarded.
 - Initial `pwsh -File ./validate.ps1 all` passed text-format, typecheck, lint, architecture, complexity, function-size, duplication, Semgrep, and production audit. Tests/coverage aborted for the same unavailable PostgreSQL; that attempt produced no valid aggregate coverage result. T012 was left unchecked pending Docker startup, `pnpm db:test:up`, and successful focused/aggregate reruns.
 - After the user started Docker, `pnpm db:test:up` succeeded with a healthy dedicated test database. The focused scheduler/calendar/creation command passed 278/278 (34 scheduler, 86 office-time, 158 ordering-policy-start tests). Final `pwsh -File ./validate.ps1 all` passed every gate: 91 files / 1,420 tests, 88.49% line and 81.43% branch coverage. The earlier environment blocker is resolved; T012 is complete and uncommitted.
 - Updated status/continuity and scheduled-poll user documentation. Stopped before T013. No dependencies, migrations, commits, or FAIM changes; memory refresh/validation is deferred at the user's request.
+
+### T013 — 2026-10-02
+
+- Started from clean T012 HEAD `0050e61` after the user authorized its commit. Initial SSE hydration/reconnect now evaluates the selected office's policy and sends only `OrderingPolicyAvailability`. Isolated evaluator failures explicitly send `orderingPolicy: null` without discarding otherwise valid hydration; the existing whole-hydration fallback also sends null. The shared field is optional for legacy compatibility, but new server payloads explicitly include it.
+- Added office-scoped `ordering_policy_changed` invalidation with only `{ officeLocationId }` after successful effective interval/timezone/anchor saves and arrival confirmation. Unchanged, omitted/unrelated, ignored Unrestricted anchor, rejected, and failed saves do not emit it. Failed/repeated completion does not emit it; existing completion events remain. A late-bound settings callback avoids a circular runtime dependency between office settings, policy evaluation and SSE.
+- Added 15 tests in `tests/server/ordering-policy-realtime.test.ts` covering office scope/reconnect, fresh/future/Unrestricted availability, effective/no-op/rejected/failed settings, successful/invalid/failed/repeated completion, evaluator failure and fallback, privacy, and immutable exception snapshots.
+- `pnpm exec vitest run --project server tests/server/ordering-policy-realtime.test.ts tests/server/ordering-policy-history.test.ts tests/server/ordering-policy-settings.test.ts` passed 36/36. Typecheck, lint, architecture and complexity passed without changing the baseline. Final `pwsh -File ./validate.ps1 all` passed every gate: 92 files / 1,435 tests, 88.57% line and 81.54% branch coverage.
+- Documented the hydration failure contract and scoped invalidation in `contracts/ordering-policy.md` and `specs/realtime-events.md`, updated status/discoveries and regenerated continuity docs. T013 is complete and uncommitted; stopped before T014. No client consumers, dependencies, migrations, or FAIM updates/validation; memory work remains deferred at the user's request.
 
 ## Planning Validation
 

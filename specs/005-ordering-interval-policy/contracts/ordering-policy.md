@@ -84,10 +84,9 @@ No separate exception-edit endpoint: snapshots are immutable.
 
 ## Realtime
 
-- Extend `initial_state` with public `orderingPolicy` availability for that office.
+- `initial_state` includes public `orderingPolicy` availability for that office on connect/reconnect. New server payloads explicitly send null on evaluation failure (including whole-hydration fallback), never synthetic eligibility; an isolated policy failure preserves other hydration data. The shared field is optional for legacy payload compatibility.
 - New `ordering_policy_changed`: `{officeLocationId}`, scoped to the affected office,
-  after saved policy changes and successful arrival confirmation. It invalidates
-  client availability; no private audit data.
+  after successful effective interval/timezone/anchor changes and successful arrival confirmation. Unchanged/unrelated/ignored-anchor saves and failed writes/completions do not emit it. It invalidates client availability; no private audit data.
 - Existing poll/food-selection events remain; successful start responses and
   public SSE payloads must not expose private exception JSON accidentally.
 - Refresh availability after invalidation, reconnect, office switch, and boundary

@@ -6,8 +6,8 @@ Server-Sent Events keep all clients synchronized with live lunch-state updates.
 ## Architecture
 
 - Endpoint: `GET /api/events`
-- Broadcast model: all clients receive all events.
-- On connect, server sends `initial_state` snapshot.
+- Connections are registered against their authenticated selected office. Office-scoped events reach only clients registered for that office; explicitly global events may reach all clients.
+- On connect/reconnect, server sends an office-scoped `initial_state` snapshot.
 
 ## initial_state payload
 
@@ -15,14 +15,23 @@ Server-Sent Events keep all clients synchronized with live lunch-state updates.
 {
   "type": "initial_state",
   "payload": {
+    "orderingPolicy": "OrderingPolicyAvailability | null",
     "activePoll": "Poll | null",
     "activeFoodSelection": "FoodSelection | null",
     "latestCompletedPoll": "Poll | null",
     "latestCompletedFoodSelection": "FoodSelection | null",
-    "completedFoodSelectionsHistory": "FoodSelection[]"
+    "completedFoodSelectionsHistory": "FoodSelection[]",
+    "defaultFoodSelectionDurationMinutes": "number"
   }
 }
 ```
+
+`orderingPolicy` contains only the server evaluator's public availability for the
+selected office, including its status, timezone, calendar boundaries and next
+eligible instant. It is `null` if evaluation fails; clients must not interpret
+null (or an absent legacy field) as eligibility. Policy failure preserves
+otherwise valid lunch-state hydration. Neither initial nor live SSE exposes
+private exception snapshots, reasons, actors, or completion lookup evidence.
 
 ## Event Catalogue
 
@@ -34,6 +43,14 @@ Server-Sent Events keep all clients synchronized with live lunch-state updates.
 - `item_created` -> `{ item }`
 - `item_updated` -> `{ item }`
 - `item_deleted` -> `{ itemId, menuId }`
+
+### Ordering Policy Events
+
+- `ordering_policy_changed` -> `{ officeLocationId }`
+  - scoped to the affected office; emitted after a successful effective interval, timezone, or anchor settings change and after successful arrival confirmation
+  - invalidation only: clients refetch public availability, rather than inferring a new status from this payload
+  - no emission for rejected/failed settings writes, unchanged or unrelated settings, ignored Unrestricted anchor edits, or failed/repeated completion
+  - existing `food_selection_completed` events are preserved; no private audit data is included
 
 ### Poll Events
 
@@ -74,4 +91,5 @@ data: <json>\n
 
 - Hydrate state from `initial_state`.
 - Update reducers per event type.
-- Browser SSE reconnect handles transient disconnects.
+- Browser SSE reconnect handles transient disconnects and receives freshly evaluated policy availability.
+- T014 will add client policy state/refetch handling for `ordering_policy_changed`, reconnect, and office changes; T015 will add countdown/boundary refresh. These consumers are not yet implemented.

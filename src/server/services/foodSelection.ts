@@ -1454,7 +1454,7 @@ export async function confirmFoodArrival(
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_completed', { foodSelection: formatted }, selection.officeLocationId);
-
+  broadcast('ordering_policy_changed', { officeLocationId: selection.officeLocationId }, selection.officeLocationId);
 
   return formatted;
 }

@@ -1,10 +1,17 @@
 import type { ServerResponse } from 'node:http';
 import prisma from './db.js';
 import type { InitialStatePayload, FoodSelection, FoodOrder } from '../lib/types.js';
-import { getOfficeDefaultFoodSelectionDurationMinutes } from './services/officeLocation.js';
+import {
+  getOfficeDefaultFoodSelectionDurationMinutes, setOrderingPolicyChangedHandler,
+} from './services/officeLocation.js';
+import { evaluateOrderingPolicy } from './services/orderingPolicy.js';
 import { formatPoll } from './services/pollCreation.js';
 
 const clients = new Map<ServerResponse, string>();
+
+setOrderingPolicyChangedHandler(officeLocationId => {
+  broadcast('ordering_policy_changed', { officeLocationId }, officeLocationId);
+});
 
 /** Register a new SSE client connection */
 export function register(res: ServerResponse, officeLocationId: string): void {
@@ -166,7 +173,13 @@ export async function sendInitialState(res: ServerResponse, officeLocationId: st
     const defaultFoodSelectionDurationMinutes =
       await getOfficeDefaultFoodSelectionDurationMinutes(officeLocationId);
 
+    // A policy failure must not imply eligibility or discard otherwise valid hydration.
+    const orderingPolicy = await evaluateOrderingPolicy(officeLocationId)
+      .then(evaluation => evaluation.availability)
+      .catch(() => null);
+
     const payload: InitialStatePayload = {
+      orderingPolicy,
       activePoll: activePollRaw ? formatPoll(activePollRaw) : null,
       activeFoodSelection: activeFoodSelectionRaw ? formatFoodSelection(activeFoodSelectionRaw) : null,
       latestCompletedPoll: latestCompletedPollRaw ? formatPoll(latestCompletedPollRaw) : null,
@@ -181,6 +194,7 @@ export async function sendInitialState(res: ServerResponse, officeLocationId: st
     res.write(`event: initial_state\ndata: ${data}\n\n`);
   } catch {
     const fallbackPayload: InitialStatePayload = {
+      orderingPolicy: null,
       activePoll: null,
       activeFoodSelection: null,
       latestCompletedPoll: null,

@@ -677,6 +677,8 @@ export interface OrderingPolicyWarningResponse extends ErrorResponse {
 // ─── SSE Event Types ───────────────────────────────────────
 
 export interface InitialStatePayload {
+  // Absent on legacy hydration; null means policy evaluation is unavailable.
+  orderingPolicy?: OrderingPolicyAvailability | null;
   activePoll: Poll | null;
   activeFoodSelection: FoodSelection | null;
   latestCompletedPoll: Poll | null;
@@ -687,6 +689,7 @@ export interface InitialStatePayload {
 
 export type SSEEvent =
   | { type: 'initial_state'; payload: InitialStatePayload }
+  | { type: 'ordering_policy_changed'; payload: { officeLocationId: string } }
   | { type: 'menu_created'; payload: { menu: Menu } }
   | { type: 'menu_updated'; payload: { menu: Menu } }
   | { type: 'menu_deleted'; payload: { menuId: string } }

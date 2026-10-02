@@ -8,6 +8,12 @@ import type {
   UpdateOfficeLocationSettingsRequest,
 } from '../../lib/types.js';
 
+// Late-bound by SSE, which already depends on this service for hydration.
+let onOrderingPolicyChanged: (officeLocationId: string) => void = () => {};
+export function setOrderingPolicyChangedHandler(handler: typeof onOrderingPolicyChanged): void {
+  onOrderingPolicyChanged = handler;
+}
+
 const DEFAULT_OFFICE_KEY = 'default';
 const DEFAULT_OFFICE_NAME = 'Default Office';
 const OFFICE_WEEKDAYS: OfficeWeekday[] = [
@@ -378,6 +384,14 @@ export async function updateOfficeLocationSettings(
       updatedAt: new Date(),
     },
   });
+
+  if ([
+    updated.orderingIntervalWeeks !== location.orderingIntervalWeeks,
+    updated.timeZone !== location.timeZone,
+    updated.orderingAnchorDate.toISOString().slice(0, 10) !== location.orderingAnchorDate,
+  ].some(Boolean)) {
+    onOrderingPolicyChanged(location.id);
+  }
 
   return formatOfficeLocation(updated);
 }
