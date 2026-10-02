@@ -95,14 +95,58 @@ pnpm dev
 
 ### Option B: Full Stack in Docker
 
-```bash
-git clone https://github.com/TKlerx/team-lunch.git
-cd team-lunch
-cp .env.example .env
-docker compose up --build
+Docker Compose is enough to build and run PostgreSQL, apply migrations, and serve
+the app. Docker with Compose v2 is required; host Node/pnpm/Python are not needed
+for this option. A fresh database still needs a configured login method.
+
+1. Create `.env` from `.env.example`. For a root-path local install, set:
+
+```env
+PORT="3000"
+BASE_PATH=""
+VITE_BASE_PATH=""
+AUTH_SESSION_SECRET="your-random-secret-of-at-least-32-characters"
+AUTH_ADMIN_EMAIL="your-local-admin@example.com"
 ```
 
-Then open `http://localhost:3000`.
+Generate a real session secret with a password manager or `openssl rand -hex 32`.
+The example text above is not a secret to reuse. Keep the default PostgreSQL
+identity for a fresh local install, or update `COMPOSE_DATABASE_URL` to match any
+changed `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB` values.
+
+2. Build and start, waiting for the database and application to be healthy:
+
+```bash
+docker compose up --build -d --wait --wait-timeout 180
+```
+
+The migration service runs automatically before the app. App health requires
+HTTP `/api/health` to report `status: ok`, including database connectivity.
+
+3. **Fresh local-login install only:** provision the first admin using the
+builder-based migration image (the slim app image has no seed tooling):
+
+```bash
+docker compose run --rm -e AUTH_ADMIN_EMAIL migrate pnpm auth:seed
+```
+
+The seed command prints a generated password; store it securely and sign in with
+the configured email. It upserts the account, so do not rerun it unnecessarily.
+If you prefer a chosen password, also set `AUTH_ADMIN_PASSWORD` in your shell
+and add `-e AUTH_ADMIN_PASSWORD` to that command. Existing accounts or configured
+Entra login do not require this seed step.
+
+Open `http://localhost:3000` (or your configured PORT). Remote deployments need
+HTTPS; localhost testing is not a production TLS setup. For troubleshooting:
+
+```bash
+docker compose ps
+docker compose logs --tail=100 app migrate
+docker compose down
+```
+
+`down` preserves the database's named volume. Do **not** add `-v` unless you
+intend to delete that installation's data.
 
 ### Production Deploy with Docker Compose
 
@@ -116,11 +160,16 @@ This runs `scripts/deploy.sh`, which exports and prints build metadata, lists
 Compose data volumes, builds the app and migrate images, starts the database,
 verifies the target does not look like the wrong/empty database, creates a
 PostgreSQL backup, runs Prisma pre-deploy verification, applies migrations,
-restarts the app, and checks the database again.
+restarts the app, waits up to 120 seconds for HTTP/database health, and checks
+the database again. The readiness probe uses the container's PORT and internal
+health route, including deployments with BASE_PATH.
 
 Backups are written to `backups/postgres/` by default and pruned by count
 (`BACKUP_KEEP_COUNT`, default `5`) and age (`KEEP_DAYS`, default `90`). For an
-intentional fresh bootstrap, set `ALLOW_EMPTY_DATABASE_DEPLOY=true`.
+intentional fresh bootstrap, use the Compose startup instructions above instead
+of `pnpm deploy` for now: the deploy wrapper's `ALLOW_EMPTY_DATABASE_DEPLOY`
+override is not forwarded to its migration container. This known gap is
+intentionally deferred.
 
 Existing deployments that were initialized before the app was renamed may still
 use the old `paiqo` database and PostgreSQL 16 data directory. Keep those values
@@ -134,6 +183,19 @@ POSTGRES_DB="paiqo"
 POSTGRES_PGDATA="/var/lib/postgresql"
 COMPOSE_DATABASE_URL="postgresql://paiqo:paiqo@db:5432/paiqo?schema=public"
 ```
+
+### Deliberately Deferred Deployment Gaps
+
+Only missing public image assets and bounded app readiness were addressed in
+the 2026-10-02 deployment maintenance pass. The following remain open by choice:
+
+- **Fresh-install deploy wrapper:** `ALLOW_EMPTY_DATABASE_DEPLOY` is not forwarded to the migration container, so the documented override alone does not unblock `pnpm deploy` against an empty database. Do not disable safety checks for an existing deployment.
+- **Optional feature environment:** Compose does not forward `GRAPH_MAIL_SENDER`, the four `AI_RECOMMENDATION_*` settings, `FOOD_SELECTION_REMINDER_MINUTES_BEFORE`, `AUTH_ADMIN_REMINDER_EMAILS`, or `DEFAULT_FOOD_SELECTION_DURATION_MINUTES`. Merely putting these in the host `.env` does not configure the app container; Graph mail/AI remain disabled and other settings keep their defaults.
+- **Auth bootstrap:** Compose does not automatically create local credentials. Use the explicit seed step or configure Entra; a strong session secret is mandatory. Nickname-only/open-access login is no longer supported.
+- **Production hardening:** predictable local DB credential defaults, published PostgreSQL host port, absent `.dockerignore`, and target-host HTTPS/proxy configuration remain follow-up/operator work. Keep PostgreSQL credentials and `COMPOSE_DATABASE_URL` aligned, and migrate existing major-version volumes by dump/restore rather than switching the image in place.
+
+These items are tracked under BACKLOG-007 in `specs/BACKLOG.md`; they are not
+claimed fixed by successful readiness or image validation.
 
 ## First-Time Setup
 
@@ -328,9 +390,11 @@ override the scan target with `TRIVY_SCAN_IMAGE` if needed.
 
 ## Authentication Modes
 
-### Nickname-only
+### Authentication prerequisite
 
-The simplest mode. Users identify themselves with a nickname stored in local storage.
+Nickname-only/open-access mode has been retired. Configure at least one local
+DB account or Entra SSO, plus a session secret of at least 32 characters. Without
+a configured login method, the app shows an authentication setup error.
 
 ### Local Auth
 

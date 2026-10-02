@@ -17,6 +17,7 @@ RUN pnpm exec prisma generate
 
 COPY tsconfig.json tsconfig.build.json vite.config.ts index.html tailwind.config.ts postcss.config.js ./
 COPY assets ./assets
+COPY public ./public
 COPY import ./import
 COPY scripts ./scripts
 COPY src ./src
@@ -47,5 +48,8 @@ COPY prisma ./prisma
 EXPOSE 3000
 
 USER node
+
+# Internal health route also works when the public app uses BASE_PATH.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=6 CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || '3000') + '/api/health', { signal: AbortSignal.timeout(4000) }).then(async response => { if (!response.ok || (await response.json()).status !== 'ok') process.exit(1); }).catch(() => process.exit(1));"
 
 CMD ["node", "dist/server/index.js"]

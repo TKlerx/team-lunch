@@ -83,8 +83,8 @@ docker compose -f "$COMPOSE_FILE" run --rm --entrypoint node migrate scripts/pri
 step "Prisma migrate deploy"
 docker compose -f "$COMPOSE_FILE" run --rm migrate
 
-step "Restart app"
-docker compose -f "$COMPOSE_FILE" up -d --no-deps app
+step "Restart app and wait for HTTP/database readiness"
+docker compose -f "$COMPOSE_FILE" up -d --no-deps --wait --wait-timeout 120 app
 
 step "Post-deploy data safety verification"
 docker compose -f "$COMPOSE_FILE" run --rm --entrypoint node migrate scripts/prisma-production-data-check.mjs

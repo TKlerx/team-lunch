@@ -72,6 +72,10 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- The Docker runner now includes public browser assets via the builder and uses Node's native fetch healthcheck against its PORT/internal `/api/health`; only `status: ok` is healthy, not HTTP 200 with degraded DB connectivity. `deploy.sh` waits at most 120 seconds for app health before reporting success. The internal health route remains valid with BASE_PATH.
+
+- Fresh local Docker installs can use `docker compose up --build -d --wait --wait-timeout 180`, then `docker compose run --rm -e AUTH_ADMIN_EMAIL migrate pnpm auth:seed` to provision the admin from `.env` (generated password printed once). The builder-based migrate image has seed tooling; the slim app image does not. The fresh-install deploy-wrapper override, optional Compose feature env forwarding, and broader hardening remain deliberately deferred in BACKLOG-007/README.
+
 - Ordering-policy acceptance coverage is mapped to all ten quickstart scenarios in `specs/005-ordering-interval-policy/quickstart.md`. `validate.ps1 full` runs three general Playwright smoke tests, not policy-specific two-browser or screen-reader acceptance; do not present that gate as manual UI verification.
 
 - FAIM's built-in import scan does not resolve this repo's `.js` specifiers to `.ts`/`.tsx` sources. Selective scanner-fact regeneration must resolve those extensions before CLI import/add; do not rehash scanner-owned facts merely because existing edge names look unchanged. Ordering-policy source/test facts were refreshed in T017 without changing axioms; the pre-existing untracked `entity(faim,tool)` notice is not a policy validation failure.

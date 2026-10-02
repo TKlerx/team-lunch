@@ -43,6 +43,32 @@ evaluated in Unrestricted mode; validate settings on both client and server.
 
 ## BACKLOG-007 notes — Prisma 7 production verification
 
+### Scoped deployment maintenance — 2026-10-02
+
+User-approved scope: ship referenced public assets and verify application
+readiness before deployment reports success. No auth/bootstrap, environment
+forwarding, database-identity, or broader hardening changes are authorized.
+
+Implementation plan: copy `public/` into the Docker builder; add a native Node
+HTTP healthcheck that requires `status: ok` (database connected), respects PORT,
+and uses the internal `/api/health` route even for prefixed deployments; make
+`deploy.sh` wait at most 120 seconds for app health. Test the probe's success,
+degraded/error paths and configuration wiring; build and smoke-test the actual
+image without accessing the application database, then run the aggregate gate.
+
+- [x] DEPLOY-001 Complete the scoped Docker assets/readiness changes, regression tests, local startup instructions and deliberately deferred-gap documentation; record validation below before marking done.
+
+Validation/completion evidence — 2026-10-02:
+- `tests/server/docker-deployment.test.ts` passed all 6 checks, executing the actual Docker probe with successful, degraded, HTTP-failure, rejected-request and unexpected-payload responses; the config check covers assets-before-build and bounded deployment wait.
+- Compose config and deployment shell syntax passed. Built both actual Compose images and started project `team-lunch-readiness` with its own fresh PostgreSQL volume, port 4180 and `/readiness` prefix; migrations completed and app health became healthy. Verified successful HTTP/database readiness and correct nonempty MIME-typed responses for all five public favicon/touch-icon/manifest assets. The documented one-time admin seed command worked with the env-file email; generated password was suppressed in validation logs. Existing app/test databases were not modified.
+- `pwsh -File ./validate.ps1 all` passed every gate: 95 files / 1,477 tests, 88.69% line / 81.83% branch coverage. README now explains Docker-only local startup and explicitly lists the deferred gaps. No runtime dependency, schema/migration, login bootstrap automation or optional feature env forwarding was added.
+
+Deliberately deferred:
+- The fresh-install `ALLOW_EMPTY_DATABASE_DEPLOY` override is not forwarded to the migration container by the deploy wrapper.
+- Compose does not forward Graph mail, AI recommendation, reminder and global food-selection fallback settings. Setting them only in the host `.env` does not configure the app container.
+- First local-user provisioning is manual; a strong session secret and configured local account or Entra are prerequisites, not automatically created by Compose.
+- PostgreSQL host-port exposure, fallback credentials, missing `.dockerignore`, HTTPS/proxy setup and database major-version/identity upgrades remain operator/follow-up work. Coordinate `COMPOSE_DATABASE_URL` with PostgreSQL credentials; do not change an existing volume's major version in place.
+
 Manual production checks after the Prisma 7 driver-adapter migration:
 
 - Confirm TLS/SSL connectivity to production Postgres for both `app` and `migrate`; add `sslmode=require` or `NODE_EXTRA_CA_CERTS` if cert handling requires it.
