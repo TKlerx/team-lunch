@@ -98,6 +98,29 @@ export function getOfficeDateTime(instant: Date, timeZone: string) {
   };
 }
 
+export function officeTimeToUtc(value: string, time: string, timeZone: string): Date | null {
+  if (typeof time !== "string" || time.length !== 5 || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+    throw new RangeError("Expected a valid HH:mm clock time");
+  }
+  const [hour, minute] = time.split(":").map(Number);
+  const nominal = parseCalendarDate(value).getTime() + (hour * 60 + minute) * 60_000;
+  const formatter = officeFormatter(timeZone);
+  const candidates: number[] = [];
+  // Sample both sides of a timezone transition; repeated clocks choose the
+  // earlier instant, while a nonexistent scheduled clock has no candidate.
+  for (const days of [-1, 0, 1]) {
+    const sample = nominal + days * DAY_MS;
+    const parts = officeParts(new Date(sample), formatter);
+    const local = parseCalendarDate(parts.date).getTime() + (parts.hour * 60 + parts.minute) * 60_000;
+    const candidate = nominal - (local - sample);
+    const resolved = officeParts(new Date(candidate), formatter);
+    if (resolved.date === value && resolved.hour === hour && resolved.minute === minute) {
+      candidates.push(candidate);
+    }
+  }
+  return candidates.length ? new Date(Math.min(...candidates)) : null;
+}
+
 export function officeMidnightToUtc(value: string, timeZone: string): Date {
   const nominal = parseCalendarDate(value).getTime();
   const formatter = officeFormatter(timeZone);

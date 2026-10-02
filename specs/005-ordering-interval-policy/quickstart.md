@@ -25,6 +25,32 @@ The ordering-policy and OrderingPolicyNotice suites are planned additions; the
 other listed suites already exist. Each task names its actual focused check in
 its completion notes.
 
+## T012 validation while PostgreSQL is unavailable
+
+The normal server project requires its test database even for pure calendar
+checks. This isolated command runs only the DB-free office-time suite with the
+existing Vitest installation; it does not validate scheduler integration or
+replace the aggregate ship gate:
+
+```sh
+node --input-type=module -e "import { startVitest } from 'vitest/node'; const ctx = await startVitest('test', ['tests/server/office-time.test.ts'], { config: false, watch: false, environment: 'node', include: ['tests/server/office-time.test.ts'] }); const failed = !ctx || ctx.state.getFiles().length !== 1 || ctx.state.getFiles().some(file => file.result?.state !== 'pass'); await ctx?.close(); process.exit(failed ? 1 : 0);"
+```
+
+If `pnpm db:test:up` reports an unavailable Docker daemon, start Docker first.
+Then run the focused T012 check and the aggregate gate:
+
+```sh
+pnpm db:test:up
+pnpm exec vitest run --project server tests/server/office-poll-schedule.test.ts tests/server/office-time.test.ts tests/server/ordering-policy-starts.test.ts
+pwsh -File ./validate.ps1 all
+```
+
+Both checks passed on 2026-10-02 after Docker and the dedicated test database
+started: 278 focused tests and 1,420 aggregate tests. T012 is complete; the
+isolated command above is only a fallback for future DB outages. No schema
+migration is needed for T012.
+FAIM updates/validation are deferred for this session at the user's request.
+
 ## Manual acceptance
 
 1. Set one office to weekly, Europe/Vienna, Monday anchor. Set another to Unrestricted.

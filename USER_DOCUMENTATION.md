@@ -10,6 +10,22 @@ This guide explains the normal workflow from poll to delivery. The app is design
 4. Place the real order.
 5. Track delivery and confirm arrival.
 
+## Scheduled Polls and Office Policy
+
+Administrators configure each office's schedule and timezone. Scheduled weekdays,
+finish times, and same-day activity checks use that office's timezone, not the
+server's timezone. Existing activity and daily duplicate checks still apply.
+
+A restricted office allows one completed lunch per configured 1–4-week calendar
+period. Scheduled polls skip a period that already contains a completed lunch,
+or dates before the policy's starting Monday. They never create justified
+exceptions, accumulate unused opportunities, or start immediately when a new
+period opens: the configured schedule must also be due. Unrestricted removes
+the interval restriction, not the other scheduling guards.
+
+If daylight saving skips the configured finish time, no scheduled poll starts
+for that time. If the clock repeats it, the earlier occurrence is used.
+
 ## Phase CTAs
 
 ### Poll active

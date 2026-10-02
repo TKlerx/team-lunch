@@ -4,6 +4,7 @@ import {
   calendarDaysBetween,
   getOfficeDateTime,
   officeMidnightToUtc,
+  officeTimeToUtc,
   parseCalendarDate,
   validateMondayDate,
   validateTimeZone,
@@ -69,6 +70,93 @@ describe("office calendar validation", () => {
     expect(() => validateTimeZone(null as unknown as string)).toThrow(
       RangeError,
     );
+  });
+});
+
+describe("office clock validation", () => {
+  it.each([
+    ["00:00", "2026-03-11T00:00:00.000Z"],
+    ["09:05", "2026-03-11T09:05:00.000Z"],
+    ["12:30", "2026-03-11T12:30:00.000Z"],
+    ["23:59", "2026-03-11T23:59:00.000Z"],
+  ])("accepts strict HH:mm %s", (time, expected) => {
+    expect(officeTimeToUtc("2026-03-11", time, "UTC")?.toISOString()).toBe(
+      expected,
+    );
+  });
+
+  it.each([
+    "",
+    "9:05",
+    "09:5",
+    "24:00",
+    "23:60",
+    "-1:00",
+    "12:30:00",
+    " 12:30",
+    "12:30 ",
+    "12:30\n",
+    "12.30",
+    "ab:cd",
+    null,
+    undefined,
+    1230,
+  ])("rejects invalid runtime clock %s rather than normalizing it", (time) => {
+    expect(() => officeTimeToUtc("2026-03-11", time as string, "UTC")).toThrow(
+      RangeError,
+    );
+  });
+
+  it("retains strict date and timezone validation", () => {
+    expect(() => officeTimeToUtc("2026-02-29", "12:30", "UTC")).toThrow(
+      RangeError,
+    );
+    expect(() =>
+      officeTimeToUtc("2026-03-11", "12:30", "Unknown/Office"),
+    ).toThrow(RangeError);
+  });
+});
+
+describe("office clock conversion", () => {
+  it.each([
+    ["2026-03-11", "01:30", "Asia/Tokyo", "2026-03-10T16:30:00.000Z"],
+    ["2026-03-11", "11:30", "Asia/Kathmandu", "2026-03-11T05:45:00.000Z"],
+    ["2026-09-28", "11:30", "America/St_Johns", "2026-09-28T14:00:00.000Z"],
+    ["2026-09-28", "11:30", "Pacific/Chatham", "2026-09-27T21:45:00.000Z"],
+    ["2026-03-29", "03:30", "Europe/Berlin", "2026-03-29T01:30:00.000Z"],
+  ])(
+    "converts %s %s in %s, including fractional offsets",
+    (date, time, zone, expected) => {
+      const instant = officeTimeToUtc(date, time, zone)!;
+      expect(instant.toISOString()).toBe(expected);
+      const [hour, minute] = time.split(":").map(Number);
+      expect(getOfficeDateTime(instant, zone)).toMatchObject({
+        date,
+        hour,
+        minute,
+      });
+    },
+  );
+
+  it.each([
+    ["2026-10-25", "02:30", "Europe/Berlin", "2026-10-25T00:30:00.000Z"],
+    ["2026-04-05", "01:45", "Australia/Lord_Howe", "2026-04-04T14:45:00.000Z"],
+  ])(
+    "chooses the earlier instant of repeated %s %s in %s",
+    (date, time, zone, expected) => {
+      expect(officeTimeToUtc(date, time, zone)?.toISOString()).toBe(expected);
+    },
+  );
+
+  it.each([
+    ["2026-03-29", "02:30", "Europe/Berlin"],
+    ["2026-10-04", "02:15", "Australia/Lord_Howe"],
+    ["2018-11-04", "00:30", "America/Sao_Paulo"],
+    ["2011-12-30", "00:00", "Pacific/Apia"],
+    ["2011-12-30", "12:30", "Pacific/Apia"],
+    ["2011-12-30", "23:59", "Pacific/Apia"],
+  ])("returns null for nonexistent %s %s in %s", (date, time, zone) => {
+    expect(officeTimeToUtc(date, time, zone)).toBeNull();
   });
 });
 

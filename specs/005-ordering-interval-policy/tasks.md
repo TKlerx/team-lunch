@@ -3,7 +3,7 @@
 **Input**: `specs/005-ordering-interval-policy/`
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md, contracts/ordering-policy.md, quickstart.md.
 **Tests**: Mandatory in every implementation task. No task is shipped until its focused tests and `pwsh -File ./validate.ps1 all` pass; update progress/discoveries afterward. Do not auto-commit without user authorization.
-**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T008 are complete and validated. T007 is committed as `be0cd71`; T008 availability endpoint/client API is complete and uncommitted. Stop before T009 warning dialogs.
+**Organization**: One unchecked task at a time, ordered by dependency and user story. T001–T011 are complete, validated, and committed at HEAD `3373283`. T012 scheduler integration is complete, validated, and uncommitted. Next task: T013 SSE availability/invalidation. FAIM updates are explicitly deferred for this session.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -41,7 +41,7 @@
 **Goal**: Automation skips used periods/future anchors and uses office-local schedules.
 **Independent Test**: Run controlled scheduler checks before and after eligibility in differing office/server zones.
 
-- [ ] T012 [US3] Apply shared precheck and non-overridable creation recheck in `src/server/services/officePollSchedule.ts`, convert weekdays/finish times/day markers/activity windows to office-local time using `src/server/services/officeTime.ts`, and extend `tests/server/office-poll-schedule.test.ts` for skipped starts without notification/exception, fresh blocks, no carryover, Unrestricted, differing zones, and unchanged schedule/deduplication guards.
+- [x] T012 [US3] Apply shared precheck and non-overridable creation recheck in `src/server/services/officePollSchedule.ts`, convert weekdays/finish times/day markers/activity windows to office-local time using `src/server/services/officeTime.ts`, and extend `tests/server/office-poll-schedule.test.ts` for skipped starts without notification/exception, fresh blocks, no carryover, Unrestricted, differing zones, and unchanged schedule/deduplication guards.
 
 ## Phase 6: User Story 4 - Landing Availability and Countdown (P1)
 
@@ -186,8 +186,20 @@ that leaves quick starts or automatic creation unguarded.
 - Refreshed affected scanner-owned dependencies with `node scripts/faim-scip-deps.mjs`, preserving unchanged fact order/source metadata to avoid timestamp-only churn. No axioms or unrelated domain facts changed. `faim validate --strict` passed without errors/warnings; `faim stale` reported no stale facts. Refreshed continuity docs with `pnpm continuity:update` after marking T011 complete.
 - T011 is complete and uncommitted. Stopped before T012; no scheduler changes, SSE availability events, landing availability/countdown, migration, or dependency changes. No commit authorized or created.
 
+### T012 — 2026-10-02
+
+- Started from clean HEAD `3373283` with T001–T011 committed. Added the shared evaluator precheck to `officePollSchedule.ts`; used periods and future anchors skip before creation/announcement. Existing `createPollRecord` still performs its non-overridable scheduled recheck immediately before writing, protecting against settings/completion changes after precheck.
+- Schedule weekdays, finish instants, daily creator markers, and half-open activity windows now use the office timezone through `officeTime.ts`. Added strict HH:mm-to-UTC conversion with native Date/Intl: repeated clocks choose the earlier instant; nonexistent clocks skip that scheduled start. Finish durations use elapsed time between actual instants across DST. Existing 60-minute window, five-minute minimum/duration validation, activity, active-lunch, and daily deduplication guards remain.
+- Precheck/time conversion errors are caught per office, logged with office ID, and do not authorize creation or prevent subsequent offices from being checked. Office-list failures are also caught to avoid an unhandled scheduler-tick rejection.
+- Expanded scheduler integration coverage for used periods/future anchors without notifications/timers/exceptions, fresh multiweek blocks/no carryover, Unrestricted, differing zones/local date bounds, DST clocks, schedule/duration/deduplication/ongoing guards, stale prechecks, and evaluator-failure isolation. Added pure clock validation/conversion tests in `tests/server/office-time.test.ts`. Tests freeze only Date so creation and scheduler decisions share the controlled clock without freezing network/timer machinery.
+- `pnpm typecheck`, scoped ESLint on the four changed source/test files (zero warnings), `pnpm lint`, and `pnpm complexity` passed without raising the baseline. `git diff --check` passed. The isolated office-time suite passed 86/86 with Vitest's programmatic `startVitest` and `config: false`, avoiding DB-only setup; the reproducible command is in `quickstart.md`.
+- Initial `pnpm exec vitest run --project server tests/server/office-poll-schedule.test.ts tests/server/office-time.test.ts tests/server/ordering-policy-starts.test.ts` aborted in global setup: PostgreSQL at localhost:55434 is unreachable. `pnpm db:test:up` could not start the dedicated database because the Docker daemon is unavailable. No application database was substituted or reset.
+- Initial `pwsh -File ./validate.ps1 all` passed text-format, typecheck, lint, architecture, complexity, function-size, duplication, Semgrep, and production audit. Tests/coverage aborted for the same unavailable PostgreSQL; that attempt produced no valid aggregate coverage result. T012 was left unchecked pending Docker startup, `pnpm db:test:up`, and successful focused/aggregate reruns.
+- After the user started Docker, `pnpm db:test:up` succeeded with a healthy dedicated test database. The focused scheduler/calendar/creation command passed 278/278 (34 scheduler, 86 office-time, 158 ordering-policy-start tests). Final `pwsh -File ./validate.ps1 all` passed every gate: 91 files / 1,420 tests, 88.49% line and 81.43% branch coverage. The earlier environment blocker is resolved; T012 is complete and uncommitted.
+- Updated status/continuity and scheduled-poll user documentation. Stopped before T013. No dependencies, migrations, commits, or FAIM changes; memory refresh/validation is deferred at the user's request.
+
 ## Planning Validation
 
-17 uniquely numbered tasks; all are unchecked, include concrete paths, and
-user-story tasks have US labels. Each implementation task names its tests.
-No application implementation or runtime validation has occurred in this phase.
+The planning phase produced 17 uniquely numbered tasks with concrete paths and
+US labels on user-story tasks. Each implementation task names its tests.
+Current completion and validation status is tracked above.
