@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import supertest from 'supertest';
-import ExcelJS from 'exceljs';
 import { buildApp } from '../../src/server/index.js';
 import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
@@ -98,9 +97,15 @@ describe('food order rating and export routes', () => {
     await app.close();
   });
 
-  it('exports own orders and ratings as xlsx', async () => {
+  it('exports own orders and ratings as CSV', async () => {
     const { selectionId, orderId } = await createCompletedSelectionWithOrder('alice@example.com');
-    await foodSelectionService.rateOrder(selectionId, orderId, 'alice@example.com', 5, 'Would order again');
+    await foodSelectionService.rateOrder(
+      selectionId,
+      orderId,
+      'alice@example.com',
+      5,
+      '=2+2, "Would order again"',
+    );
     const app = await buildApp();
     await app.ready();
 
@@ -115,53 +120,29 @@ describe('food order rating and export routes', () => {
       })
       .expect(200);
 
-    expect(res.headers['content-type']).toContain(
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    expect(res.headers['content-disposition']).toContain('.xlsx');
+    expect(res.headers['content-type']).toContain('text/csv');
+    expect(res.headers['content-disposition']).toContain('.csv');
 
-    const workbook = new ExcelJS.Workbook();
-    const bytes = Uint8Array.from(res.body as Uint8Array);
-    await workbook.xlsx.load(bytes.buffer);
-    const sheet = workbook.getWorksheet('Orders');
-    expect(sheet).toBeDefined();
-    expect(sheet?.rowCount).toBeGreaterThanOrEqual(2);
-    expect(String(sheet?.getRow(2).getCell(5).value ?? '')).toContain('Pad Thai');
-    expect(String(sheet?.getRow(2).getCell(7).value ?? '')).toContain('5');
-    expect(String(sheet?.getRow(2).getCell(8).value ?? '')).toContain('Would order again');
+    const csv = (res.body as Buffer).toString('utf8');
+    expect(csv).toContain('"Completed Date","Ordered At","Menu","Item Number","Meal"');
+    expect(csv).toContain('"Pad Thai"');
+    expect(csv).toContain('"5","\'=2+2, ""Would order again"""');
 
     await app.close();
   });
 
-  it('round-trips extended XLSX formatting that generates UUIDs', async () => {
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('UUID compatibility');
-    sheet.addRows([[1], [2], [3]]);
-    const formatting: ExcelJS.ConditionalFormattingOptions = {
-      ref: 'A1:A3',
-      rules: [{
-        type: 'iconSet',
-        iconSet: '3Stars',
-        priority: 1,
-        cfvo: [
-          { type: 'percent', value: 0 },
-          { type: 'percent', value: 33 },
-          { type: 'percent', value: 67 },
-        ],
-      }],
-    };
-    sheet.addConditionalFormatting(formatting);
-
-    const bytes = await workbook.xlsx.writeBuffer();
-    const restored = new ExcelJS.Workbook();
-    await restored.xlsx.load(bytes);
-    const restoredSheet = restored.getWorksheet('UUID compatibility');
-    expect(restoredSheet?.getCell('A3').value).toBe(3);
-    expect(formatting.rules[0]).toMatchObject({
-      type: 'iconSet',
-      iconSet: '3Stars',
-      x14Id: expect.stringMatching(/^\{[0-9A-F-]{36}\}$/),
+  it('keeps private policy exceptions and other users out of personal CSV exports', async () => {
+    const { selectionId } = await createCompletedSelectionWithOrder('alice@example.com');
+    const selection = await prisma.foodSelection.findUniqueOrThrow({ where: { id: selectionId } });
+    await prisma.poll.update({
+      where: { id: selection.pollId! },
+      data: { orderingPolicyException: { reason: 'private override reason', actorEmail: 'private@example.com' } },
     });
+    const csv = await foodSelectionService.exportOrdersForUserCsv('alice@example.com');
+    expect(csv).toContain('Pad Thai');
+    expect(csv).not.toContain('private override reason');
+    expect(csv).not.toContain('private@example.com');
+    expect(await foodSelectionService.exportOrdersForUserCsv('bob@example.com')).not.toContain('Pad Thai');
   });
 
   it('rejects a too-long feedback comment', async () => {

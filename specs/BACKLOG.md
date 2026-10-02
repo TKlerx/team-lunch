@@ -63,6 +63,11 @@ Validation/completion evidence — 2026-10-02:
 - Compose config and deployment shell syntax passed. Built both actual Compose images and started project `team-lunch-readiness` with its own fresh PostgreSQL volume, port 4180 and `/readiness` prefix; migrations completed and app health became healthy. Verified successful HTTP/database readiness and correct nonempty MIME-typed responses for all five public favicon/touch-icon/manifest assets. The documented one-time admin seed command worked with the env-file email; generated password was suppressed in validation logs. Existing app/test databases were not modified.
 - `pwsh -File ./validate.ps1 all` passed every gate: 95 files / 1,477 tests, 88.69% line / 81.83% branch coverage. README now explains Docker-only local startup and explicitly lists the deferred gaps. No runtime dependency, schema/migration, login bootstrap automation or optional feature env forwarding was added.
 
+Main integration validation — 2026-10-02:
+- User committed/pushed scoped maintenance as `e01cccc`. Final pre-merge `validate.ps1 full` passed 1,477 tests, Trivy and 3 Playwright smoke tests. Recreated only the disposable test PostgreSQL container after Docker reported a stale network reference; no application data was reset.
+- Integrated `origin/main` at `8d240d2` without committing/pushing. Resolved `AGENTS.md`, package manifest, workspace and lockfile conflicts: retained newer branch security patches and all policy/assets/readiness changes, incorporated upstream pnpm 11.21.0 and tooling/security updates, schema-qualified import fixes, and CSV personal exports. Removed obsolete ExcelJS compatibility/override and added CSV policy-privacy/ownership coverage. Vitest 4 uses `maxWorkers: 1` instead of removed `poolOptions`.
+- Focused merged checks passed 84 tests, typecheck and production audit. Final merged `validate.ps1 full` passed every gate: 95 files / 1,483 tests, 85.91% line / 77.13% branch coverage under Vitest 4, pinned Trivy and 3 Playwright smoke tests. Compose config, shell syntax, and conflict/whitespace checks passed. Selective FAIM refresh/validation passed with zero stale facts/violations and unchanged axioms; the existing untracked tool notice remains.
+
 Deliberately deferred:
 - The fresh-install `ALLOW_EMPTY_DATABASE_DEPLOY` override is not forwarded to the migration container by the deploy wrapper.
 - Compose does not forward Graph mail, AI recommendation, reminder and global food-selection fallback settings. Setting them only in the host `.env` does not configure the app container.
@@ -76,7 +81,7 @@ Manual production checks after the Prisma 7 driver-adapter migration:
 - Smoke-test read/write queries against the intended schema; runtime schema selection depends on `src/server/db.ts` parsing `?schema=` and passing it to `PrismaPg`.
 - Watch connection-pool behavior under real traffic; configure pool size/timeouts in `PrismaPg` options if defaults are insufficient.
 - Confirm `scripts/prisma-production-data-check.mjs` reports live row counts and blocks unintended empty-DB deploys.
-- Smoke-test auth login (Entra + local), poll lifecycle, food-selection/order flow, and Excel export after deploy.
+- Smoke-test auth login (Entra + local), poll lifecycle, food-selection/order flow, and CSV export after deploy.
 
 ## BACKLOG-006 notes — Live Entra account verification
 

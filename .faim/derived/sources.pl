@@ -42,8 +42,8 @@ derivation_query(entity(entraOidc,service), "What are the import dependencies be
 derived_at(entity(entraOidc,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(foodSelection,service), agent_scan).
 source_files(entity(foodSelection,service), ['src/server/services/foodSelection.ts']).
-source_hash(entity(foodSelection,service), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(entity(foodSelection,service), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(entity(foodSelection,service), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(entity(foodSelection,service), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(entity(foodSelection,service), "What are the import dependencies between server modules?").
 derived_at(entity(foodSelection,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(localAuth,service), agent_scan).
@@ -84,8 +84,8 @@ derivation_query(entity(mealRecommendationPreVote,service), "What are the import
 derived_at(entity(mealRecommendationPreVote,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(menu,service), agent_scan).
 source_files(entity(menu,service), ['src/server/services/menu.ts']).
-source_hash(entity(menu,service), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(entity(menu,service), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(entity(menu,service), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(entity(menu,service), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(entity(menu,service), "What are the import dependencies between server modules?").
 derived_at(entity(menu,service), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(notificationEmail,service), agent_scan).
@@ -156,8 +156,8 @@ derivation_query(entity(authIdentity,route), "What are the import dependencies b
 derived_at(entity(authIdentity,route), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(foodSelections_route,route), agent_scan).
 source_files(entity(foodSelections_route,route), ['src/server/routes/foodSelections.ts']).
-source_hash(entity(foodSelections_route,route), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(entity(foodSelections_route,route), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(entity(foodSelections_route,route), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(entity(foodSelections_route,route), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(entity(foodSelections_route,route), "What are the import dependencies between server modules?").
 derived_at(entity(foodSelections_route,route), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(menus_route,route), agent_scan).
@@ -222,32 +222,32 @@ derivation_query(rel(localAuth,depends_on,routeUtils), "What are the import depe
 derived_at(rel(localAuth,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,db), agent_scan).
 source_files(rel(foodSelection,depends_on,db), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,db), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel(foodSelection,depends_on,db), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(rel(foodSelection,depends_on,db), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel(foodSelection,depends_on,db), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(rel(foodSelection,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,sse), agent_scan).
 source_files(rel(foodSelection,depends_on,sse), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,sse), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel(foodSelection,depends_on,sse), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(rel(foodSelection,depends_on,sse), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel(foodSelection,depends_on,sse), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(rel(foodSelection,depends_on,sse), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,sse), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,lib_types), agent_scan).
 source_files(rel(foodSelection,depends_on,lib_types), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,lib_types), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel(foodSelection,depends_on,lib_types), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(rel(foodSelection,depends_on,lib_types), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel(foodSelection,depends_on,lib_types), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(rel(foodSelection,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,notificationEmail), agent_scan).
 source_files(rel(foodSelection,depends_on,notificationEmail), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,notificationEmail), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel(foodSelection,depends_on,notificationEmail), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(rel(foodSelection,depends_on,notificationEmail), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel(foodSelection,depends_on,notificationEmail), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(rel(foodSelection,depends_on,notificationEmail), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,notificationEmail), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelection,depends_on,officeLocation), agent_scan).
 source_files(rel(foodSelection,depends_on,officeLocation), ['src/server/services/foodSelection.ts']).
-source_hash(rel(foodSelection,depends_on,officeLocation), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel(foodSelection,depends_on,officeLocation), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(rel(foodSelection,depends_on,officeLocation), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel(foodSelection,depends_on,officeLocation), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(rel(foodSelection,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelection,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(authAudit,depends_on,db), agent_scan).
@@ -558,44 +558,44 @@ derivation_query(rel(mealFeatures,depends_on,db), "What are the import dependenc
 derived_at(rel(mealFeatures,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,db), agent_scan).
 source_files(rel(menu,depends_on,db), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,db), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,db), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,db), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,db), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,sse), agent_scan).
 source_files(rel(menu,depends_on,sse), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,sse), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,sse), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,sse), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,sse), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,sse), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,sse), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,officeLocation), agent_scan).
 source_files(rel(menu,depends_on,officeLocation), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,officeLocation), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,officeLocation), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,officeLocation), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,officeLocation), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,officeLocation), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,officeLocation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,mealItemIdentity), agent_scan).
 source_files(rel(menu,depends_on,mealItemIdentity), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,mealItemIdentity), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,mealItemIdentity), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,mealItemIdentity), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,mealItemIdentity), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,mealItemIdentity), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,mealItemIdentity), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,mealFeatures), agent_scan).
 source_files(rel(menu,depends_on,mealFeatures), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,mealFeatures), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,mealFeatures), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,mealFeatures), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,mealFeatures), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,mealFeatures), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,mealFeatures), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,mealRecommendationAi), agent_scan).
 source_files(rel(menu,depends_on,mealRecommendationAi), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,mealRecommendationAi), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,mealRecommendationAi), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,mealRecommendationAi), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,mealRecommendationAi), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,mealRecommendationAi), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,mealRecommendationAi), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(menu,depends_on,lib_types), agent_scan).
 source_files(rel(menu,depends_on,lib_types), ['src/server/services/menu.ts']).
-source_hash(rel(menu,depends_on,lib_types), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel(menu,depends_on,lib_types), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
+source_hash(rel(menu,depends_on,lib_types), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel(menu,depends_on,lib_types), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
 derivation_query(rel(menu,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(menu,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(officeLocation,depends_on,db), agent_scan).
@@ -1056,74 +1056,74 @@ derivation_query(rel(shoppingList_route,depends_on,lib_types), "What are the imp
 derived_at(rel(shoppingList_route,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,foodSelection), agent_scan).
 source_files(rel(foodSelections_route,depends_on,foodSelection), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,foodSelection), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,foodSelection), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,foodSelection), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,foodSelection), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,foodSelection), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,foodSelection), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,poll), agent_scan).
 source_files(rel(foodSelections_route,depends_on,poll), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,poll), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,poll), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,poll), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,poll), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,poll), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,poll), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,mealRecommendation), agent_scan).
 source_files(rel(foodSelections_route,depends_on,mealRecommendation), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,mealRecommendation), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendation), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,mealRecommendation), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendation), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,mealRecommendation), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,mealRecommendation), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,mealRecommendationExplore), agent_scan).
 source_files(rel(foodSelections_route,depends_on,mealRecommendationExplore), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,mealRecommendationExplore), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendationExplore), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,mealRecommendationExplore), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendationExplore), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,mealRecommendationExplore), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,mealRecommendationExplore), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,mealRecommendationPreVote), agent_scan).
 source_files(rel(foodSelections_route,depends_on,mealRecommendationPreVote), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,mealRecommendationPreVote), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendationPreVote), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,mealRecommendationPreVote), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,mealRecommendationPreVote), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,mealRecommendationPreVote), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,mealRecommendationPreVote), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,mealAnticipatedLikes), agent_scan).
 source_files(rel(foodSelections_route,depends_on,mealAnticipatedLikes), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,mealAnticipatedLikes), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,mealAnticipatedLikes), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,mealAnticipatedLikes), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,mealAnticipatedLikes), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,mealAnticipatedLikes), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,mealAnticipatedLikes), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,db), agent_scan).
 source_files(rel(foodSelections_route,depends_on,db), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,db), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,db), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,db), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,db), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,db), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,db), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,routeUtils), agent_scan).
 source_files(rel(foodSelections_route,depends_on,routeUtils), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,routeUtils), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,routeUtils), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,routeUtils), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,routeUtils), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,routeUtils), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,routeUtils), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,authAccess), agent_scan).
 source_files(rel(foodSelections_route,depends_on,authAccess), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,authAccess), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,authAccess), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,authAccess), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,authAccess), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,authAccess), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,authAccess), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,officeContext), agent_scan).
 source_files(rel(foodSelections_route,depends_on,officeContext), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,officeContext), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,officeContext), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,officeContext), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,officeContext), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,officeContext), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,officeContext), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,authIdentity), agent_scan).
 source_files(rel(foodSelections_route,depends_on,authIdentity), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,authIdentity), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,authIdentity), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,authIdentity), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,authIdentity), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,authIdentity), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,authIdentity), '2026-07-01T05:51:27Z', agent).
 derived_from(rel(foodSelections_route,depends_on,lib_types), agent_scan).
 source_files(rel(foodSelections_route,depends_on,lib_types), ['src/server/routes/foodSelections.ts']).
-source_hash(rel(foodSelections_route,depends_on,lib_types), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel(foodSelections_route,depends_on,lib_types), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(rel(foodSelections_route,depends_on,lib_types), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel(foodSelections_route,depends_on,lib_types), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(rel(foodSelections_route,depends_on,lib_types), "What are the import dependencies between server modules?").
 derived_at(rel(foodSelections_route,depends_on,lib_types), '2026-07-01T05:51:27Z', agent).
 derived_from(entity(pollCreation,service), agent_scan).
@@ -1177,8 +1177,8 @@ derivation_query(rel(sse,depends_on,pollCreation), "What are the import dependen
 derived_at(rel(sse,depends_on,pollCreation), '2026-07-01T12:01:09Z', agent).
 derived_from(entity(db,module), agent_scan).
 source_files(entity(db,module), ['src/server/db.ts']).
-source_hash(entity(db,module), 'sha256:917b065d04ea3c21368011ef0e65a94ce81c5e5d84b7901f0d9663842bff494e').
-source_file_hashes(entity(db,module), ['sha256:917b065d04ea3c21368011ef0e65a94ce81c5e5d84b7901f0d9663842bff494e']).
+source_hash(entity(db,module), 'sha256:68fcca4aa52a8f895efe83ce1b653a5c7dcc771bb8907548afba1b80753fc2b2').
+source_file_hashes(entity(db,module), ['sha256:68fcca4aa52a8f895efe83ce1b653a5c7dcc771bb8907548afba1b80753fc2b2']).
 derivation_query(entity(db,module), "server module dependency graph").
 derived_at(entity(db,module), '2026-07-06T11:39:00Z', agent).
 derived_from(entity(mealRecommendation,service), agent_scan).
@@ -1423,62 +1423,62 @@ derivation_query(prop('GET:/api/menus',mutates_state,false), "REST endpoint auth
 derived_at(prop('GET:/api/menus',mutates_state,false), '2026-07-06T11:47:23Z', agent).
 derived_from(entity('GET:/api/food-selections/active',endpoint), agent_scan).
 source_files(entity('GET:/api/food-selections/active',endpoint), ['src/server/routes/foodSelections.ts']).
-source_hash(entity('GET:/api/food-selections/active',endpoint), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(entity('GET:/api/food-selections/active',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(entity('GET:/api/food-selections/active',endpoint), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(entity('GET:/api/food-selections/active',endpoint), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(entity('GET:/api/food-selections/active',endpoint), "REST endpoint auth and state-mutation surface").
 derived_at(entity('GET:/api/food-selections/active',endpoint), '2026-07-06T11:47:24Z', agent).
 derived_from(prop('GET:/api/food-selections/active',method,get), agent_scan).
 source_files(prop('GET:/api/food-selections/active',method,get), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/active',method,get), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/active',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/active',method,get), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/active',method,get), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/active',method,get), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/active',method,get), '2026-07-06T11:47:25Z', agent).
 derived_from(prop('GET:/api/food-selections/active',mutates_state,false), agent_scan).
 source_files(prop('GET:/api/food-selections/active',mutates_state,false), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/active',mutates_state,false), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/active',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/active',mutates_state,false), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/active',mutates_state,false), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/active',mutates_state,false), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/active',mutates_state,false), '2026-07-06T11:47:27Z', agent).
 derived_from(entity('GET:/api/food-selections/history',endpoint), agent_scan).
 source_files(entity('GET:/api/food-selections/history',endpoint), ['src/server/routes/foodSelections.ts']).
-source_hash(entity('GET:/api/food-selections/history',endpoint), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(entity('GET:/api/food-selections/history',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(entity('GET:/api/food-selections/history',endpoint), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(entity('GET:/api/food-selections/history',endpoint), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(entity('GET:/api/food-selections/history',endpoint), "REST endpoint auth and state-mutation surface").
 derived_at(entity('GET:/api/food-selections/history',endpoint), '2026-07-06T11:47:27Z', agent).
 derived_from(prop('GET:/api/food-selections/history',method,get), agent_scan).
 source_files(prop('GET:/api/food-selections/history',method,get), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/history',method,get), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/history',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/history',method,get), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/history',method,get), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/history',method,get), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/history',method,get), '2026-07-06T11:47:28Z', agent).
 derived_from(prop('GET:/api/food-selections/history',mutates_state,false), agent_scan).
 source_files(prop('GET:/api/food-selections/history',mutates_state,false), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/history',mutates_state,false), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/history',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/history',mutates_state,false), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/history',mutates_state,false), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/history',mutates_state,false), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/history',mutates_state,false), '2026-07-06T11:47:29Z', agent).
 derived_from(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), agent_scan).
 source_files(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), ['src/server/routes/foodSelections.ts']).
-source_hash(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), "REST endpoint auth and state-mutation surface").
 derived_at(entity('GET:/api/food-selections/:id/fallback-candidates',endpoint), '2026-07-06T11:47:30Z', agent).
 derived_from(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), agent_scan).
 source_files(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/:id/fallback-candidates',method,get), '2026-07-06T11:47:31Z', agent).
 derived_from(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), agent_scan).
 source_files(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/:id/fallback-candidates',path,'/api/food-selections/:id/fallback-candidates'), '2026-07-06T11:47:32Z', agent).
 derived_from(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), agent_scan).
 source_files(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/:id/fallback-candidates',mutates_state,false), '2026-07-06T11:47:32Z', agent).
 derived_from(entity('GET:/api/polls/active',endpoint), agent_scan).
@@ -1591,20 +1591,20 @@ derivation_query(prop('GET:/api/menus',requires_auth,true), "REST endpoint auth 
 derived_at(prop('GET:/api/menus',requires_auth,true), '2026-07-06T11:47:47Z', agent).
 derived_from(prop('GET:/api/food-selections/active',requires_auth,true), agent_scan).
 source_files(prop('GET:/api/food-selections/active',requires_auth,true), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/active',requires_auth,true), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/active',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/active',requires_auth,true), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/active',requires_auth,true), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/active',requires_auth,true), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/active',requires_auth,true), '2026-07-06T11:47:47Z', agent).
 derived_from(prop('GET:/api/food-selections/history',requires_auth,true), agent_scan).
 source_files(prop('GET:/api/food-selections/history',requires_auth,true), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/history',requires_auth,true), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/history',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/history',requires_auth,true), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/history',requires_auth,true), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/history',requires_auth,true), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/history',requires_auth,true), '2026-07-06T11:47:48Z', agent).
 derived_from(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), agent_scan).
 source_files(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/:id/fallback-candidates',requires_auth,true), '2026-07-06T11:47:49Z', agent).
 derived_from(prop('GET:/api/polls/active',requires_auth,true), agent_scan).
@@ -1639,14 +1639,14 @@ derivation_query(prop('GET:/api/shopping-list',path,'/api/shopping-list'), "REST
 derived_at(prop('GET:/api/shopping-list',path,'/api/shopping-list'), '2026-07-06T11:49:37Z', agent).
 derived_from(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), agent_scan).
 source_files(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/active',path,'/api/food-selections/active'), '2026-07-06T11:49:38Z', agent).
 derived_from(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), agent_scan).
 source_files(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), ['src/server/routes/foodSelections.ts']).
-source_hash(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
+source_hash(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
 derivation_query(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), "REST endpoint auth and state-mutation surface").
 derived_at(prop('GET:/api/food-selections/history',path,'/api/food-selections/history'), '2026-07-06T11:49:40Z', agent).
 derived_from(prop('GET:/api/polls/active',path,'/api/polls/active'), agent_scan).
@@ -1801,12 +1801,6 @@ source_hash(entity('src/server/buildInfo.ts',module), 'sha256:a2bf676d57336694cb
 source_file_hashes(entity('src/server/buildInfo.ts',module), ['sha256:a2bf676d57336694cb438f70daaf8efbe3f6e283a28272e1db1df49dbe9b45e3']).
 derivation_query(entity('src/server/buildInfo.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/buildInfo.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/db.ts',module), scanner_scan).
-source_files(entity('src/server/db.ts',module), ['src/server/db.ts']).
-source_hash(entity('src/server/db.ts',module), 'sha256:917b065d04ea3c21368011ef0e65a94ce81c5e5d84b7901f0d9663842bff494e').
-source_file_hashes(entity('src/server/db.ts',module), ['sha256:917b065d04ea3c21368011ef0e65a94ce81c5e5d84b7901f0d9663842bff494e']).
-derivation_query(entity('src/server/db.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/db.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/routes/routeUtils.ts',module), scanner_scan).
 source_files(entity('src/server/routes/routeUtils.ts',module), ['src/server/routes/routeUtils.ts']).
 source_hash(entity('src/server/routes/routeUtils.ts',module), 'sha256:fc1284394050f5eb1f1b0a4bf6803700f31753a4f6ba276e6d09b4f6aaf8f8bc').
@@ -1885,12 +1879,6 @@ source_hash(entity('src/server/services/mealRecommendationAi.ts',module), 'sha25
 source_file_hashes(entity('src/server/services/mealRecommendationAi.ts',module), ['sha256:cbc955de85f7b6fcdd054b665a5a0bd004d29f3415e2f1b298f3f2bef1e180b8']).
 derivation_query(entity('src/server/services/mealRecommendationAi.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/services/mealRecommendationAi.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/services/menu.ts',module), scanner_scan).
-source_files(entity('src/server/services/menu.ts',module), ['src/server/services/menu.ts']).
-source_hash(entity('src/server/services/menu.ts',module), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(entity('src/server/services/menu.ts',module), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(entity('src/server/services/menu.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/services/menu.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('src/server/services/officeContext.ts',module), scanner_scan).
 source_files(entity('src/server/services/officeContext.ts',module), ['src/server/services/officeContext.ts']).
 source_hash(entity('src/server/services/officeContext.ts',module), 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d').
@@ -1957,12 +1945,6 @@ source_hash(entity('src/server/services/mealAnticipatedLikes.ts',module), 'sha25
 source_file_hashes(entity('src/server/services/mealAnticipatedLikes.ts',module), ['sha256:c4dd7f0a8e1d5a28572a5379a4364e5f90323bb68739b56e8cf9eeaf7ca82379']).
 derivation_query(entity('src/server/services/mealAnticipatedLikes.ts',module), "import graph (scip-typescript)").
 derived_at(entity('src/server/services/mealAnticipatedLikes.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/server/routes/foodSelections.ts',module), scanner_scan).
-source_files(entity('src/server/routes/foodSelections.ts',module), ['src/server/routes/foodSelections.ts']).
-source_hash(entity('src/server/routes/foodSelections.ts',module), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(entity('src/server/routes/foodSelections.ts',module), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(entity('src/server/routes/foodSelections.ts',module), "import graph (scip-typescript)").
-derived_at(entity('src/server/routes/foodSelections.ts',module), '2026-10-01T12:42:12Z', agent).
 derived_from(entity('src/server/services/mealRecommendationEval.ts',module), scanner_scan).
 source_files(entity('src/server/services/mealRecommendationEval.ts',module), ['src/server/services/mealRecommendationEval.ts']).
 source_hash(entity('src/server/services/mealRecommendationEval.ts',module), 'sha256:60f3a8b628e42e5ae479f2822bb80ad19e485835b476a1d003e389cc5eef55e1').
@@ -2137,12 +2119,6 @@ source_hash(entity('src/client/components/ui/Input.tsx',module), 'sha256:00efcaf
 source_file_hashes(entity('src/client/components/ui/Input.tsx',module), ['sha256:00efcaf2462f231501dc942afbef6f07110c4bfc6964cbca07ecf95b35f4111b']).
 derivation_query(entity('src/client/components/ui/Input.tsx',module), "import graph (scip-typescript)").
 derived_at(entity('src/client/components/ui/Input.tsx',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('src/client/components/FoodSelectionCompletedView.tsx',module), scanner_scan).
-source_files(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(entity('src/client/components/FoodSelectionCompletedView.tsx',module), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(entity('src/client/components/FoodSelectionCompletedView.tsx',module), "import graph (scip-typescript)").
-derived_at(entity('src/client/components/FoodSelectionCompletedView.tsx',module), '2026-10-01T13:19:06Z', agent).
 derived_from(entity('src/client/components/MinutesActionDropdown.tsx',module), scanner_scan).
 source_files(entity('src/client/components/MinutesActionDropdown.tsx',module), ['src/client/components/MinutesActionDropdown.tsx']).
 source_hash(entity('src/client/components/MinutesActionDropdown.tsx',module), 'sha256:76452f3232f6a9dceb1536ca773c35d691c1d8951c155242fc5f9024d8810a55').
@@ -2449,12 +2425,6 @@ source_hash(entity('tests/server/display-name-identity.test.ts',module), 'sha256
 source_file_hashes(entity('tests/server/display-name-identity.test.ts',module), ['sha256:81d0c13425dee6722c5dae4ccc100e6328ab430a9add4373133d6397b9e14552']).
 derivation_query(entity('tests/server/display-name-identity.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/server/display-name-identity.test.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/server/food-order-rating-export.test.ts',module), scanner_scan).
-source_files(entity('tests/server/food-order-rating-export.test.ts',module), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(entity('tests/server/food-order-rating-export.test.ts',module), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(entity('tests/server/food-order-rating-export.test.ts',module), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(entity('tests/server/food-order-rating-export.test.ts',module), "import graph (scip-typescript)").
-derived_at(entity('tests/server/food-order-rating-export.test.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('tests/server/food-selection-authz.test.ts',module), scanner_scan).
 source_files(entity('tests/server/food-selection-authz.test.ts',module), ['tests/server/food-selection-authz.test.ts']).
 source_hash(entity('tests/server/food-selection-authz.test.ts',module), 'sha256:3aad7cd7b03c653105b5956a9761a6db90419c56c70cdc9ab20fd946e72205cd').
@@ -2599,12 +2569,6 @@ source_hash(entity('tests/server/menu-routes.test.ts',module), 'sha256:eae1969dd
 source_file_hashes(entity('tests/server/menu-routes.test.ts',module), ['sha256:eae1969ddfebdf4b1b78ca414903fc8e2a084d267c2180a1c0909b066fa9652e']).
 derivation_query(entity('tests/server/menu-routes.test.ts',module), "import graph (scip-typescript)").
 derived_at(entity('tests/server/menu-routes.test.ts',module), '2026-10-01T11:44:13Z', agent).
-derived_from(entity('tests/server/menu-service.test.ts',module), scanner_scan).
-source_files(entity('tests/server/menu-service.test.ts',module), ['tests/server/menu-service.test.ts']).
-source_hash(entity('tests/server/menu-service.test.ts',module), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(entity('tests/server/menu-service.test.ts',module), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(entity('tests/server/menu-service.test.ts',module), "import graph (scip-typescript)").
-derived_at(entity('tests/server/menu-service.test.ts',module), '2026-10-01T11:44:13Z', agent).
 derived_from(entity('tests/server/notification-email.test.ts',module), scanner_scan).
 source_files(entity('tests/server/notification-email.test.ts',module), ['tests/server/notification-email.test.ts']).
 source_hash(entity('tests/server/notification-email.test.ts',module), 'sha256:c26d457c4c252219e52a9526207247028715c750a6a0f316e920871584b37b3e').
@@ -3115,54 +3079,6 @@ source_hash(rel('src/server/services/mealRecommendationAi.ts',depends_on,'src/li
 source_file_hashes(rel('src/server/services/mealRecommendationAi.ts',depends_on,'src/lib/types.ts'), ['sha256:cbc955de85f7b6fcdd054b665a5a0bd004d29f3415e2f1b298f3f2bef1e180b8']).
 derivation_query(rel('src/server/services/mealRecommendationAi.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/services/mealRecommendationAi.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), ['src/server/services/menu.ts']).
-source_hash(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), 'sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b').
-source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), ['sha256:a92d00abe8c00a73134f71b61e596e11c0817a7afa14997a3cdb29cbf97e774b']).
-derivation_query(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
 derived_from(rel('src/server/services/officeContext.ts',depends_on,'src/server/services/authSession.ts'), scanner_scan).
 source_files(rel('src/server/services/officeContext.ts',depends_on,'src/server/services/authSession.ts'), ['src/server/services/officeContext.ts']).
 source_hash(rel('src/server/services/officeContext.ts',depends_on,'src/server/services/authSession.ts'), 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d').
@@ -3535,78 +3451,6 @@ source_hash(rel('src/server/services/mealAnticipatedLikes.ts',depends_on,'src/li
 source_file_hashes(rel('src/server/services/mealAnticipatedLikes.ts',depends_on,'src/lib/types.ts'), ['sha256:c4dd7f0a8e1d5a28572a5379a4364e5f90323bb68739b56e8cf9eeaf7ca82379']).
 derivation_query(rel('src/server/services/mealAnticipatedLikes.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/server/services/mealAnticipatedLikes.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), '2026-10-01T12:42:12Z', agent).
-derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), ['src/server/routes/foodSelections.ts']).
-source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), 'sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638').
-source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638']).
-derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), '2026-10-01T12:42:12Z', agent).
 derived_from(rel('src/server/services/mealRecommendationEval.ts',depends_on,'src/server/db.ts'), scanner_scan).
 source_files(rel('src/server/services/mealRecommendationEval.ts',depends_on,'src/server/db.ts'), ['src/server/services/mealRecommendationEval.ts']).
 source_hash(rel('src/server/services/mealRecommendationEval.ts',depends_on,'src/server/db.ts'), 'sha256:60f3a8b628e42e5ae479f2822bb80ad19e485835b476a1d003e389cc5eef55e1').
@@ -4135,60 +3979,6 @@ source_hash(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/
 source_file_hashes(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), ['sha256:00efcaf2462f231501dc942afbef6f07110c4bfc6964cbca07ecf95b35f4111b']).
 derivation_query(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/ui/Input.tsx',depends_on,'src/client/lib/cn.ts'), '2026-10-01T11:44:13Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-01T13:19:06Z', agent).
 derived_from(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
 source_files(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/MinutesActionDropdown.tsx']).
 source_hash(rel('src/client/components/MinutesActionDropdown.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:76452f3232f6a9dceb1536ca773c35d691c1d8951c155242fc5f9024d8810a55').
@@ -5623,60 +5413,6 @@ source_hash(rel('tests/server/display-name-identity.test.ts',depends_on,'src/lib
 source_file_hashes(rel('tests/server/display-name-identity.test.ts',depends_on,'src/lib/types.ts'), ['sha256:81d0c13425dee6722c5dae4ccc100e6328ab430a9add4373133d6397b9e14552']).
 derivation_query(rel('tests/server/display-name-identity.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/display-name-identity.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), ['tests/server/food-order-rating-export.test.ts']).
-source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), 'sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8').
-source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), ['sha256:fa4c1558e92db41353ea531ecf188bb2d30e34abd07d8a320272d411bffb17b8']).
-derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
 derived_from(rel('tests/server/food-selection-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
 source_files(rel('tests/server/food-selection-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/food-selection-authz.test.ts']).
 source_hash(rel('tests/server/food-selection-authz.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:3aad7cd7b03c653105b5956a9761a6db90419c56c70cdc9ab20fd946e72205cd').
@@ -6559,36 +6295,6 @@ source_hash(rel('tests/server/menu-routes.test.ts',depends_on,'src/lib/types.ts'
 source_file_hashes(rel('tests/server/menu-routes.test.ts',depends_on,'src/lib/types.ts'), ['sha256:eae1969ddfebdf4b1b78ca414903fc8e2a084d267c2180a1c0909b066fa9652e']).
 derivation_query(rel('tests/server/menu-routes.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
 derived_at(rel('tests/server/menu-routes.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
-source_files(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/menu-service.test.ts']).
-source_hash(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), scanner_scan).
-source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), ['tests/server/menu-service.test.ts']).
-source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/menu-service.test.ts']).
-source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), ['tests/server/menu-service.test.ts']).
-source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), '2026-10-01T11:44:14Z', agent).
-derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), ['tests/server/menu-service.test.ts']).
-source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), 'sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a').
-source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), ['sha256:a70a25ebfee71c663b6e81c7abf0d890271bf0213ee7cc78000a3d77d6e2c19a']).
-derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), "import graph (scip-typescript)").
-derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T11:44:14Z', agent).
 derived_from(rel('tests/server/notification-email.test.ts',depends_on,'src/server/services/notificationEmail.ts'), scanner_scan).
 source_files(rel('tests/server/notification-email.test.ts',depends_on,'src/server/services/notificationEmail.ts'), ['tests/server/notification-email.test.ts']).
 source_hash(rel('tests/server/notification-email.test.ts',depends_on,'src/server/services/notificationEmail.ts'), 'sha256:c26d457c4c252219e52a9526207247028715c750a6a0f316e920871584b37b3e').
@@ -7911,38 +7617,38 @@ derivation_query(rel('tests/server/ordering-policy-history.test.ts',depends_on,'
 derived_at(rel('tests/server/ordering-policy-history.test.ts',depends_on,'src/lib/types.ts'), '2026-10-01T12:42:13Z', agent).
 derived_from(entity('GET:/api/food-selections/:id',endpoint), agent_scan).
 source_files(entity('GET:/api/food-selections/:id',endpoint), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(entity('GET:/api/food-selections/:id',endpoint), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(entity('GET:/api/food-selections/:id',endpoint), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(entity('GET:/api/food-selections/:id',endpoint), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(entity('GET:/api/food-selections/:id',endpoint), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(entity('GET:/api/food-selections/:id',endpoint), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(entity('GET:/api/food-selections/:id',endpoint), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',method,get), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',method,get), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',method,get), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(prop('GET:/api/food-selections/:id',method,get), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',method,get), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(prop('GET:/api/food-selections/:id',method,get), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',method,get), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',method,get), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',path,'/api/food-selections/:id'), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',mutates_state,false), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',mutates_state,false), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',mutates_state,false), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(prop('GET:/api/food-selections/:id',mutates_state,false), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',mutates_state,false), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(prop('GET:/api/food-selections/:id',mutates_state,false), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',mutates_state,false), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',mutates_state,false), '2026-10-01T12:43:15Z', agent).
 derived_from(prop('GET:/api/food-selections/:id',requires_auth,true), agent_scan).
 source_files(prop('GET:/api/food-selections/:id',requires_auth,true), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(prop('GET:/api/food-selections/:id',requires_auth,true), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(prop('GET:/api/food-selections/:id',requires_auth,true), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(prop('GET:/api/food-selections/:id',requires_auth,true), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(prop('GET:/api/food-selections/:id',requires_auth,true), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(prop('GET:/api/food-selections/:id',requires_auth,true), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(prop('GET:/api/food-selections/:id',requires_auth,true), '2026-10-01T12:43:15Z', agent).
 derived_from(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), agent_scan).
 source_files(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['src/server/routes/foodSelections.ts', 'src/server/services/foodSelection.ts', 'src/server/routes/authIdentity.ts', 'src/server/services/officeContext.ts', 'tests/server/ordering-policy-history.test.ts']).
-source_hash(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), 'sha256:523783bcb77e539b8b80ffdf579789d7c6b08637198c441651aa127245f6bee0').
-source_file_hashes(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['sha256:c958a87892a7af3895ed9ad60c68fc71e11cdb72771bdc0e737ad09382756638', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
+source_hash(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), 'sha256:7f45c1d88c0a7d42cecf9ecddc39914ba2f94abcecbafed1563c0280579af04e').
+source_file_hashes(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:30a4da6b02c665a7fd85a085734fb09427c0c2502bb68b3a6c07c5a72c12f062', 'sha256:0c7fd471cb37c785a4f3854d4f126b15a7a65e79de374eccbc79cefe24522b8d', 'sha256:e20887265701cb2b6836058eab1609f3f2a08d345ab2324be551ed0f555aeab8']).
 derivation_query(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), "T010 food-selection detail authenticates, resolves office scope, and projects original Poll exceptions only for signed admins").
 derived_at(rel(foodSelections_route,exposes,'GET:/api/food-selections/:id'), '2026-10-01T12:43:15Z', agent).
 derived_from(entity('src/client/components/OrderingPolicyExceptionDetails.tsx',module), scanner_scan).
@@ -7981,12 +7687,6 @@ source_hash(rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depen
 source_file_hashes(rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), ['sha256:d97887b7c72611c7c29fa72733849381032a374a536c899b846fb9ccfaa8133f']).
 derivation_query(rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), "import graph (scip-typescript)").
 derived_at(rel('src/client/components/OrderingPolicyExceptionDetails.tsx',depends_on,'src/client/context/AdminOfficeContext.tsx'), '2026-10-01T13:19:06Z', agent).
-derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), scanner_scan).
-source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
-source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), 'sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8').
-source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), ['sha256:8e33c6e0c0da3b8a4402cb0fa96bf386bc25739f71909ea5bdabab71afde6ed8']).
-derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), "import graph (scip-typescript)").
-derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), '2026-10-01T13:19:06Z', agent).
 derived_from(rel('src/client/App.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), scanner_scan).
 source_files(rel('src/client/App.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), ['src/client/App.tsx']).
 source_hash(rel('src/client/App.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), 'sha256:e9acf65e3dd471bc92257a749e516f7d9a9b4968de34c732678a7a390bc0d2e4').
@@ -8029,24 +7729,6 @@ source_hash(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/
 source_file_hashes(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), ['sha256:b541ee329ccb4b2270f3b4bb6b5341b5362afaa50a0ceebfefe058bb7193fd25']).
 derivation_query(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), "import graph (scip-typescript)").
 derived_at(rel('tests/client/OrderingPolicyHistory.test.tsx',depends_on,'tests/client/helpers.tsx'), '2026-10-01T13:19:07Z', agent).
-derived_from(entity('src/client/api.ts',module), scanner_scan).
-source_files(entity('src/client/api.ts',module), ['src/client/api.ts']).
-source_hash(entity('src/client/api.ts',module), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
-source_file_hashes(entity('src/client/api.ts',module), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
-derivation_query(entity('src/client/api.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(entity('src/client/api.ts',module), '2026-10-02T07:16:36Z', agent).
-derived_from(rel('src/client/api.ts',depends_on,'src/client/config.ts'), scanner_scan).
-source_files(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['src/client/api.ts']).
-source_hash(rel('src/client/api.ts',depends_on,'src/client/config.ts'), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
-source_file_hashes(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
-derivation_query(rel('src/client/api.ts',depends_on,'src/client/config.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/client/api.ts',depends_on,'src/client/config.ts'), '2026-10-02T07:16:37Z', agent).
-derived_from(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['src/client/api.ts']).
-source_hash(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), 'sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50').
-source_file_hashes(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['sha256:40aac17d114e0fbb9c44c026295763391c344879e762f0ea8f3971931a14cb50']).
-derivation_query(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:16:38Z', agent).
 derived_from(entity('src/client/context/AppContext.tsx',module), scanner_scan).
 source_files(entity('src/client/context/AppContext.tsx',module), ['src/client/context/AppContext.tsx']).
 source_hash(entity('src/client/context/AppContext.tsx',module), 'sha256:bbd4c9b8254d013c418ced25570c7f95c51316eb68128f829761c72b4b05453c').
@@ -8197,42 +7879,6 @@ source_hash(entity('src/lib/types.ts',module), 'sha256:4b0138bb13b21b8d8e403ba1b
 source_file_hashes(entity('src/lib/types.ts',module), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe']).
 derivation_query(entity('src/lib/types.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
 derived_at(entity('src/lib/types.ts',module), '2026-10-02T07:17:02Z', agent).
-derived_from(entity('src/server/services/foodSelection.ts',module), scanner_scan).
-source_files(entity('src/server/services/foodSelection.ts',module), ['src/server/services/foodSelection.ts']).
-source_hash(entity('src/server/services/foodSelection.ts',module), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(entity('src/server/services/foodSelection.ts',module), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(entity('src/server/services/foodSelection.ts',module), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(entity('src/server/services/foodSelection.ts',module), '2026-10-02T07:17:03Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), '2026-10-02T07:17:05Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), '2026-10-02T07:17:06Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), '2026-10-02T07:17:07Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T07:17:08Z', agent).
-derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), scanner_scan).
-source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['src/server/services/foodSelection.ts']).
-source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5').
-source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
-derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), "T017 scoped import graph (relative TypeScript imports with .js source resolution)").
-derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), '2026-10-02T07:17:09Z', agent).
 derived_from(entity('src/server/services/officeLocation.ts',module), scanner_scan).
 source_files(entity('src/server/services/officeLocation.ts',module), ['src/server/services/officeLocation.ts']).
 source_hash(entity('src/server/services/officeLocation.ts',module), 'sha256:e3262c7af8d9d5fc7570b9243be141ee3877a8a5f86074d71e63a38b3cd3a705').
@@ -8511,14 +8157,14 @@ derivation_query(rel(sse,uses,'OrderingPolicyAvailability'), "T017 shared office
 derived_at(rel(sse,uses,'OrderingPolicyAvailability'), '2026-10-02T07:19:07Z', agent).
 derived_from(entity(ordering_policy_changed,event), agent_scan).
 source_files(entity(ordering_policy_changed,event), ['src/lib/types.ts', 'src/server/sse.ts', 'src/server/services/foodSelection.ts']).
-source_hash(entity(ordering_policy_changed,event), 'sha256:fb1102aa2f10e48b6de056e1ec7903e6203e15814803005efe55b88ed2c9cd32').
-source_file_hashes(entity(ordering_policy_changed,event), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(entity(ordering_policy_changed,event), 'sha256:6f53d73e7d312779cae5a7b72fb7ca6c44348b882d8551d1665a5d65eba2a81a').
+source_file_hashes(entity(ordering_policy_changed,event), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(entity(ordering_policy_changed,event), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
 derived_at(entity(ordering_policy_changed,event), '2026-10-02T07:19:07Z', agent).
 derived_from(prop(ordering_policy_changed,scoped_by,office_location), agent_scan).
 source_files(prop(ordering_policy_changed,scoped_by,office_location), ['src/lib/types.ts', 'src/server/sse.ts', 'src/server/services/foodSelection.ts']).
-source_hash(prop(ordering_policy_changed,scoped_by,office_location), 'sha256:fb1102aa2f10e48b6de056e1ec7903e6203e15814803005efe55b88ed2c9cd32').
-source_file_hashes(prop(ordering_policy_changed,scoped_by,office_location), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5']).
+source_hash(prop(ordering_policy_changed,scoped_by,office_location), 'sha256:6f53d73e7d312779cae5a7b72fb7ca6c44348b882d8551d1665a5d65eba2a81a').
+source_file_hashes(prop(ordering_policy_changed,scoped_by,office_location), ['sha256:4b0138bb13b21b8d8e403ba1b65d0283bcbf6bc07fa61eeb6e89a9d38a5eaffe', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055', 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
 derivation_query(prop(ordering_policy_changed,scoped_by,office_location), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
 derived_at(prop(ordering_policy_changed,scoped_by,office_location), '2026-10-02T07:19:07Z', agent).
 derived_from(rel(officeLocation,emits,ordering_policy_changed), agent_scan).
@@ -8529,8 +8175,8 @@ derivation_query(rel(officeLocation,emits,ordering_policy_changed), "T017 shared
 derived_at(rel(officeLocation,emits,ordering_policy_changed), '2026-10-02T07:19:07Z', agent).
 derived_from(rel(foodSelection,emits,ordering_policy_changed), agent_scan).
 source_files(rel(foodSelection,emits,ordering_policy_changed), ['src/server/services/foodSelection.ts', 'src/server/sse.ts']).
-source_hash(rel(foodSelection,emits,ordering_policy_changed), 'sha256:2f648d9813ccdb5ee863a3ec1324ba7ae3739251ed0cdc9cd967fedf1860bc25').
-source_file_hashes(rel(foodSelection,emits,ordering_policy_changed), ['sha256:221b08b95f7d13e6203d790c14e357dbb8dabbfee2322c94d5054d1bffb1e2e5', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
+source_hash(rel(foodSelection,emits,ordering_policy_changed), 'sha256:371e7e48a996abace2cdba56806f2f144972f0fd92ae23ca972fa73279ded15c').
+source_file_hashes(rel(foodSelection,emits,ordering_policy_changed), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a', 'sha256:1cbb01606c786808b6ed50db789898a093673976069d466acc967234fa72c055']).
 derivation_query(rel(foodSelection,emits,ordering_policy_changed), "T017 shared office-calendar ordering evaluator; authenticated no-store REST and SSE expose public availability only; office-scoped invalidation after effective settings changes or arrival confirmation").
 derived_at(rel(foodSelection,emits,ordering_policy_changed), '2026-10-02T07:19:07Z', agent).
 derived_from(rel('src/client/hooks/useSSE.ts',consumes,ordering_policy_changed), agent_scan).
@@ -8665,3 +8311,345 @@ source_hash(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.t
 source_file_hashes(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), ['sha256:ee6ecfc7c08cd84b27301e358fd3edf66e79850f9fef2a5ede7f3fdac806864e']).
 derivation_query(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), "T017 scoped feature-test import graph (relative TypeScript imports with .js source resolution; existing facts only)").
 derived_at(rel('tests/client/PollIdleView.test.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T07:23:29Z', agent).
+derived_from(entity('src/server/db.ts',module), scanner_scan).
+source_files(entity('src/server/db.ts',module), ['src/server/db.ts']).
+source_hash(entity('src/server/db.ts',module), 'sha256:68fcca4aa52a8f895efe83ce1b653a5c7dcc771bb8907548afba1b80753fc2b2').
+source_file_hashes(entity('src/server/db.ts',module), ['sha256:68fcca4aa52a8f895efe83ce1b653a5c7dcc771bb8907548afba1b80753fc2b2']).
+derivation_query(entity('src/server/db.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/server/db.ts',module), '2026-10-02T09:34:04Z', agent).
+derived_from(entity('src/server/services/menu.ts',module), scanner_scan).
+source_files(entity('src/server/services/menu.ts',module), ['src/server/services/menu.ts']).
+source_hash(entity('src/server/services/menu.ts',module), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(entity('src/server/services/menu.ts',module), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(entity('src/server/services/menu.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/server/services/menu.ts',module), '2026-10-02T09:34:06Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/lib/menuItemTags.ts'), '2026-10-02T09:34:07Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/lib/types.ts'), '2026-10-02T09:34:08Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/db.ts'), '2026-10-02T09:34:09Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealFeatures.ts'), '2026-10-02T09:34:10Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealItemIdentity.ts'), '2026-10-02T09:34:12Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/mealRecommendationAi.ts'), '2026-10-02T09:34:13Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T09:34:14Z', agent).
+derived_from(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), scanner_scan).
+source_files(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), ['src/server/services/menu.ts']).
+source_hash(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), 'sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408').
+source_file_hashes(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), ['sha256:9c09116bb9d32ead33ff9819d092c7b34f3c187b954d8ed532cfc6e582db9408']).
+derivation_query(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/menu.ts',depends_on,'src/server/sse.ts'), '2026-10-02T09:34:15Z', agent).
+derived_from(entity('src/server/services/foodSelection.ts',module), scanner_scan).
+source_files(entity('src/server/services/foodSelection.ts',module), ['src/server/services/foodSelection.ts']).
+source_hash(entity('src/server/services/foodSelection.ts',module), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(entity('src/server/services/foodSelection.ts',module), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(entity('src/server/services/foodSelection.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/server/services/foodSelection.ts',module), '2026-10-02T09:34:16Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/lib/types.ts'), '2026-10-02T09:34:18Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/db.ts'), '2026-10-02T09:34:19Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/notificationEmail.ts'), '2026-10-02T09:34:20Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T09:34:21Z', agent).
+derived_from(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), scanner_scan).
+source_files(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['src/server/services/foodSelection.ts']).
+source_hash(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), 'sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a').
+source_file_hashes(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), ['sha256:0601b269e561aff49d290a5d2445a20516ac83a27f3d60091d63fe8db777c09a']).
+derivation_query(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/services/foodSelection.ts',depends_on,'src/server/sse.ts'), '2026-10-02T09:34:22Z', agent).
+derived_from(entity('src/server/routes/foodSelections.ts',module), scanner_scan).
+source_files(entity('src/server/routes/foodSelections.ts',module), ['src/server/routes/foodSelections.ts']).
+source_hash(entity('src/server/routes/foodSelections.ts',module), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(entity('src/server/routes/foodSelections.ts',module), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(entity('src/server/routes/foodSelections.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/server/routes/foodSelections.ts',module), '2026-10-02T09:34:23Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/lib/types.ts'), '2026-10-02T09:34:25Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/db.ts'), '2026-10-02T09:34:26Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/authIdentity.ts'), '2026-10-02T09:34:27Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/routes/routeUtils.ts'), '2026-10-02T09:34:28Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/authAccess.ts'), '2026-10-02T09:34:29Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/foodSelection.ts'), '2026-10-02T09:34:30Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealAnticipatedLikes.ts'), '2026-10-02T09:34:32Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendation.ts'), '2026-10-02T09:34:33Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationExplore.ts'), '2026-10-02T09:34:34Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/mealRecommendationPreVote.ts'), '2026-10-02T09:34:35Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/officeContext.ts'), '2026-10-02T09:34:36Z', agent).
+derived_from(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
+source_files(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), ['src/server/routes/foodSelections.ts']).
+source_hash(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), 'sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b').
+source_file_hashes(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), ['sha256:387696403a1e22651b3ecce8b0724baa79282a8caae72509fa8249d41e1b9a7b']).
+derivation_query(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/server/routes/foodSelections.ts',depends_on,'src/server/services/poll.ts'), '2026-10-02T09:34:37Z', agent).
+derived_from(entity('src/client/api.ts',module), scanner_scan).
+source_files(entity('src/client/api.ts',module), ['src/client/api.ts']).
+source_hash(entity('src/client/api.ts',module), 'sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e').
+source_file_hashes(entity('src/client/api.ts',module), ['sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e']).
+derivation_query(entity('src/client/api.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/client/api.ts',module), '2026-10-02T09:34:39Z', agent).
+derived_from(rel('src/client/api.ts',depends_on,'src/client/config.ts'), scanner_scan).
+source_files(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['src/client/api.ts']).
+source_hash(rel('src/client/api.ts',depends_on,'src/client/config.ts'), 'sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e').
+source_file_hashes(rel('src/client/api.ts',depends_on,'src/client/config.ts'), ['sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e']).
+derivation_query(rel('src/client/api.ts',depends_on,'src/client/config.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/api.ts',depends_on,'src/client/config.ts'), '2026-10-02T09:34:40Z', agent).
+derived_from(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['src/client/api.ts']).
+source_hash(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), 'sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e').
+source_file_hashes(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), ['sha256:6c4d4b44bc48b06d1f04d710c7a4f65bc18b8070585561e962c51e5b6e2c777e']).
+derivation_query(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/api.ts',depends_on,'src/lib/types.ts'), '2026-10-02T09:34:41Z', agent).
+derived_from(entity('src/client/components/FoodSelectionCompletedView.tsx',module), scanner_scan).
+source_files(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(entity('src/client/components/FoodSelectionCompletedView.tsx',module), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(entity('src/client/components/FoodSelectionCompletedView.tsx',module), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(entity('src/client/components/FoodSelectionCompletedView.tsx',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('src/client/components/FoodSelectionCompletedView.tsx',module), '2026-10-02T09:34:42Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/api.ts'), '2026-10-02T09:34:43Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/auth.ts'), '2026-10-02T09:34:45Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderCopyStatus.tsx'), '2026-10-02T09:34:46Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/OrderingPolicyExceptionDetails.tsx'), '2026-10-02T09:34:47Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Button.tsx'), '2026-10-02T09:34:48Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Input.tsx'), '2026-10-02T09:34:49Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/components/ui/Select.tsx'), '2026-10-02T09:34:51Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/context/AppContext.tsx'), '2026-10-02T09:34:52Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/client/utils/orderCopy.ts'), '2026-10-02T09:34:53Z', agent).
+derived_from(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), scanner_scan).
+source_files(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['src/client/components/FoodSelectionCompletedView.tsx']).
+source_hash(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), 'sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28').
+source_file_hashes(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), ['sha256:00944ce661810acf4c12cf26d04a5e83eaa84ccfde5aa9f65d5408c125568c28']).
+derivation_query(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('src/client/components/FoodSelectionCompletedView.tsx',depends_on,'src/lib/types.ts'), '2026-10-02T09:34:54Z', agent).
+derived_from(entity('tests/server/menu-service.test.ts',module), scanner_scan).
+source_files(entity('tests/server/menu-service.test.ts',module), ['tests/server/menu-service.test.ts']).
+source_hash(entity('tests/server/menu-service.test.ts',module), 'sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7').
+source_file_hashes(entity('tests/server/menu-service.test.ts',module), ['sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7']).
+derivation_query(entity('tests/server/menu-service.test.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('tests/server/menu-service.test.ts',module), '2026-10-02T09:34:55Z', agent).
+derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), ['tests/server/menu-service.test.ts']).
+source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), 'sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7').
+source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), ['sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7']).
+derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/db.ts'), '2026-10-02T09:34:57Z', agent).
+derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), scanner_scan).
+source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), ['tests/server/menu-service.test.ts']).
+source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), 'sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7').
+source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), ['sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7']).
+derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/menu.ts'), '2026-10-02T09:34:58Z', agent).
+derived_from(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/menu-service.test.ts']).
+source_hash(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7').
+source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7']).
+derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/menu-service.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T09:34:59Z', agent).
+derived_from(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
+source_files(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/menu-service.test.ts']).
+source_hash(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7').
+source_file_hashes(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:66d233dfa7e71f3944bb0c5982f7fa630df395083b43c9c43cd5dad8522f0ff7']).
+derivation_query(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/menu-service.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-02T09:35:00Z', agent).
+derived_from(entity('tests/server/food-order-rating-export.test.ts',module), scanner_scan).
+source_files(entity('tests/server/food-order-rating-export.test.ts',module), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(entity('tests/server/food-order-rating-export.test.ts',module), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(entity('tests/server/food-order-rating-export.test.ts',module), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(entity('tests/server/food-order-rating-export.test.ts',module), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(entity('tests/server/food-order-rating-export.test.ts',module), '2026-10-02T09:35:02Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/db.ts'), '2026-10-02T09:35:03Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/index.ts'), '2026-10-02T09:35:04Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/authSession.ts'), '2026-10-02T09:35:05Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/foodSelection.ts'), '2026-10-02T09:35:06Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/menu.ts'), '2026-10-02T09:35:08Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/officeLocation.ts'), '2026-10-02T09:35:09Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'src/server/services/poll.ts'), '2026-10-02T09:35:10Z', agent).
+derived_from(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), scanner_scan).
+source_files(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), ['tests/server/food-order-rating-export.test.ts']).
+source_hash(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), 'sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face').
+source_file_hashes(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), ['sha256:55d50f871512489591602f8c71f338688e9d88b0fb0b610f3306fadb4424face']).
+derivation_query(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), "Merged e01cccc with origin/main 8d240d2: scoped application/test imports with .js-to-TypeScript resolution (excludes generated clients and non-code fixtures)").
+derived_at(rel('tests/server/food-order-rating-export.test.ts',depends_on,'tests/server/helpers/db.ts'), '2026-10-02T09:35:11Z', agent).

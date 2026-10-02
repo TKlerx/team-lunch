@@ -3,6 +3,7 @@ import { cleanDatabase, disconnectDatabase } from './helpers/db.js';
 import * as menuService from '../../src/server/services/menu.js';
 import { createOfficeLocation } from '../../src/server/services/officeLocation.js';
 import prisma from '../../src/server/db.js';
+import indianMenu from '../../import/menu/indian.json';
 
 // Suppress SSE broadcasts during tests
 vi.mock('../../src/server/sse.js', () => ({
@@ -383,6 +384,91 @@ describe('Menu service', () => {
     expect(result.menu.items[0].price).toBe(7.5);
   });
 
+  it('imports the full Indish menu within the transaction deadline', async () => {
+    const result = await menuService.importMenuFromJson(indianMenu);
+
+    expect(result.menu.items).toHaveLength(149);
+  }, 30_000);
+
+  it('refreshes an existing identity display-name snapshot on re-import', async () => {
+    const buildPayload = (itemName: string) => ({
+      menu: [
+        { name: 'Identity Menu', 'date-created': '2026-02-06T12:00:00Z' },
+        { category: 'All', items: [{ name: itemName, ingredients: 'Rice', price: 10 }] },
+      ],
+    });
+
+    await menuService.importMenuFromJson(buildPayload('Chicken Korma!!'));
+    await menuService.importMenuFromJson(buildPayload('CHICKEN korma'));
+
+    const identity = await prisma.menuItemIdentity.findFirstOrThrow({
+      where: { identityKey: 'chicken-korma' },
+    });
+    expect(identity.displayNameSnapshot).toBe('CHICKEN korma');
+  });
+
+  it('imports the maximum supported 1000 items with bounded bulk writes', async () => {
+    const items = Array.from({ length: 1_000 }, (_, index) => ({
+      name: `Curry ${index + 1}`,
+      ingredients: 'Rice',
+      price: 10,
+    }));
+
+    const result = await menuService.importMenuFromJson({
+      menu: [
+        { name: 'Maximum Menu', 'date-created': '2026-02-06T12:00:00Z' },
+        { category: 'All', items },
+      ],
+    });
+
+    expect(result.menu.items).toHaveLength(1_000);
+  }, 30_000);
+
+  it('rejects imports above the supported item limit before writing', async () => {
+    const items = Array.from({ length: 1_001 }, (_, index) => ({
+      name: `Item ${index + 1}`,
+      ingredients: 'Rice',
+      price: 10,
+    }));
+
+    await expect(
+      menuService.importMenuFromJson({
+        menu: [
+          { name: 'Oversized', 'date-created': '2026-02-06T12:00:00Z' },
+          { category: 'All', items },
+        ],
+      }),
+    ).rejects.toMatchObject({
+      statusCode: 400,
+      violations: expect.arrayContaining([
+        { path: 'menu', message: 'import must contain at most 1000 items' },
+      ]),
+    });
+
+    expect(await menuService.listMenus()).toHaveLength(0);
+  });
+
+  it('rolls back rows written before a derived-data failure', async () => {
+    await expect(
+      menuService.importMenuFromJson({
+        menu: [
+          { name: 'Rollback Menu', 'date-created': '2026-02-06T12:00:00Z' },
+          { category: 'All', items: [{ name: '---', ingredients: 'Rice', price: 10 }] },
+        ],
+      }),
+    ).rejects.toThrow('Menu item name must contain at least one alphanumeric character');
+
+    expect(await menuService.listMenus()).toHaveLength(0);
+  });
+
+  it('reports an expired import transaction without leaking Prisma internals', () => {
+    expect(() =>
+      menuService.throwMenuImportError(
+        Object.assign(new Error('A query cannot be executed on an expired transaction'), { code: 'P2028' }),
+      ),
+    ).toThrow('Menu import timed out before it could be saved. No changes were applied; please try again.');
+  });
+
   it('updates existing menu by name and replaces all existing items', async () => {
     const existing = await menuService.createMenu('Pizza Pronto');
     await menuService.createItem(existing.id, 'Old Item', 'Old Desc');
@@ -614,4 +700,3 @@ describe('Menu service', () => {
     expect(menus).toHaveLength(0);
   });
 });
-
