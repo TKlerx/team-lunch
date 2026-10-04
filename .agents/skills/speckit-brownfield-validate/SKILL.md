@@ -3,7 +3,7 @@ name: speckit-brownfield-validate
 description: Verify bootstrap output matches actual project structure and conventions
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: github-spec-kit
+  author: Quratulain-bilal
   source: brownfield:commands/speckit.brownfield.validate.md
 ---
 

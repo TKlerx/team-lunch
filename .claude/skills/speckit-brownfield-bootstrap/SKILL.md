@@ -3,9 +3,13 @@ name: speckit-brownfield-bootstrap
 description: Generate spec-kit configuration tailored to the existing codebase
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: github-spec-kit
-  source: brownfield:commands/speckit.brownfield.bootstrap.md
+  author: Quratulain-bilal
+  source: extension:brownfield
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Brownfield Bootstrap Skill
 
 # Bootstrap Spec-Kit
 

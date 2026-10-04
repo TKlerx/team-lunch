@@ -1,38 +1,6 @@
 {
   "schema_version": "1.0",
   "extensions": {
-    "git": {
-      "version": "1.0.0",
-      "source": "local",
-      "manifest_hash": "sha256:9731aa8143a72fbebfdb440f155038ab42642517c2b2bdbbf67c8fdbe076ed79",
-      "enabled": true,
-      "priority": 10,
-      "registered_commands": {
-        "agy": [
-          "speckit.git.feature",
-          "speckit.git.validate",
-          "speckit.git.remote",
-          "speckit.git.initialize",
-          "speckit.git.commit"
-        ],
-        "claude": [
-          "speckit.git.feature",
-          "speckit.git.validate",
-          "speckit.git.remote",
-          "speckit.git.initialize",
-          "speckit.git.commit"
-        ],
-        "codex": [
-          "speckit.git.feature",
-          "speckit.git.validate",
-          "speckit.git.remote",
-          "speckit.git.initialize",
-          "speckit.git.commit"
-        ]
-      },
-      "registered_skills": [],
-      "installed_at": "2026-06-03T08:49:52.321517+00:00"
-    },
     "brownfield": {
       "version": "1.0.0",
       "source": "local",
@@ -59,8 +27,34 @@
           "speckit.brownfield.migrate"
         ]
       },
-      "registered_skills": [],
+      "registered_skills": [
+        "speckit-brownfield-scan",
+        "speckit-brownfield-bootstrap",
+        "speckit-brownfield-validate",
+        "speckit-brownfield-migrate"
+      ],
       "installed_at": "2026-06-03T08:49:57.152645+00:00"
+    },
+    "git": {
+      "version": "1.0.1",
+      "source": {
+        "kind": "catalog",
+        "catalog": "default"
+      },
+      "manifest_hash": "sha256:698cc7089602db44622de39730555db4999cda94ab47195bcfe18f41d08b430a",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "codex": [
+          "speckit.git.feature",
+          "speckit.git.validate",
+          "speckit.git.remote",
+          "speckit.git.initialize",
+          "speckit.git.commit"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-06-03T08:49:52.321517+00:00"
     }
   }
 }

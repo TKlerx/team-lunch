@@ -4,7 +4,7 @@
 
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit-plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Note**: This template is filled in by the `$speckit-plan` command; its definition describes the execution workflow.
 
 ## Summary
 
@@ -18,13 +18,13 @@
   the iteration process.
 -->
 
-**Language/Version**: TypeScript 5.x (ESM) on Node.js — confirm or override if feature differs
+**Language/Version**: TypeScript 5.x (ESM) on Node.js 24 LTS — confirm or override if feature differs
 
-**Primary Dependencies**: Fastify 5 (backend), React 18 + Vite 6 + React Router 6 (frontend), Prisma 6 (ORM), jose (JWT). Add feature-specific deps here.
+**Primary Dependencies**: Fastify 5 (backend), React 19 + Vite 8 + React Router 7 (frontend), Prisma 7 (ORM), jose (JWT). Add feature-specific deps here.
 
 **Storage**: PostgreSQL via Prisma — `prisma/schema.prisma`
 
-**Testing**: Vitest 3 + Supertest (server), Vitest + Testing Library (client), Playwright (E2E)
+**Testing**: Vitest 4 + Supertest (server), Vitest + Testing Library (client), Playwright (E2E)
 
 **Target Platform**: Web app — Fastify server + browser SPA; Windows-first dev tooling
 
@@ -48,12 +48,12 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckit-plan command output)
-├── research.md          # Phase 0 output (/speckit-plan command)
-├── data-model.md        # Phase 1 output (/speckit-plan command)
-├── quickstart.md        # Phase 1 output (/speckit-plan command)
-├── contracts/           # Phase 1 output (/speckit-plan command)
-└── tasks.md             # Phase 2 output (/speckit-tasks command - NOT created by /speckit-plan)
+├── plan.md              # This file ($speckit-plan command output)
+├── research.md          # Phase 0 output ($speckit-plan command)
+├── data-model.md        # Phase 1 output ($speckit-plan command)
+├── quickstart.md        # Phase 1 output ($speckit-plan command)
+├── contracts/           # Phase 1 output ($speckit-plan command)
+└── tasks.md             # Phase 2 output ($speckit-tasks command - NOT created by $speckit-plan)
 ```
 
 ### Source Code (repository root)
