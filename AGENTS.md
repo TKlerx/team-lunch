@@ -72,6 +72,12 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Windows Vitest runs cap workers at one and use verbose progress: the default CPU-based jsdom worker count can exhaust memory alongside the coding team, while the default reporter stays quiet until a whole file completes. A silent runner alone does not establish a deadlock. `.env.test` can point at a remote test database; starting local `db-test` does not change that target. Use an explicit process-scoped `TEST_DATABASE_URL` override for local disposable validation without rewriting `.env.test`.
+
+- On a busy Windows host, Playwright's 180-second web-server startup limit can expire during build + migration + seeding. After `pnpm build`, start `node scripts/e2e-server.mjs` with the dedicated `TEST_DATABASE_URL`, wait for `/api/health` to report `status: ok`, then run E2E with `PLAYWRIGHT_BASE_URL` targeting that server. Stop the test server afterward; keep assertions and test timeouts unchanged.
+
+- Spec Kit is managed with Specify CLI 1.1.0; Codex is the default integration with skills and Python helpers, alongside Claude's PowerShell integration. Refresh integrations with `specify integration upgrade` and preserve the three customized planning templates. On Windows, `specify self upgrade` can lock its own executable; finish with `uv tool install specify-cli --force --from git+https://github.com/github/spec-kit.git@v1.1.0` after the command exits.
+
 - Upstream pnpm 11.21.0/tooling integration moves Vitest to v4: use top-level `maxWorkers: 1` for the serial server fork pool instead of removed `poolOptions.forks.singleFork`. Vitest 4 coverage results should be recorded with their runner version rather than silently substituted for historical Vitest 3 metrics.
 
 - The Docker runner now includes public browser assets via the builder and uses Node's native fetch healthcheck against its PORT/internal `/api/health`; only `status: ok` is healthy, not HTTP 200 with degraded DB connectivity. `deploy.sh` waits at most 120 seconds for app health before reporting success. The internal health route remains valid with BASE_PATH.

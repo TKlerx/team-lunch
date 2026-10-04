@@ -11,6 +11,10 @@ export default defineConfig({
   },
   test: {
     testTimeout: 10_000,
+    // Windows development hosts also run the coding team and browsers. Avoid
+    // one jsdom worker per CPU exhausting RAM, and show progress within big files.
+    maxWorkers: process.platform === 'win32' ? 1 : undefined,
+    reporters: process.platform === 'win32' ? ['verbose'] : ['default'],
     coverage: {
       provider: 'v8',
       reportsDirectory: 'reports/coverage',

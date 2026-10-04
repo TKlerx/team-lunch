@@ -1,0 +1,16 @@
+# Machine-local Spec Kit state — not meant to be shared.
+# Managed by the Specify CLI; safe to edit (your changes are preserved on refresh).
+
+# Local pointer to the current feature directory. Rewritten every time you
+# switch features, so it is per-checkout state rather than something to share.
+feature.json
+
+# Per-machine extension config overrides.
+extensions/*/local-config.yml
+
+# Downloaded extension update packages are regenerable local cache.
+extensions/.cache/
+
+# Bytecode generated when running the Python integration helpers.
+__pycache__/
+*.pyc

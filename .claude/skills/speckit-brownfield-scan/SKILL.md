@@ -4,9 +4,13 @@ description: Auto-discover project structure, tech stack, frameworks, and archit
   patterns
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: github-spec-kit
-  source: brownfield:commands/speckit.brownfield.scan.md
+  author: Quratulain-bilal
+  source: extension:brownfield
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Brownfield Scan Skill
 
 # Scan Project
 

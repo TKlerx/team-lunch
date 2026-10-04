@@ -1,10 +1,9 @@
 ---
 name: speckit-brownfield-migrate
-description: Incrementally adopt SDD for existing features with reverse-engineered
-  specs
+description: Incrementally adopt SDD for existing features with reverse-engineered specs
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: github-spec-kit
+  author: Quratulain-bilal
   source: brownfield:commands/speckit.brownfield.migrate.md
 ---
 
