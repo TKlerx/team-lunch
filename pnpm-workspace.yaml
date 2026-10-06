@@ -1,3 +1,7 @@
+# pnpm 11 reads this setting here, not from .npmrc. Build-script approval is
+# declared below; running scripts must not trigger an implicit install.
+verifyDepsBeforeRun: false
+
 # Approve postinstall build scripts for native deps (engines/binaries).
 allowBuilds:
   '@prisma/client': true

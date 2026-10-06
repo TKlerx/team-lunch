@@ -1,6 +1,6 @@
 # Specs Backlog
 
-**Last Updated**: 2026-10-02
+**Last Updated**: 2026-10-05
 
 This backlog is the canonical intake list for unstructured feature wishes before
 they become numbered specs.
@@ -26,6 +26,23 @@ they become numbered specs.
 | BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
 | BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
 | BACKLOG-009 | Office ordering interval policy | Delivered | [005-ordering-interval-policy](005-ordering-interval-policy/spec.md) | Fixed office-local calendar periods, pre-poll soft warning with recorded exceptions, scheduler compliance, and landing countdown. |
+| BACKLOG-010 | Separate office duration defaults and longer food selection | Promoted | [team-team-lunch-4](team-team-lunch-4/spec.md) | Independent 5-minute menu-selection poll default per office; existing poll choices in Administration and manual initialization with explicit override; add 45/60-minute food-selection choices and accept integer 1 or multiples of 5 through 60. Preserve authorization, office isolation, scheduled finish times, interval policy, extensions and delivery ETA. |
+
+## BACKLOG-010 notes — Office duration defaults
+
+Accepted intake — 2026-10-05: persist the separate menu-selection poll default
+for existing and new offices through a new non-destructive migration. Preserve
+both defaults across settings saves, realtime state, reloads and office switching;
+honor saved food defaults in existing default-driven starts. Keep existing
+food-selection choices including 1 minute and poll validation at multiples of 5
+from 5 through 720. Add focused coverage in existing suites for migration/defaults,
+settings persistence, signed admin authorization, office isolation, manual
+initialization/override, selectors, default-driven starts, SSE and duration
+validation. Update current documentation that states the obsolete 30-minute cap;
+leave unrelated accepted feature artifacts intact. Before implementation delivery,
+pass `validate.ps1 all` and `full` using dedicated test PostgreSQL without weakening
+assertions or data-safety gates. Controller owns host checks, branches, commits,
+pushes, provider interactions and merge. No additional scope is authorized.
 
 ## BACKLOG-009 notes — Office ordering interval policy
 

@@ -1,0 +1,13 @@
+node_modules/
+.git/
+.team/
+.venv/
+Dockerfile*
+.dockerignore
+*.log*
+.env*
+coverage/
+reports/
+dist/
+test-results/
+playwright-report/

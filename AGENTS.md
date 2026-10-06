@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- pnpm 11 reads `verifyDepsBeforeRun` from `pnpm-workspace.yaml`, not `.npmrc`; keep the existing no-implicit-install setting there. Worker validation can fail before scanning with Semgrep's `CertOpenSystemStore returned NULL`; retain the security gate and hand its actual result to the controller rather than changing host certificates or disabling the scan.
+
 - Windows Vitest runs cap workers at one and use verbose progress: the default CPU-based jsdom worker count can exhaust memory alongside the coding team, while the default reporter stays quiet until a whole file completes. A silent runner alone does not establish a deadlock. `.env.test` can point at a remote test database; starting local `db-test` does not change that target. Use an explicit process-scoped `TEST_DATABASE_URL` override for local disposable validation without rewriting `.env.test`.
 
 - On a busy Windows host, Playwright's 180-second web-server startup limit can expire during build + migration + seeding. After `pnpm build`, start `node scripts/e2e-server.mjs` with the dedicated `TEST_DATABASE_URL`, wait for `/api/health` to report `status: ok`, then run E2E with `PLAYWRIGHT_BASE_URL` targeting that server. Stop the test server afterward; keep assertions and test timeouts unchanged.
