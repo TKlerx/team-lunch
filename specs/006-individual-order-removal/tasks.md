@@ -15,7 +15,8 @@ One complete vertical task; no parallel implementation or new APIs/migrations.
 ## Validation evidence
 
 - Focused client suite: 50/50 passed (Vitest 4.1.11).
-- All quality gates passed within the corrected `validate.ps1 full` run: text format, typecheck, lint, architecture, complexity, function size, duplication, Semgrep, production audit and coverage. 95 files / 1,490 tests; lines 85.94%, branches 77.13%.
+- All quality gates passed within the corrected `validate.ps1 full` run: text format, typecheck, lint, architecture, complexity, function size, duplication, Semgrep, production audit and coverage. Final patched run: 95 files / 1,490 tests; lines 85.92%, branches 77.11% (Vitest 4.1.11).
 - Production build and three Playwright smoke tests passed against a separate disposable E2E schema.
 - Initial all run failed because the fresh worktree lacked `AUTH_SESSION_SECRET`; corrected with an explicit test-only secret, without production credentials.
-- Additional pre-push full gate (container scan and E2E): pending.
+- Additional pre-push full gate passed on 2026-10-10: patched production image has no HIGH/CRITICAL Trivy findings, and all three Playwright smoke tests passed.
+- The required image scan found existing CVE-2026-93749 in transitive `source-map-js` 1.2.1. Pin the maintainer's patched 1.2.2 through the existing pnpm overrides; no new dependency.
