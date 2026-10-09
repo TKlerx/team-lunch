@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within } from './testRender.js';
+import { act, render, screen, within } from './testRender.js';
 import { MemoryRouter } from 'react-router-dom';
 import { makeFoodSelection, makeFoodOrder, makeMenu, makeMenuItem, makePoll, setupUser } from './helpers.js';
 import type { AppState } from '../../src/client/context/AppContext.js';
@@ -667,7 +667,55 @@ describe('FoodSelectionActiveView', () => {
     renderView();
 
     await user.click(screen.getByRole('button', { name: /withdraw/i }));
-    expect(mockWithdrawOrder).toHaveBeenCalledWith('fs-1', 'Alice');
+    expect(mockWithdrawOrder).toHaveBeenCalledWith('fs-1', 'Alice', undefined);
+  });
+
+  it('removes a specific duplicate from my summary and blocks withdrawals while pending', async () => {
+    const user = setupUser();
+    let finish!: () => void;
+    mockWithdrawOrder.mockImplementationOnce(() => new Promise<void>((resolve) => { finish = resolve; }));
+    mockUseAppState.mockReturnValue({
+      ...initialAppState, initialized: true, menus,
+      activeFoodSelection: makeFoodSelection({ orders: [
+        makeFoodOrder({ id: 'first', nickname: 'Alice', itemId: 'item-1', itemName: 'Margherita', notes: 'mild' }),
+        makeFoodOrder({ id: 'second', nickname: 'Alice', itemId: 'item-1', itemName: 'Margherita', notes: 'hot' }),
+        makeFoodOrder({ id: 'other', nickname: 'Bob', itemId: 'item-2', itemName: 'Pepperoni' }),
+      ] }),
+    });
+    renderView();
+    const summary = within(screen.getByText(/your added meals/i).parentElement!);
+    const buttons = summary.getAllByRole('button', { name: 'Remove Margherita' });
+    expect(summary.queryByText('Pepperoni')).not.toBeInTheDocument();
+    await user.click(buttons[1]);
+    expect(mockWithdrawOrder).toHaveBeenCalledWith('fs-1', 'Alice', 'second');
+    buttons.forEach((button) => expect(button).toBeDisabled());
+    const bulk = screen.getByRole('button', { name: 'Withdraw all items' });
+    expect(bulk).toBeDisabled();
+    await user.click(buttons[0]);
+    await user.click(bulk);
+    expect(mockWithdrawOrder).toHaveBeenCalledTimes(1);
+    expect(summary.getByText(/mild/)).toBeInTheDocument();
+    await act(async () => { finish(); });
+    expect(buttons[0]).toBeEnabled();
+  });
+
+  it('keeps a failed summary withdrawal available for retry', async () => {
+    const user = setupUser();
+    mockWithdrawOrder.mockRejectedValueOnce(new Error('Please retry')).mockResolvedValueOnce({});
+    mockUseAppState.mockReturnValue({
+      ...initialAppState, initialized: true, menus,
+      activeFoodSelection: makeFoodSelection({ orders: [
+        makeFoodOrder({ id: 'first', nickname: 'Alice', itemId: 'item-1', itemName: 'Margherita' }),
+      ] }),
+    });
+    renderView();
+    const button = screen.getByRole('button', { name: 'Remove Margherita' });
+    await user.click(button);
+    expect(await screen.findByText('Please retry')).toBeInTheDocument();
+    expect(button).toBeEnabled();
+    await user.click(button);
+    expect(mockWithdrawOrder).toHaveBeenCalledTimes(2);
+    expect(mockWithdrawOrder).toHaveBeenLastCalledWith('fs-1', 'Alice', 'first');
   });
 
   it('shows "No orders yet" when order board is empty', () => {

@@ -46,6 +46,7 @@ This overview tracks spec completeness and implementation status for epics in
 | 003 | learned-meal-recommender | Done | Y | Y | Y | Y | Y | Y | - |
 | 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
 | 005 | ordering-interval-policy | Done | Y | Y | Y | Y | Y | Y | Y |
+| 006 | individual-order-removal | Done | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
