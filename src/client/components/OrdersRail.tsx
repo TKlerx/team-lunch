@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { FoodSelection } from '../../lib/types.js';
 import { formatTime, useCountdown } from '../hooks/useCountdown.js';
 import { Button } from './ui/Button.js';
@@ -34,6 +35,7 @@ export default function OrdersRail({
   inProgressPhaseLabel,
   inProgressCountdownTo,
 }: OrdersRailProps) {
+  const [historyOpen, setHistoryOpen] = useState(false);
   const topActionLabel = hasOngoingLunchProcess
     ? (inProgressActionLabel ?? 'In Progress...')
     : 'Start new Team Lunch';
@@ -48,7 +50,7 @@ export default function OrdersRail({
     : 'mb-4 w-full border border-accent/50 bg-accent-soft px-3 text-left font-semibold text-accent-fg hover:bg-accent-soft/70';
 
   return (
-    <aside className="flex min-h-0 w-full flex-col border-b border-border bg-surface p-4 md:w-80 md:border-b-0 md:border-r">
+    <aside className="flex min-h-0 w-full shrink-0 flex-col border-b border-border bg-surface p-3 md:w-80 md:border-b-0 md:border-r md:p-4">
       <Button
         variant={topActionVariant}
         onClick={onStartNewTeamLunch}
@@ -56,11 +58,11 @@ export default function OrdersRail({
         className={topActionClass}
       >
         {hasOngoingLunchProcess ? (
-          <span className="flex items-center justify-between gap-2">
+          <span className="flex flex-wrap items-center justify-between gap-2">
             <span>{topActionLabel}</span>
             <span
               data-testid="in-progress-status"
-              className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold ${
+              className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded px-2 py-0.5 text-xs font-bold ${
                 isPhase3Due ? 'delivery-due-alert text-danger-fg' : 'text-warning-fg'
               }`}
             >
@@ -78,7 +80,16 @@ export default function OrdersRail({
         )}
       </Button>
 
-      <h2 className={`mb-3 ${sectionTitleClass}`}>Past Lunches</h2>
+      <h2 className={`mb-3 hidden md:block ${sectionTitleClass}`}>Past Lunches</h2>
+      <Button
+        variant="secondary"
+        className="mb-2 w-full text-left md:hidden"
+        aria-expanded={historyOpen}
+        aria-controls="past-lunches"
+        onClick={() => setHistoryOpen((open) => !open)}
+      >
+        Past Lunches ({history.length}) {historyOpen ? '▴' : '▾'}
+      </Button>
 
       {selectedSelectionId && hasOngoingLunchProcess && onBackToOngoing && (
         <Button
@@ -90,14 +101,18 @@ export default function OrdersRail({
         </Button>
       )}
 
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+      <div id="past-lunches" className={`${historyOpen ? 'block' : 'hidden'} max-h-[20dvh] min-h-0 space-y-2 overflow-y-auto pr-1 md:block md:max-h-none md:flex-1`}>
         {history.map((selection) => {
           const isSelected = selectedSelectionId === selection.id;
           return (
             <Button
               key={selection.id}
               variant="secondary"
-              onClick={() => onSelectSelection(selection.id)}
+              onClick={(event) => {
+                onSelectSelection(selection.id);
+                setHistoryOpen(false);
+                event.currentTarget.closest('aside')?.querySelector<HTMLButtonElement>('[aria-controls="past-lunches"]')?.focus();
+              }}
               className={`w-full px-3 text-left ${
                 isSelected ? 'border-success bg-success-soft' : 'bg-surface-muted hover:bg-surface'
               }`}

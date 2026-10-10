@@ -47,7 +47,9 @@ This overview tracks spec completeness and implementation status for epics in
 | 004 | menu-safety-labels | Planned | Y | Y | Y | Y | Y | Y | Y |
 | 005 | ordering-interval-policy | Done | Y | Y | Y | Y | Y | Y | Y |
 | 008 | auth-config-privacy | Done | Y | Y | Y | Y | Y | Y | Y |
+| 006 | individual-order-removal | Done | Y | Y | Y | Y | Y | Y | Y |
 | - | auth | Done | Y | Y | Y | - | - | - | - |
+| 007 | mobile-responsive | Done | Y | Y | Y | Y | Y | Y | Y |
 | - | poll-lifecycle | Done | Y | Y | Y | - | - | - | - |
 | - | food-selection | Mostly Done | Y | Y | Y | - | - | - | - |
 | - | menu-management | Done | Y | Y | Y | - | - | - | - |

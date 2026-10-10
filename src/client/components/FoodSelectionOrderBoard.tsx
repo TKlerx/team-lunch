@@ -144,7 +144,7 @@ export default function FoodSelectionOrderBoard({
                       : `${itemGroup.comments.length} comment variant${itemGroup.comments.length === 1 ? '' : 's'}`}
                   </div>
                 </div>
-                <div className="text-right text-xs font-semibold text-success-fg">
+                <div className="shrink-0 whitespace-nowrap text-right text-xs font-semibold text-success-fg">
                   {formatPrice(itemGroup.totalPrice)}
                 </div>
               </div>
@@ -153,11 +153,12 @@ export default function FoodSelectionOrderBoard({
                   ? itemGroup.orders.map((order) => (
                       <div
                         key={order.id}
-                        className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5"
+                        className="flex flex-col gap-2 rounded bg-surface px-2 py-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3"
                       >
-                        <div className="flex min-w-0 items-baseline gap-2 text-xs text-fg-muted">
+                        <label className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-baseline gap-2 text-xs text-fg-muted sm:min-h-0">
                           <input
                             type="checkbox"
+                            className="shrink-0"
                             aria-label={`Processed ${order.itemName} for ${order.nickname}`}
                             checked={Boolean(order.processed)}
                             disabled={!onToggleProcessed || processingOrderIds.has(order.id)}
@@ -167,8 +168,8 @@ export default function FoodSelectionOrderBoard({
                           />
                           <span className="font-semibold text-fg">{order.nickname}</span>
                           <span>{order.notes ? order.notes : 'No comment'}</span>
-                        </div>
-                        <span className="w-16 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+                        </label>
+                        <span className="shrink-0 whitespace-nowrap text-xs font-semibold text-success-fg sm:w-16 sm:text-right">
                           {order.itemId && priceByItemId.has(order.itemId)
                             ? formatPrice(priceByItemId.get(order.itemId) as number)
                             : '-'}
@@ -202,7 +203,7 @@ export default function FoodSelectionOrderBoard({
               <div className="space-y-1">
                 {userOrders.map((order) => (
                   <div key={order.id} className="flex items-baseline justify-between gap-3 rounded bg-surface px-2 py-1.5">
-                    <div className="flex min-w-0 items-baseline gap-2">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-2">
                       {showProcessedCheckboxes && (
                         <input
                           type="checkbox"
@@ -212,10 +213,10 @@ export default function FoodSelectionOrderBoard({
                           onChange={(event) => onToggleProcessed?.(order.id, event.currentTarget.checked)}
                         />
                       )}
-                      <span className="truncate text-sm text-fg">{order.itemName}</span>
-                      {order.notes && <span className="truncate text-xs text-fg-muted">({order.notes})</span>}
+                      <span className="max-w-full text-sm text-fg">{order.itemName}</span>
+                      {order.notes && <span className="max-w-full text-xs text-fg-muted">({order.notes})</span>}
                     </div>
-                    <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+                    <span className="shrink-0 whitespace-nowrap text-right text-xs font-semibold text-success-fg sm:w-20">
                       {order.itemId && priceByItemId.has(order.itemId)
                         ? formatPrice(priceByItemId.get(order.itemId) as number)
                         : '-'}

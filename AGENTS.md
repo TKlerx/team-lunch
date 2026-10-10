@@ -75,6 +75,11 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - In the production-style loopback Playwright harness, Chromium sends Secure session cookies on HTTP loopback while its APIRequestContext does not. Read authenticated bootstrap through browser fetch after real UI login; do not weaken production cookie flags to make an API-client assertion pass.
 
 - AuthGate office selection consumes `accessibleOfficeLocations` summaries for ordinary users and full `officeLocations` only for admins. Keep id/key/name/isActive summaries compatible when hardening auth bootstrap; clearing the full-office list for ordinary users does not require a client change.
+- Responsive geometry checks must inspect inner controls and grid children: an `overflow-hidden` ancestor can keep document/container `scrollWidth` within the viewport while hiding oversized implicit grid columns. Use explicit `grid-cols-1` below multi-column breakpoints. WebKit mobile validation of production Secure cookies needs local HTTPS; port 8443 works, while WebKit blocks port 4190.
+
+- Docker's Linux data disk can fill even when the Windows host has free space. Check `wsl -d rancher-desktop -e df -h /var/lib` after PostgreSQL reports `No space left on device`; overlapping image builds and database validation can stop the test DB. Reclaim only identified task-owned artifacts, restore DB readiness, and rerun interrupted checks.
+
+- Fresh worktrees running the server tests without a local `.env` must provide an explicit test-only `AUTH_SESSION_SECRET` (at least 32 characters), alongside the disposable `TEST_DATABASE_URL`; database setup alone does not configure signed test sessions.
 
 - Windows Vitest runs cap workers at one and use verbose progress: the default CPU-based jsdom worker count can exhaust memory alongside the coding team, while the default reporter stays quiet until a whole file completes. A silent runner alone does not establish a deadlock. `.env.test` can point at a remote test database; starting local `db-test` does not change that target. Use an explicit process-scoped `TEST_DATABASE_URL` override for local disposable validation without rewriting `.env.test`.
 

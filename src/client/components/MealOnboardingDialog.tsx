@@ -79,7 +79,7 @@ export default function MealOnboardingDialog({
               to warm up your recommendations.
             </p>
           </div>
-          <Button variant="secondary" onClick={onClose} className="px-3 py-1.5 text-fg-muted">
+          <Button variant="secondary" onClick={onClose} className="shrink-0 px-3 py-1.5 text-fg-muted">
             Skip
           </Button>
         </div>
@@ -98,7 +98,7 @@ export default function MealOnboardingDialog({
           </p>
         ) : null}
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {candidates.map((candidate) => (
             <div key={candidate.itemId} className="rounded-xl border border-border bg-surface p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">

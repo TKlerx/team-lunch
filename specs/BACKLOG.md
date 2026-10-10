@@ -17,6 +17,7 @@ they become numbered specs.
 
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
+| BACKLOG-011 | Mobile-friendly responsive app | Promoted | [007-mobile-responsive](007-mobile-responsive/spec.md) | [GitHub #67](https://github.com/TKlerx/team-lunch/issues/67): phone layouts, history, dialogs and long content. |
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
 | BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Delivered | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md); successor to BACKLOG-001's deterministic feature scorer. See notes below. |
 | BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |
@@ -27,6 +28,7 @@ they become numbered specs.
 | BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
 | BACKLOG-012 | Auth bootstrap office privacy | Promoted | [008-auth-config-privacy](008-auth-config-privacy/spec.md) | [Issue #65](https://github.com/TKlerx/team-lunch/issues/65): public sign-in bootstrap must not expose office records; authorized selectors use summaries, admins retain full settings, all responses are non-cacheable. |
 | BACKLOG-009 | Office ordering interval policy | Delivered | [005-ordering-interval-policy](005-ordering-interval-policy/spec.md) | Fixed office-local calendar periods, pre-poll soft warning with recorded exceptions, scheduler compliance, and landing countdown. |
+| BACKLOG-010 | Individual food-order item removal | Promoted | [006-individual-order-removal](006-individual-order-removal/spec.md) | [Issue #66](https://github.com/TKlerx/team-lunch/issues/66): expose the existing order-ID withdrawal in the user's added-meals summary. |
 
 ## BACKLOG-009 notes — Office ordering interval policy
 

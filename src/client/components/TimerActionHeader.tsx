@@ -56,18 +56,18 @@ export default function TimerActionHeader({
 
   return (
     <div
-      className={`relative mb-4 flex items-center justify-between rounded px-4 py-2 ${
+      className={`relative mb-4 flex flex-wrap items-center justify-between gap-2 rounded px-4 py-2 ${
         dueStyle ? 'delivery-due-alert' : 'bg-accent-soft'
       }`}
       ref={containerRef}
     >
-      <span className={`text-sm font-medium ${dueStyle ? 'text-danger-fg' : 'text-accent-fg'}`}>
+      <span className={`min-w-0 flex-1 text-sm font-medium ${dueStyle ? 'text-danger-fg' : 'text-accent-fg'}`}>
         {title}
       </span>
       <Button
         variant="ghost"
         onClick={() => setIsMenuOpen((open) => !open)}
-        className={`inline-flex items-center gap-1 px-2 py-1 font-bold hover:bg-surface/60 ${
+        className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap px-2 py-1 font-bold hover:bg-surface/60 ${
           dueStyle ? 'text-danger-fg' : 'text-accent-fg'
         }`}
         aria-label={triggerAriaLabel}

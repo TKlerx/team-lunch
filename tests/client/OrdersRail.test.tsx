@@ -53,9 +53,24 @@ describe('OrdersRail', () => {
       />,
     );
 
-    const buttons = screen.getAllByRole('button');
-    expect(buttons[1]).toHaveTextContent('Most Recent');
-    expect(buttons[2]).toHaveTextContent('Older');
+    const recent = screen.getByRole('button', { name: /Most Recent/ });
+    const older = screen.getByRole('button', { name: /Older/ });
+    expect(recent.compareDocumentPosition(older) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('opens mobile history and collapses it after selecting a lunch', async () => {
+    const user = setupUser();
+    const onSelect = vi.fn();
+    render(<OrdersRail history={[makeFoodSelection({ id: 'past', status: 'completed', menuName: 'Pizza Place' })]}
+      selectedSelectionId={null} onSelectSelection={onSelect} onStartNewTeamLunch={vi.fn()} />);
+    const disclosure = screen.getByRole('button', { name: /Past Lunches/ });
+    expect(disclosure).toHaveAttribute('aria-expanded', 'false');
+    await user.click(disclosure);
+    expect(disclosure).toHaveAttribute('aria-expanded', 'true');
+    await user.click(screen.getByRole('button', { name: /Pizza Place/ }));
+    expect(onSelect).toHaveBeenCalledWith('past');
+    expect(disclosure).toHaveAttribute('aria-expanded', 'false');
+    expect(disclosure).toHaveFocus();
   });
 
   it('calls onSelectSelection when clicking a history item', async () => {
