@@ -62,7 +62,7 @@ function OrderingContactCard({ menu }: { menu: Parameters<typeof getOrderingCont
 
   return (
     <div className="mb-4 rounded border border-border bg-surface-muted p-3">
-      <table className="text-sm text-fg">
+      <table className="w-full table-fixed text-sm text-fg">
         <tbody>
           {links.map((link) => (
             <tr key={link.key}>

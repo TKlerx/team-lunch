@@ -17,6 +17,7 @@ they become numbered specs.
 
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
+| BACKLOG-011 | Mobile-friendly responsive app | Promoted | [007-mobile-responsive](007-mobile-responsive/spec.md) | [GitHub #67](https://github.com/TKlerx/team-lunch/issues/67): phone layouts, history, dialogs and long content. |
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |
 | BACKLOG-002 | Learned meal recommender (factorization machines / contextual bandit) | Delivered | [003-learned-meal-recommender](003-learned-meal-recommender/spec.md) | Delivered in [003-learned-meal-recommender](003-learned-meal-recommender/spec.md); successor to BACKLOG-001's deterministic feature scorer. See notes below. |
 | BACKLOG-003 | Ordering claim timeout and recovery | Backlog | - | Prevents a lunch from staying locked if the person who claimed ordering disappears before placing the real order. Not implemented; promote to a focused food-selection spec update before building. |

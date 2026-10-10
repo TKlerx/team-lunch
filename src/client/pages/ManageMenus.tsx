@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'reac
 import { useAppState } from '../context/AppContext.js';
 import { useToast } from '../context/ToastContext.js';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog.js';
+import { Modal } from '../components/ui/Modal.js';
 import { getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
 import menuImportJsonSchema from '../../../import/menu/import-menu-schema.json';
@@ -155,9 +156,8 @@ function MenuEditDialog({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-surface-raised p-6 shadow-xl">
-        <h4 className="text-base font-semibold text-fg">Edit menu {menuName}</h4>
+    <Modal open onClose={onCancel} labelledBy="menu-edit-title">
+        <h4 id="menu-edit-title" className="text-base font-semibold text-fg">Edit menu {menuName}</h4>
         <div className="mt-4 space-y-3">
           <div>
             <label htmlFor="menu-edit-name" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-fg-muted">
@@ -171,7 +171,6 @@ function MenuEditDialog({
               maxLength={60}
               className="w-full rounded border border-border bg-surface px-3 py-2 text-sm text-fg focus:border-accent focus:outline-none"
               placeholder="Menu name"
-              autoFocus
             />
           </div>
           <div>
@@ -250,8 +249,7 @@ function MenuEditDialog({
             Save changes
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

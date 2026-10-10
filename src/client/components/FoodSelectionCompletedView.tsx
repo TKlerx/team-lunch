@@ -192,20 +192,20 @@ export default function FoodSelectionCompletedView({
               return (
                 <div key={o.id} className="flex items-baseline justify-between gap-3 rounded bg-surface-muted px-3 py-2">
                   <div className="min-w-0 flex-1">
-                    <div className="flex min-w-0 items-baseline gap-2">
+                    <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
                       <span className="text-sm font-medium text-fg">{o.nickname}</span>
-                      <span className="text-sm text-fg-muted">&middot;</span>
-                      <span className="cursor-help truncate text-sm text-fg hover:text-accent-fg" title={displayName}>
+                      <span className="hidden text-sm text-fg-muted sm:inline">&middot;</span>
+                      <span className="max-w-full cursor-help text-sm text-fg hover:text-accent-fg sm:truncate" title={displayName}>
                         {displayName}
                       </span>
                       {o.notes && (
-                        <span className="cursor-help truncate text-xs text-fg-muted hover:text-accent-fg" title={o.notes}>
+                        <span className="max-w-full cursor-help text-xs text-fg-muted hover:text-accent-fg sm:truncate" title={o.notes}>
                           ({o.notes})
                         </span>
                       )}
                     </div>
                     {isOrderOwnedByCurrentUser(o) && (
-                      <div className="mt-1 flex items-center gap-2">
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
                         <Select
                           value={ratingValues[o.id] ?? o.rating ?? ''}
                           onChange={(e) => {
