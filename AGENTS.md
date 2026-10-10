@@ -7,7 +7,7 @@ the user observes and steers. For new features, run the spec-kit phases
 task at a time from `tasks.md`.
 
 <!-- SPECKIT START -->
-Active feature plan: `specs/005-ordering-interval-policy/plan.md`.
+Active feature plan: `specs/008-auth-config-privacy/plan.md`.
 <!-- SPECKIT END -->
 
 ### Typical Development Workflow
@@ -72,6 +72,9 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- In the production-style loopback Playwright harness, Chromium sends Secure session cookies on HTTP loopback while its APIRequestContext does not. Read authenticated bootstrap through browser fetch after real UI login; do not weaken production cookie flags to make an API-client assertion pass.
+
+- AuthGate office selection consumes `accessibleOfficeLocations` summaries for ordinary users and full `officeLocations` only for admins. Keep id/key/name/isActive summaries compatible when hardening auth bootstrap; clearing the full-office list for ordinary users does not require a client change.
 - Responsive geometry checks must inspect inner controls and grid children: an `overflow-hidden` ancestor can keep document/container `scrollWidth` within the viewport while hiding oversized implicit grid columns. Use explicit `grid-cols-1` below multi-column breakpoints. WebKit mobile validation of production Secure cookies needs local HTTPS; port 8443 works, while WebKit blocks port 4190.
 
 - Docker's Linux data disk can fill even when the Windows host has free space. Check `wsl -d rancher-desktop -e df -h /var/lib` after PostgreSQL reports `No space left on device`; overlapping image builds and database validation can stop the test DB. Reclaim only identified task-owned artifacts, restore DB readiness, and rerun interrupted checks.

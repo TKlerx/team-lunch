@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import AuthGate from '../../src/client/components/AuthGate.js';
+import { useAdminOfficeContext } from '../../src/client/context/AdminOfficeContext.js';
 import type { OfficeLocation } from '../../src/lib/types.js';
 
 type AuthState = {
@@ -234,6 +236,30 @@ describe('AuthGate sign-in methods', () => {
     expect(await screen.findByText(/failed to load authentication config/i)).toBeInTheDocument();
     expect(screen.queryByText(/app content/i)).not.toBeInTheDocument();
   });
+});
+
+it('ordinary users can switch offices using only authorized selector summaries', async () => {
+  const summaries = [
+    { id: 'paderborn', key: 'paderborn', name: 'Paderborn', isActive: true },
+    { id: 'herford', key: 'herford', name: 'Herford', isActive: true },
+  ];
+  vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ auth: {
+    ...baseAuthState, isAdmin: false, role: 'user', officeLocations: [],
+    officeLocation: summaries[0], accessibleOfficeLocations: summaries,
+  } })));
+  function OfficeChoices() {
+    const context = useAdminOfficeContext();
+    return <select aria-label="Office" value={context.selectedOfficeLocationId ?? ''}
+      onChange={event => context.setSelectedOfficeLocationId(event.target.value)}>
+      {context.officeLocations.map(office => <option key={office.id} value={office.id}>{office.name}</option>)}
+    </select>;
+  }
+  render(<AuthGate><OfficeChoices /></AuthGate>);
+  const selector = await screen.findByRole('combobox', { name: 'Office' });
+  expect(selector).toHaveValue('paderborn');
+  expect(screen.getAllByRole('option')).toHaveLength(2);
+  await userEvent.setup().selectOptions(selector, 'herford');
+  expect(selector).toHaveValue('herford');
 });
 
 describe('AuthGate authenticated access', () => {

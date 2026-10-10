@@ -1,0 +1,10 @@
+.git
+.venv
+node_modules
+dist
+src/server/generated
+.env*
+reports
+test-results
+playwright-report
+*.log

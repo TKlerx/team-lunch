@@ -20,6 +20,11 @@ async function loginAsE2eUser(page: import('@playwright/test').Page) {
 // Smoke check: the production server (served against the dedicated test DB)
 // is healthy and serves the SPA shell. Proves the e2e harness + db-test wiring.
 test('serves the SPA, reports healthy, and supports local e2e login', async ({ page, request }) => {
+  const anonymousConfig = await request.get('/api/auth/config');
+  expect(anonymousConfig.headers()['cache-control']).toBe('no-store');
+  expect((await anonymousConfig.json()).auth).toMatchObject({
+    authenticated: false, officeLocation: null, officeLocations: [], accessibleOfficeLocations: [],
+  });
   const health = await request.get('/api/health');
   expect(health.ok()).toBeTruthy();
   const body = await health.json();
@@ -32,6 +37,16 @@ test('serves the SPA, reports healthy, and supports local e2e login', async ({ p
   await expect(page.locator('#root')).toBeVisible();
 
   await loginAsE2eUser(page);
+  // Use Chromium's loopback Secure-cookie handling, just like the app's fetch.
+  const authenticatedConfig = await page.evaluate(async url => {
+    const response = await fetch(url);
+    return { cacheControl: response.headers.get('cache-control'), auth: (await response.json()).auth };
+  }, `${currentAppBasePath(page)}/api/auth/config`);
+  expect(authenticatedConfig.cacheControl).toBe('no-store');
+  const auth = authenticatedConfig.auth;
+  expect(auth.authenticated).toBe(true);
+  expect(auth.isAdmin).toBe(true);
+  expect(auth.officeLocations.length).toBeGreaterThan(0);
 });
 
 test('account dropdown opens settings, administration, and logout', async ({ page }) => {
