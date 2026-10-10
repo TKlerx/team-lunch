@@ -156,7 +156,7 @@ function MenuEditDialog({
   onCancel: () => void;
 }) {
   return (
-    <Modal open onClose={onCancel} labelledBy="menu-edit-title">
+    <Modal open onClose={submitting ? undefined : onCancel} labelledBy="menu-edit-title">
         <h4 id="menu-edit-title" className="text-base font-semibold text-fg">Edit menu {menuName}</h4>
         <div className="mt-4 space-y-3">
           <div>

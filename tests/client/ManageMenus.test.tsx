@@ -352,6 +352,30 @@ describe('ManageMenus', () => {
     expect(await screen.findByText('Duplicate name')).toBeInTheDocument();
   });
 
+  it('blocks Escape and backdrop dismissal during saving and allows dismissal after failure', async () => {
+    const user = setupUser();
+    let rejectSave!: (error: Error) => void;
+    mockUpdateMenu.mockReturnValueOnce(new Promise<void>((_resolve, reject) => { rejectSave = reject; }));
+    mockUseAppState.mockReturnValue({ ...initialAppState, initialized: true, menus: [makeMenu()] });
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Expand Pizza Place' }));
+    await user.click(screen.getAllByRole('button', { name: 'Edit' })[0]);
+    await user.click(screen.getByRole('button', { name: 'Save changes' }));
+    const dialog = screen.getByRole('dialog');
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await user.keyboard('{Escape}');
+    expect(dialog).toBeInTheDocument();
+    fireEvent.click(dialog.previousElementSibling!);
+    expect(dialog).toBeInTheDocument();
+
+    rejectSave(new Error('Menu save failed'));
+    expect(await screen.findByText('Menu save failed')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
   it('lists menus alphabetically with item counts', () => {
     const menus = [
       makeMenu({ id: 'menu-2', name: 'Sushi Bar', items: [makeMenuItem({ id: 'i1' }), makeMenuItem({ id: 'i2' })], itemCount: 2 }),

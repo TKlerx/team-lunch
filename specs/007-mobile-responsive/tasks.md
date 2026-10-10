@@ -8,6 +8,8 @@ One complete vertical task. No parallel implementation or backend/schema changes
 
 - [x] T002 [US1] Correct visually verified mobile overflow in dashboard and lunch grids; keep countdowns/prices readable, stack crowded order details, and strengthen browser checks against clipped inner content. Inspect screenshots on phone portrait/landscape and desktop; run focused tests and all/full validation, record evidence, commit and update PR #69.
 
+- [x] T003 [US1] Block Escape/backdrop dismissal while menu saving is pending; add a regression for pending dismissal and failure recovery, validate and update PR #69.
+
 ## Validation evidence
 
 - Focused client suites: OrdersRail/Header 31 tests and ManageMenus/Modal 35 tests passed during implementation; the final full run covers the finished versions.
@@ -25,3 +27,8 @@ One complete vertical task. No parallel implementation or backend/schema changes
 - Focused client checks passed, including the new keyboard Edit regression. Final `validate.ps1 full` passed on 2026-10-10: all quality/security gates, 95 files / 1,492 tests, 86.00% lines and 77.24% branches (Vitest 4.1.11), production image Trivy scan and 14 Playwright tests. The full gate includes every `all` check.
 - An initial aggregate run lacked the worktree test session secret; a subsequent full run exposed a test callback over the function-length limit. Supplied the process-scoped test secret and split the test groups without weakening authentication or raising the quality baseline, then completed the clean full run.
 - Tightened the menu-dialog final-action check after screenshot inspection; its two Chromium/WebKit cases passed again, with Save fully inside the 320×480 viewport after scrolling.
+
+## T003 pending menu save review fix
+
+- The menu edit dialog omits Modal's dismissal callback while saving, matching the disabled Cancel button. The regression checks Escape and backdrop clicks during a pending request, visible error recovery after failure, and restored Escape dismissal.
+- `validate.ps1 all` passed on 2026-10-10: all quality/security gates, 95 files / 1,493 tests, 86.01% lines and 77.23% branches (Vitest 4.1.11), against the dedicated disposable test database. The focused regression also passed; browser tests were not rerun for this dismissal-only fix.
