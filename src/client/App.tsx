@@ -199,8 +199,8 @@ export default function App() {
   };
 
   return (
-    <div className="relative h-screen overflow-hidden">
-      <div className="relative z-0 flex h-full min-h-0 flex-col">
+    <div className="relative min-h-dvh [overflow-wrap:anywhere] md:h-dvh md:overflow-hidden">
+      <div className="relative z-0 flex min-h-dvh flex-col md:h-full md:min-h-0">
         <Header
           nickname={nickname}
           authMethod={authMethod}

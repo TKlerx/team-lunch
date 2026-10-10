@@ -111,7 +111,7 @@ export function Modal({
         tabIndex={-1}
         data-testid={testId}
         className={cn(
-          'relative z-10 w-full max-w-md rounded-xl border border-border',
+          'relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-xl border border-border [overflow-wrap:anywhere]',
           'bg-surface-raised p-6 text-fg shadow-xl',
           className,
         )}

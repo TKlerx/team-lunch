@@ -71,7 +71,7 @@ function DashboardStats({
 
   return (
     <DashboardCard title="Quick Stats">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-border bg-surface-muted p-3">
           <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">Last winner</p>
           <p className="mt-1 text-base font-semibold text-fg">{lastWinner ?? 'No winner yet'}</p>
@@ -126,7 +126,7 @@ function DashboardInsights({
         history={history}
       />
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <DashboardCard title="Meals Waiting For Your Rating">
           {pendingRatings.length === 0 ? (
             <p className="text-sm text-fg-muted">You are caught up on meal ratings.</p>
@@ -147,7 +147,7 @@ function DashboardInsights({
                   <Button
                     variant="warning-solid"
                     onClick={() => onOpenHistorySelection?.(selection.selectionId)}
-                    className="px-3"
+                    className="shrink-0 whitespace-nowrap px-3"
                   >
                     Rate now
                   </Button>
@@ -215,7 +215,7 @@ function DashboardInsights({
                     <span className="font-medium text-fg">
                       {index + 1}. {meal.itemName}
                     </span>
-                    <span className="text-sm text-fg-muted">
+                    <span className="shrink-0 whitespace-nowrap text-sm text-fg-muted">
                       {meal.count} order{meal.count === 1 ? '' : 's'}
                     </span>
                   </div>
@@ -294,7 +294,7 @@ function QuickActions() {
 
   return (
     <DashboardCard title="Quick Actions">
-      <div className="grid gap-2">
+      <div className="grid grid-cols-1 gap-2">
         <Button
           variant="secondary"
           onClick={() => navigate('/menus')}
@@ -596,7 +596,7 @@ export default function PollIdleView({
         </p>
       </Card>
 
-      <div className="grid min-h-0 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className="grid min-h-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-4">
           <OrderingPolicyAvailability />
           {menusWithItems.length === 1 ? (

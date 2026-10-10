@@ -10,7 +10,7 @@ export function IconButton({ className, type, ...props }: ButtonHTMLAttributes<H
     <button
       type={type ?? 'button'}
       className={cn(
-        'rounded p-1.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg',
+        'inline-flex min-h-11 min-w-11 items-center justify-center rounded p-1.5 text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg sm:min-h-0 sm:min-w-0',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
         className,
       )}

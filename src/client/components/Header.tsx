@@ -193,7 +193,7 @@ export default function Header({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <Link
           to="/"
-          className="flex min-w-0 items-center gap-2 text-lg font-bold text-fg hover:text-accent sm:text-xl"
+          className="flex min-w-0 shrink-0 items-center gap-2 text-lg font-bold text-fg hover:text-accent sm:text-xl"
         >
           <img src={pizzaLogo} alt="Pizza logo" className="h-8 w-8" />
           <img
@@ -208,7 +208,7 @@ export default function Header({
         <div className="flex flex-wrap items-center gap-2 sm:gap-4 lg:justify-end">
         <Link
           to="/menus"
-          className={`flex items-center gap-1.5 text-sm font-medium ${
+          className={`flex min-h-11 items-center gap-1.5 text-sm font-medium sm:min-h-0 ${
             location.pathname === '/menus'
               ? 'text-accent'
               : 'text-fg-muted hover:text-accent'
@@ -220,7 +220,7 @@ export default function Header({
 
         <Link
           to="/shopping-list"
-          className={`flex items-center gap-1.5 text-sm font-medium ${
+          className={`flex min-h-11 items-center gap-1.5 text-sm font-medium sm:min-h-0 ${
             location.pathname === '/shopping-list' || location.pathname === '/shopping'
               ? 'text-accent'
               : 'text-fg-muted hover:text-accent'
@@ -257,26 +257,27 @@ export default function Header({
         </IconButton>
 
         {nickname && (
-          <div className="relative" ref={accountRef}>
+          <div className="relative w-full min-w-0 max-w-full lg:w-auto lg:max-w-sm" ref={accountRef}>
             <Button
               variant="ghost"
               onClick={() => setMenuOpen((open) => !open)}
-              className="flex items-center gap-2 rounded-full bg-accent-soft/70 px-3 py-1 text-accent-fg hover:bg-accent-soft"
+              className="flex min-w-0 max-w-full items-center gap-2 rounded-full bg-accent-soft/70 px-3 py-1 text-accent-fg hover:bg-accent-soft"
+              aria-label={nickname}
               aria-haspopup="menu"
               aria-expanded={menuOpen}
             >
-              <span className="relative inline-flex">
+              <span className="relative inline-flex shrink-0">
                 <AccountAvatar label={nickname} authMethod={authMethod} />
                 {hasPendingApprovals && (
                   <span className="absolute -right-1.5 -top-1.5 inline-flex h-3 w-3 rounded-full bg-red-500" />
                 )}
               </span>
-              <span>{nickname}</span>
+              <span className="truncate" title={nickname}>{nickname}</span>
               <ChevronDownIcon open={menuOpen} />
             </Button>
 
             {menuOpen && (
-              <MenuList className="w-52">
+              <MenuList className="left-0 right-auto w-52 lg:left-auto lg:right-0">
                 <MenuItem
                   as={Link}
                   to="/settings"

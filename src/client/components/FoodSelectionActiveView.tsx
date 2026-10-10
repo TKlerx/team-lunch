@@ -178,7 +178,7 @@ function SafetyFilterPill({
       aria-pressed={selected}
       aria-label={`Exclude ${tone} ${label}`}
       onClick={onToggle}
-      className={`relative overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium text-fg-muted transition-colors ${labelPillClasses[tone]} ${
+      className={`relative min-h-11 overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium text-fg-muted transition-colors sm:min-h-0 ${labelPillClasses[tone]} ${
         selected ? 'border-fg-muted/70' : 'border-transparent'
       }`}
     >
@@ -199,7 +199,7 @@ function MenuItemLabelInfo({ item }: { item: OrderMenuItem }) {
         type="button"
         aria-label={`Labels for ${item.name}`}
         aria-describedby={tooltipId}
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent-soft/45 text-[11px] font-bold text-fg-muted hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="inline-flex h-5 min-h-11 w-5 min-w-11 items-center justify-center rounded-full bg-accent-soft/45 text-[11px] font-bold text-fg-muted hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:min-h-0 sm:min-w-0"
       >
         i
       </button>
@@ -234,7 +234,7 @@ function OrderItemCard({
     <div id={`meal-item-${item.id}`} tabIndex={-1} className="space-y-2 rounded border border-border p-3 hover:bg-surface-muted">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
         <div className="flex min-w-0 items-center gap-1">
-          <span className="truncate text-sm font-medium text-fg">
+          <span className="min-w-0 text-sm font-medium text-fg sm:truncate" title={item.name}>
             {item.itemNumber && <span className="mr-1 text-fg-muted">{item.itemNumber}</span>}
             <span>{item.name}</span>
           </span>
@@ -456,7 +456,7 @@ function OrderForm({
           to="/settings"
           aria-label="Ingredient Preferences"
           title={formatIngredientPreferencesTooltip(preferences)}
-          className="inline-flex min-h-9 w-full shrink-0 items-center justify-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:w-auto"
+          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:min-h-9 sm:w-auto"
         >
           <svg
             aria-hidden="true"
@@ -482,7 +482,7 @@ function OrderForm({
             role="tab"
             aria-selected={activeTab === tab}
             onClick={() => switchTab(tab)}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+            className={`min-h-11 flex-1 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors sm:min-h-0 ${
               activeTab === tab ? "bg-surface text-fg shadow-sm" : "text-fg-muted hover:text-fg"
             }`}
           >
@@ -499,7 +499,7 @@ function OrderForm({
               type="button"
               aria-pressed={selectedTags.has(tag)}
               onClick={() => toggleSelectedTag(tag)}
-              className={`rounded-full border px-2 py-0.5 text-[11px] font-medium transition-col ${
+              className={`min-h-11 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-col sm:min-h-0 ${
                 selectedTags.has(tag)
                   ? "border-accent bg-accent-soft text-accent-fg"
                   : "border-transparent bg-surface-muted text-fg-muted hover:text-fg"
@@ -590,7 +590,7 @@ function OrderForm({
                     aria-label={`Remove ${order.itemName}`}
                     onClick={() => void handleWithdraw(order.id)}
                     disabled={withdrawingAll || addingItemId !== null}
-                    className="min-h-9 shrink-0 px-2 py-1 text-xs"
+                    className="min-h-11 shrink-0 px-2 py-1 text-xs sm:min-h-9"
                   >
                     Remove
                   </Button>
@@ -695,7 +695,7 @@ function OrderBoard({
                   className="group flex flex-col gap-2 rounded bg-surface px-2 py-1.5 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
-                    <span className="truncate text-sm text-fg">
+                    <span className="max-w-full text-sm text-fg sm:truncate" title={o.itemName}>
                       {o.itemId && itemNumberById.has(o.itemId) && (
                         <span className="mr-1 text-fg-muted">
                           {itemNumberById.get(o.itemId)}
@@ -704,7 +704,7 @@ function OrderBoard({
                       <span>{o.itemName}</span>
                     </span>
                     {o.notes && (
-                      <span className="truncate text-xs text-fg-muted">
+                      <span className="max-w-full text-xs text-fg-muted sm:truncate" title={o.notes}>
                         ({o.notes})
                       </span>
                     )}
@@ -723,7 +723,7 @@ function OrderBoard({
                         variant="secondary"
                         onClick={() => void handleRemoveFromBoard(o.id)}
                         disabled={removingOrderId === o.id}
-                        className="min-h-9 px-2 py-1 text-xs text-fg-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+                        className="min-h-11 px-2 py-1 text-xs text-fg-muted opacity-100 sm:min-h-9 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
                       >
                         Remove
                       </Button>
@@ -826,9 +826,9 @@ function MealRecommendationsPanel({
 }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold text-fg">Meal recommendations</h3>
-        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+        <div className="flex flex-col items-stretch gap-2">
           <Button
             onClick={onRecommendMeal}
             disabled={recommendationsLoading}
@@ -1631,7 +1631,7 @@ export default function FoodSelectionActiveView() {
         onManualRemainingMinutesChange={setManualRemainingMinutes}
       />
 
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Left: Order form */}
         <div className="rounded-lg border border-border bg-surface p-4 shadow-sm xl:col-span-2">
           <OrderForm

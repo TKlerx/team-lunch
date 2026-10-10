@@ -227,7 +227,7 @@ function PreVotePanel({ pollId }: { pollId: string }) {
 
   return (
     <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
         <div>
           <h3 className="text-sm font-semibold text-fg">Pre-vote recommendations</h3>
           <p className="mt-1 text-sm text-fg-muted">
@@ -238,7 +238,7 @@ function PreVotePanel({ pollId }: { pollId: string }) {
           variant="secondary"
           onClick={() => void handleLoadRecommendations()}
           disabled={loading}
-          className="border-accent px-3 py-1.5 text-accent-fg hover:bg-accent-soft"
+          className="shrink-0 whitespace-nowrap border-accent px-3 py-1.5 text-accent-fg hover:bg-accent-soft"
         >
           {loading ? 'Loading...' : result ? 'Refresh suggestions' : 'Show suggestions'}
         </Button>
