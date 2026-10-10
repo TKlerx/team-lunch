@@ -66,7 +66,7 @@ export default function FoodSelectionOvertimeView() {
         </span>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Left: Prompt */}
         <div className="rounded-lg border border-warning bg-surface p-6 shadow-sm xl:col-span-2">
           <h2 className="mb-2 text-lg font-semibold text-warning-fg">

@@ -449,6 +449,22 @@ describe('ManageMenus', () => {
     expect(screen.getByLabelText('URL')).toBeInTheDocument();
   });
 
+  it('opens Edit with the keyboard without collapsing its menu and restores focus', async () => {
+    const user = setupUser();
+    mockUseAppState.mockReturnValue({
+      ...initialAppState, initialized: true, menus: [makeMenu({ name: 'Keyboard Menu' })],
+    });
+    renderPage();
+    fireEvent.keyDown(screen.getByLabelText('Expand Keyboard Menu'), { key: 'Enter' });
+    const edit = screen.getAllByRole('button', { name: 'Edit' })[0];
+    edit.focus();
+    await user.keyboard('{Enter}');
+    expect(screen.getByRole('dialog', { name: 'Edit menu Keyboard Menu' })).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(edit).toHaveFocus();
+    expect(screen.getByLabelText('Collapse Keyboard Menu')).toBeInTheDocument();
+  });
+
   it('calls updateMenu API when saving name and contact details', async () => {
     const user = setupUser();
     mockUpdateMenu.mockResolvedValue({});

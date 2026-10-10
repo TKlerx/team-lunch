@@ -1152,14 +1152,14 @@ function MenuContactLinks({ menu }: { menu: Menu }) {
 function MenuCardActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
   return (
     <div className="flex gap-1" onClick={(event) => event.stopPropagation()}>
-      <button type="button" onClick={onEdit} aria-label="Edit" title="Edit" className="rounded p-1.5 text-accent hover:bg-surface-muted">
+      <button type="button" onClick={onEdit} aria-label="Edit" title="Edit" className="min-h-11 min-w-11 rounded p-1.5 text-accent hover:bg-surface-muted sm:min-h-0 sm:min-w-0">
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 20h9" />
           <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
         </svg>
         <span className="sr-only">Edit</span>
       </button>
-      <button type="button" onClick={onDelete} aria-label="Delete" title="Delete" className="rounded p-1.5 text-danger-fg hover:bg-surface-muted">
+      <button type="button" onClick={onDelete} aria-label="Delete" title="Delete" className="min-h-11 min-w-11 rounded p-1.5 text-danger-fg hover:bg-surface-muted sm:min-h-0 sm:min-w-0">
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 6h18" />
           <path d="M8 6V4h8v2" />
@@ -1191,7 +1191,7 @@ function MenuCardHeader({
       className="flex cursor-pointer flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
       onClick={onToggle}
       onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
           event.preventDefault();
           onToggle();
         }

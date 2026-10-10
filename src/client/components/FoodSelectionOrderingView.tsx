@@ -423,7 +423,7 @@ export default function FoodSelectionOrderingView() {
         </span>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="rounded-lg border border-accent bg-surface p-6 shadow-sm xl:col-span-2">
           <h2 className="mb-2 text-lg font-semibold text-accent-fg">Place the restaurant order</h2>
           <p className="mb-4 text-sm text-fg-muted">

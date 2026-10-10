@@ -193,7 +193,7 @@ export default function Header({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <Link
           to="/"
-          className="flex min-w-0 items-center gap-2 text-lg font-bold text-fg hover:text-accent sm:text-xl"
+          className="flex min-w-0 shrink-0 items-center gap-2 text-lg font-bold text-fg hover:text-accent sm:text-xl"
         >
           <img src={pizzaLogo} alt="Pizza logo" className="h-8 w-8" />
           <img
@@ -257,7 +257,7 @@ export default function Header({
         </IconButton>
 
         {nickname && (
-          <div className="relative w-full min-w-0 max-w-full lg:w-auto" ref={accountRef}>
+          <div className="relative w-full min-w-0 max-w-full lg:w-auto lg:max-w-sm" ref={accountRef}>
             <Button
               variant="ghost"
               onClick={() => setMenuOpen((open) => !open)}

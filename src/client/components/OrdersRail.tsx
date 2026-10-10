@@ -58,11 +58,11 @@ export default function OrdersRail({
         className={topActionClass}
       >
         {hasOngoingLunchProcess ? (
-          <span className="flex items-center justify-between gap-2">
+          <span className="flex flex-wrap items-center justify-between gap-2">
             <span>{topActionLabel}</span>
             <span
               data-testid="in-progress-status"
-              className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold ${
+              className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded px-2 py-0.5 text-xs font-bold ${
                 isPhase3Due ? 'delivery-due-alert text-danger-fg' : 'text-warning-fg'
               }`}
             >

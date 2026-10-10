@@ -190,8 +190,8 @@ export default function FoodSelectionCompletedView({
               const itemNumber = resolveOrderItemNumber(o, itemNumberByItemId, itemNumberByItemName);
               const displayName = itemNumber ? `${itemNumber} ${o.itemName}` : o.itemName;
               return (
-                <div key={o.id} className="flex items-baseline justify-between gap-3 rounded bg-surface-muted px-3 py-2">
-                  <div className="min-w-0 flex-1">
+                <div key={o.id} className="flex flex-col gap-3 rounded bg-surface-muted px-3 py-2 sm:flex-row sm:items-baseline sm:justify-between">
+                  <div className="w-full min-w-0 flex-1">
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
                       <span className="text-sm font-medium text-fg">{o.nickname}</span>
                       <span className="hidden text-sm text-fg-muted sm:inline">&middot;</span>
@@ -205,7 +205,7 @@ export default function FoodSelectionCompletedView({
                       )}
                     </div>
                     {isOrderOwnedByCurrentUser(o) && (
-                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <div className="mt-2 flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         <Select
                           value={ratingValues[o.id] ?? o.rating ?? ''}
                           onChange={(e) => {
@@ -227,7 +227,7 @@ export default function FoodSelectionCompletedView({
                           onChange={(e) => {
                             setFeedbackValues((prev) => ({ ...prev, [o.id]: e.target.value }));
                           }}
-                          className="min-w-0 flex-1 px-2 py-1 text-xs"
+                          className="min-w-0 flex-1 px-2 py-1 text-xs sm:min-w-40"
                           maxLength={300}
                           placeholder="Remark about food or delivery"
                           aria-label={`Feedback remark for ${o.itemName}`}
@@ -251,7 +251,7 @@ export default function FoodSelectionCompletedView({
                       </div>
                     ) : null}
                   </div>
-                  <span className="w-20 text-right whitespace-nowrap text-xs font-semibold text-success-fg">
+                  <span className="shrink-0 self-end whitespace-nowrap text-right text-xs font-semibold text-success-fg sm:w-20 sm:self-auto">
                     {(() => {
                       const resolvedPrice = resolveOrderPrice(o, priceByItemId, priceByItemName);
                       return resolvedPrice === null ? '-' : formatPrice(resolvedPrice);
