@@ -1,5 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type {
+  AuthConfigResponse,
   LocalLoginRequest,
   OfficeLocation,
   UpdateOfficeLocationSettingsRequest,
@@ -61,50 +62,6 @@ import type { JWTPayload } from 'jose';
 import { recordAuthAuditLog } from '../services/authAudit.js';
 import { getAuthAvatarForUser } from '../services/authAvatar.js';
 import { getDatabaseConnectivityStatus } from '../services/dbConnectivity.js';
-
-type AuthConfigResponse = {
-  auth: {
-    entraEnabled: boolean;
-    localEnabled: boolean;
-    authenticated: boolean;
-    databaseUnavailable?: boolean;
-    warning?: string;
-    user: {
-      username: string;
-      method: 'entra' | 'local';
-      displayName: string | null;
-      displayNameSource: 'local' | 'entra' | null;
-    } | null;
-    officeLocation: { id: string; key: string; name: string } | null;
-    officeLocations: OfficeLocation[];
-    accessibleOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
-    approvalRequired: boolean;
-    approved: boolean;
-    blocked: boolean;
-    isAdmin: boolean;
-    role: 'admin' | 'user' | null;
-    pendingApprovals: Array<{ email: string; requestedAt: string }>;
-    users: Array<{
-      email: string;
-      displayName: string | null;
-      displayNameSource: 'local' | 'entra' | null;
-      localAccount: boolean;
-      protectedBootstrapAdmin: boolean;
-      approved: boolean;
-      blocked: boolean;
-      isAdmin: boolean;
-      officeLocationId: string | null;
-      officeLocationKey: string | null;
-      officeLocationName: string | null;
-      assignedOfficeLocationIds: string[];
-      assignedOfficeLocations: Array<{ id: string; key: string; name: string; isActive: boolean }>;
-      requestedAt: string;
-      approvedAt: string | null;
-      blockedAt: string | null;
-      updatedAt: string;
-    }>;
-  };
-};
 
 function buildDefaultApprovalState() {
   return {
@@ -284,10 +241,10 @@ async function requireCurrentAuthSession(cookieHeader: string | undefined): Prom
 }
 
 async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
+  reply.header('Cache-Control', 'no-store');
   try {
     const entra = getEntraConfig();
     if (!getDatabaseConnectivityStatus().connected) {
-      reply.header('Cache-Control', 'no-store');
       return reply.send(buildDatabaseUnavailableAuthConfig(entra.enabled));
     }
 
@@ -313,13 +270,20 @@ async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
         };
       } catch {
         session = null;
+        userProfile = null;
+        approvalState = {
+          ...buildDefaultApprovalState(),
+          approvalRequired: approvalState.approvalRequired,
+          blocked: approvalState.blocked,
+        };
         reply.header('Set-Cookie', buildClearSessionCookieHeader());
         warning = 'Your session expired. Please sign in again.';
       }
     }
     let pendingApprovals: Array<{ email: string; requestedAt: string }> = [];
     let users: AuthConfigResponse['auth']['users'] = [];
-    if (!warning && session && approvalState.isAdmin) {
+    const canReadOffices = !!session && approvalState.approved && !approvalState.blocked;
+    if (!warning && canReadOffices && approvalState.isAdmin) {
       try {
         [pendingApprovals, users] = await Promise.all([
           listPendingAccessRequests(),
@@ -331,17 +295,18 @@ async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
       }
     }
     let officeLocations: OfficeLocation[] = [];
-    try {
-      officeLocations = await listOfficeLocations();
-    } catch {
-      warning =
-        'Authentication settings are partially unavailable. Local sign-in is still available.';
+    if (canReadOffices && approvalState.isAdmin) {
+      try {
+        officeLocations = await listOfficeLocations();
+      } catch {
+        warning =
+          'Authentication settings are partially unavailable. Local sign-in is still available.';
+      }
     }
-    const accessibleOfficeLocations = approvalState.isAdmin
-      ? officeLocations
-      : officeLocations.filter((location) =>
-          approvalState.accessibleOfficeLocationIds.includes(location.id),
-        );
+    const accessibleOfficeLocations = canReadOffices
+      ? (approvalState.isAdmin ? officeLocations : approvalState.accessibleOfficeLocations)
+          .map(({ id, key, name, isActive }) => ({ id, key, name, isActive }))
+      : [];
 
     const response: AuthConfigResponse = {
       auth: {
@@ -356,7 +321,7 @@ async function handleAuthConfig(req: FastifyRequest, reply: FastifyReply) {
             }
           : {}),
         user: userProfile,
-        officeLocation: approvalState.officeLocationId
+        officeLocation: canReadOffices && approvalState.officeLocationId
           ? {
               id: approvalState.officeLocationId,
               key: approvalState.officeLocationKey ?? '',

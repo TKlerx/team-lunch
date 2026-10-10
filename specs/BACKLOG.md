@@ -25,6 +25,7 @@ they become numbered specs.
 | BACKLOG-006 | Live Entra account verification | Backlog | - | Manual tenant/app-registration validation that mocked tests cannot cover. |
 | BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
 | BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
+| BACKLOG-012 | Auth bootstrap office privacy | Promoted | [008-auth-config-privacy](008-auth-config-privacy/spec.md) | [Issue #65](https://github.com/TKlerx/team-lunch/issues/65): public sign-in bootstrap must not expose office records; authorized selectors use summaries, admins retain full settings, all responses are non-cacheable. |
 | BACKLOG-009 | Office ordering interval policy | Delivered | [005-ordering-interval-policy](005-ordering-interval-policy/spec.md) | Fixed office-local calendar periods, pre-poll soft warning with recorded exceptions, scheduler compliance, and landing countdown. |
 
 ## BACKLOG-009 notes — Office ordering interval policy

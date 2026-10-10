@@ -7,7 +7,7 @@ the user observes and steers. For new features, run the spec-kit phases
 task at a time from `tasks.md`.
 
 <!-- SPECKIT START -->
-Active feature plan: `specs/005-ordering-interval-policy/plan.md`.
+Active feature plan: `specs/008-auth-config-privacy/plan.md`.
 <!-- SPECKIT END -->
 
 ### Typical Development Workflow
@@ -71,6 +71,10 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 - **Update the active spec** — after every task, mark progress in `specs/NNN-*/tasks.md`; log operational discoveries in the Discoveries section below
 
 ### Discoveries
+
+- In the production-style loopback Playwright harness, Chromium sends Secure session cookies on HTTP loopback while its APIRequestContext does not. Read authenticated bootstrap through browser fetch after real UI login; do not weaken production cookie flags to make an API-client assertion pass.
+
+- AuthGate office selection consumes `accessibleOfficeLocations` summaries for ordinary users and full `officeLocations` only for admins. Keep id/key/name/isActive summaries compatible when hardening auth bootstrap; clearing the full-office list for ordinary users does not require a client change.
 
 - Windows Vitest runs cap workers at one and use verbose progress: the default CPU-based jsdom worker count can exhaust memory alongside the coding team, while the default reporter stays quiet until a whole file completes. A silent runner alone does not establish a deadlock. `.env.test` can point at a remote test database; starting local `db-test` does not change that target. Use an explicit process-scoped `TEST_DATABASE_URL` override for local disposable validation without rewriting `.env.test`.
 
