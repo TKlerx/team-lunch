@@ -26,6 +26,7 @@ they become numbered specs.
 | BACKLOG-007 | Prisma 7 production verification | Backlog | - | Production smoke checklist for pg driver-adapter behavior, deploy safety, and critical flows. |
 | BACKLOG-008 | Menu allergens and additives | Planned | [004-menu-safety-labels](004-menu-safety-labels/spec.md) | Extend imported and manually managed menu items with distinct allergen/additive metadata. Show them apart from preference tags and let food-selection users temporarily exclude matching dishes. |
 | BACKLOG-009 | Office ordering interval policy | Delivered | [005-ordering-interval-policy](005-ordering-interval-policy/spec.md) | Fixed office-local calendar periods, pre-poll soft warning with recorded exceptions, scheduler compliance, and landing countdown. |
+| BACKLOG-010 | Individual food-order item removal | Promoted | [006-individual-order-removal](006-individual-order-removal/spec.md) | [Issue #66](https://github.com/TKlerx/team-lunch/issues/66): expose the existing order-ID withdrawal in the user's added-meals summary. |
 
 ## BACKLOG-009 notes — Office ordering interval policy
 

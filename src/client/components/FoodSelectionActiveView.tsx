@@ -436,10 +436,11 @@ function OrderForm({
     }
   };
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = async (orderId?: string) => {
+    if (withdrawingAll || addingItemId !== null) return;
     setWithdrawingAll(true);
     try {
-      await api.withdrawOrder(selectionId, nickname);
+      await api.withdrawOrder(selectionId, nickname, orderId);
     } catch (err) {
       showToast({ tone: "error", message: getErrorMessage(err, "Could not withdraw your order") });
     } finally {
@@ -573,15 +574,26 @@ function OrderForm({
                 ? itemNumberById.get(order.itemId)
                 : null;
               return (
-                <li key={order.id} className="text-sm text-accent-fg">
-                  {itemNumber ? `${itemNumber} ` : ""}
-                  {order.itemName}
-                  {order.notes ? (
-                    <span className="text-xs text-accent-fg">
-                      {" "}
-                      ({order.notes})
-                    </span>
-                  ) : null}
+                <li key={order.id} className="flex items-start justify-between gap-2 text-sm text-accent-fg">
+                  <span className="min-w-0 break-words">
+                    {itemNumber ? `${itemNumber} ` : ""}
+                    {order.itemName}
+                    {order.notes ? (
+                      <span className="text-xs text-accent-fg">
+                        {" "}
+                        ({order.notes})
+                      </span>
+                    ) : null}
+                  </span>
+                  <Button
+                    variant="secondary"
+                    aria-label={`Remove ${order.itemName}`}
+                    onClick={() => void handleWithdraw(order.id)}
+                    disabled={withdrawingAll || addingItemId !== null}
+                    className="min-h-9 shrink-0 px-2 py-1 text-xs"
+                  >
+                    Remove
+                  </Button>
                 </li>
               );
             })}
@@ -599,7 +611,7 @@ function OrderForm({
             existingOrders.length === 0
           }
         >
-          Withdraw
+          Withdraw all items
         </Button>
       </div>
       {dialog}
