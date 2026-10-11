@@ -22,12 +22,12 @@ overrides:
   '@fastify/ajv-compiler>fast-uri': 3.1.8
   'ajv>fast-uri': 3.1.8
   'fast-json-stringify>fast-uri': 4.1.5
-  shell-quote: 1.10.0
+  shell-quote: 1.11.0
   nanoid: 3.3.18
   '@vitest/mocker@>=2.1.0 <4.1.11': ^4.1.11
   baseline-browser-mapping@>=2.0.0 <2.11.0: ^2.11.0
   browserslist@<=4.28.6: ^4.28.7
-  postcss-selector-parser@>=6.1.0 <6.1.3: ^6.1.3
+  postcss-selector-parser@<7.1.6: 7.1.6
   qs@>=2.2.5 <6.16.0: ^6.16.0
   qs@>=6.14.2 <=6.15.3: ^6.15.4
   vitest@>=2.1.0 <4.1.11: ^4.1.11
@@ -46,7 +46,8 @@ minimumReleaseAgeExclude:
   - mysql2
   - react-router
   - react-router-dom
-  - postcss-selector-parser@6.1.3
+  - postcss-selector-parser@7.1.6
+  - shell-quote@1.11.0
   - browserslist@4.28.7
   - qs@6.15.4 || 6.16.0
   - vitest@4.1.11
