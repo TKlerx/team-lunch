@@ -65,8 +65,7 @@ step "Compose data volumes"
 docker compose -f "$COMPOSE_FILE" config --volumes
 
 step "Build app and migrate images"
-docker compose -f "$COMPOSE_FILE" build app
-docker compose -f "$COMPOSE_FILE" build migrate
+docker compose -f "$COMPOSE_FILE" build --pull app migrate
 
 step "Start database"
 docker compose -f "$COMPOSE_FILE" up -d --wait db
