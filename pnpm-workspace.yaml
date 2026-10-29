@@ -13,24 +13,23 @@ overrides:
   'prisma>mysql2': 3.23.1
   '@prisma/config>deepmerge-ts': 8.0.1
   effect: 3.21.0
-  '@hono/node-server': 2.0.10
-  hono: 4.13.7
+  '@hono/node-server': 2.1.3
+  hono: 4.13.11
   'minimatch@3>brace-expansion': 1.1.21
   'minimatch@5>brace-expansion': 2.1.7
   'minimatch@10>brace-expansion': 5.0.12
   valibot: ^1.4.2
-  '@fastify/ajv-compiler>fast-uri': 3.1.8
-  'ajv>fast-uri': 3.1.8
-  'fast-json-stringify>fast-uri': 4.1.5
+  '@fastify/ajv-compiler>fast-uri': 3.1.9
+  'ajv>fast-uri': 3.1.9
+  'fast-json-stringify>fast-uri': 4.2.3
   shell-quote: 1.11.0
   nanoid: 3.3.18
-  '@vitest/mocker@>=2.1.0 <4.1.11': ^4.1.11
   baseline-browser-mapping@>=2.0.0 <2.11.0: ^2.11.0
   browserslist@<=4.28.6: ^4.28.7
   postcss-selector-parser@<7.1.6: 7.1.6
-  qs@>=2.2.5 <6.16.0: ^6.16.0
-  qs@>=6.14.2 <=6.15.3: ^6.15.4
-  vitest@>=2.1.0 <4.1.11: ^4.1.11
+  fast-uri@>=3.0.0 <3.1.9: ^3.1.9
+  fast-uri@>=4.0.0 <4.2.3: ^4.2.3
+  qs@>=6.7.0 <=6.16.0: ^6.16.1
 
 # Wait three days before resolving newly published packages.
 minimumReleaseAge: 4320 # nosemgrep: package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age
