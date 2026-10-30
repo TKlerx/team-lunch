@@ -72,6 +72,8 @@ pnpm ports:check:ci         # non-interactive port blocker report (no terminatio
 
 ### Discoveries
 
+- Successful deploys remove stopped migrate containers and images labelled for this Compose project's migrate service only after the final data check. Image removal is never forced; failures retain the image with a warning. Docker build cache is managed separately.
+
 - In the production-style loopback Playwright harness, Chromium sends Secure session cookies on HTTP loopback while its APIRequestContext does not. Read authenticated bootstrap through browser fetch after real UI login; do not weaken production cookie flags to make an API-client assertion pass.
 
 - AuthGate office selection consumes `accessibleOfficeLocations` summaries for ordinary users and full `officeLocations` only for admins. Keep id/key/name/isActive summaries compatible when hardening auth bootstrap; clearing the full-office list for ordinary users does not require a client change.

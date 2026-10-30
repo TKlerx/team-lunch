@@ -1,6 +1,6 @@
 # Specs Backlog
 
-**Last Updated**: 2026-10-22
+**Last Updated**: 2026-10-29
 
 This backlog is the canonical intake list for unstructured feature wishes before
 they become numbered specs.
@@ -17,6 +17,7 @@ they become numbered specs.
 
 | ID | Title | Status | Promoted Spec | Notes |
 |----|-------|--------|---------------|-------|
+| BACKLOG-014 | Remove successful deployment migration artifacts | Implemented; PR validation pending | Maintenance (no feature/schema changes) | Clean stopped migration containers and project-labelled migration images after final data verification; preserve resources on deploy failure and never force-remove an image. All 1,516 tests and the six final cleanup regressions passed; the complexity ratchet remains unchanged. No live Docker or application data used by cleanup regressions. |
 | BACKLOG-013 | October Node runtime security deployment | Delivered | Maintenance (no feature/schema changes) | Docker stages pin Node 24.22.1; deploy pulls fresh bases before any service changes. Full local validation passed: 96 files / 1,508 tests. NAS app rebuilt/recreated, healthy with connected DB and zero restarts; PostgreSQL backup verified (24 table-data entries). Legacy Compose overrides and rollback image preserved; no schema/data migration performed. |
 | BACKLOG-011 | Mobile-friendly responsive app | Promoted | [007-mobile-responsive](007-mobile-responsive/spec.md) | [GitHub #67](https://github.com/TKlerx/team-lunch/issues/67): phone layouts, history, dialogs and long content. |
 | BACKLOG-001 | AI meal recommendations from ratings | Promoted | [002-ai-meal-recommendations](002-ai-meal-recommendations/spec.md) | Builds on persisted order ratings, remarks, preferences, and retained poll/food-selection history. |

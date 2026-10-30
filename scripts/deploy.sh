@@ -90,4 +90,15 @@ docker compose -f "$COMPOSE_FILE" up -d --no-deps --wait --wait-timeout 120 app
 step "Post-deploy data safety verification"
 docker compose -f "$COMPOSE_FILE" run --rm --entrypoint node migrate scripts/prisma-production-data-check.mjs
 
+step "Remove completed migration containers and dedicated images"
+migration_images="$(docker image ls -q \
+  --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME" \
+  --filter "label=com.docker.compose.service=migrate" | sort -u)"
+docker compose -f "$COMPOSE_FILE" rm -f migrate
+for migration_image in $migration_images; do
+  # Never force removal: another container or tag may still need this image.
+  docker image rm "$migration_image" || \
+    printf 'WARNING: Migration image %s could not be removed; leaving it in place.\n' "$migration_image" >&2
+done
+
 printf '\nDeploy completed successfully.\n'
