@@ -1,7 +1,9 @@
 import prisma from '../db.js';
+import type { Prisma } from '../generated/client/client.js';
 import { broadcast, formatFoodSelection } from '../sse.js';
 import type {
   FoodSelection,
+  LunchPhaseAction,
   FoodOrder,
   FoodSelectionFallbackCandidate,
   PingFallbackCandidateResponse,
@@ -16,6 +18,23 @@ const deliveryTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const reminderTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const ORGANIZER_FALLBACK_NOTE_PREFIX = 'Default meal placed by organizer';
 const MAX_FOOD_ORDER_NOTES_LENGTH = 200;
+
+type PhaseActor = { actorKey: string; displayNameSnapshot: string };
+
+function phaseAction(
+  selection: SelectionWithOrders,
+  kind: LunchPhaseAction['kind'],
+  actor?: PhaseActor,
+) {
+  if (!actor) return undefined;
+  const history = Array.isArray(selection.phaseActions) ? selection.phaseActions : [];
+  return [...history, {
+    kind,
+    actorKey: actor.actorKey,
+    displayName: actor.displayNameSnapshot,
+    at: new Date().toISOString(),
+  }];
+}
 
 export function getActiveTimers(): Map<string, ReturnType<typeof setTimeout>> {
   return activeTimers;
@@ -407,14 +426,26 @@ function getWinnerVoterNicknames(
   )];
 }
 
-async function transitionToOrdering(selectionId: string): Promise<FoodSelection> {
-  clearTimer(selectionId);
-  clearDeliveryTimer(selectionId);
+async function updateSelectionPhase(
+  where: Prisma.FoodSelectionWhereUniqueInput,
+  data: Prisma.FoodSelectionUpdateInput,
+): Promise<SelectionWithOrders> {
+  try {
+    return await prisma.foodSelection.update({ where, data, include: { orders: true } });
+  } catch (error) {
+    if ((error as { code?: string }).code === 'P2025') {
+      throw Object.assign(new Error('The lunch phase has changed'), { statusCode: 409 });
+    }
+    throw error;
+  }
+}
 
-  const updated = await prisma.foodSelection.update({
-    where: { id: selectionId },
-    data: {
+async function transitionToOrdering(selection: SelectionWithOrders, actor?: PhaseActor): Promise<FoodSelection> {
+  const updated = await updateSelectionPhase(
+    { id: selection.id, status: selection.status, endsAt: selection.endsAt },
+    {
       status: 'ordering',
+      phaseActions: phaseAction(selection, 'closed', actor),
       orderPlacedAt: null,
       orderPlacedBy: null,
       completedAt: null,
@@ -422,8 +453,9 @@ async function transitionToOrdering(selectionId: string): Promise<FoodSelection>
       etaSetAt: null,
       deliveryDueAt: null,
     },
-    include: { orders: true },
-  });
+  );
+  clearTimer(selection.id);
+  clearDeliveryTimer(selection.id);
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_ordering_started', { foodSelection: formatted }, updated.officeLocationId);
@@ -695,33 +727,38 @@ export async function extendFoodSelection(
   selectionId: string,
   extensionMinutes: number,
   officeLocationId?: string,
+  actor?: PhaseActor,
 ): Promise<FoodSelection> {
   validateExtension(extensionMinutes);
 
   const selection = await fetchSelectionOrThrow(selectionId, officeLocationId);
-  if (selection.status !== 'overtime') {
+  if (selection.status !== 'overtime' && selection.status !== 'ordering') {
     throw Object.assign(
       new Error('Only overtime food selections can be extended'),
       { statusCode: 400 },
     );
   }
+  if (selection.status === 'ordering' && selection.orderPlacedBy) {
+    throw Object.assign(new Error('The order has already been claimed'), { statusCode: 409 });
+  }
 
   const now = new Date();
   const newEndsAt = new Date(now.getTime() + extensionMinutes * 60 * 1000);
 
-  const updated = await prisma.foodSelection.update({
-    where: { id: selectionId },
-    data: {
+  const updated = await updateSelectionPhase(
+    { id: selectionId, status: selection.status, endsAt: selection.endsAt, orderPlacedBy: null },
+    {
       status: 'active',
       endsAt: newEndsAt,
+      phaseActions: selection.status === 'ordering' ? phaseAction(selection, 'reopened', actor) : undefined,
     },
-    include: { orders: true },
-  });
+  );
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_extended', {
     foodSelectionId: selectionId,
     newEndsAt: newEndsAt.toISOString(),
+    phaseActions: formatted.phaseActions,
   }, selection.officeLocationId);
 
   scheduleTimer(selectionId, newEndsAt);
@@ -766,6 +803,7 @@ export async function updateActiveFoodSelectionTimer(
 export async function completeFoodSelection(
   selectionId: string,
   officeLocationId?: string,
+  actor?: PhaseActor,
 ): Promise<FoodSelection> {
   const selection = await fetchSelectionOrThrow(selectionId, officeLocationId);
   if (selection.status !== 'overtime') {
@@ -775,7 +813,7 @@ export async function completeFoodSelection(
     );
   }
 
-  return transitionToOrdering(selectionId);
+  return transitionToOrdering(selection, actor);
 }
 
 export async function rateOrder(
@@ -1173,6 +1211,7 @@ export async function exportOrdersForUserCsv(nickname: string, actor?: OrderActo
 export async function completeFoodSelectionNow(
   selectionId: string,
   officeLocationId?: string,
+  actor?: PhaseActor,
 ): Promise<FoodSelection> {
   const selection = await fetchSelectionOrThrow(selectionId, officeLocationId);
   if (selection.status !== 'active') {
@@ -1182,13 +1221,14 @@ export async function completeFoodSelectionNow(
     );
   }
 
-  return transitionToOrdering(selectionId);
+  return transitionToOrdering(selection, actor);
 }
 
 export async function claimOrderingResponsibility(
   selectionId: string,
   claimedBy: string,
   officeLocationId?: string,
+  actor?: PhaseActor,
 ): Promise<FoodSelection> {
   const validatedClaimedBy = validateOrderPlacedBy(claimedBy);
   const selection = await fetchSelectionOrThrow(selectionId, officeLocationId);
@@ -1205,14 +1245,15 @@ export async function claimOrderingResponsibility(
       { statusCode: 409 },
     );
   }
+  if (selection.orderPlacedBy) return formatFoodSelection(selection);
 
-  const updated = await prisma.foodSelection.update({
-    where: { id: selectionId },
-    data: {
+  const updated = await updateSelectionPhase(
+    { id: selectionId, status: 'ordering', endsAt: selection.endsAt, orderPlacedBy: null },
+    {
       orderPlacedBy: validatedClaimedBy,
+      phaseActions: phaseAction(selection, 'claimed', actor),
     },
-    include: { orders: true },
-  });
+  );
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_ordering_claimed', { foodSelection: formatted }, selection.officeLocationId);
@@ -1225,6 +1266,7 @@ export async function placeDeliveryOrder(
   etaMinutes: number,
   placedBy: string,
   officeLocationId?: string,
+  actor?: PhaseActor,
 ): Promise<FoodSelection> {
   const validatedEtaMinutes = validateEtaMinutes(etaMinutes);
   const validatedPlacedBy = validateOrderPlacedBy(placedBy);
@@ -1245,11 +1287,12 @@ export async function placeDeliveryOrder(
   const now = new Date();
   const dueAt = new Date(now.getTime() + validatedEtaMinutes * 60 * 1000);
   const updateResult = await prisma.foodSelection.updateMany({
-    where: { id: selectionId, status: 'ordering' },
+    where: { id: selectionId, status: 'ordering', endsAt: existing.endsAt, orderPlacedBy: existing.orderPlacedBy },
     data: {
       status: 'delivering',
       orderPlacedAt: now,
       orderPlacedBy: validatedPlacedBy,
+      phaseActions: phaseAction(existing, 'placed', actor),
       etaMinutes: validatedEtaMinutes,
       etaSetAt: now,
       deliveryDueAt: dueAt,

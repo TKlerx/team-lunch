@@ -576,6 +576,10 @@ describe('SSE end-to-end integration', () => {
       await waitForEvents(sse.events, eventCountBefore + 4);
 
       expect(sse.events[eventCountBefore + 3].event).toBe('food_selection_ordering_started');
+      const ordering = sse.events[eventCountBefore + 3].data as { foodSelection: { phaseActions: unknown[] } };
+      expect(ordering.foodSelection.phaseActions).toEqual([
+        { kind: 'closed', displayName: 'approved-sse@company.com', at: expect.any(String) },
+      ]);
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/place-order`, {
         etaMinutes: 20,

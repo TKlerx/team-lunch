@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAppState } from '../context/AppContext.js';
+import { LunchActivity } from './LunchProgress.js';
 import type { FoodSelection } from '../../lib/types.js';
 import { getAuthenticatedActorKey, getAuthenticatedDisplayLabel } from '../auth.js';
 import * as api from '../api.js';
@@ -166,6 +167,7 @@ export default function FoodSelectionCompletedView({
         <p className="mb-1 text-center text-xs text-fg-muted">
           Order placed: {formatDateTime(selection.orderPlacedAt)}
         </p>
+        {isHistorical && <LunchActivity actions={selection.phaseActions} />}
         <p className="mb-4 text-center text-xs text-fg-muted">
           Announced arrival: {formatDateTime(selection.deliveryDueAt)}
         </p>

@@ -171,6 +171,7 @@ model FoodSelection {
   endsAt           DateTime  @map("ends_at") @db.Timestamptz()
   orderPlacedAt    DateTime? @map("order_placed_at") @db.Timestamptz()
   orderPlacedBy    String?   @map("order_placed_by") @db.VarChar(255)
+  phaseActions     Json      @default("[]") @map("phase_actions")
   completedAt      DateTime? @map("completed_at") @db.Timestamptz()
   etaMinutes       Int?      @map("eta_minutes")
   etaSetAt         DateTime? @map("eta_set_at") @db.Timestamptz()

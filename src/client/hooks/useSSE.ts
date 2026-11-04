@@ -11,6 +11,7 @@ import type {
   FoodSelection,
   FoodOrder,
   ShoppingListItem,
+  SSEEvent,
 } from '../../lib/types.js';
 import { withBasePath, withOfficeLocationContext } from '../config.js';
 
@@ -283,7 +284,7 @@ export function useSSE(selectedOfficeLocationId?: string | null): void {
     });
 
     es.addEventListener('food_selection_extended', (e: MessageEvent) => {
-      const payload = JSON.parse(e.data) as { foodSelectionId: string; newEndsAt: string };
+      const payload = JSON.parse(e.data) as Extract<SSEEvent, { type: 'food_selection_extended' }>['payload'];
       dispatchRef.current({ type: 'FOOD_SELECTION_EXTENDED', payload });
     });
 

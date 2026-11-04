@@ -16,6 +16,7 @@ vi.mock('../../src/client/context/AppContext.js', async (importOriginal) => {
 
 const mockPlaceDeliveryOrder = vi.fn();
 const mockClaimOrderingResponsibility = vi.fn();
+const mockExtendFoodSelection = vi.fn();
 const mockSetOrderProcessed = vi.fn();
 const mockFetchFallbackOrderCandidates = vi.fn();
 const mockPlaceFallbackOrder = vi.fn();
@@ -23,6 +24,7 @@ const mockPingFallbackCandidate = vi.fn();
 vi.mock('../../src/client/api.js', () => ({
   placeDeliveryOrder: (...args: unknown[]) => mockPlaceDeliveryOrder(...args),
   claimOrderingResponsibility: (...args: unknown[]) => mockClaimOrderingResponsibility(...args),
+  extendFoodSelection: (...args: unknown[]) => mockExtendFoodSelection(...args),
   setOrderProcessed: (...args: unknown[]) => mockSetOrderProcessed(...args),
   fetchFallbackOrderCandidates: (...args: unknown[]) => mockFetchFallbackOrderCandidates(...args),
   placeFallbackOrder: (...args: unknown[]) => mockPlaceFallbackOrder(...args),
@@ -40,6 +42,18 @@ function renderView() {
 }
 
 describe('FoodSelectionOrderingView', () => {
+  it('lets an admin reopen unclaimed meal selection for five minutes', async () => {
+    mockExtendFoodSelection.mockResolvedValue({});
+    const user = setupUser();
+    renderView();
+    await user.click(screen.getByRole('button', { name: 'Reopen meal selection' }));
+    await user.click(screen.getByRole('button', { name: '5 min' }));
+    expect(mockExtendFoodSelection).toHaveBeenCalledWith(
+      mockUseAppState().activeFoodSelection?.id,
+      5,
+    );
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.setItem('team_lunch_actor_key', 'alice@example.com');

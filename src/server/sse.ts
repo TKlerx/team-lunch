@@ -1,6 +1,7 @@
 import type { ServerResponse } from 'node:http';
 import prisma from './db.js';
-import type { InitialStatePayload, FoodSelection, FoodOrder } from '../lib/types.js';
+import type { InitialStatePayload, FoodSelection, FoodOrder, LunchPhaseAction } from '../lib/types.js';
+import type { Prisma } from './generated/client/client.js';
 import {
   getOfficeDefaultFoodSelectionDurationMinutes, setOrderingPolicyChangedHandler,
 } from './services/officeLocation.js';
@@ -66,6 +67,7 @@ function formatFoodSelection(fs: {
   endsAt: Date;
   orderPlacedAt: Date | null;
   orderPlacedBy: string | null;
+  phaseActions?: Prisma.JsonValue;
   completedAt: Date | null;
   etaMinutes: number | null;
   etaSetAt: Date | null;
@@ -102,6 +104,9 @@ function formatFoodSelection(fs: {
     endsAt: fs.endsAt.toISOString(),
     orderPlacedAt: fs.orderPlacedAt ? fs.orderPlacedAt.toISOString() : null,
     orderPlacedBy: fs.orderPlacedBy,
+    phaseActions: (fs.phaseActions as LunchPhaseAction[] | undefined)?.map(({ kind, displayName, at }) => ({
+      kind, displayName, at,
+    })),
     completedAt: fs.completedAt ? fs.completedAt.toISOString() : null,
     etaMinutes: fs.etaMinutes,
     etaSetAt: fs.etaSetAt ? fs.etaSetAt.toISOString() : null,
