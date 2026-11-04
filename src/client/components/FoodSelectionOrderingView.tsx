@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as api from '../api.js';
-import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser } from '../auth.js';
+import { getAuthenticatedDisplayLabel, isAdminAuthenticatedUser, isCreatorAuthenticatedUser } from '../auth.js';
 import { useAppState } from '../context/AppContext.js';
 import { useToast } from '../context/ToastContext.js';
 import FoodSelectionAbortControl from './FoodSelectionAbortControl.js';
@@ -18,6 +18,31 @@ import type { FoodSelectionFallbackCandidate } from '../../lib/types.js';
 import { getErrorMessage } from '../lib/errorMessage.js';
 
 const ETA_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60] as const;
+const REOPEN_OPTIONS = [5, 10, 15] as const;
+
+function ReopenMealSelection({ selectionId }: { selectionId: string }) {
+  const { showToast } = useToast();
+
+  async function reopen(minutes: number) {
+    try {
+      await api.extendFoodSelection(selectionId, minutes);
+      return true;
+    } catch (err) {
+      showToast({ tone: 'error', message: getErrorMessage(err, 'Could not reopen meal selection') });
+      return false;
+    }
+  }
+
+  return (
+    <MinutesActionDropdown
+      triggerLabel="Reopen meal selection"
+      triggerAriaLabel="Reopen meal selection"
+      options={REOPEN_OPTIONS}
+      allowCustomMinutes={false}
+      onSubmitMinutes={reopen}
+    />
+  );
+}
 
 function formatCompactUrl(value: string): string {
   try {
@@ -444,6 +469,11 @@ export default function FoodSelectionOrderingView() {
             onClaimOrdering={() => void handleClaimOrdering()}
             onPlaceOrder={handlePlaceOrder}
           />
+          {!isClaimed && (canManageFoodSelection || isCreatorAuthenticatedUser(selection.createdBy)) && (
+            <div className="mb-4 flex justify-end">
+              <ReopenMealSelection selectionId={selection.id} />
+            </div>
+          )}
 
           <div className="mb-4">
             <Button

@@ -104,7 +104,7 @@ describe('FoodSelectionOvertimeView', () => {
     mockCompleteFoodSelection.mockResolvedValue({});
     renderView();
 
-    await user.click(screen.getByRole('button', { name: /confirm/i }));
+    await user.click(screen.getByRole('button', { name: /finish meal selection and move to ordering/i }));
     expect(mockCompleteFoodSelection).toHaveBeenCalledWith('fs-1');
   });
 

@@ -9,6 +9,7 @@ import FoodSelectionOvertimeView from '../components/FoodSelectionOvertimeView.j
 import FoodSelectionOrderingView from '../components/FoodSelectionOrderingView.js';
 import FoodDeliveryView from '../components/FoodDeliveryView.js';
 import FoodSelectionCompletedView from '../components/FoodSelectionCompletedView.js';
+import LunchProgress from '../components/LunchProgress.js';
 
 /**
  * Phase-driven main view. Renders the appropriate view component for each phase.
@@ -20,6 +21,15 @@ export default function MainView({
   phase: AppPhase;
   onOpenHistorySelection?: (selectionId: string) => void;
 }) {
+  return (
+    <>
+      <LunchProgress phase={phase} />
+      {renderPhase(phase, onOpenHistorySelection)}
+    </>
+  );
+}
+
+function renderPhase(phase: AppPhase, onOpenHistorySelection?: (selectionId: string) => void) {
   switch (phase) {
     case 'NO_MENUS':
       return <NoMenusView />;

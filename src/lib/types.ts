@@ -147,6 +147,12 @@ export interface PollVote {
   castAt: string;
 }
 
+export interface LunchPhaseAction {
+  kind: 'closed' | 'reopened' | 'claimed' | 'placed';
+  displayName: string;
+  at: string;
+}
+
 export interface FoodSelection {
   id: string;
   createdBy?: string | null;
@@ -158,6 +164,7 @@ export interface FoodSelection {
   endsAt: string;
   orderPlacedAt: string | null;
   orderPlacedBy: string | null;
+  phaseActions?: LunchPhaseAction[];
   completedAt: string | null;
   etaMinutes: number | null;
   etaSetAt: string | null;
@@ -708,7 +715,7 @@ export type SSEEvent =
   | { type: 'order_updated'; payload: { order: FoodOrder } }
   | { type: 'order_withdrawn'; payload: { nickname: string; actorKey?: string | null; selectionId: string; orderId?: string } }
   | { type: 'food_selection_overtime'; payload: { foodSelectionId: string } }
-  | { type: 'food_selection_extended'; payload: { foodSelectionId: string; newEndsAt: string } }
+  | { type: 'food_selection_extended'; payload: { foodSelectionId: string; newEndsAt: string; phaseActions?: LunchPhaseAction[] } }
   | { type: 'food_selection_ordering_started'; payload: { foodSelection: FoodSelection } }
   | { type: 'food_selection_ordering_claimed'; payload: { foodSelection: FoodSelection } }
   | {

@@ -576,25 +576,47 @@ describe('SSE end-to-end integration', () => {
       await waitForEvents(sse.events, eventCountBefore + 4);
 
       expect(sse.events[eventCountBefore + 3].event).toBe('food_selection_ordering_started');
+      const ordering = sse.events[eventCountBefore + 3].data as { foodSelection: { phaseActions: unknown[] } };
+      expect(ordering.foodSelection.phaseActions).toEqual([
+        { kind: 'closed', displayName: 'approved-sse@company.com', at: expect.any(String) },
+      ]);
+
+      const observer = await connectSSE(port, defaultHeaders);
+      try {
+        await waitForEvents(observer.events, 1);
+        const reopened = await httpRequest('POST', port, `/api/food-selections/${fs.id}/extend`, {
+          extensionMinutes: 5,
+        }, headers);
+        expect(reopened.status).toBe(200);
+        await waitForEvents(observer.events, 2);
+        expect(observer.events[1]).toMatchObject({
+          event: 'food_selection_extended',
+          data: { foodSelectionId: fs.id, newEndsAt: (reopened.body as { endsAt: string }).endsAt },
+        });
+      } finally {
+        observer.close();
+      }
+      await httpRequest('POST', port, `/api/food-selections/${fs.id}/complete-now`, undefined, headers);
+      await waitForEvents(sse.events, eventCountBefore + 6);
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/place-order`, {
         etaMinutes: 20,
       }, headers);
-      await waitForEvents(sse.events, eventCountBefore + 5);
+      await waitForEvents(sse.events, eventCountBefore + 7);
 
-      expect(sse.events[eventCountBefore + 4].event).toBe('food_selection_delivery_started');
+      expect(sse.events[eventCountBefore + 6].event).toBe('food_selection_delivery_started');
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/eta`, {
         etaMinutes: 30,
       }, headers);
-      await waitForEvents(sse.events, eventCountBefore + 6);
+      await waitForEvents(sse.events, eventCountBefore + 8);
 
-      expect(sse.events[eventCountBefore + 5].event).toBe('food_selection_eta_updated');
+      expect(sse.events[eventCountBefore + 7].event).toBe('food_selection_eta_updated');
 
       await httpRequest('POST', port, `/api/food-selections/${fs.id}/confirm-arrival`, undefined, headers);
-      await waitForEvents(sse.events, eventCountBefore + 7);
+      await waitForEvents(sse.events, eventCountBefore + 9);
 
-      expect(sse.events[eventCountBefore + 6].event).toBe('food_selection_completed');
+      expect(sse.events[eventCountBefore + 8].event).toBe('food_selection_completed');
     } finally {
       await teardown(sse);
     }

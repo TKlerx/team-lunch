@@ -75,6 +75,117 @@ vi.mock('../../src/server/sse.js', () => ({
 
 let app: FastifyInstance;
 
+// ─── Helpers ─────────────────────────────────────────────
+
+async function createMenu(name: string) {
+  const res = await supertest(app.server).post('/api/menus').set(await approvedAuthHeaders()).send({ name }).expect(201);
+  return res.body;
+}
+
+async function createMenuItem(menuId: string, name: string, description?: string) {
+  const res = await supertest(app.server)
+    .post(`/api/menus/${menuId}/items`)
+    .set(await approvedAuthHeaders())
+    .send({ name, description })
+    .expect(201);
+  return res.body;
+}
+
+async function createFinishedPoll() {
+  const headers = await approvedAuthHeaders('alice@example.com');
+  const menu = await createMenu('Thai Food');
+  const item = await createMenuItem(menu.id, 'Pad Thai', 'Noodles');
+
+  // Start poll
+  const pollRes = await supertest(app.server)
+    .post('/api/polls')
+    .set(headers)
+    .send({ description: 'Lunch poll', durationMinutes: 60 })
+    .expect(201);
+  const poll = pollRes.body;
+
+  // Cast a vote
+  await supertest(app.server)
+    .post(`/api/polls/${poll.id}/votes`)
+    .set(headers)
+    .send({ menuId: menu.id, nickname: 'Alice' })
+    .expect(201);
+
+  await prisma.poll.update({
+    where: { id: poll.id },
+    data: { endsAt: new Date(Date.now() - 1000) },
+  });
+
+  // End the poll
+  const endRes = await supertest(app.server)
+    .post(`/api/polls/${poll.id}/end`)
+    .set(headers)
+    .expect(200);
+
+  return { menu, item, poll: endRes.body };
+}
+
+async function startFoodSelection(pollId: string, durationMinutes = 10) {
+  const res = await supertest(app.server)
+    .post('/api/food-selections')
+    .set(await approvedAuthHeaders('creator@example.com'))
+    .send({ pollId, durationMinutes })
+    .expect(201);
+  return res.body;
+}
+
+async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string, isAdmin = false) {
+  const defaultOffice = await ensureDefaultOfficeLocation();
+  await prisma.authAccessUser.upsert({
+    where: { email },
+    update: {
+      approved: true,
+      blocked: false,
+      isAdmin,
+      displayName: displayName ?? null,
+      displayNameSource: displayName ? 'local' : null,
+      officeLocationId: defaultOffice.id,
+    },
+    create: {
+      email,
+      approved: true,
+      blocked: false,
+      isAdmin,
+      displayName: displayName ?? null,
+      displayNameSource: displayName ? 'local' : null,
+      officeLocationId: defaultOffice.id,
+    },
+  });
+
+  const session = createSessionCookieValue({
+    username: email,
+    method: 'entra',
+    iat: Math.floor(Date.now() / 1000),
+  });
+
+  return {
+    cookie: `team_lunch_auth_session=${session}`,
+  };
+}
+
+async function adminAuthHeaders(email = 'admin@example.com') {
+  return approvedAuthHeaders(email, undefined, true);
+}
+
+async function completeFoodSelectionAsApproved(selectionId: string, email?: string) {
+  return supertest(app.server)
+    .post(`/api/food-selections/${selectionId}/complete`)
+    .set(await approvedAuthHeaders(email))
+    .expect(200);
+}
+
+async function completeFoodSelectionNowAsApproved(selectionId: string, email?: string) {
+  return supertest(app.server)
+    .post(`/api/food-selections/${selectionId}/complete-now`)
+    .set(await approvedAuthHeaders(email))
+    .expect(200);
+}
+
 describe('Food selection routes (integration)', () => {
   beforeAll(async () => {
     app = await buildApp();
@@ -94,117 +205,6 @@ describe('Food selection routes (integration)', () => {
     await app.close();
     await disconnectDatabase();
   });
-
-  // ─── Helpers ─────────────────────────────────────────────
-
-  async function createMenu(name: string) {
-    const res = await supertest(app.server).post('/api/menus').set(await approvedAuthHeaders()).send({ name }).expect(201);
-    return res.body;
-  }
-
-  async function createMenuItem(menuId: string, name: string, description?: string) {
-    const res = await supertest(app.server)
-      .post(`/api/menus/${menuId}/items`)
-      .set(await approvedAuthHeaders())
-      .send({ name, description })
-      .expect(201);
-    return res.body;
-  }
-
-  async function createFinishedPoll() {
-    const headers = await approvedAuthHeaders('alice@example.com');
-    const menu = await createMenu('Thai Food');
-    const item = await createMenuItem(menu.id, 'Pad Thai', 'Noodles');
-
-    // Start poll
-    const pollRes = await supertest(app.server)
-      .post('/api/polls')
-      .set(headers)
-      .send({ description: 'Lunch poll', durationMinutes: 60 })
-      .expect(201);
-    const poll = pollRes.body;
-
-    // Cast a vote
-    await supertest(app.server)
-      .post(`/api/polls/${poll.id}/votes`)
-      .set(headers)
-      .send({ menuId: menu.id, nickname: 'Alice' })
-      .expect(201);
-
-    await prisma.poll.update({
-      where: { id: poll.id },
-      data: { endsAt: new Date(Date.now() - 1000) },
-    });
-
-    // End the poll
-    const endRes = await supertest(app.server)
-      .post(`/api/polls/${poll.id}/end`)
-      .set(headers)
-      .expect(200);
-
-    return { menu, item, poll: endRes.body };
-  }
-
-  async function startFoodSelection(pollId: string, durationMinutes = 10) {
-    const res = await supertest(app.server)
-      .post('/api/food-selections')
-      .set(await approvedAuthHeaders('creator@example.com'))
-      .send({ pollId, durationMinutes })
-      .expect(201);
-    return res.body;
-  }
-
-  async function approvedAuthHeaders(email = 'approved-user@company.com', displayName?: string, isAdmin = false) {
-    const defaultOffice = await ensureDefaultOfficeLocation();
-    await prisma.authAccessUser.upsert({
-      where: { email },
-      update: {
-        approved: true,
-        blocked: false,
-        isAdmin,
-        displayName: displayName ?? null,
-        displayNameSource: displayName ? 'local' : null,
-        officeLocationId: defaultOffice.id,
-      },
-      create: {
-        email,
-        approved: true,
-        blocked: false,
-        isAdmin,
-        displayName: displayName ?? null,
-        displayNameSource: displayName ? 'local' : null,
-        officeLocationId: defaultOffice.id,
-      },
-    });
-
-    const session = createSessionCookieValue({
-      username: email,
-      method: 'entra',
-      iat: Math.floor(Date.now() / 1000),
-    });
-
-    return {
-      cookie: `team_lunch_auth_session=${session}`,
-    };
-  }
-
-  async function adminAuthHeaders(email = 'admin@example.com') {
-    return approvedAuthHeaders(email, undefined, true);
-  }
-
-  async function completeFoodSelectionAsApproved(selectionId: string, email?: string) {
-    return supertest(app.server)
-      .post(`/api/food-selections/${selectionId}/complete`)
-      .set(await approvedAuthHeaders(email))
-      .expect(200);
-  }
-
-  async function completeFoodSelectionNowAsApproved(selectionId: string, email?: string) {
-    return supertest(app.server)
-      .post(`/api/food-selections/${selectionId}/complete-now`)
-      .set(await approvedAuthHeaders(email))
-      .expect(200);
-  }
 
   // ─── POST /api/food-selections ───────────────────────────
 
@@ -696,6 +696,51 @@ describe('Food selection routes (integration)', () => {
     expect(res.body.error).toContain('Only overtime food selections can be extended');
   });
 
+  it('reopens after an earlier extension and races safely with an ordering claim', async () => {
+    const { poll, item } = await createFinishedPoll();
+    const selection = await startFoodSelection(poll.id);
+    const creator = await approvedAuthHeaders('creator@example.com', 'Lunch organizer');
+    const other = await approvedAuthHeaders('other@example.com');
+    const client = supertest(app.server);
+    const path = `/api/food-selections/${selection.id}`;
+    const extend = (headers: typeof creator) =>
+      client.post(`${path}/extend`).set(headers).send({ extensionMinutes: 5 });
+
+    const order = await client.post(`${path}/orders`).set(other).send({ itemId: item.id }).expect(201);
+    await client.post(`${path}/expire`).set(creator).expect(200);
+    await extend(creator).expect(200);
+    await client.post(`${path}/complete-now`).set(creator).expect(200);
+    await extend(other).expect(403);
+    const otherOffice = await createOfficeLocation('Other office');
+    const admin = await adminAuthHeaders();
+    await extend(admin).query({ officeLocationId: otherOffice.id }).expect(404);
+    const reopened = await extend(creator).expect(200);
+    expect(reopened.body).toMatchObject({
+      id: selection.id,
+      status: 'active',
+      menuId: selection.menuId,
+      orders: [{ id: order.body.id, itemId: item.id }],
+    });
+    expect(await prisma.foodSelection.findUnique({ where: { id: selection.id } })).toMatchObject({
+      phaseActions: [
+        { kind: 'closed', actorKey: 'creator@example.com', displayName: 'Lunch organizer' },
+        { kind: 'reopened', actorKey: 'creator@example.com', displayName: 'Lunch organizer' },
+      ],
+    });
+
+    await client.post(`${path}/complete-now`).set(creator).expect(200);
+    const [reopen, claim] = await Promise.all([
+      extend(creator),
+      client.post(`${path}/claim-ordering`).set(other),
+    ]);
+    expect([reopen.status, claim.status].filter((status) => status === 200)).toHaveLength(1);
+    if (reopen.status === 200) {
+      await client.post(`${path}/complete-now`).set(creator).expect(200);
+      await client.post(`${path}/claim-ordering`).set(other).expect(200);
+    }
+    await extend(creator).expect(409);
+  });
+
   // ─── POST /api/food-selections/:id/complete ──────────────
 
   it('completes an overtime food selection', async () => {
@@ -1108,6 +1153,12 @@ describe('Food selection routes (integration)', () => {
     expect(res.body.status).toBe('delivering');
     expect(res.body.orderPlacedAt).toEqual(expect.any(String));
     expect(res.body.etaMinutes).toBe(35);
+    expect(await prisma.foodSelection.findUnique({ where: { id: selection.id } })).toMatchObject({
+      phaseActions: [
+        { kind: 'closed', actorKey: 'approved-user@company.com' },
+        { kind: 'placed', actorKey: 'admin@example.com' },
+      ],
+    });
   });
 
   it('claims ordering responsibility before the order is placed', async () => {
@@ -1129,6 +1180,12 @@ describe('Food selection routes (integration)', () => {
     expect(res.body.status).toBe('ordering');
     expect(res.body.orderPlacedBy).toBe('alice@example.com');
     expect(res.body.orderPlacedAt).toBeNull();
+    expect(await prisma.foodSelection.findUnique({ where: { id: selection.id } })).toMatchObject({
+      phaseActions: [
+        { kind: 'closed', actorKey: 'approved-user@company.com' },
+        { kind: 'claimed', actorKey: 'alice@example.com' },
+      ],
+    });
   });
 
   it('rejects placing the order when another user already claimed ordering responsibility', async () => {

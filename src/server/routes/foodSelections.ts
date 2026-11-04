@@ -62,8 +62,8 @@ async function resolveOptionalApprovedActor(
 async function requireAdminOrSelectionCreator(
   cookieHeader: string | undefined,
   selectionId: string,
-): Promise<{ actorKey: string | null; isAdmin: boolean }> {
-  const actor = await requireApprovedActorIfApprovalWorkflowEnabled(cookieHeader);
+) {
+  const actor = await requireAuthenticatedActor(cookieHeader);
   if (actor.isAdmin) {
     return actor;
   }
@@ -232,7 +232,7 @@ function registerSelectionLifecycleRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/extend',
     async (req, reply) => {
       try {
-        await requireAdminOrSelectionCreator(req.headers.cookie, req.params.id);
+        const actor = await requireAdminOrSelectionCreator(req.headers.cookie, req.params.id);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
@@ -241,6 +241,7 @@ function registerSelectionLifecycleRoutes(app: FastifyInstance) {
           req.params.id,
           req.body.extensionMinutes,
           officeLocationId,
+          actor,
         );
         return reply.send(selection);
       } catch (err) {
@@ -257,12 +258,12 @@ function registerSelectionCompletionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/complete',
     async (req, reply) => {
       try {
-        await requireApprovedActorIfApprovalWorkflowEnabled(req.headers.cookie);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
-        const selection = await foodSelectionService.completeFoodSelection(req.params.id, officeLocationId);
+        const selection = await foodSelectionService.completeFoodSelection(req.params.id, officeLocationId, actor);
         return reply.send(selection);
       } catch (err) {
         return sendServiceError(reply, err);
@@ -275,12 +276,12 @@ function registerSelectionCompletionRoutes(app: FastifyInstance) {
     '/api/food-selections/:id/complete-now',
     async (req, reply) => {
       try {
-        await requireApprovedActorIfApprovalWorkflowEnabled(req.headers.cookie);
+        const actor = await requireAuthenticatedActor(req.headers.cookie);
         const officeLocationId = await resolveOfficeLocationIdFromCookie(
           req.headers.cookie,
           readRequestedOfficeLocationId(req.query),
         );
-        const selection = await foodSelectionService.completeFoodSelectionNow(req.params.id, officeLocationId);
+        const selection = await foodSelectionService.completeFoodSelectionNow(req.params.id, officeLocationId, actor);
         return reply.send(selection);
       } catch (err) {
         return sendServiceError(reply, err);
@@ -644,6 +645,7 @@ function registerDeliveryRoutes(app: FastifyInstance) {
           req.params.id,
           actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.send(selection);
       } catch (err) {
@@ -667,6 +669,7 @@ function registerDeliveryRoutes(app: FastifyInstance) {
           req.body.etaMinutes,
           actor.displayNameSnapshot,
           officeLocationId,
+          actor,
         );
         return reply.send(selection);
       } catch (err) {

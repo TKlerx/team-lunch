@@ -3,6 +3,7 @@ import { render, screen } from './testRender.js';
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 import MainView from '../../src/client/pages/MainView.js';
+import { AppProvider } from '../../src/client/context/AppContext.js';
 import type { AppPhase } from '../../src/lib/types.js';
 
 // Mock all child components so we can test routing in isolation
@@ -40,7 +41,7 @@ vi.mock('../../src/client/components/FoodSelectionCompletedView.js', () => ({
 function renderPhase(phase: AppPhase) {
   return render(
     <MemoryRouter>
-      <MainView phase={phase} />
+      <AppProvider><MainView phase={phase} /></AppProvider>
     </MemoryRouter>,
   );
 }
@@ -84,6 +85,7 @@ describe('MainView — phase routing', () => {
   it('renders FoodSelectionOrderingView for FOOD_ORDERING', () => {
     renderPhase('FOOD_ORDERING');
     expect(screen.getByTestId('food-selection-ordering-view')).toBeInTheDocument();
+    expect(screen.getByText('3. Place the order')).toHaveAttribute('aria-current', 'step');
   });
 
   it('renders FoodDeliveryView for FOOD_DELIVERY_ACTIVE', () => {

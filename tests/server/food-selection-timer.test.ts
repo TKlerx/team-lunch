@@ -150,6 +150,21 @@ describe('Food selection timer', () => {
     expect(timers.has(selection.id)).toBe(false);
   });
 
+  it('ignores expiry from before meal selection was reopened', async () => {
+    vi.useRealTimers();
+    const { poll } = await createFinishedPollWithWinner();
+    const selection = await foodSelectionService.startFoodSelection(poll.id, 10);
+    const oldDeadline = new Date(selection.endsAt);
+    await foodSelectionService.completeFoodSelectionNow(selection.id);
+    const reopened = await foodSelectionService.extendFoodSelection(selection.id, 5);
+
+    await expect(foodSelectionService.expireFoodSelection(selection.id, undefined, oldDeadline))
+      .rejects.toMatchObject({ statusCode: 409 });
+    expect(await prisma.foodSelection.findUnique({ where: { id: selection.id } }))
+      .toMatchObject({ status: 'active', endsAt: new Date(reopened.endsAt) });
+    expect(foodSelectionService.getActiveTimers().has(selection.id)).toBe(true);
+  });
+
   it('clearAllTimers utility clears all timers', async () => {
     vi.useRealTimers();
     const { poll } = await createFinishedPollWithWinner();

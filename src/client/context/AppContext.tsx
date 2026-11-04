@@ -8,6 +8,7 @@ import type {
   InitialStatePayload,
   ShoppingListItem,
   OrderingPolicyAvailability,
+  SSEEvent,
 } from '../../lib/types.js';
 
 // ─── State shape ───────────────────────────────────────────
@@ -200,7 +201,7 @@ export type AppAction =
   | { type: 'FOOD_SELECTION_OVERTIME'; payload: { foodSelectionId: string } }
   | {
       type: 'FOOD_SELECTION_EXTENDED';
-      payload: { foodSelectionId: string; newEndsAt: string };
+      payload: Extract<SSEEvent, { type: 'food_selection_extended' }>['payload'];
     }
   | { type: 'FOOD_SELECTION_ORDERING_STARTED'; payload: { foodSelection: FoodSelection } }
   | { type: 'FOOD_SELECTION_ORDERING_CLAIMED'; payload: { foodSelection: FoodSelection } }
@@ -412,6 +413,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.activeFoodSelection,
           status: 'active',
           endsAt: action.payload.newEndsAt,
+          phaseActions: action.payload.phaseActions ?? state.activeFoodSelection.phaseActions,
         },
       };
     }

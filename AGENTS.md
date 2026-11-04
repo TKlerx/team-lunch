@@ -7,7 +7,7 @@ the user observes and steers. For new features, run the spec-kit phases
 task at a time from `tasks.md`.
 
 <!-- SPECKIT START -->
-Active feature plan: `specs/008-auth-config-privacy/plan.md`.
+Active feature plan: `specs/009-lunch-phase-controls/plan.md`.
 <!-- SPECKIT END -->
 
 ### Typical Development Workflow
