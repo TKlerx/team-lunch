@@ -47,6 +47,7 @@ describe('FoodSelectionOrderingView', () => {
     const user = setupUser();
     renderView();
     await user.click(screen.getByRole('button', { name: 'Reopen meal selection' }));
+    expect(screen.queryByRole('textbox', { name: 'Manual minutes' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: '5 min' }));
     expect(mockExtendFoodSelection).toHaveBeenCalledWith(
       mockUseAppState().activeFoodSelection?.id,

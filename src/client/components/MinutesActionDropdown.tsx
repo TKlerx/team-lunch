@@ -8,6 +8,7 @@ interface MinutesActionDropdownProps {
   options: readonly number[];
   onSubmitMinutes: (minutes: number) => Promise<boolean>;
   disabled?: boolean;
+  allowCustomMinutes?: boolean;
   customPlaceholder?: string;
   customAriaLabel?: string;
   submitButtonLabel?: string;
@@ -19,6 +20,7 @@ export default function MinutesActionDropdown({
   options,
   onSubmitMinutes,
   disabled = false,
+  allowCustomMinutes = true,
   customPlaceholder = 'Manual minutes',
   customAriaLabel = 'Manual minutes',
   submitButtonLabel = 'Apply',
@@ -89,35 +91,37 @@ export default function MinutesActionDropdown({
               </Button>
             ))}
           </div>
-          <div className="space-y-2 p-2">
-            <Input
-              value={manualMinutes}
-              onChange={(event) => setManualMinutes(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
+          {allowCustomMinutes && (
+            <div className="space-y-2 p-2">
+              <Input
+                value={manualMinutes}
+                onChange={(event) => setManualMinutes(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const parsed = Number.parseInt(manualMinutes, 10);
+                    if (!Number.isInteger(parsed)) return;
+                    void runSubmit(parsed);
+                  }
+                }}
+                placeholder={customPlaceholder}
+                aria-label={customAriaLabel}
+                className="px-2 py-1.5"
+              />
+              <Button
+                variant="success"
+                onClick={() => {
                   const parsed = Number.parseInt(manualMinutes, 10);
                   if (!Number.isInteger(parsed)) return;
                   void runSubmit(parsed);
-                }
-              }}
-              placeholder={customPlaceholder}
-              aria-label={customAriaLabel}
-              className="px-2 py-1.5"
-            />
-            <Button
-              variant="success"
-              onClick={() => {
-                const parsed = Number.parseInt(manualMinutes, 10);
-                if (!Number.isInteger(parsed)) return;
-                void runSubmit(parsed);
-              }}
-              disabled={disabled || submitting}
-              className="w-full px-3 py-1.5"
-            >
-              {submitButtonLabel}
-            </Button>
-          </div>
+                }}
+                disabled={disabled || submitting}
+                className="w-full px-3 py-1.5"
+              >
+                {submitButtonLabel}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

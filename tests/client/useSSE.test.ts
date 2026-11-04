@@ -606,6 +606,19 @@ describe('useSSE', () => {
     expect(result.current.activeFoodSelection?.status).toBe('overtime');
   });
 
+  it('reopens the client selection at the broadcast deadline', async () => {
+    const { result } = renderSSE();
+    await act(() => Promise.resolve());
+    const newEndsAt = '2026-11-04T11:05:00.000Z';
+
+    act(() => {
+      getES().emit('food_selection_ordering_started', { foodSelection: makeFS({ status: 'ordering' }) });
+      getES().emit('food_selection_extended', { foodSelectionId: 'fs-1', newEndsAt });
+    });
+
+    expect(result.current.activeFoodSelection).toMatchObject({ status: 'active', endsAt: newEndsAt });
+  });
+
   it('handles food_selection_completed event', async () => {
     const { result } = renderSSE();
     await act(() => Promise.resolve());

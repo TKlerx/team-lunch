@@ -711,6 +711,9 @@ describe('Food selection routes (integration)', () => {
     await extend(creator).expect(200);
     await client.post(`${path}/complete-now`).set(creator).expect(200);
     await extend(other).expect(403);
+    const otherOffice = await createOfficeLocation('Other office');
+    const admin = await adminAuthHeaders();
+    await extend(admin).query({ officeLocationId: otherOffice.id }).expect(404);
     const reopened = await extend(creator).expect(200);
     expect(reopened.body).toMatchObject({
       id: selection.id,

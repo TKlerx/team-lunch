@@ -38,6 +38,7 @@ function ReopenMealSelection({ selectionId }: { selectionId: string }) {
       triggerLabel="Reopen meal selection"
       triggerAriaLabel="Reopen meal selection"
       options={REOPEN_OPTIONS}
+      allowCustomMinutes={false}
       onSubmitMinutes={reopen}
     />
   );

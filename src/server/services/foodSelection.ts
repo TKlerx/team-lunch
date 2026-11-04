@@ -45,17 +45,27 @@ function scheduleTimer(selectionId: string, endsAt: Date): void {
   scheduleMissingOrderReminder(selectionId, endsAt);
   const delay = endsAt.getTime() - Date.now();
   if (delay <= 0) {
-    void expireFoodSelection(selectionId);
+    expireAtDeadline(selectionId, endsAt);
     return;
   }
   const timer = setTimeout(() => {
+    if (activeTimers.get(selectionId) !== timer) return;
     activeTimers.delete(selectionId);
-    void expireFoodSelection(selectionId);
+    expireAtDeadline(selectionId, endsAt);
   }, delay);
   if (typeof timer === 'object' && 'unref' in timer) {
     timer.unref();
   }
   activeTimers.set(selectionId, timer);
+}
+
+function expireAtDeadline(selectionId: string, endsAt: Date): void {
+  void expireFoodSelection(selectionId, undefined, endsAt).catch((error: unknown) => {
+    const { statusCode } = error as { statusCode?: number };
+    if (statusCode !== 404 && statusCode !== 409) {
+      console.error('Failed to expire food selection', error);
+    }
+  });
 }
 
 function scheduleDeliveryTimer(selectionId: string, dueAt: Date): void {
@@ -441,6 +451,7 @@ async function updateSelectionPhase(
 }
 
 async function transitionToOrdering(selection: SelectionWithOrders, actor?: PhaseActor): Promise<FoodSelection> {
+  const timer = activeTimers.get(selection.id);
   const updated = await updateSelectionPhase(
     { id: selection.id, status: selection.status, endsAt: selection.endsAt },
     {
@@ -454,7 +465,7 @@ async function transitionToOrdering(selection: SelectionWithOrders, actor?: Phas
       deliveryDueAt: null,
     },
   );
-  clearTimer(selection.id);
+  if (activeTimers.get(selection.id) === timer) clearTimer(selection.id);
   clearDeliveryTimer(selection.id);
 
   const formatted = formatFoodSelection(updated);
@@ -703,19 +714,22 @@ export async function withdrawOrder(
 export async function expireFoodSelection(
   selectionId: string,
   officeLocationId?: string,
+  expectedEndsAt?: Date,
 ): Promise<FoodSelection> {
   const selection = await fetchSelectionOrThrow(selectionId, officeLocationId);
+  if (expectedEndsAt && (selection.status !== 'active' || selection.endsAt.getTime() !== expectedEndsAt.getTime())) {
+    throw Object.assign(new Error('The lunch phase has changed'), { statusCode: 409 });
+  }
   if (selection.status !== 'active') {
     throw Object.assign(new Error('Only active food selections can expire'), { statusCode: 400 });
   }
 
-  clearTimer(selectionId);
-
-  const updated = await prisma.foodSelection.update({
-    where: { id: selectionId },
-    data: { status: 'overtime' },
-    include: { orders: true },
-  });
+  const timer = activeTimers.get(selectionId);
+  const updated = await updateSelectionPhase(
+    { id: selectionId, status: 'active', endsAt: selection.endsAt },
+    { status: 'overtime' },
+  );
+  if (activeTimers.get(selectionId) === timer) clearTimer(selectionId);
 
   const formatted = formatFoodSelection(updated);
   broadcast('food_selection_overtime', { foodSelectionId: selectionId }, selection.officeLocationId);
